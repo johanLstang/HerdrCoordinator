@@ -47,7 +47,7 @@ Leverera taskens hela avgränsade resultat med relevanta fel-, omstarts- och åt
 
 Kör meningsfulla kontroller för de berörda kraven. Prioritera tillstånd, persistens, idempotens, rollkontroll, worktree-isolering, samtidighet och aktuella reviewcommits. Använd temporära Git-repositories, SQLite-filer och avgränsade testepics. Redovisa verkliga integrationer separat från simulerade adaptrar. För dokumentändringar räcker relevanta länk-, innehålls- och konsistenskontroller.
 
-Projektet har initialt dokumentation och instruktionsfiler. Fastställ start-, test- och buildkommandon i F-01 och dokumentera dem; kör inga påhittade projektkommandon. Markera bara acceptans som faktiskt verifierats.
+F-01 fastställer start-, test- och buildkommandon i README. Använd dessa och versionslåset uv.lock; kör inga påhittade projektkommandon. Markera bara acceptans som faktiskt verifierats.
 
 ## Status och hinder
 

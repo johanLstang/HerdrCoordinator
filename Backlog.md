@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. Alla 50 tasks ligger i `Planned` (API-status `Pending`); epicernas leveransstatus är ännu planerad. Inga implementationskriterier är verifierade. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-01** under **E-01**.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är plockad i TeamPlayer som `InProgress` och E-01 är Active. Övriga 49 tasks är Planned. Inga implementationskriterier är ännu verifierade. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-01** under **E-01**.
 
 ## Styrande underlag
 
@@ -100,7 +100,7 @@ Totalt 227 taskberoenden är registrerade. Ett beroende på en föregående epic
 
 | ID | Beslut eller förutsättning | Leverans som fastställer eller verifierar |
 | --- | --- | --- |
-| D-01 | Python 3.12+, asyncio och Pydantic följer A. Föreslagen första persistens är sqlite3; paketstruktur och versionsval fastställs före kodberoenden. | F-01 och F-02. |
+| D-01 | F-01 fastställer Python 3.12+, asyncio, Pydantic 2 och sqlite3. src/orchestrator, TOML, Hatchling, pytest och Ruff; versionslås i uv.lock och verifieringsmiljö Python 3.13. | Beslut dokumenterat i README; persistens levereras i F-02. |
 | D-02 | Lokalt MCP behöver betrodd sessions/rollkoppling. Orchestratorbehörighet och runtime/shellbegränsningar ska redovisas separat; promptpolicy ensam upprätthåller inte teknisk isolering. | F-04, F-10 och F-17; olösta nödvändiga gränser blockerar F-38. |
 | D-03 | Slots reserveras från CLAIMED/STARTING och hålls genom review/fix tills bekräftad parkering eller avslut. Kanban Active är inte sloträknare. | F-15, F-28 och F-31–F-32. |
 | D-04 | Versionerat task/rapportformat med runidentitet väljs; textvarianterna TASK och TASK_ID i källorna normaliseras uttryckligen. | F-14 och F-16. |
@@ -133,7 +133,7 @@ Ordningen mellan epics är sekventiell enligt faserna och implementationen sker 
 
 ## Epic E-01 Starta orchestratorn och bevara körningarnas tillstånd
 
-**Fas:** 1. **Prioritet:** P0. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `0da5c7c4-6e29-475e-aeb6-ce887f3864db`.
+**Fas:** 1. **Prioritet:** P0. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `0da5c7c4-6e29-475e-aeb6-ce887f3864db`.
 
 **Körbar:** Ja — börja med F-01 via bootstrap. **Beroende:** Inget.
 
@@ -166,9 +166,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-01 Starta ett konfigurerbart Python-projekt
 
-**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9bc95f85-f05d-4842-b517-c1f8132c49ab`.
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `9bc95f85-f05d-4842-b517-c1f8132c49ab`.
 
-**Körbar:** Ja — inga blockerande beroenden; starta via bootstrap.
+**Körbar:** Pågår — task/e01-f01 i .worktrees/task-e01-f01 från epicbas 7d1f832; bootstrap Worker implementerar F-01.
 
 **Källa:** A §§4.4, 34–35, 49; W §§1–4. **Berör:** Projektstruktur, konfiguration, startkommando, loggning.
 
@@ -180,11 +180,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-01.A1:** Givet giltiga paths startar tjänsten och rapporterar vald konfiguration utan credentials.
-- [ ] **F-01.A2:** Givet ogiltig workergräns, saknat repository eller otillåten worktree-rot avslutas start med begripligt fel innan externa operationer.
-- [ ] **F-01.A3:** Ett loggat konfigurationsfel exponerar inte en testhemlighet.
+- [x] **F-01.A1:** Givet giltiga paths startar tjänsten och rapporterar vald konfiguration utan credentials.
+- [x] **F-01.A2:** Givet ogiltig workergräns, saknat repository eller otillåten worktree-rot avslutas start med begripligt fel innan externa operationer.
+- [x] **F-01.A3:** Ett loggat konfigurationsfel exponerar inte en testhemlighet.
 
 **Verifiering:** Lokal start i temporär konfiguration, felkonfigurationer och loggkontroll. Dokumentera installations- och startkommandon.
+
+**Verifieringsunderlag F-01 (2026-10-07):** Python 3.13.14. `uv run --locked pytest`: 19 passerade, exit 0 (A1–A3). `uv run --locked ruff check .`: exit 0. `uv build`: wheel och sdist, exit 0. `uv run --locked herdr-coordinator --config herdr.example.toml --check`: exit 0. CLI-prov täcker riktiga temporära Git-repositories, ogiltiga workergränser/paths, symlänk till metadata, planterad hemlighet och SIGTERM. Inga externa agent- eller TeamPlayer-adaptrar körs. READY_FOR_REVIEW på task/e01-f01 från epicbas 7d1f832; Integration-review och merge återstår.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -1762,8 +1764,8 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Planned | Ja | 0/3 | Inget | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Planned | Ja | 0/3 | Inget | Implementera och verifiera lokal start via bootstrap. |
+| 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Active | Ja | 0/3 | Inget | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Active | Ja | 3/3 | Inget | 19 tester och build passerar; bootstrap Integration-review och merge återstår. |
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Planned | Nej | 0/3 | F-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Planned | Nej | 0/3 | F-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Planned | Nej | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

@@ -1,0 +1,7 @@
+# Paths resolve relative to this file. Keep real credentials in the environment.
+repository = "."
+worktree_root = ".worktrees/runtime"
+sqlite_path = ".herdr/state.sqlite3"
+max_workers = 2
+# Optional names of environment variables to redact; values never belong in TOML.
+credential_env = ["HERDR_TEAMPLAYER_TOKEN", "HERDR_CODEX_API_KEY"]
