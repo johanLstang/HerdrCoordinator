@@ -236,6 +236,42 @@ class StateStore:
         ).fetchone()
         return Operation.model_validate_json(row[0]) if row else None
 
+    def complete_worktree_creation(self, record: EpicRun | TaskRun, operation: Operation) -> None:
+        """Persist verified creation metadata and result together, without a state transition."""
+        with self.transaction() as db:
+            is_epic = isinstance(record, EpicRun)
+            prior = self.get_epic(record.id) if is_epic else self.get_task(record.id)
+            intent = self.get_operation(
+                operation.project_id, operation.kind, operation.idempotency_key
+            )
+            if (
+                prior is None
+                or intent is None
+                or intent.id != operation.id
+                or intent.status != "PENDING"
+                or operation.status != "SUCCEEDED"
+                or operation.project_id != record.project_id
+                or operation.epic_run_id != (record.id if is_epic else record.epic_run_id)
+                or operation.task_run_id != (None if is_epic else record.id)
+                or operation.idempotency_key != record.id
+                or operation.kind != ("create_epic_worktree" if is_epic else "create_task_worktree")
+                or intent.model_dump(exclude={"status", "updated_at"})
+                != operation.model_dump(exclude={"status", "updated_at"})
+                or prior.model_dump(exclude={"current_commit"})
+                != record.model_dump(exclude={"current_commit"})
+                or record.current_commit != record.base_commit
+                or record.base_commit is None
+            ):
+                raise StoreError("worktree completion does not match its stored intent")
+            table = "epic_runs" if is_epic else "task_runs"
+            db.execute(
+                f"UPDATE {table} SET payload=? WHERE id=?", (record.model_dump_json(), record.id)
+            )
+            db.execute(
+                "UPDATE operations SET payload=? WHERE id=?",
+                (operation.model_dump_json(), operation.id),
+            )
+
     def add_reference(self, record: ExternalReference) -> None:
         with self.transaction() as db:
             db.execute(
