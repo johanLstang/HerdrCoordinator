@@ -11,4 +11,4 @@ Läs [rotens AGENTS.md](../AGENTS.md) och den valda taskens acceptans i [Backlog
 - Redovisa kommando, exitkod, miljö, relevanta commit-SHA och vilket acceptanskriterium provet styrker. Dokumentera externa prov som inte kunnat genomföras som kvarvarande arbete.
 - Kör relevanta kontroller och föreskrivna grindar. Bredare omkörning behövs vid förändrat underlag, fel eller kvarvarande konkret risk.
 
-Tests är ännu inte en implementerad testsvit. F-01 fastställer ramverk och kommandon; instruktionsfilen gör inga test- eller implementationskriterier uppfyllda.
+F-01 fastställer pytest och kommandona i README. Instruktionsfilen gör inga test- eller implementationskriterier uppfyllda; redovisa faktiska testresultat för varje leverans.
