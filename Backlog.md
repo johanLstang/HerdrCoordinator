@@ -278,7 +278,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-02 Isolera och integrera arbete genom Git worktrees
 
-**Fas:** 2. **Prioritet:** P0. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `225cca70-7f09-4313-a020-52c8b0b7b069`.
+**Fas:** 2. **Prioritet:** P0. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `225cca70-7f09-4313-a020-52c8b0b7b069`.
 
 **Körbar:** Ja — E-01 Done på main; börja med F-05. **Beroende:** E-01 Done på main.
 
@@ -1787,7 +1787,7 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Done | — | 3/3 | F-01 | Integrerad via 8e29ef2; fortsätt med F-03. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Done | — | 3/3 | F-02 | Integrerad via 904a022; fortsätt med F-04. |
 | 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Done | — | 3/3 | F-03 | Integrerad via d37fcfd; E-01 slutgranskas. |
-| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Planned | Ja | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Planned | Ja | 0/3 | E-01 | E-01-grinden uppfylld via PR #1/9cafb75; förbered och plocka tasken. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Planned | Nej | 0/3 | E-01, F-05 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Planned | Nej | 0/3 | E-01, F-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
