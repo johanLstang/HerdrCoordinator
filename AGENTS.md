@@ -39,6 +39,8 @@ En begäran om dokumentation, planering eller instruktioner börjar inte automat
 
 Under bootstrap kan den ansvariga utvecklaren utföra rollerna sekventiellt. Ange rollövergång vid review och merge; Worker-uppdragets gränser består under implementation. När respektive orchestratorservice finns utförs kritiska operationer genom den. En framtida service behandlas inte som redan tillgänglig.
 
+Utvecklingens manuella bootstrap-worktrees saknar produktens registrerade run-/runtime-livscykel. Adoptera dem inte och fabricera inte ownership-, session-, slot- eller statebevis för att få en service att acceptera dem. Under denna bootstrap utför ansvarig roll Git-operationen genom GitAdapter efter separata branch/path/bas-/SHA-kontroller, sparad faktisk review och verifiering; dokumentera undantaget i leveransunderlaget. Produktservices används för registrerade produkt-/testruns. Undantaget gäller utvecklingsbootstrapen och ger ingen Worker mergebehörighet eller rätt att kringgå produktens policy.
+
 Bevara befintliga lokala ändringar. Kontrollera branch, worktree, arbetsläge och bascommit före arbete. Kodberoenden till annan epic hämtas normalt efter dess main-merge. Synkronisering epic → task är en särskild integrationsoperation; leveransmerge går Task → Epic → main med `--no-ff`.
 
 ## Implementation och verifiering
