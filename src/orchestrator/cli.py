@@ -34,6 +34,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="HerdrCoordinator local orchestrator")
     parser.add_argument("--config", type=Path, required=True, help="path to a TOML configuration")
     parser.add_argument("--check", action="store_true", help="validate configuration and exit")
+    parser.add_argument("--mcp", action="store_true", help="serve local MCP over stdio")
+    parser.add_argument(
+        "--principal", type=Path, help="operator-controlled external principal JSON"
+    )
     args = parser.parse_args(argv)
     log = EventLog()
     try:
@@ -51,10 +55,23 @@ def main(argv: list[str] | None = None) -> int:
     log.emit("configuration.validate", "INFO", "configuration is valid", **settings.public_config())
     if args.check:
         return 0
+    from orchestrator.mcp.principal import PrincipalError, load_principal
+
     try:
-        with StateStore(settings.sqlite_path):
+        actor = load_principal(args.principal, settings) if args.mcp else None
+    except PrincipalError as exc:
+        log.emit("principal.validate", "ERROR", str(exc))
+        return 4
+    try:
+        with StateStore(settings.sqlite_path) as store:
             log.emit("state.initialize", "INFO", "state database is ready", version=SCHEMA_VERSION)
-            asyncio.run(serve(log))
+            if args.mcp:
+                from orchestrator.application.runtime_service import RuntimeService
+                from orchestrator.mcp.server import serve_stdio
+
+                asyncio.run(serve_stdio(RuntimeService(store, actor, log)))
+            else:
+                asyncio.run(serve(log))
     except StoreError as exc:
         log.emit("state.initialize", "ERROR", str(exc))
         return 3
