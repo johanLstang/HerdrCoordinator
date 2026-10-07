@@ -310,6 +310,10 @@ get_task_dependencies()
 
 Exakta MCP tool names kapslas in av adaptern.
 
+Epicens boardstatus använder endast Planned, Active och Done. Coordinator skriver den vid start och efter slutleverans, och stämmer av efter taskintegration samt vid review/hinder. Påbörjade epics förblir Active under samtliga interna review-, korrigerings- och mergefaser, paus och blockerare. Done kräver samlad acceptans, slutreview, main-merge och slutverifiering. Taskernas Attention är separat och blir inte epicstatus.
+
+Verifierat TeamPlayer-kontrakt: `list_epics(projectId)` returnerar epicens `id`, `status`, `version`; `update_epic_status(projectId, epicId, version, status)` skriver med optimistic concurrency. API-status Pending motsvarar Planned, InProgress motsvarar Active och Done motsvarar Done. Återläs efter skrivning, versionskonflikt eller okänt nätutfall. Saknat verktyg i en äldre klientlista kräver kontroll av serverns aktuella MCP-katalog. En statussträng ersätter inte Git-/testbevis.
+
 Resten av systemet ska därför inte behöva känna till TeamPlayer MCP:s interna API.
 
 ---
@@ -457,6 +461,8 @@ orchestrator.db
 ---
 
 # 12. EpicRun
+
+`status` nedan är intern runtime-state. PLANNED mappar till epicens Planned, ACTIVE/READY_FOR_REVIEW/REVIEWING/CHANGES_REQUESTED/APPROVED/MERGING till Active och verifierad DONE till Done. Detaljerade interna tillstånd bevaras i SQLite även när flera faser visas som Active på boarden.
 
 ```text
 EpicRun
@@ -1383,6 +1389,8 @@ write Attention reason
 ```
 
 Testa först med en test-Epic.
+
+Ovanstående Attention gäller tasks. Epics har Planned/Active/Done: verifiera separat epicstart, fortsatt Active när tasks är blockerade eller klara före main-integration, och Done först efter hela epicens leveransgrind. Coordinator initierar epicstatus och Integration taskstatus. Både task- och epicversion ska återläsas före respektive skrivning.
 
 ---
 

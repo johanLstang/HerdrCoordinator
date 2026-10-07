@@ -43,6 +43,10 @@ Flera samtidiga epics, fler än två Workers, tasks över flera repositories, dy
 | Attention | Extern input eller åtgärd krävs; orsak och nästa åtgärd sparas. |
 | Done | Task: godkänd review, merge till epic och passerad integration. Epic: slutreview, merge till main och passerad slutverifiering. |
 
+**Epics använder endast Planned/Active/Done.** Planned betyder ej påbörjad; Active sätts av Coordinator vid epicstart och senast när första tasken plockas. Påbörjade epics behåller Active genom implementation, review, korrigering, paus, blockerare och väntan på PR/main-integration/slutverifiering. Hinder dokumenteras separat och ger inte epicstatus Attention. Alla tasks Done räcker inte för epic-Done. Done kräver epicens fulla definition av Done nedan. Återöppning för nytt arbete dokumenteras och ger Active. Tabellen ovan används med samtliga fyra värden för tasks.
+
+Coordinator läser epicens status/version med `list_epics` och skriver `update_epic_status(projectId, epicId, version, status)` med färsk version. API-status Pending mappar till Planned, InProgress till Active och Done till Done. Återläs och håll Kanbanrad överens med statusfältet. Synka epicbeskrivningen via en verifierad redigeringsväg; saknad sådan dokumenteras som separat textavvikelse. Vid versionskonflikt/okänt nätutfall återläs före retry; väntande synk dokumenteras och Git-merge upprepas inte. Interna EpicRun-faser mellan PLANNED och verifierad DONE visas som Active på boarden.
+
 Körbarhet är separat från status. En task blir körbar när angivna beroenden är verifierade, krav och testförutsättningar finns och externa villkor är uppfyllda. Taskberoende inom samma epic kräver granskad integration i epic-branchen. Beroende på tidigare epic kräver dess verifierade merge till `main`. Varje epic efter E-01 kräver föregående epic Done; detta gäller samtliga tasks i epicen utöver deras uttryckliga taskberoenden.
 
 Interna tasktillstånd följer A §§15–16: `PLANNED`, `CLAIMED`, `STARTING` motsvarar Planned; `WORKING`, `READY_FOR_REVIEW`, `REVIEWING`, `CHANGES_REQUESTED`, `APPROVED`, `MERGING` motsvarar Active; `BLOCKED`, `PARKED` motsvarar Attention; `DONE` motsvarar Done. W:s `ASSIGNING` är inget ytterligare Kanban-tillstånd.
@@ -76,7 +80,7 @@ Dessa regler gäller varje epic och task och ska användas tillsammans med taske
 
 ## Bootstrap och praktisk arbetsgång
 
-Utvecklingen av denna backlogg följer [Utvecklingsprocess.md](Utvecklingsprocess.md) och [AGENTS.md](AGENTS.md): en feature/task i taget, plockad i TeamPlayer före kodändring. Behåll Planned/Active/Attention/Done i lokal Kanban och registrera faktisk API-status vid behov. Varje epic slutgranskas via PR mot main. Produktens tester får använda två Workers enligt acceptansen utan att implementationsfeatures utvecklas parallellt.
+Utvecklingen av denna backlogg följer [Utvecklingsprocess.md](Utvecklingsprocess.md) och [AGENTS.md](AGENTS.md): en feature/task i taget, plockad i TeamPlayer före kodändring. Epics använder Planned/Active/Done och tasks Planned/Active/Attention/Done; registrera faktisk API-status vid behov. Varje epic slutgranskas via PR mot main. Produktens tester får använda två Workers enligt acceptansen utan att implementationsfeatures utvecklas parallellt.
 
 Före full orkestrering utför ansvarig utvecklare Coordinator- och Integration-rollerna manuellt. Skapa epicbranch från aktuell main och taskbranches från epicen, arbeta i separata worktrees, granska och kör relevanta tester före merge. Registrera commits, review och testunderlag lokalt. Epicens byggda produktfunktion och arbetsprocessen för att bygga den behöver inte ha samma automationsgrad.
 
@@ -88,7 +92,9 @@ Backloggen är upplagd i TeamPlayer och epic/taskkopplingar, tilldelning, beskri
 
 **Projekt:** HerdrCoordinator. **Projekt-ID:** `d2ee4c75-7b80-465f-83ac-1750854a8e80`. **Utförare:** `blitterbot@gmail.com`. **Verifierat användar-ID:** `105f26a7-0648-438d-94fd-3260ac3af4ee`.
 
-Samtliga 50 tasks har `executionOwnerKind=User` och det verifierade kontot som utförare. Skapandets valideringsansvar är också satt till detta användarkonto. Detta är administrativ tilldelning; kodgranskning och integration följer fortfarande agentrollerna i arbetsprocessen. TeamPlayers board epics har inget tilldelningsfält; kontot anges som ansvarigt i varje epicbeskrivning. Board epics har heller ingen separat leveransstatus i nuvarande MCP-kontrakt, så epicstatus i denna backlogg följs genom leveransunderlaget och senare EpicRun.
+Samtliga 50 tasks har `executionOwnerKind=User` och det verifierade kontot som utförare. Skapandets valideringsansvar är också satt till detta användarkonto. Detta är administrativ tilldelning; kodgranskning och integration följer fortfarande agentrollerna i arbetsprocessen. TeamPlayers board epics har inget tilldelningsfält; kontot anges som ansvarigt i varje epicbeskrivning. De har ett verifierat status-/versionsfält och statusverktyget update_epic_status. Coordinator synkar epicstatus med denna backlogg utifrån faktiskt arbete, Git-/review-/testunderlag och senare EpicRun.
+
+**Avstämning av epicstatus (2026-10-07):** TeamPlayers statusfält är uppdaterade och återlästa: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Äldre epicbeskrivningar innehåller fortfarande planeringsögonblickets status och acceptans; använd det återlästa statusfältet och denna backloggs verifieringsunderlag. Aktuell MCP-katalog saknar verktyg för att redigera epicbeskrivningar och GET till epicernas REST-endpoint avvisades med HTTP 403 för samma autentiserade anslutning. Ingen beskrivningsskrivning genomfördes. Coordinator/operatör behöver en behörig redigeringsväg för att synka texterna; detta ändrar inte verifierad epicstatus och startar ingen implementationstask.
 
 Tasktypen är `Task`. Prioritet mappas `P0 → Critical`, `P1 → High`, `P2 → Medium`, `P3 → Low`. Kanbankolumnen Planned representeras av API-status Pending. Använd det verifierade API-kontraktet vid kommande statusändringar.
 
@@ -878,7 +884,7 @@ Operatören kan välja arbete från TeamPlayer och se rätt arbetsstatus, blocke
 ### Epicacceptans
 
 - [ ] **E-06.A1:** En testepic och dess tasks kan läsas med riktiga ID:n, kriterier och beroenden.
-- [ ] **E-06.A2:** Active, Attention och Done skrivs på verifierade domänhändelser och med rätt ansvarig roll.
+- [ ] **E-06.A2:** Tasks får Active/Attention/Done och epics Planned/Active/Done på verifierade domänhändelser med rätt ansvarig roll; påbörjade epics behåller Active fram till verifierad main-leverans.
 - [ ] **E-06.A3:** Avbruten TeamPlayer-skrivning återförsöks utan att start, merge eller kommentar dupliceras.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
@@ -941,13 +947,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Beroenden:** F-24. **Externa förutsättningar:** X-02 och skrivkontrakt från F-23; avstämningsstöd måste vara verifierat.
 
-**Arbetsinstruktion för Codex:** Implementera rollstyrd set_task_status, set_epic_status och kommentarer med beständiga synkavsikter. Sätt Active efter startbekräftelse, Attention vid verifierad blockerare och Done först efter merge/verifiering. Spara retryläge och referens till domänhändelsen.
+**Arbetsinstruktion för Codex:** Implementera rollstyrd set_task_status, set_epic_status och kommentarer med beständiga synkavsikter. Tasks får Active efter startbekräftelse, Attention vid verifierad blockerare och Done efter taskmerge/verifiering. Epics får Planned före start, Active vid Coordinator-start och genom review/hinder/väntan på main-integration, samt Done först efter samlad acceptans/slutreview/main-merge/slutverifiering. Använd update_epic_status med färsk list_epics-version och mappa Pending/InProgress/Done till Planned/Active/Done. Spara retryläge och referens till domänhändelsen.
 
 **Resultat och kontrakt:** Integration initierar taskskrivning och Coordinator epicskrivning. Externt fel efter lokal framgång återförsöker endast TeamPlayer-steget. Okänt kommentarutfall avstäms med verifierad dedupliceringsmekanism; om API saknar den används dokumenterad readback eller Attention. Manuellt ändrad Kanban ger avvikelse, inte bevis för merge.
 
 **Acceptans**
 
-- [ ] **F-25.A1:** WORKING, BLOCKED/PARKED och DONE ger rätt taskstatus med orsak eller merge/testreferens.
+- [ ] **F-25.A1:** WORKING, BLOCKED/PARKED och DONE ger rätt taskstatus med orsak eller merge/testreferens; epicen är Planned före start, Active under arbete/review/hinder och väntan på main-integration, och Done först efter verifierad main-merge med samlad acceptans/slutreview.
 - [ ] **F-25.A2:** Nätfel efter lokal merge ger väntande synk och återförsök utan ny merge.
 - [ ] **F-25.A3:** Worker kan inte skriva status och upprepad samma kommentarhändelse ger inte flera identiska kommentarer.
 
@@ -1782,7 +1788,7 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. Taskstatus Pending motsvarar Planned. Epicstatus är ännu planerad enligt leveransunderlaget. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-07 efter E-01-main-merge och F-05-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
