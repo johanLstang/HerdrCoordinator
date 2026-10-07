@@ -8,6 +8,7 @@ from pathlib import Path
 
 from orchestrator.config import ConfigurationError, load_settings
 from orchestrator.event_log import EventLog
+from orchestrator.persistence.store import SCHEMA_VERSION, StateStore, StoreError
 
 
 async def serve(log: EventLog) -> None:
@@ -51,7 +52,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.check:
         return 0
     try:
-        asyncio.run(serve(log))
+        with StateStore(settings.sqlite_path):
+            log.emit("state.initialize", "INFO", "state database is ready", version=SCHEMA_VERSION)
+            asyncio.run(serve(log))
+    except StoreError as exc:
+        log.emit("state.initialize", "ERROR", str(exc))
+        return 3
     except KeyboardInterrupt:
         return 0
     return 0
