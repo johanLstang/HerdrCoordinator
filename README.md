@@ -1,6 +1,6 @@
 # HerdrCoordinator
 
-HerdrCoordinator ska automatisera utveckling av epics och tasks med Codex-agenter via Herdr, isolerade Git-worktrees och TeamPlayer Kanban. En deterministisk orchestrator ska validera och utföra kritiska operationer samt lagra runtime-information i SQLite. F-01 levererar lokal start, konfigurationsvalidering och sanerad loggning. Databas, MCP och agentautomation levereras i efterföljande tasks.
+HerdrCoordinator ska automatisera utveckling av epics och tasks med Codex-agenter via Herdr, isolerade Git-worktrees och TeamPlayer Kanban. En deterministisk orchestrator ska validera och utföra kritiska operationer samt lagra runtime-information i SQLite. F-01–F-02 levererar lokal start, konfigurationsvalidering, sanerad loggning och beständig runtime-lagring. MCP och agentautomation levereras i efterföljande tasks.
 
 ## Lokal installation och start
 
@@ -12,11 +12,19 @@ uv run --locked herdr-coordinator --config herdr.example.toml --check
 uv run --locked herdr-coordinator --config herdr.example.toml
 ```
 
-Det första startkommandot validerar konfigurationen och avslutas. Det andra håller grundtjänsten igång tills Ctrl+C eller SIGTERM. I F-01 skapas inga databaser, worktrees eller agentsessioner. JSON-loggar skrivs till stderr, med UTC-tid, nivå, operation och korrelations-ID. Stdout är reserverad för kommande MCP-transport.
+Det första startkommandot validerar konfigurationen och avslutas utan att skapa resurser. Det andra initierar SQLite och håller grundtjänsten igång tills Ctrl+C eller SIGTERM. Inga worktrees eller agentsessioner skapas. JSON-loggar skrivs till stderr, med UTC-tid, nivå, operation och korrelations-ID. Stdout är reserverad för kommande MCP-transport.
 
 Kopiera `herdr.example.toml` till den ignorerade `herdr.local.toml` för lokala val. Relativa paths räknas från konfigurationsfilens katalog. Repository ska vara en befintlig Git-arbetskatalog. Workergränsen är ett heltal 1–2. Worktree-roten får vara utanför repository eller under dess `.worktrees`; den får inte vara repository eller en överordnad katalog. Runtimepaths får inte använda skyddade metadata- eller systemkataloger. SQLite-pathen måste vara skild från worktrees. Symlänkar normaliseras före kontroll; saknade runtimekataloger får ha skrivbara överordnade kataloger.
 
-Credentials ligger i miljövariabler vars **namn** kan anges i `credential_env`. Värden hämtas aldrig från TOML eller skrivs ut. De namngivna värdena maskeras i loggar. Valideringsfel innehåller fältnamn och felbeskrivning, utan råa indata eller exception-dumpar. Exitkod 0 betyder lyckad kontroll/kontrollerat stopp; 2 betyder ogiltig konfiguration.
+Credentials ligger i miljövariabler vars **namn** kan anges i `credential_env`. Värden hämtas aldrig från TOML eller skrivs ut. De namngivna värdena maskeras i loggar. Valideringsfel innehåller fältnamn och felbeskrivning, utan råa indata eller exception-dumpar. Exitkod 0 betyder lyckad kontroll/kontrollerat stopp; 2 betyder ogiltig konfiguration och 3 betyder lagringsfel eller inkompatibelt schema.
+
+## Runtime-lagring (F-02)
+
+`StateStore` lagrar EpicRun, TaskRun, Review, Operation och ExternalReference. SQLite-schema 1 använder `PRAGMA user_version`, foreign keys och explicita transaktioner; flera skrivningar kan grupperas med `store.transaction()`. Nästlade operationer använder savepoints. En misslyckad enhet återställs utan partiella rader.
+
+Modellfälten lagras som validerad JSON tillsammans med relations- och indexkolumner. Tider är tidszonsmedvetna och normaliseras till UTC. Ett projekt/task-ID får bara ha en ofullbordad ägande run (`completed_at IS NULL`). Historiska avslutade runs kan bevaras. Taskens projekt måste matcha dess epic. Reviewnummer är unika per taskrun. Operationsnycklar är unika per projekt/operationstyp, och externa ID:n får inte bindas till två ägare inom samma projekt/provider/typ. Okända session-, workspace-, agent-, slot- och commitreferenser är null tills ett verkligt delresultat finns.
+
+Schema initieras bara i en tom, oversionerad databas; upprepad start bevarar data. Okänd schemaversion eller ofullständigt schema stoppar start. Ta inte bort databasen för att kringgå detta fel. Senare features levererar migrations- och recoveryflöden samt statusövergångar. F-02 startar inga agenter och återspelar inga externa operationer.
 
 ## Verifiering och paketering
 

@@ -1,6 +1,7 @@
 import json
 import os
 import signal
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
@@ -126,6 +127,7 @@ def test_service_starts_and_stops_on_sigterm(configuration):
     )
     try:
         assert json.loads(process.stderr.readline())["operation"] == "configuration.validate"
+        assert json.loads(process.stderr.readline())["operation"] == "state.initialize"
         assert json.loads(process.stderr.readline())["operation"] == "service.ready"
         process.send_signal(signal.SIGTERM)
         stdout, stderr = process.communicate(timeout=10)
@@ -136,3 +138,20 @@ def test_service_starts_and_stops_on_sigterm(configuration):
         if process.poll() is None:
             process.kill()
             process.communicate()
+
+
+def test_service_rejects_future_schema_with_safe_error(configuration):
+    state = configuration.parent / "state"
+    state.mkdir()
+    path = state / "runtime.db"
+    with sqlite3.connect(path) as db:
+        db.execute("PRAGMA user_version = 99")
+    result = subprocess.run(
+        [sys.executable, "-m", "orchestrator", "--config", str(configuration)],
+        capture_output=True, text=True, timeout=10,
+    )
+    assert result.returncode == 3
+    assert "unsupported state database schema version" in result.stderr
+    assert "service.ready" not in result.stderr
+    with sqlite3.connect(path) as db:
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 99
