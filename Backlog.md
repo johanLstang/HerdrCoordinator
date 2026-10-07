@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är plockad i TeamPlayer som `InProgress` och E-01 är Active. Övriga 49 tasks är Planned. Inga implementationskriterier är ännu verifierade. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-01** under **E-01**.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är Done efter granskad integration i E-01. E-01 är Active; övriga 49 tasks är Planned. F-01:s tre kriterier är verifierade; epicacceptansen återstår. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-02** under **E-01**.
 
 ## Styrande underlag
 
@@ -166,9 +166,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-01 Starta ett konfigurerbart Python-projekt
 
-**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `9bc95f85-f05d-4842-b517-c1f8132c49ab`.
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `9bc95f85-f05d-4842-b517-c1f8132c49ab`.
 
-**Körbar:** Pågår — task/e01-f01 i .worktrees/task-e01-f01 från epicbas 7d1f832; bootstrap Worker implementerar F-01.
+**Körbar:** Levererad — task/e01-f01 är granskad och integrerad i feature/epic-e01.
 
 **Källa:** A §§4.4, 34–35, 49; W §§1–4. **Berör:** Projektstruktur, konfiguration, startkommando, loggning.
 
@@ -186,7 +186,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Verifiering:** Lokal start i temporär konfiguration, felkonfigurationer och loggkontroll. Dokumentera installations- och startkommandon.
 
-**Verifieringsunderlag F-01 (2026-10-07):** Python 3.13.14. `uv run --locked pytest`: 19 passerade, exit 0 (A1–A3). `uv run --locked ruff check .`: exit 0. `uv build`: wheel och sdist, exit 0. `uv run --locked herdr-coordinator --config herdr.example.toml --check`: exit 0. CLI-prov täcker riktiga temporära Git-repositories, ogiltiga workergränser/paths, symlänk till metadata, planterad hemlighet och SIGTERM. Inga externa agent- eller TeamPlayer-adaptrar körs. READY_FOR_REVIEW på task/e01-f01 från epicbas 7d1f832; Integration-review och merge återstår.
+**Verifieringsunderlag F-01 (2026-10-07):** Python 3.13.14. `uv run --locked pytest`: 19 passerade, exit 0 (A1–A3). `uv run --locked ruff check .`: exit 0. `uv build`: wheel och sdist, exit 0. `uv run --locked herdr-coordinator --config herdr.example.toml --check`: exit 0. CLI-prov täcker riktiga temporära Git-repositories, ogiltiga workergränser/paths, symlänk till metadata, planterad hemlighet och SIGTERM. Inga externa agent- eller TeamPlayer-adaptrar körs. Bootstrap Integration-review godkänd för task `af84f4df958161649108a6f25a50252a97a604ad` mot epicbas `7d1f832fee14ad43c7bec6e618c06da0684fbc78`. Merge `7dc5d80e5e36c01f8b639fe0eb765b37580e600a` med --no-ff; 19 tester passerade efter merge, exit 0. TeamPlayer Done återläst. Epicen väntar på F-02–F-04 och main-integration.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -194,7 +194,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `b555e011-5e55-4cae-8d14-9cdd57725e5c`.
 
-**Körbar:** Nej — invänta F-01 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F-01 Done och integrerad i E-01 via 7dc5d80.
 
 **Källa:** A §§11–14, 35; W §§19–20, 35. **Berör:** Domänmodeller, SQLite, schemaversion.
 
@@ -1765,8 +1765,8 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Active | Ja | 0/3 | Inget | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Active | Ja | 3/3 | Inget | 19 tester och build passerar; bootstrap Integration-review och merge återstår. |
-| 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Planned | Nej | 0/3 | F-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Done | — | 3/3 | Inget | Integrerad i E-01 via 7dc5d80; fortsätt med F-02. |
+| 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Planned | Ja | 0/3 | F-01 | Implementera beständig SQLite-state enligt taskens instruktion. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Planned | Nej | 0/3 | F-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Planned | Nej | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Planned | Nej | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
