@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01 och F-01–F-04 är Done efter PR #1 och verifierad main-merge. E-02 är Active; F-05–F-07 är Done efter review, epicmerge och tester. F-08–F-50 är Planned. E-02 har 1/3 verifierade egna kriterier. Nästa konkreta leverans är **F-08**.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. F-01–F-08 Done. E-01 Done på main (PR #1); E-02 Active med 3/3 egen acceptans verifierad på epic-branchen. F-09–F-50 Planned. Nästa leverans **F-09**; därefter E-02:s slutreview, PR/main-integration och slutverifiering.
 
 ## Styrande underlag
 
@@ -286,7 +286,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Fas:** 2. **Prioritet:** P0. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `225cca70-7f09-4313-a020-52c8b0b7b069`.
 
-**Körbar:** Ja — E-01 Done på main och F-05–F-07 integrerade; fortsätt med F-08. **Beroende:** E-01 Done på main.
+**Körbar:** Ja — E-01 Done på main och F-05–F-08 integrerade; fortsätt med F-09. **Beroende:** E-01 Done på main.
 
 **Källa:** A §§8–10, 27, 36; W §§3–4, 6, 10, 23–26, 33, 40.
 
@@ -311,8 +311,8 @@ Operatören kan skapa en epic och två task-worktrees, granska ändringar och in
 ### Epicacceptans
 
 - [x] **E-02.A1:** En epic och två separata tasks skapas från förväntade bascommits i ett temporärt repository.
-- [ ] **E-02.A2:** Tasks synkroniseras, verifieras och integreras med --no-ff; en godkänd epic integreras till main.
-- [ ] **E-02.A3:** Fel branch, smutsigt worktree, konflikt och otillåten riktning stoppar operationen utan dataförlust.
+- [x] **E-02.A2:** Tasks synkroniseras, verifieras och integreras med --no-ff; en godkänd epic integreras till main.
+- [x] **E-02.A3:** Fel branch, smutsigt worktree, konflikt och otillåten riktning stoppar operationen utan dataförlust.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
@@ -418,9 +418,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-08 Integrera godkänd epic till aktuell main
 
-**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `a9c700e9-6200-4aa7-a19f-3b1535270e57`.
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `a9c700e9-6200-4aa7-a19f-3b1535270e57`.
 
-**Körbar:** Ja — F-07 är Done och integrerad i E-02; E-01 verifierad på main.
+**Körbar:** Levererad — granskad/integrerad i E-02; TeamPlayer Done version 7 återläst.
 
 **Arbetsstart F-08 (2026-10-08):** TeamPlayer InProgress version 2 återläst; utförare och beroenden verifierade. Bootstrap Worker i `task/e02-f08`, `.worktrees/task-e02-f08`, bas `1e4d9b329bb04a6a0806bb132aed7e20d47a081b`. Första add_worktree-anropet avvisades före Git (saknad branch_exists); korrigerat anrop skapade och verifierade rätt worktree innan kodändring. Äldre bootstrap-resurser adopteras inte.
 
@@ -436,9 +436,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-08.A1:** Aktuellt godkännande och taskunderlag ger --no-ff-merge till main med registrerat SHA.
-- [ ] **F-08.A2:** Integration/Worker, ofärdig task eller ändrad main avvisas utan merge.
-- [ ] **F-08.A3:** Avbrott efter merge kan avstämmas via operation och Git; det skapas ingen dubbel merge eller falsk Done.
+- [x] **F-08.A1:** Aktuellt godkännande och taskunderlag ger --no-ff-merge till main med registrerat SHA.
+- [x] **F-08.A2:** Integration/Worker, ofärdig task eller ändrad main avvisas utan merge.
+- [x] **F-08.A3:** Avbrott efter merge kan avstämmas via operation och Git; det skapas ingen dubbel merge eller falsk Done.
 
 **Verifiering:** Temporärt repository med aktuellt/föråldrat main, otillåtna roller och felinjicerad verifiering.
 
@@ -446,11 +446,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker-leverans F-08 (2026-10-08):** READY_FOR_REVIEW för task/e02-f08. EpicIntegrationService levererar verklig aggregate-/main-verifiering, manuell review, main→epic-synk och Coordinator-only --no-ff-merge. Explicit scope och taskens registrerade review/test/merge/parents/ancestry kontrolleras; Pending-intent och operationstagg möjliggör recovery utan dubbel merge. Sluttestfel sparar SHA och lämnar MERGING, inte Done. `uv run --locked pytest`: 163 passerade, 22 nya epicintegrationsprov; Ruff, diffkontroll och wheel/sdist-build passerar, exit 0. Git/SQLite/subprocesser är verkliga, runtime-handoff är fixtures. Tidigare F-07-Kanbanrad korrigerad till redan verifierad Done 3/3. Taskens egen review, merge och integrationstest återstår.
 
+**Slutleverans F-08 (2026-10-08):** Bootstrap Integration godkänner `33eda4a976e85610f8b941c13b9fddffd20b2022` mot `1e4d9b329bb04a6a0806bb132aed7e20d47a081b`. Komplett diff 50932 bytes, SHA256 `ab387921585d2ad2d7d6d84ffc952d45d70c52026f312c39d8846681d3f98479`. Faktisk Task → Epic --no-ff-merge `1d6e2bea6fe9ff64cc0159eafe751c365becbf2f`; 163 pytesttester, Ruff, diffkontroll och wheel/sdist-build passerar på merge, exit 0. F-08.A1–A3 uppfyllda; TeamPlayer Done version 7 återläst. E-02 Active med 3/3 egen acceptans på epic-branchen, men F-09 och slutlig PR/main-integration/verifiering återstår. Se [review](docs/reviews/F-08.md).
+
 ### Task F-09 Avsluta Git resurser efter verifierad leverans
 
 **Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
 
-**Körbar:** Nej — invänta F-07, F-08 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F-07/F-08 Done och integrerade; E-01 verifierad på main.
 
 **Källa:** A §§8, 10, 36; W §§25–26, 38, 40. **Berör:** Git-adapter, resurspolicy, dokumentation.
 
@@ -1808,11 +1810,11 @@ Tabellen kopplar tvärgående krav till leveranser. Samtliga faser 1–12 täcks
 
 ## Nästa steg
 
-Fortsätt direkt med F-08, därefter F-09. F-01–F-07 är Done; E-02 förblir Active tills samlad acceptans, slutreview, PR/main-merge och slutverifiering är uppfyllda.
+Fortsätt direkt med F-09. F-01–F-08 är Done; E-02 Active, 3/3 egen acceptans på epic-branchen. Efter F-09 följer samlad verifiering, PR/slutreview, main-merge och slutverifiering; därefter E-03/F-10.
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-07-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-08-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1821,12 +1823,12 @@ Fortsätt direkt med F-08, därefter F-09. F-01–F-07 är Done; E-02 förblir A
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Done | — | 3/3 | F-01 | Integrerad via 8e29ef2; fortsätt med F-03. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Done | — | 3/3 | F-02 | Integrerad via 904a022; fortsätt med F-04. |
 | 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Done | — | 3/3 | F-03 | Integrerad via d37fcfd; E-01 slutgranskas. |
-| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 1/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 3/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Done | — | 3/3 | E-01 | Granskad och integrerad via 5efca19; 88 integrationstester passerar. Fortsätt F-06. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Done | — | 3/3 | E-01, F-05 | Granskad och integrerad via aa373bd; 119 integrationstester passerar. Fortsätt F-07. |
 | 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Done | — | 3/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
-| 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Active | Ja | 0/3 | E-01, F-07 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
-| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Nej | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Done | — | 3/3 | E-01, F-07 | Granskad och integrerad via 1d6e2be; 163 tester passerar. Fortsätt F-09. |
+| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Ja | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Nej | 0/3 | E-02, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Nej | 0/3 | E-02, F-10, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
