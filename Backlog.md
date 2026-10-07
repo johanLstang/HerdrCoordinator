@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-09 Done efter verifierade PR/main-leveranser (#1/#2). E-02: main-merge 9beaf34, 187 sluttester, egen acceptans 3/3. E-03–E-12 och F-10–F-50 Planned. Nästa leverans **F-10** under **E-03** med kontroll av externa förutsättningen X-01.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-09 Done. E-03 Active och F-10 Attention/NeedsInput under verklig gränssnittsverifiering. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -486,7 +486,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-03 Starta och återanslut agentruntime genom Herdr
 
-**Fas:** 3. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `3b52b7d6-7527-4d44-a873-238f26067246`.
+**Fas:** 3. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `3b52b7d6-7527-4d44-a873-238f26067246`.
 
 **Körbar:** Ja — E-02 Done på main; F-10 kontrollerar externa X-01. **Beroende:** E-02 Done på main.
 
@@ -519,9 +519,11 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-10 Verifiera Herdr och Codex gränssnitt
 
-**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `fd25939b-3ae9-4215-8edc-dd3415a696b5`.
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Attention. **TeamPlayer Task-ID:** `fd25939b-3ae9-4215-8edc-dd3415a696b5`.
 
-**Körbar:** Ja — E-02 Done på main; F-10 undersöker X-01, inget tidigare adapterprov krävs.
+**Körbar:** Nej — inväntar operatörens trust-beslut för avgränsad testrepo; fortsätt samma pane efter beslut.
+
+**Arbetsstart F-10 (2026-10-08):** HerdrCoordinator Write och blitterbot@gmail.com återverifierade; alla beroenden Done och E-02 PR #2/main 9beaf34 slutverifierad (187 tester). E-03 InProgress/Active och F-10 InProgress återlästa. Worker i `task/e03-f10`, `.worktrees/task-e03-f10`, från aktuell main/epicbas `1108b0f2dd8d587ecdb6deb702210cb14e02d2a2`. Utvecklingsbootstrap använder verifierad GitAdapter enligt AGENTS.md; inga produkt-/runtimefakta fabriceras.
 
 **Källa:** A §§7, 31, 37; W §§6, 10–12, 17, 38. **Berör:** Adapterkontrakt, miljöprov, dokumentation.
 
@@ -540,6 +542,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Manuellt avgränsat verkligt prov med inspelade sanerade resultat och versionsuppgifter.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Hinder F-10 (2026-10-08):** Herdr 0.9.3/Codex 0.161.0 provade i separat server `hc-f10-20261008`, workspace `w1`, pane `w1:p1`, agent `hc-f10-codex`. Start gav `agent_not_ready`; get/read bekräftar Codex “Trust this folder?” för `.herdr/probes/f10/repo`. Herdrs inbyggda skill kräver användarinput före dialogbeslut; beslut begärt, ingen input skickad. Promptprov avvisades korrekt `agent_blocked`, ingen dubbel start. Verkliga app-server sandboxprov passerar skriv-/nätkontroller men tillåter läsning utanför cwd. Nästa ansvariga roll: operatören beslutar om trust, därefter fortsätter samma agent med prompt/session/resume/stopp/park. F-11 blockeras av F-10; ingen ändrad arbetsordning. [Sanerat kontrakt och prov](docs/runtime/Herdr-Codex-kontrakt.md). Ingen acceptans markerad som komplett; E-03 förblir Active.
 
 ### Task F-11 Skapa workspace och starta Codex i rätt worktree
 
@@ -1822,11 +1826,11 @@ Tabellen kopplar tvärgående krav till leveranser. Samtliga faser 1–12 täcks
 
 ## Nästa steg
 
-Fortsätt direkt E-03/F-10: verifiera installerad Herdr/Codex och verkliga gränssnitt i avgränsad testmiljö. E-01/E-02 och F-01–F-09 är Done; E-02 PR #2 och main-merge 9beaf34 är slutverifierade med 187 tester. Kontrollera aktuell tilldelning, färsk taskversion och X-01 före beroende runtimeimplementation.
+Fortsätt E-03/F-10 efter operatörens trust-beslut för `.herdr/probes/f10/repo`. F-10 NeedsInput version 4 är återläst, lokal Attention; E-03 förblir Active. Använd samma separata server/pane/agent enligt [runtimekontraktet](docs/runtime/Herdr-Codex-kontrakt.md), verifiera beständigt sessions-ID, prompt, resume och stopp/park. E-01/E-02 och F-01–F-09 är Done. F-11 startas först efter granskad/integrerad F-10; arbetsordningen oförändrad.
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01/E-02 Done och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01/E-02 Done, E-03 InProgress/Active och E-04–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1841,8 +1845,8 @@ Fortsätt direkt E-03/F-10: verifiera installerad Herdr/Codex och verkliga grän
 | 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Done | — | 3/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
 | 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Done | — | 3/3 | E-01, F-07 | Granskad och integrerad via 1d6e2be; 163 tester passerar. Fortsätt F-09. |
 | 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Done | — | 3/3 | E-01, F-07, F-08 | Granskad och integrerad via 65097a8; 187 tester passerar. E-02 slutgranskas. |
-| 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Ja | 0/3 | E-02 Done på main | E-02 verifierad på main; kontrollera X-01 och plocka F-10 med färsk version. |
-| 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Ja | 0/3 | E-02, X-01 | E-02 verifierad på main; kontrollera X-01 och plocka F-10 med färsk version. |
+| 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Active | Ja | 0/3 | E-02 Done på main | E-02 verifierad på main; kontrollera X-01 och plocka F-10 med färsk version. |
+| 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Attention | Nej | 0/3 | E-02, X-01 | Trust-dialog i separat testrepo; inväntar operatörsbeslut. Se runtimekontrakt; inga senare tasks startas. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Nej | 0/3 | E-02, F-10, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Planned | Nej | 0/3 | E-02, F-11, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Planned | Nej | 0/3 | E-02, F-12, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
