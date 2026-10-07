@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. F-01–F-08 Done. E-01 Done på main (PR #1); E-02 Active med 3/3 egen acceptans verifierad på epic-branchen. F-09–F-50 Planned. Nästa leverans **F-09**; därefter E-02:s slutreview, PR/main-integration och slutverifiering.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. F-01–F-09 Done. E-01 Done på main (PR #1); E-02 Active med 3/3 egen acceptans och alla fem tasks verifierade på epic-branchen. F-10–F-50 Planned. Nästa steg är E-02:s samlade slutreview, PR/main-merge och slutverifiering; därefter E-03/F-10.
 
 ## Styrande underlag
 
@@ -286,7 +286,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Fas:** 2. **Prioritet:** P0. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `225cca70-7f09-4313-a020-52c8b0b7b069`.
 
-**Körbar:** Ja — E-01 Done på main och F-05–F-08 integrerade; fortsätt med F-09. **Beroende:** E-01 Done på main.
+**Körbar:** Ja — E-01 Done på main, F-05–F-09 Done och integrerade. Coordinator slutgranskar och integrerar epicen till main. **Beroende:** E-01 Done på main.
 
 **Källa:** A §§8–10, 27, 36; W §§3–4, 6, 10, 23–26, 33, 40.
 
@@ -450,9 +450,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-09 Avsluta Git resurser efter verifierad leverans
 
-**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
 
-**Körbar:** Ja — F-07/F-08 Done och integrerade; E-01 verifierad på main.
+**Körbar:** Levererad — granskad/integrerad i E-02; TeamPlayer Done version 7 återläst.
 
 **Arbetsstart F-09 (2026-10-08):** TeamPlayer InProgress återläst, konto och beroenden verifierade. Worker i `task/e02-f09`, `.worktrees/task-e02-f09`, bas `6aebea8777acc3227b699318da44ee4b831e6e7e`. Äldre bootstrap-resurser adopteras inte och utvecklingsworktrees städas inte av produktproven.
 
@@ -468,15 +468,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-09.A1:** Verifierat integrerad och oanvänd taskresurs tas bort utan att historik eller main ändras.
-- [ ] **F-09.A2:** Ointegrerat arbete, smutsigt worktree eller aktiv resurs skyddas från borttagning.
-- [ ] **F-09.A3:** Upprepad cleanup lyckas utan nya sidoeffekter; retentionbeslutet finns i driftinstruktionen.
+- [x] **F-09.A1:** Verifierat integrerad och oanvänd taskresurs tas bort utan att historik eller main ändras.
+- [x] **F-09.A2:** Ointegrerat arbete, smutsigt worktree eller aktiv resurs skyddas från borttagning.
+- [x] **F-09.A3:** Upprepad cleanup lyckas utan nya sidoeffekter; retentionbeslutet finns i driftinstruktionen.
 
 **Verifiering:** Temporära worktrees med integrerade, ointegrerade och ocommittade ändringar samt upprepat cleanupanrop.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
 **Worker-leverans F-09 (2026-10-08):** READY_FOR_REVIEW för task/e02-f09. TaskCleanupService kontrollerar registrerad faktisk leverans, F-05-ägarskap, exklusiv path/branch, inaktivitet och rent/olåst arbetsläge inklusive ignored-filer. Pending-intent före Git-remove utan force ger recovery med branch/historik bevarade; saknad okänd eller återuppstånden resurs raderas inte. Leveransbevis återanvänds av F-08 utan semantikändring. 24 cleanup-prov samt 22 epicintegrationsprov passerar (46 unika relevanta kontroller), Ruff/diffkontroll/wheel/sdist-build passerar, exit 0. Git/SQLite/subprocesser är verkliga; runtime-handoff/probe är fixtures, inget verkligt Herdr-stopp påstås. Hela suites integrationsgrind körs efter merge.
+
+**Slutleverans F-09 (2026-10-08):** Bootstrap Integration godkänner `f9869a2b012ad11fcaef1543f02fd7e6d5f518b3` mot `6aebea8777acc3227b699318da44ee4b831e6e7e`. Komplett diff 38254 bytes, SHA256 `222c4bf956135205fbd77cf5f86d6468c3922c10ec7b1087300cc1f1e4abd708`. Faktisk Task → Epic --no-ff-merge `65097a826f5724f8be6750449e43a7381edcf72a`; 187 pytesttester, Ruff, diffkontroll och wheel/sdist-build passerar på merge, exit 0. F-09.A1–A3 uppfyllda; TeamPlayer Done version 7 återläst. E-02 Active med alla fem tasks Done och 3/3 egen acceptans; samlad slutreview, PR/main-merge och slutverifiering återstår. Se [review](docs/reviews/F-09.md).
 
 ## Epic E-03 Starta och återanslut agentruntime genom Herdr
 
@@ -1816,11 +1818,11 @@ Tabellen kopplar tvärgående krav till leveranser. Samtliga faser 1–12 täcks
 
 ## Nästa steg
 
-Fortsätt direkt med F-09. F-01–F-08 är Done; E-02 Active, 3/3 egen acceptans på epic-branchen. Efter F-09 följer samlad verifiering, PR/slutreview, main-merge och slutverifiering; därefter E-03/F-10.
+Integrera E-02: alla F-05–F-09 är Done; 187 tester passerar på faktisk taskmerge och epicens egen acceptans är 3/3. Coordinator synkar aktuell main, genomför samlad review/PR, merge och slutverifiering. E-02 förblir Active tills hela grindkedjan är klar. Fortsätt därefter direkt E-03/F-10.
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-08-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1829,12 +1831,12 @@ Fortsätt direkt med F-09. F-01–F-08 är Done; E-02 Active, 3/3 egen acceptans
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Done | — | 3/3 | F-01 | Integrerad via 8e29ef2; fortsätt med F-03. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Done | — | 3/3 | F-02 | Integrerad via 904a022; fortsätt med F-04. |
 | 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Done | — | 3/3 | F-03 | Integrerad via d37fcfd; E-01 slutgranskas. |
-| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 3/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 3/3 | E-01 Done på main | Alla fem tasks Done; Coordinator synkar aktuell main, slutgranskar, öppnar PR och integrerar/verifierar. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Done | — | 3/3 | E-01 | Granskad och integrerad via 5efca19; 88 integrationstester passerar. Fortsätt F-06. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Done | — | 3/3 | E-01, F-05 | Granskad och integrerad via aa373bd; 119 integrationstester passerar. Fortsätt F-07. |
 | 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Done | — | 3/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
 | 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Done | — | 3/3 | E-01, F-07 | Granskad och integrerad via 1d6e2be; 163 tester passerar. Fortsätt F-09. |
-| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Active | Ja | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Done | — | 3/3 | E-01, F-07, F-08 | Granskad och integrerad via 65097a8; 187 tester passerar. E-02 slutgranskas. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Nej | 0/3 | E-02, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Nej | 0/3 | E-02, F-10, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
