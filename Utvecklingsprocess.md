@@ -16,7 +16,23 @@ Processen gäller när projektets egna features byggs. Produkten ska enligt [ark
 | F-01 task-ID | `9bc95f85-f05d-4842-b517-c1f8132c49ab` |
 | E-01 epic-ID | `0da5c7c4-6e29-475e-aeb6-ce887f3864db` |
 
-Boarden innehåller 12 epics och 50 tasks. Använd lokala E-/F-ID:n i dokumentationen och verifierade UUID:n i MCP-anrop. Epics är organiserande boardobjekt utan eget utförar- eller leveransstatusfält; deras leveransstatus följs i backloggen och senare EpicRun.
+Boarden innehåller 12 epics och 50 tasks. Använd lokala E-/F-ID:n i dokumentationen och verifierade UUID:n i MCP-anrop. Epics är organiserande boardobjekt med status/version men utan eget utförarfält. Coordinator håller deras status i TeamPlayer och backloggen överens med verkligt arbete och leveransunderlag.
+
+## Epicstatus: Planned, Active och Done
+
+| Epicstatus | När den används | TeamPlayer API-status |
+| --- | --- | --- |
+| Planned | Epicens arbete har inte startat, även om beroenden saknas. | Pending |
+| Active | Epicen är påbörjad: implementation, taskreview, korrigering, paus, blockerare, slutreview eller väntan på PR/main-integration/slutverifiering. | InProgress |
+| Done | Alla tasks är Done, samlad acceptans och slutreview är godkända, main-merge och slutverifiering är genomförda. | Done |
+
+Coordinator sätter Active när epicen startas och senast när första tasken plockas. Active består tills hela leveransgrinden är uppfylld; alla tasks Done räcker inte för epic-Done. Påbörjat arbete går inte tillbaka till Planned vid hinder. Blockerare dokumenteras med orsak, ansvarig roll och nästa åtgärd medan epicen behåller Active. Tasks kan samtidigt vara Attention.
+
+Läs aktuell epic/version med `list_epics`. Skriv med `update_epic_status(projectId, epicId, version, status)` och kontrollera mutationssvaret samt återläs epicen. Vid versionskonflikt eller okänt nätutfall hämtas epicen på nytt före nytt försök. Verktyget är verifierat i TeamPlayers aktuella MCP-katalog; om sessionens lista är äldre ska katalogen uppdateras eller samma autentiserade MCP-anslutning användas direkt. Statusskrivning går till board-epicens UUID, inte `update_task_status` med ett epic-ID.
+
+Aktuell MCP-katalog har inget verktyg för att redigera epicbeskrivningar. Om beskrivningens statustext är äldre, dokumentera avvikelsen och synka texten när en behörig redigeringsväg finns. Använd statusfältet för aktuell status och backloggen för scope och verifieringsunderlag.
+
+Stäm av epicstatus efter varje task, vid hinder och vid review/integration. Intern EpicRun-state PLANNED motsvarar Planned; ACTIVE, READY_FOR_REVIEW, REVIEWING, CHANGES_REQUESTED, APPROVED och MERGING motsvarar Active; verifierad DONE motsvarar Done. Interna faser är inte extra boardstatusar. En dokumentuppdatering startar ingen ny implementationsepic. Nytt arbete i en Done-epic kräver dokumenterat återöppningsbeslut, Active och ny leveransverifiering.
 
 ## Kontrollera projekt och board
 
@@ -57,6 +73,8 @@ Hämta `get_task(projectId, taskId)` och kontrollera aktuell version, tilldelnin
 1. Anropa `update_task_status` med `projectId`, `taskId`, `version`, `status=InProgress` och konkret `statusReason` som anger feature, epic och startat arbete.
 2. Kontrollera mutationssvaret; vid okänt resultat återläs tasken.
 3. Uppdatera featurestatus och Kanbanrad till `Active` i backloggen samt ange branch och nästa steg.
+
+Coordinator kontrollerar samtidigt att taskens påbörjade epic är Active i TeamPlayer och backloggen. Vid första tasken ändras epicens Pending till InProgress med dess egen färska version.
 
 Vid versionskonflikt hämtas tasken på nytt och den nya statusen/tilldelningen bedöms före nytt försök. En redan Active-task ska återupptas med sitt kända worktree och underlag, inte claima en ny körning. Bekräftad Worker-start gäller när arbetet körs genom orchestratorn.
 
@@ -119,7 +137,7 @@ När samtliga ingående tasks är Done gör Integration-rollen samlad build, tes
 
 Synkronisera mot aktuell main och verifiera på nytt där bas eller konflikter ändrar underlaget. Vid EPIC_CHANGES_REQUESTED genomförs kopplad korrigering med nya aktuella reviews. När slutreview är godkänd integrerar Coordinator epicen med `--no-ff` och kör slutverifiering på main.
 
-Markera sedan epicen Done i backloggen med PR, main-mergecommit och slutverifiering. Nästa beroende epic utgår från uppdaterad main. Om merge har utförts men tester eller synk återstår bevaras merge-SHA och epicen markeras inte Done. Saknad GitHub-åtkomst eller remote för PR är en konkret blockerare för epicintegration, inte skäl att kringgå processen.
+Efter slutverifiering skriver Coordinator epicen Done i TeamPlayer med `update_epic_status` och aktuell epicversion. Återläs och uppdatera epicbeskrivning samt Kanbanrad i backloggen med PR, main-mergecommit och slutverifiering. Nästa beroende epic utgår från uppdaterad main. Om merge har utförts men tester återstår bevaras merge-SHA och epicen behåller Active. Om endast extern synk återstår dokumenteras leveransen och väntande synk; upprepa inte merge och rapportera inte källorna som synkroniserade. Saknad GitHub-åtkomst eller remote håller epicen Active med separat blockerarrapport.
 
 ## Instruktioner per katalog
 

@@ -17,7 +17,7 @@ Läs närmaste underordnade AGENTS.md innan filer där ändras: [src/AGENTS.md](
 
 Vid start av implementationsarbete: kör `list_projects` och `get_me`, verifiera projektets namn, ID och Write-åtkomst samt autentiserat konto. Läs sedan `list_epics` och `list_tasks` för detta projekt. Kontrollera `executionOwnerKind=User` och `responsibleUserId=get_me.userId` för vald task; ett äldre `responsibleAgentId` är inte bevis för aktuell utförartilldelning.
 
-Board epics saknar utförar- och leveransstatusfält i nuvarande MCP-kontrakt. Följ epicens leveransstatus i backloggen och senare EpicRun. Ändra inte andra projekt eller skapa ersättningstasks för att dölja ett felaktigt ID.
+Board epics har `status` och `version` i `list_epics`, men saknar eget utförarfält. Coordinator ansvarar för epicstatus i TeamPlayer och backloggen. Använd `update_epic_status(projectId, epicId, version, status)` med färsk version från `list_epics`; API-mappningen är Pending → Planned, InProgress → Active och Done → Done. Kontrollera serverns aktuella verktygskatalog om sessionens MCP-lista saknar verktyget. Ändra inte andra projekt eller skapa ersättningstasks för att dölja ett felaktigt ID.
 
 ## Välj och plocka en task
 
@@ -51,7 +51,15 @@ F-01 fastställer start-, test- och buildkommandon i README. Använd dessa och v
 
 ## Status och hinder
 
-Använd de etablerade lokala Kanban-värdena `Planned`, `Active`, `Attention`, `Done`. De motsvarar planerad, pågår, behöver åtgärd och klar.
+Epics använder endast `Planned`, `Active`, `Done`:
+
+- `Planned`: epicens arbete har inte startat; väntan på beroenden ändrar inte detta.
+- `Active`: Coordinator har startat epicen. Statusen består under implementation, review, korrigering, paus, blockerare och väntan på PR/main-integration eller slutverifiering, även när alla tasks är Done.
+- `Done`: alla tasks är Done, samlad acceptans och slutreview är godkända, epicen är mergad till main och slutverifieringen passerar.
+
+Sätt epicen Active vid start och senast när dess första task plockas. Stäm av epicstatus efter varje task och vid review/integration. En påbörjad epic återgår inte till Planned vid hinder. Dokumentera hindret och nästa åtgärd separat; epicen får inte Attention. Vid fortsatt arbete i en tidigare Done-epic krävs dokumenterat återöppningsbeslut, Active och ny verifierad leverans innan Done igen. En ren dokumentuppdatering startar ingen ny implementationsepic.
+
+Tasks använder de etablerade lokala Kanban-värdena `Planned`, `Active`, `Attention`, `Done`. De motsvarar planerad, pågår, behöver åtgärd och klar. Tabellen nedan gäller tasks.
 
 | TeamPlayer API-status | Lokal Kanban | Användning |
 | --- | --- | --- |
@@ -72,6 +80,8 @@ Worker lämnar `READY_FOR_REVIEW` med task-ID, branch, commit, tester och begrä
 Uppdatera taskens kriterier, featurestatus, Kanbanrad och verifieringsunderlag i Backlog.md. Registrera testkommando/resultat, granskad task/epic-SHA och merge-SHA. Epicens antal verifierade kriterier räknas från dess egen acceptans, inte antalet avslutade tasks. Stäm av status innan nästa task väljs.
 
 När alla tasks är Done: kör samlad build/test/epicacceptans, öppna PR mot main, granska diff, kontrakt, schema/migrationer, rollkontroll, recovery och dokumentation. Verifiera mot aktuell main och gör om berörda kontroller vid ändrad bas eller konflikter. Coordinator integrerar efter godkänd slutreview. Epicen blir Done efter main-merge och slutverifiering, med PR-referens och mergecommit i backloggen.
+
+Coordinator skriver då Done via `update_epic_status` med färsk epicversion och återläser `list_epics`. Uppdatera Kanbanrad med samma status och underlag. Synka även epicbeskrivningen när en verifierad redigeringsväg finns; dokumentera annars textavvikelsen och nästa ansvariga roll separat från statusfältets synk. Aktuell MCP-katalog har statusverktyget men inget verktyg för att redigera epicbeskrivningar. Vid versionskonflikt eller okänt nätutfall: återläs innan nytt försök. Om TeamPlayer-synk återstår, registrera väntande synk och faktisk Git-verifiering; upprepa inte merge och rapportera inte att statuskällorna är synkroniserade.
 
 Om Git-merge lyckas men verifiering eller TeamPlayer-synk misslyckas: behåll faktisk merge-SHA, dokumentera kvarvarande steg och sätt inte Done i förtid. Återförsök endast steget som saknas.
 

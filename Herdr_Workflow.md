@@ -1158,6 +1158,16 @@ MERGED
 
 Epic Coordinator ansvarar för Epic-status.
 
+Epics använder endast `Planned`, `Active`, `Done`:
+
+- Planned: epicen är inte påbörjad; väntan på beroenden räknas inte som start.
+- Active: Coordinator har startat epicen, senast när första tasken plockas. Statusen består under implementation, review, korrigering, paus, hinder och väntan på main-integration/slutverifiering.
+- Done: alla tasks är Done och samlad acceptans, slutreview, main-merge samt slutverifiering är genomförda.
+
+En task kan vara Attention medan epicen är Active. Blockerare, ansvarig roll och nästa åtgärd dokumenteras separat; epics får inte Attention och en påbörjad epic återgår inte till Planned vid hinder. Alla tasks Done lämnar epicen Active tills leveransgrinden är uppfylld. Nytt arbete i en Done-epic kräver dokumenterat återöppningsbeslut och Active.
+
+Coordinator läser board-epicens status/version med `list_epics`, skriver med `update_epic_status` och färsk epicversion, och återläser före uppdatering av backloggen. TeamPlayer API mappar Pending → Planned, InProgress → Active, Done → Done. Versionskonflikt eller okänt nätutfall kräver återläsning före retry. Vid väntande extern synk sparas faktisk leverans och synkavsikt; Git-merge upprepas inte. Interna EpicRun-faser mellan PLANNED och verifierad DONE motsvarar Active på boarden.
+
 Detta innebär att endast en agentnivå skriver status för respektive nivå.
 
 ---

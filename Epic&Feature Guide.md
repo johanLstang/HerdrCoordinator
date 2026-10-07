@@ -23,7 +23,7 @@ Vid motsägelse används arbetsprocessen för roller och leveransregler och arki
 - Epic Coordinator äger `main` och slutreview av epics. Epic Integration Agent äger en epic och dess task-review. Worker Agent implementerar en task i eget worktree, testar och committar.
 - Git Manager utför kritiska Git-operationer. Integration Agent får begära Task → Epic-merge; Coordinator får begära Epic → `main`-merge. Worker får inte mergea, ändra andra worktrees eller skriva Kanban-status direkt.
 - Epic-branch heter `feature/epic-<epic-id>`. Task-branch heter `task/<epic-id>-<task-id>` och skapas från aktuell epic-branch. Varje aktiv branch har eget worktree. Verkliga ID:n och paths ska komma från projektkonfiguration och taskkopplingar.
-- MVP omfattar ett repository, en aktiv epic, högst två aktiva Workers, TeamPlayer-statusarna `Planned`, `Active`, `Attention`, `Done`, task-review och merge samt epic-review och merge. Flera samtidiga epics, fler Workers, arbete över flera repositories, automatisk konfliktlösning på epicnivå och dynamisk agentskalning ligger efter MVP.
+- MVP omfattar ett repository, en aktiv epic, högst två aktiva Workers, epicstatusarna `Planned`, `Active`, `Done` och taskstatusarna `Planned`, `Active`, `Attention`, `Done`, task-review och merge samt epic-review och merge. Flera samtidiga epics, fler Workers, arbete över flera repositories, automatisk konfliktlösning på epicnivå och dynamisk agentskalning ligger efter MVP.
 - En blockerad session kan parkeras utan att förbruka en aktiv Worker-slot. Återupptagning använder samma session, branch och worktree när en slot finns. En saknad session eller worktree ska hanteras uttryckligen, inte döljas med en ny körning.
 - Exakta Herdr-, Codex- och TeamPlayer-anrop ska verifieras mot tillgängliga gränssnitt när respektive adapter byggs. Verktygsnamnen i arkitekturplanen beskriver logiska operationer och är inte bevis för att externa API:er har dessa namn.
 
@@ -48,7 +48,17 @@ Projektets TeamPlayer-ID, konton och utförartilldelning ska verifieras vid ansl
 
 Prioritet ersätter inte beroendeordning. Minsta skydd för exempelvis dubbla starter och felaktig merge ska finnas när operationen införs; fas 12 fördjupar skydden och verifieringen.
 
-Använd samma Kanban-statusar som TeamPlayer:
+Epics använder endast följande leveransstatusar, med Coordinator som ansvarig:
+
+| Epicstatus | Villkor |
+| --- | --- |
+| `Planned` | Epicens arbete har inte startat, även om den inväntar beroenden. |
+| `Active` | Epicen är påbörjad och ännu inte slutlevererad. Implementation, review, korrigering, paus, hinder och väntan på main-integration/slutverifiering ingår. |
+| `Done` | Alla tasks är Done, samlad acceptans och slutreview passerar, main-merge och slutverifiering är genomförda. |
+
+Epics får inte Attention. Hinder och nästa åtgärd dokumenteras separat medan en påbörjad epic behåller Active. Alla tasks Done gör inte automatiskt epicen Done. Interna EpicRun-faser fram till DONE speglas som Active; PLANNED speglas som Planned. En Done-epic återöppnas till Active endast efter dokumenterat beslut om nytt arbete.
+
+Tasks använder följande Kanban-statusar:
 
 | Status | Villkor |
 | --- | --- |
@@ -70,7 +80,7 @@ Interna tasktillstånd följer arkitekturplanens §§15–16:
 
 Integration Agent ansvarar för taskstatus och Coordinator för epicstatus; orchestratorns TeamPlayer-adapter utför skrivningarna. Ett misslyckat statusanrop ska kunna återförsökas utan att redan utförd Git-merge eller sessionstart upprepas. Redovisa verifierade kriterier och underlag, inte uppskattad procent färdigt.
 
-Vid manuell utveckling utför bootstrapansvarig dessa rolluppgifter enligt Utvecklingsprocess.md. TeamPlayer API använder Pending för Planned och InProgress/Testing för Active. NeedsReview ligger i Attention och används för väntan på extern granskning; vanlig review/fix-loop ligger kvar i Active. Board epics saknar egen leveransstatus i nuvarande MCP-kontrakt och följs i backloggen och senare EpicRun.
+Vid manuell utveckling utför bootstrapansvarig dessa rolluppgifter enligt Utvecklingsprocess.md. För tasks använder TeamPlayer API Pending för Planned och InProgress/Testing för Active. NeedsReview ligger i taskens Attention; vanlig review/fix-loop ligger kvar i Active. Board epics har status/version i `list_epics`. Coordinator använder `update_epic_status` med färsk version och mappar Pending → Planned, InProgress → Active, Done → Done; återläs och spegla samma status i backloggen. Epics saknar eget utförarfält.
 
 ## Epicmall
 
@@ -79,7 +89,7 @@ Vid manuell utveckling utför bootstrapansvarig dessa rolluppgifter enligt Utvec
 
 **Implementationsfas:** <1–12 enligt arkitekturplanen; ange flera om det behövs>
 **Prioritet:** P0/P1/P2/P3
-**Kanban-status:** Planned/Active/Attention/Done
+**Kanban-status:** Planned/Active/Done
 **TeamPlayer Epic-ID:** <Verifierat ID eller ej skapat>
 **Källa:** <Fil, avsnittsnummer och rubrik>
 
@@ -321,7 +331,7 @@ Ordningen följer arkitekturplanens faser. Ett fasnummer är inte automatiskt et
 | 3 | En session kan startas i rätt worktree genom Herdr/Codex-adaptern. | §37 Herdr automation |
 | 4 | En explicit angiven task går genom en Worker till commit och READY_FOR_REVIEW. | §38 Worker MVP |
 | 5 | Task-review, korrigering och godkänd Task → Epic-merge fungerar. | §39 Review loop |
-| 6 | Epics/tasks läses och status/Attention skrivs genom TeamPlayer-adaptern. | §40 TeamPlayer MCP |
+| 6 | Epics/tasks läses; epics får Planned/Active/Done och tasks kan dessutom få Attention genom TeamPlayer-adaptern. | §40 TeamPlayer MCP |
 | 7 | Minst tre tasks genomförs med högst två aktiva Workers och korrekta beroenden. | §41 Två parallella Workers |
 | 8 | Blockerat arbete parkeras, frigör en slot och återupptas med rätt session och beslut. | §42 Attention |
 | 9 | En långlivad Integration Agent driver epicens scheduling, review och integration. | §43 Epic Integration Agent |

@@ -4,6 +4,7 @@ Läs [rotens AGENTS.md](../AGENTS.md), [Herdr_Workflow.md](../Herdr_Workflow.md)
 
 - Skapa prompttexter när relevant feature levereras. Håll Coordinator-, Integration- och Worker-policy separata och versionshanterade.
 - Coordinator väljer epics och slutgranskar samt begär Epic → main-merge. Integration styr Workers, taskreview, Task → Epic-merge och epicöverlämning. Worker implementerar en task, testar, committar och rapporterar.
+- Coordinator håller epicstatus Planned/Active/Done synkroniserad mellan TeamPlayer och backlogg. Påbörjad epic förblir Active under review, hinder och väntan på main-integration/slutverifiering; Done kräver hela leveransgrinden. Task-Attention ändrar inte epicen till Attention. Prompten ska kräva färsk epicversion och återläsning vid statusskrivning.
 - Worker-prompt innehåller verifierade task/epic/run-ID:n, branch/worktree, bascommit, mål, scope, källor, acceptans, beroenden och externa förutsättningar.
 - Prompten återger behörighet som runtime redan har upprättat. Den utfärdar inte rollbehörighet och ger inte instruktion att kringgå services, statusregler eller filesystemgränser.
 - Kräv maskinläsbara rapporter enligt taskens verifierade schema. READY_FOR_REVIEW anger commit, tester, sammanfattning och begränsningar; BLOCKED anger orsak och behövd input. Använd TASK/TASK_ID-normalisering först när F-14 fastställt formatet.

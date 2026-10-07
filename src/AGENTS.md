@@ -9,7 +9,7 @@ Läs [rotens AGENTS.md](../AGENTS.md) och [Utvecklingsprocess.md](../Utvecklings
 - Spara kända delresultat vid partiella operationer. Upprepad start, merge, synk, resume och cleanup får inte skapa dubbla sidoeffekter. Okänt externt resultat kräver avstämning.
 - Reservera Worker-kapacitet före start/resume. Frigör först efter bekräftad inaktivitet. Testa produktens två Workers utan att parallellisera arbetet med backloggens implementationsfeatures.
 - Kontrollera branch, worktree, arbetsläge, roll och aktuella SHA före merge. Approval binds till exakt granskat underlag; ändrad bas kräver ny verifiering.
-- Skilj Kanbanstatus från runtime och Gitbevis. TeamPlayers board epic saknar leveransstatus; använd dokumenterad epicstate och den verkliga adapterförmågan.
+- Skilj Kanbanstatus från runtime och Gitbevis. Epics använder Planned/Active/Done och tasks Planned/Active/Attention/Done. Mappa EpicRun PLANNED till Planned, alla påbörjade ej-DONE-faser till Active och verifierad DONE till Done. Coordinator synkar board-epicens status via update_epic_status med färsk list_epics-version; hinder lämnar epicen Active och dokumenteras separat.
 - Håll credentials utanför kod, loggar och agentkontext. Använd argumentbaserade processanrop och validerade paths.
 - Vid ändrat schema eller kontrakt: uppdatera källan, taskens beskrivning, acceptans och relevanta recovery/driftinstruktioner. F-01 fastställer Python-, start- och testkonfigurationen.
 

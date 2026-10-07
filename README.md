@@ -107,3 +107,5 @@ Paketet heter `herdr-coordinator`, med importpaket `orchestrator` under `src`. B
 - [Agentinstruktioner](AGENTS.md) — gemensamma regler med kompletteringar i src, tests och prompts.
 
 Använd guiden när nya epics och features planeras. TeamPlayer är primär källa för arbetsstatus när kopplingen är etablerad; dokumentöversikten speglar den. En task blir `Done` efter godkänd review, merge till epic-branchen och integrationstester. En epic blir `Done` efter slutreview, merge till `main` och slutverifiering.
+
+Epics använder `Planned` före start, `Active` under arbete och hela review/integrationsflödet, och `Done` efter verifierad leverans till main. Hinder dokumenteras separat medan en påbörjad epic behåller Active. Coordinator synkar epicstatus via TeamPlayers `update_epic_status` med färsk version från `list_epics`; API-statusarna Pending/InProgress/Done motsvarar Planned/Active/Done. Tasks kan dessutom ha Attention.
