@@ -1,0 +1,1826 @@
+# HerdrCoordinator komplett backlogg
+
+HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
+
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. Alla 50 tasks ligger i `Planned` (API-status `Pending`); epicernas leveransstatus är ännu planerad. Inga implementationskriterier är verifierade. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-01** under **E-01**.
+
+## Styrande underlag
+
+| Referens | Dokument | Styr |
+| --- | --- | --- |
+| G | [Epic och Feature Guide](Epic%26Feature%20Guide.md) | Mallar, prioritet, körbarhet och krav på verifierbar leverans. |
+| A | [Arkitektur och implementationsplan](Arkitektur%20och%20implementationsplan%20%E2%80%93%20Herdr%20-Codex%20Multi-Agent%20Workflow.md) | Komponenter, tekniska kontrakt, runtime och faser 1–12. |
+| W | [Herdr Workflow](Herdr_Workflow.md) | Roller, worktrees, review, merge och Done. |
+
+Hänvisningar som `A §35` och `W §25` avser numrerade avsnitt i dessa dokument. W styr ansvar och leveransregler; A styr teknik och fasordning. Backloggens kontraktsdetaljer är planeringsbeslut som konkretiserar underlagen och ska fastställas i angiven task. Externa API-namn fastställs först vid adapterverifiering.
+
+## Mål omfattning och leveransgrindar
+
+MVP gäller ett repository, en aktiv epic och maximalt två aktiva Workers. Coordinator äger projektet och `main`, Integration Agent äger en epic och Worker en task i eget worktree. Orchestratorn validerar kritiska operationer; Git, Herdr/Codex och TeamPlayer nås genom adaptrar. SQLite bevarar runtime medan TeamPlayer är primär källa för arbetsstatus när kopplingen finns.
+
+| Grind | Efter epic | Resultat som måste visas |
+| --- | --- | --- |
+| Grundplattform | E-01 | Tjänstestart, beständig state och rollkontroll utan AI-automation. |
+| Git och runtime | E-03 | Isolerade worktrees och verifierade verkliga Herdr/Codex-operationer. |
+| Worker MVP | E-04 | En task till commit och READY_FOR_REVIEW, utan automatisk merge. |
+| Taskintegration | E-05 | Review, korrigering och verifierad Task → Epic-merge. |
+| Kanban och parallellitet | E-08 | TeamPlayer, två Workers, beroenden, Attention och samma-session-resume. |
+| Första autonoma version | E-10 | Integration Agent och Coordinator driver hela epicflödet till main och nästa epic. |
+| Robust drift | E-12 | Recovery, samtidighetsskydd, felhantering, audit och verifierad återställning. |
+
+Flera samtidiga epics, fler än två Workers, tasks över flera repositories, dynamisk scaling och automatisk konfliktlösning på epicnivå ligger utanför denna leverans. De ska få en separat backlogg om omfattningen senare utökas.
+
+## Identiteter status och körbarhet
+
+`E-01`–`E-12` är lokala epic-ID:n. `F-01`–`F-50` är lokala feature/task-ID:n med en task per feature. Varje lokal identitet är kopplad till det registrerade TeamPlayer-ID:t i sin beskrivning och Kanbanöversikten. Varje runtime-run får eget ID och varje ny körning eller korrigering behåller länken till tidigare historik.
+
+**Backloggtasks bygger HerdrCoordinator.** Tasks och epics som körs genom systemet i integrationsproven har separata test-ID:n. Exempelvis får produktprovet i E-04 stanna i READY_FOR_REVIEW medan implementationstasken F-17 kan integreras och bli Done genom bootstrap-processen.
+
+| Kanban | Betydelse |
+| --- | --- |
+| Planned | Planerad leverans; kan invänta beroende eller extern förutsättning. |
+| Active | Bekräftat arbete eller review/fix/merge. |
+| Attention | Extern input eller åtgärd krävs; orsak och nästa åtgärd sparas. |
+| Done | Task: godkänd review, merge till epic och passerad integration. Epic: slutreview, merge till main och passerad slutverifiering. |
+
+Körbarhet är separat från status. En task blir körbar när angivna beroenden är verifierade, krav och testförutsättningar finns och externa villkor är uppfyllda. Taskberoende inom samma epic kräver granskad integration i epic-branchen. Beroende på tidigare epic kräver dess verifierade merge till `main`. Varje epic efter E-01 kräver föregående epic Done; detta gäller samtliga tasks i epicen utöver deras uttryckliga taskberoenden.
+
+Interna tasktillstånd följer A §§15–16: `PLANNED`, `CLAIMED`, `STARTING` motsvarar Planned; `WORKING`, `READY_FOR_REVIEW`, `REVIEWING`, `CHANGES_REQUESTED`, `APPROVED`, `MERGING` motsvarar Active; `BLOCKED`, `PARKED` motsvarar Attention; `DONE` motsvarar Done. W:s `ASSIGNING` är inget ytterligare Kanban-tillstånd.
+
+## Gemensamma kontrakt och leveransregler
+
+Dessa regler gäller varje epic och task och ska användas tillsammans med taskens egna kontrakt.
+
+1. **Identitet och roll:** knyt varje operation till betrodd aktör, project/epic/task/run. Worker får rapportera egen task; Integration får styra egen epic; Coordinator får initiera epicintegration till main. Verktygsargument eller prompttext ger inte behörighet.
+2. **Git och isolering:** epicbranch är `feature/epic-<epic-id>` och taskbranch `task/<epic-id>-<task-id>`. Varje aktiv branch har eget worktree under konfigurerad rot. Validera branch, path, ägarskap, rent arbetsläge och commits före kritiska operationer. Worktreeexemplen i källorna är inte verkliga paths för detta projekt.
+3. **Persistens och sidoeffekter:** använd beständiga runs och operationsreferenser för start, review, merge, park/resume, synk och cleanup. Spara skapade resurser och kända resultat innan fortsatt automation. Ett agentpåstående eller Kanbanstatus ersätter inte Git-/runtimebevis.
+4. **Review och merge:** review binds till task/epic-SHA respektive epic/main-SHA och aktuellt testunderlag. Ny kod eller bas kräver ny relevant verifiering. Leveransmerge görs med `--no-ff` genom Git Manager på rätt rolls begäran. Integration Agent synkroniserar epic → task genom separat Git-operation; Worker mergear aldrig.
+5. **Slots och Attention:** reservera kapacitet före start och frigör först vid bekräftad parkering eller avslut. Max två aktiva Workers, med en Worker under E-04. BLOCKED/Attention utan bekräftad parkering bevisar inte att kapacitet är fri. Resume behåller session, branch och worktree och kräver ledig slot.
+6. **Fel och verifiering:** ett fel efter utförd merge behåller faktisk merge-SHA och ej-Done-läge tills verifiering är klar. Nätfel efter lokal framgång återförsöker bara synk. Hemligheter hålls utanför repository, loggar och agentkontext. Tester använder temporära repositories eller testepics; simulerad adapter och verklig integration redovisas separat.
+
+### Definition av Done för varje task
+
+- [ ] Taskens numrerade acceptanskriterier är verifierade med sparat underlag.
+- [ ] Relevant kod, schema, prompts och dokumentation är committade i taskbranch.
+- [ ] Tasken är synkroniserad mot aktuell epic och har godkänd review för rätt commits.
+- [ ] Tasken är mergad till epic-branchen och relevanta integrationstester passerar.
+- [ ] Review-, test- och mergeunderlag är registrerade; statuskällan och Kanbanöversikten är uppdaterade.
+
+### Definition av Done för varje epic
+
+- [ ] Alla ingående tasks är Done och epicens numrerade acceptans är verifierad.
+- [ ] Samlad build, tester och epicacceptans passerar på aktuella commits.
+- [ ] Coordinator har öppnat epicens PR och genomfört samt sparat slutreview mot aktuell main.
+- [ ] Epicen är mergad till main och slutverifieringen passerar.
+- [ ] PR, merge-SHA och verifiering är registrerade; statuskällan och Kanbanöversikten är uppdaterade.
+
+## Bootstrap och praktisk arbetsgång
+
+Utvecklingen av denna backlogg följer [Utvecklingsprocess.md](Utvecklingsprocess.md) och [AGENTS.md](AGENTS.md): en feature/task i taget, plockad i TeamPlayer före kodändring. Behåll Planned/Active/Attention/Done i lokal Kanban och registrera faktisk API-status vid behov. Varje epic slutgranskas via PR mot main. Produktens tester får använda två Workers enligt acceptansen utan att implementationsfeatures utvecklas parallellt.
+
+Före full orkestrering utför ansvarig utvecklare Coordinator- och Integration-rollerna manuellt. Skapa epicbranch från aktuell main och taskbranches från epicen, arbeta i separata worktrees, granska och kör relevanta tester före merge. Registrera commits, review och testunderlag lokalt. Epicens byggda produktfunktion och arbetsprocessen för att bygga den behöver inte ha samma automationsgrad.
+
+E-01 etablerar tjänsten, E-02 Git-automation, E-03 runtime, E-04 en Worker och E-05 taskreview. E-06 ansluter TeamPlayer. E-07 har servicebaserad scheduling; E-09 flyttar beslut till en långlivad Integration Agent. E-10 inför Coordinator-loopen. Före dessa leveranser används endast redan verifierade verktyg och dokumenterad manuell motsvarighet.
+
+Backloggen är upplagd i TeamPlayer och epic/taskkopplingar, tilldelning, beskrivningar, prioriteringar, acceptans och taskberoenden har återlästs och verifierats. Dokumentöversikten synkas efter varje leverans. Uppläggningen ändrar inte de fortfarande overifierade implementationskriterierna.
+
+## TeamPlayer koppling
+
+**Projekt:** HerdrCoordinator. **Projekt-ID:** `d2ee4c75-7b80-465f-83ac-1750854a8e80`. **Utförare:** `blitterbot@gmail.com`. **Verifierat användar-ID:** `105f26a7-0648-438d-94fd-3260ac3af4ee`.
+
+Samtliga 50 tasks har `executionOwnerKind=User` och det verifierade kontot som utförare. Skapandets valideringsansvar är också satt till detta användarkonto. Detta är administrativ tilldelning; kodgranskning och integration följer fortfarande agentrollerna i arbetsprocessen. TeamPlayers board epics har inget tilldelningsfält; kontot anges som ansvarigt i varje epicbeskrivning. Board epics har heller ingen separat leveransstatus i nuvarande MCP-kontrakt, så epicstatus i denna backlogg följs genom leveransunderlaget och senare EpicRun.
+
+Tasktypen är `Task`. Prioritet mappas `P0 → Critical`, `P1 → High`, `P2 → Medium`, `P3 → Low`. Kanbankolumnen Planned representeras av API-status Pending. Använd det verifierade API-kontraktet vid kommande statusändringar.
+
+Varje task har en sammanhängande Codex-beskrivning med syfte, mål, scope, konkreta arbetssteg, förväntat beteende, tekniska krav, beroenden, källfiler, acceptans, testinstruktioner och leveransregler. De 150 taskkriterierna finns dessutom i TeamPlayers särskilda acceptansfält; epicernas 36 kriterier finns i epicbeskrivningarna.
+
+Totalt 227 taskberoenden är registrerade. Ett beroende på en föregående epic representeras i TeamPlayer av beroenden till samtliga dess tasks. Detta är en startspärr som kompletteras med kravet på verifierad epicmerge till main i varje taskbeskrivning; task-Done ensam bevisar inte den main-mergen.
+
+## Planeringsbeslut och externa förutsättningar
+
+| ID | Beslut eller förutsättning | Leverans som fastställer eller verifierar |
+| --- | --- | --- |
+| D-01 | Python 3.12+, asyncio och Pydantic följer A. Föreslagen första persistens är sqlite3; paketstruktur och versionsval fastställs före kodberoenden. | F-01 och F-02. |
+| D-02 | Lokalt MCP behöver betrodd sessions/rollkoppling. Orchestratorbehörighet och runtime/shellbegränsningar ska redovisas separat; promptpolicy ensam upprätthåller inte teknisk isolering. | F-04, F-10 och F-17; olösta nödvändiga gränser blockerar F-38. |
+| D-03 | Slots reserveras från CLAIMED/STARTING och hålls genom review/fix tills bekräftad parkering eller avslut. Kanban Active är inte sloträknare. | F-15, F-28 och F-31–F-32. |
+| D-04 | Versionerat task/rapportformat med runidentitet väljs; textvarianterna TASK och TASK_ID i källorna normaliseras uttryckligen. | F-14 och F-16. |
+| D-05 | Epic → Task är en separat synkoperation enligt W §23. Leveransmerge går Task → Epic → main; synk utförs av Git Manager på Integration-rollens begäran. | F-07 och F-18. |
+| D-06 | Run-, operations-, väntande synk- och epicreviewhistorik konkretiserar källornas runtime/recoverykrav. Backup/restore i F-50 kompletterar recovery med ett verifierbart driftprov. | F-02, F-25, F-39 och F-42–F-50. |
+| X-01 | Installerad och åtkomlig Herdr/Codex-runtime och ett ofarligt testrepository. Start/resume/park/sandboxkapabiliteter fastställs i respektive verifieringstask; de krävs inte som förkunskap för F-10. | F-10–F-13. Credentials förvaras externt. |
+| X-02 | Tillgänglig TeamPlayer MCP, projekt och särskild testepic med avsedd behörighet. ID:n, läs/skrivkontrakt, create/reopen och kommentaravstämning fastställs i verifieringstaskerna. | F-23–F-26 och F-39. |
+| X-03 | Isolerad drift/testmaskin för process-, Herdr-, SSH- och maskinavbrott samt återställning. Pi används bara om den är vald målmiljö. | F-45 och F-50. |
+
+Ett beroende vars externa förutsättning saknas behåller Planned tills start är möjlig. Om påbörjad automation behöver extern åtgärd används Attention med konkret orsak. Ingen ej verifierad API-förmåga eller miljö räknas som tillgänglig.
+
+## Epicöversikt och leveransordning
+
+| Ordning | Epic | Fas | Prioritet | Resultat | Beroende | Tasks |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | E-01 | 1 | P0 | Starta orchestratorn och bevara körningarnas tillstånd | Inget | F-01–F-04 |
+| 2 | E-02 | 2 | P0 | Isolera och integrera arbete genom Git worktrees | E-01 Done på main | F-05–F-09 |
+| 3 | E-03 | 3 | P1 | Starta och återanslut agentruntime genom Herdr | E-02 Done på main | F-10–F-13 |
+| 4 | E-04 | 4 | P1 | Låt en Worker leverera en verifierbar task | E-03 Done på main | F-14–F-17 |
+| 5 | E-05 | 5 | P1 | Granska korrigera och integrera en task | E-04 Done på main | F-18–F-22 |
+| 6 | E-06 | 6 | P1 | Spegla arbetsflödet i TeamPlayer | E-05 Done på main | F-23–F-26 |
+| 7 | E-07 | 7 | P1 | Genomför beroendestyrda tasks med två Workers | E-06 Done på main | F-27–F-30 |
+| 8 | E-08 | 8 | P1 | Parkera blockerade tasks och återuppta samma arbete | E-07 Done på main | F-31–F-33 |
+| 9 | E-09 | 9 | P1 | Låt en långlivad Integration Agent driva en epic | E-08 Done på main | F-34–F-37 |
+| 10 | E-10 | 10 | P1 | Slutgranska integrera och välj nästa epic med Coordinator | E-09 Done på main | F-38–F-41 |
+| 11 | E-11 | 11 | P1 | Återhämta körningar efter avbrott och omstart | E-10 Done på main | F-42–F-45 |
+| 12 | E-12 | 12 | P0 | Härda orchestrering och gör drift spårbar | E-11 Done på main | F-46–F-50 |
+
+Ordningen mellan epics är sekventiell enligt faserna och implementationen sker en task i taget. Oberoende tasks kan väljas efter en dokumenterad blockerare utan att kringgå beroenden. Parallella Workers förekommer i produktens verifieringsscenarier enligt den berörda featurens acceptans.
+
+## Epic E-01 Starta orchestratorn och bevara körningarnas tillstånd
+
+**Fas:** 1. **Prioritet:** P0. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `0da5c7c4-6e29-475e-aeb6-ce887f3864db`.
+
+**Körbar:** Ja — börja med F-01 via bootstrap. **Beroende:** Inget.
+
+**Källa:** A §§4.4, 11–16, 31–35, 49–50; W §§4, 13–15, 35, 39–40.
+
+### Resultat och omfattning
+
+Operatören kan starta en lokal tjänst, konfigurera ett projekt och bevara epic-, task- och reviewinformation utan AI-automation.
+
+**Ingår:** Python-projekt, konfiguration, SQLite, domänmodeller, övergångsregler, loggning och ett lokalt MCP-skal med rollkontroll. **Utanför:** Git-sidoeffekter, Herdr-sessioner och externa TeamPlayer-anrop.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** D-01 och D-02 avgör lagringsbas och hur ett anrop knyts till en betrodd roll; besluten levereras i F-01 respektive F-04.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-01 | Starta ett konfigurerbart Python-projekt | Inget | P0 |
+| F-02 | Spara runs och reviewhistorik i SQLite | F-01 | P0 |
+| F-03 | Validera task och epic genom explicita tillstånd | F-02 | P0 |
+| F-04 | Exponera lokala MCP-kontrakt med betrodda roller | F-03 | P0 |
+
+### Epicacceptans
+
+- [ ] **E-01.A1:** Tjänsten startar från dokumenterad konfiguration och en andra start bevarar tidigare runs.
+- [ ] **E-01.A2:** EpicRun, TaskRun och Review kan läsas efter omstart med samma relationer och identiteter.
+- [ ] **E-01.A3:** Ogiltiga övergångar och otillåtna rollanrop avvisas utan ändrad state.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-01 Starta ett konfigurerbart Python-projekt
+
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9bc95f85-f05d-4842-b517-c1f8132c49ab`.
+
+**Körbar:** Ja — inga blockerande beroenden; starta via bootstrap.
+
+**Källa:** A §§4.4, 34–35, 49; W §§1–4. **Berör:** Projektstruktur, konfiguration, startkommando, loggning.
+
+**Beroenden:** Inget. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Skapa minsta Python-paket, pyproject.toml, testkonfiguration och dokumenterad lokal start. Definiera validerad konfiguration för repository, worktree-rot, SQLite-path och workergräns. Dokumentera D-01 och versionsval; starta inga agenter.
+
+**Resultat och kontrakt:** Konfiguration läses och valideras innan tjänsten gör sidoeffekter. Föreslagen bas är Python 3.12+, asyncio, Pydantic och sqlite3; F-01 ska fastställa valet. Loggar har operation, nivå och korrelations-ID. Hemligheter tas från extern konfiguration och maskeras.
+
+**Acceptans**
+
+- [ ] **F-01.A1:** Givet giltiga paths startar tjänsten och rapporterar vald konfiguration utan credentials.
+- [ ] **F-01.A2:** Givet ogiltig workergräns, saknat repository eller otillåten worktree-rot avslutas start med begripligt fel innan externa operationer.
+- [ ] **F-01.A3:** Ett loggat konfigurationsfel exponerar inte en testhemlighet.
+
+**Verifiering:** Lokal start i temporär konfiguration, felkonfigurationer och loggkontroll. Dokumentera installations- och startkommandon.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-02 Spara runs och reviewhistorik i SQLite
+
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `b555e011-5e55-4cae-8d14-9cdd57725e5c`.
+
+**Körbar:** Nej — invänta F-01 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§11–14, 35; W §§19–20, 35. **Berör:** Domänmodeller, SQLite, schemaversion.
+
+**Beroenden:** F-01. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera EpicRun, TaskRun och Review med fälten i arkitekturplanen, repositories och första schemaversionen. Lägg till beständiga operationer och externa referenser som senare start-, merge- och synkflöden behöver; definiera unika nycklar och UTC-tider.
+
+**Resultat och kontrakt:** TaskRun hör till en EpicRun och Review till en TaskRun. Spara projekt/task-ID, branch, worktree, bas/aktuell commit, slot och runtime-ID; ännu okända externa ID:n får vara null. En aktiv task får inte ha två ägande runs. Schema initieras idempotent och relationer valideras.
+
+**Acceptans**
+
+- [ ] **F-02.A1:** En sparad epic, task och två reviews läses tillbaka efter att databasanslutningen stängts och öppnats.
+- [ ] **F-02.A2:** Task utan giltig epic och dubbla aktiva runs för samma projekt/task avvisas utan partiellt sparade rader.
+- [ ] **F-02.A3:** Andra schema-initieringen behåller data; en okänd framtida schemaversion stoppas med tydligt fel.
+
+**Verifiering:** Temporär SQLite-fil, relations- och transaktionstest samt återöppning med oberoende förväntade fält.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-03 Validera task och epic genom explicita tillstånd
+
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6ca76316-bff1-40e6-b57d-dd6407e449dd`.
+
+**Körbar:** Nej — invänta F-02 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§15–16, 24–27, 35; W §§13–15, 19–25, 35–37, 40. **Berör:** Domän, övergångsregler, persistens.
+
+**Beroenden:** F-02. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera tasktillstånden och Kanban-mappningen samt en dokumenterad epic-livscykel. Knyt övergångar till förvillkor, aktör och beständigt event. Definiera återgång vid misslyckad start, review, merge eller verifiering utan att fabricera framgång.
+
+**Resultat och kontrakt:** Task använder CLAIMED enligt planen och PARKED för bekräftad parkering. Epic skiljer aktiv körning, redo för review, ändringsbegäran, godkännande, merge och Done. DONE kräver verifierings- och mergeunderlag; epictillstånd är ett internt kontrakt som fastställs här.
+
+**Acceptans**
+
+- [ ] **F-03.A1:** Alla dokumenterade tasktillstånd ger rätt av de fyra Kanban-statusarna.
+- [ ] **F-03.A2:** Direkt WORKING → DONE och epic-Done utan main-merge avvisas; befintlig state består.
+- [ ] **F-03.A3:** CHANGES_REQUESTED kan återgå till arbete och BLOCKED till PARKED; samma event återspelas utan dubbla övergångar.
+
+**Verifiering:** Tabellstyrda övergångstest med både tillåtna och förbjudna händelser, beständig återläsning och felinjicerad transaktion.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-04 Exponera lokala MCP-kontrakt med betrodda roller
+
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `96cc0f5f-e737-4a19-897f-2419f690b2e0`.
+
+**Körbar:** Nej — invänta F-03 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§2, 4–5, 31, 50; W §§4, 11–12, 39–40. **Berör:** MCP, applikationstjänster, policy, loggning.
+
+**Beroenden:** F-03. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Skapa lokalt MCP-skal och validerade anrops/resultatmodeller. Bind varje anslutning till registrerad roll, projekt och tillåten run enligt D-02. Publicera läsbar runtime-status och policykontroll; registrera muterande verktyg först när deras service finns.
+
+**Resultat och kontrakt:** En rollsträng från prompt eller verktygsargument ger ingen behörighet. Worker får endast rapportera egen task; Integration får styra egen epic; Coordinator får styra projektets epics. Okända eller ännu oimplementerade operationer svarar strukturerat utan sidoeffekter. Logga beslut utan hemligheter.
+
+**Acceptans**
+
+- [ ] **F-04.A1:** En registrerad Worker kan läsa tillåten egen runtime men inte utge sig för att vara Coordinator genom ändrade argument.
+- [ ] **F-04.A2:** Fel projekt/task eller oregistrerad anslutning avvisas före adapteranrop och databasändring.
+- [ ] **F-04.A3:** MCP-servern startar lokalt; okända operationer och valideringsfel ger dokumenterade felkoder.
+
+**Verifiering:** Lokalt MCP-prov och serviceprov med inspelande adapterstubbar som visar att avvisade anrop ger noll sidoeffekter.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-02 Isolera och integrera arbete genom Git worktrees
+
+**Fas:** 2. **Prioritet:** P0. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `225cca70-7f09-4313-a020-52c8b0b7b069`.
+
+**Körbar:** Nej — E-01 Done på main; externa villkor anges per task. **Beroende:** E-01 Done på main.
+
+**Källa:** A §§8–10, 27, 36; W §§3–4, 6, 10, 23–26, 33, 40.
+
+### Resultat och omfattning
+
+Operatören kan skapa en epic och två task-worktrees, granska ändringar och integrera dem i rätt riktning med kontrollerad cleanup.
+
+**Ingår:** Git Manager, identitets- och pathkontroll, worktree-skapande, diff, synkronisering och båda mergeoperationerna. **Utanför:** Automatiskt agentgodkännande, scheduling och automatisk konfliktlösning på epicnivå.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Git kan ha ändrats mellan kontroll och merge. F-07 och F-08 måste kontrollera aktuella commits i samma skyddade operation; D-05 skiljer synkronisering från leveransmerge.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-05 | Skapa och återfinn epic och task worktrees | E-01 | P0 |
+| F-06 | Leverera diff och aktuella Git fakta för granskning | F-05 | P0 |
+| F-07 | Synkronisera task mot epic och integrera granskad task | F-06 | P0 |
+| F-08 | Integrera godkänd epic till aktuell main | F-07 | P0 |
+| F-09 | Avsluta Git resurser efter verifierad leverans | F-07, F-08 | P0 |
+
+### Epicacceptans
+
+- [ ] **E-02.A1:** En epic och två separata tasks skapas från förväntade bascommits i ett temporärt repository.
+- [ ] **E-02.A2:** Tasks synkroniseras, verifieras och integreras med --no-ff; en godkänd epic integreras till main.
+- [ ] **E-02.A3:** Fel branch, smutsigt worktree, konflikt och otillåten riktning stoppar operationen utan dataförlust.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-05 Skapa och återfinn epic och task worktrees
+
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9974ec4e-453c-4498-8994-f14e119c6e2d`.
+
+**Körbar:** Nej — invänta E-01 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8–10, 30, 36; W §§3, 6, 10, 40. **Berör:** Git-adapter, paths, operationer, runreferenser.
+
+**Beroenden:** E-01. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera create_epic_worktree och create_task_worktree via argumentbaserade subprocess-anrop. Kontrollera repository, ID-koppling, branch och normaliserad path. Spara skapade resurser och återanvänd dem endast om ägarskap och bas kan verifieras.
+
+**Resultat och kontrakt:** Epic skapas från aktuell main; task från aktuell epic. Planerings-ID kan användas under bootstrap, externa ID:n efter anslutning. Paths hålls under konfigurerad rot. Upprepat anrop med samma identitet returnerar samma resurs; befintlig resurs med annan ägare ger fel.
+
+**Acceptans**
+
+- [ ] **F-05.A1:** Epic och två tasks får egna branches/worktrees och rätt bas-SHA utan ändringar i main.
+- [ ] **F-05.A2:** Två likadana anrop ger en enda branch/worktree och samma referens.
+- [ ] **F-05.A3:** Path utanför roten, fel epic eller upptagen branch avvisas utan att befintligt arbete ändras.
+
+**Verifiering:** Temporära Git-repositories och paths med mellanslag, traversal och befintliga worktrees.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-06 Leverera diff och aktuella Git fakta för granskning
+
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `56e322eb-8902-4e39-92f0-66ed47224ee7`.
+
+**Körbar:** Nej — invänta F-05 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8, 20–22, 25, 36; W §§19–20, 31. **Berör:** Git-adapter, granskningsunderlag.
+
+**Beroenden:** F-05. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera läsning av HEAD, commitexistens, branchinnehåll, arbetsläge, ändrade filer och diff mellan angivna baser. Returnera strukturerade fakta med task- och epic-SHA som review kan hänvisa till; implementera ingen merge.
+
+**Resultat och kontrakt:** Underlaget skiljer commitdiff från ocommittade filer och innehåller verifierad repository/worktree-identitet. Stora diffar får inte tyst kapas som om hela ändringen granskats; redovisa begränsning och hur full diff hämtas.
+
+**Acceptans**
+
+- [ ] **F-06.A1:** En känd commit ger rätt ändrade filer, diff och bas/current-SHA.
+- [ ] **F-06.A2:** En okänd commit eller branch från annat repository ger tydligt fel.
+- [ ] **F-06.A3:** Smutsigt worktree och ofullständig diff markeras så att underlaget inte kan godtas som färdig review.
+
+**Verifiering:** Fixture-repository med flera branches, ocommittad fil, binär fil och diff över dokumenterad storleksgräns.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-07 Synkronisera task mot epic och integrera granskad task
+
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `4bc70580-208a-4c06-a18a-2adce002a5f7`.
+
+**Körbar:** Nej — invänta F-06 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8–9, 21, 27, 36; W §§20, 23–25, 40. **Berör:** Git Manager, taskmerge, mergeunderlag.
+
+**Beroenden:** F-06. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera sync_task_with_epic och merge_task_to_epic. Separera synkronisering till task från leveransmerge, kontrollera roll och commits och använd --no-ff vid leverans. Registrera operationens resultat även om efterföljande statusuppdatering misslyckas.
+
+**Resultat och kontrakt:** Integration-rollen begär operationen; Worker mergear inte. Slutmerge kräver rent arbetsläge, godkännande och tester för exakt task-SHA och aktuell epic-SHA. Konflikt ger spårbar blockerare i task-worktree. Git-merge ensam sätter inte task till Done.
+
+**Acceptans**
+
+- [ ] **F-07.A1:** Task B kan synkroniseras efter att task A integrerats; gamla godkännandet kan inte användas efter ändrad bas eller taskcommit.
+- [ ] **F-07.A2:** Godkänd task integreras med mergecommit; samma operation kan återläsas utan andra mergecommit.
+- [ ] **F-07.A3:** Fel roll, smutsigt arbetsläge eller konflikt blockerar leveransmerge och lämnar tasken ej Done.
+
+**Verifiering:** Temporärt repository med två parallella tasks, konflikt, stale approval och avbrott efter Git-merge.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-08 Integrera godkänd epic till aktuell main
+
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `a9c700e9-6200-4aa7-a19f-3b1535270e57`.
+
+**Körbar:** Nej — invänta F-07 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8–9, 25–27, 36; W §§29–33, 40. **Berör:** Git Manager, epicmerge, slutverifiering.
+
+**Beroenden:** F-07. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera merge_epic_to_main med Coordinator-policy och komplett mergeunderlag. Kontrollera att alla tasks är integrerade och att review/tester avser aktuella epic- och maincommits. Persistéra merge-SHA; lämna epicstatus till service som kan verifiera resultatet.
+
+**Resultat och kontrakt:** En manuellt utfärdad och registrerad Coordinator-review används under bootstrap; fas 10 producerar den automatiskt. Ändrad main kräver synkronisering och ny relevant verifiering. Konflikter eskaleras. Misslyckad slutverifiering efter merge lämnar spårbart ej-Done-läge och blockerar nästa epic.
+
+**Acceptans**
+
+- [ ] **F-08.A1:** Aktuellt godkännande och taskunderlag ger --no-ff-merge till main med registrerat SHA.
+- [ ] **F-08.A2:** Integration/Worker, ofärdig task eller ändrad main avvisas utan merge.
+- [ ] **F-08.A3:** Avbrott efter merge kan avstämmas via operation och Git; det skapas ingen dubbel merge eller falsk Done.
+
+**Verifiering:** Temporärt repository med aktuellt/föråldrat main, otillåtna roller och felinjicerad verifiering.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-09 Avsluta Git resurser efter verifierad leverans
+
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
+
+**Körbar:** Nej — invänta F-07, F-08 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8, 10, 36; W §§25–26, 38, 40. **Berör:** Git-adapter, resurspolicy, dokumentation.
+
+**Beroenden:** F-07, F-08. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera försiktig remove_worktree och eventuell branchradering enligt dokumenterad retention. Kontrollera integrerat arbete, arbetsläge, ägarskap och att ingen aktiv körning använder resursen. Behåll run-, review- och mergehistorik.
+
+**Resultat och kontrakt:** Cleanup är explicit och återförsökbar. Ointegrerat eller smutsigt arbete och resurser som används av annan run får inte tas bort. Saknad redan städad resurs ger ett känt resultat. Sessionsstopp och slotrelease kopplas in i Worker-livscykeln senare.
+
+**Acceptans**
+
+- [ ] **F-09.A1:** Verifierat integrerad och oanvänd taskresurs tas bort utan att historik eller main ändras.
+- [ ] **F-09.A2:** Ointegrerat arbete, smutsigt worktree eller aktiv resurs skyddas från borttagning.
+- [ ] **F-09.A3:** Upprepad cleanup lyckas utan nya sidoeffekter; retentionbeslutet finns i driftinstruktionen.
+
+**Verifiering:** Temporära worktrees med integrerade, ointegrerade och ocommittade ändringar samt upprepat cleanupanrop.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-03 Starta och återanslut agentruntime genom Herdr
+
+**Fas:** 3. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `3b52b7d6-7527-4d44-a873-238f26067246`.
+
+**Körbar:** Nej — E-02 Done på main; externa villkor anges per task. **Beroende:** E-02 Done på main.
+
+**Källa:** A §§7, 19, 31, 37; W §§6, 8, 10, 17, 38.
+
+### Resultat och omfattning
+
+Operatören kan skapa workspace och starta Codex i rätt worktree, skicka ett uppdrag, läsa status och återansluta eller stoppa den registrerade sessionen.
+
+**Ingår:** Gränssnittsverifiering, Herdr/Codex-adaptrar, runtime-ID och ett verkligt integrationsprov. **Utanför:** Implementationsuppdrag, task-review och Kanban-automation.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Tillgängliga API:er och resume/park-förmåga måste provas. F-10 dokumenterar vad runtime faktiskt stöder innan beroende kod byggs.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-10 | Verifiera Herdr och Codex gränssnitt | E-02 | P1 |
+| F-11 | Skapa workspace och starta Codex i rätt worktree | F-10 | P1 |
+| F-12 | Skicka uppdrag och observera start och status | F-11 | P1 |
+| F-13 | Återanslut och stoppa registrerad runtime | F-12 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-03.A1:** Ett verkligt worktree kan kopplas till Herdr och Codex med beständiga workspace/pane/agent/session-ID.
+- [ ] **E-03.A2:** Uppdrag och status kan utväxlas utan manuell terminalinteraktion.
+- [ ] **E-03.A3:** Återanslutning och stopp berör rätt session; misslyckad start skapar inte en dold extra agent.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-10 Verifiera Herdr och Codex gränssnitt
+
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `fd25939b-3ae9-4215-8edc-dd3415a696b5`.
+
+**Körbar:** Nej — invänta E-02 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 31, 37; W §§6, 10–12, 17, 38. **Berör:** Adapterkontrakt, miljöprov, dokumentation.
+
+**Beroenden:** E-02. **Externa förutsättningar:** X-01: Herdr och Codex ska vara installerade och åtkomliga i testmiljön med ett ofarligt testrepository.
+
+**Arbetsinstruktion för Codex:** Inventera installerade Herdr/Codex-versioner och tillgängliga gränssnitt. Prova workspace, pane, start, prompt, status, återanslutning, stopp och möjlig parkering i testmiljö. Skriv ett adapterkontrakt med verifierade kommandon/anrop och kända begränsningar.
+
+**Resultat och kontrakt:** Arkitekturens logiska operationsnamn översätts till verkliga anrop här. Dokumentera transport, signal för startbekräftelse, sessions-ID och kapabiliteter för roll/sandbox. Spara provresultat utan credentials; ej stödd funktion blir konkret blockerare.
+
+**Acceptans**
+
+- [ ] **F-10.A1:** Varje erforderlig adapteroperation har verifierat anrop/resultat eller specificerad blockerare.
+- [ ] **F-10.A2:** En ny testsession kan identifieras och återanslutas med beständigt ID.
+- [ ] **F-10.A3:** Parkering, startbekräftelse och möjliga sandboxgränser redovisas separat från antaganden.
+
+**Verifiering:** Manuellt avgränsat verkligt prov med inspelade sanerade resultat och versionsuppgifter.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-11 Skapa workspace och starta Codex i rätt worktree
+
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `784fbbcf-dcf5-475d-940f-bb4039cf40fe`.
+
+**Körbar:** Nej — invänta F-10 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 19, 37; W §§6, 10, 38. **Berör:** Herdr/Codex-adapter, TaskRun/EpicRun, operationer.
+
+**Beroenden:** F-10. **Externa förutsättningar:** X-01 och verifierat kontrakt från F-10.
+
+**Arbetsinstruktion för Codex:** Implementera verifierade workspace/pane- och sessionstarter med kontrollerad cwd och beständig koppling till run. Spara externa ID:n efter varje lyckat delsteg och återfinn dem vid upprepat anrop; skicka ännu inga produktuppdrag.
+
+**Resultat och kontrakt:** Startoperationen kontrollerar worktreeägare och förväntad branch. Fel efter skapad workspace lämnar den registrerad för avstämning. En befintlig matchande session återanvänds; osäkert ägarskap blockerar start.
+
+**Acceptans**
+
+- [ ] **F-11.A1:** En session startar i tilldelat worktree och alla tillgängliga runtime-ID:n sparas.
+- [ ] **F-11.A2:** Dubbel start ger samma ägda session utan extra agent.
+- [ ] **F-11.A3:** Fel cwd och fel efter workspace-skapande redovisas utan falsk startbekräftelse.
+
+**Verifiering:** Adapterprov med fel efter varje delsteg samt verkligt startprov enligt F-10.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-12 Skicka uppdrag och observera start och status
+
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `8f1c732d-8ada-4e39-b2f1-b140f2795517`.
+
+**Körbar:** Nej — invänta F-11 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 19–20, 37; W §§10–11, 15, 19. **Berör:** Prompttransport, statusadapter, events.
+
+**Beroenden:** F-11. **Externa förutsättningar:** X-01 och statusmekanism verifierad i F-10.
+
+**Arbetsinstruktion för Codex:** Implementera sändning av strukturerat uppdrag, detektion av Worker-bekräftelse och statusobservation. Knyt inkommande meddelanden till registrerad session/run. Definiera säkert beteende vid utebliven, upprepad eller för gammal signal.
+
+**Resultat och kontrakt:** Prompt levereras till rätt pane/session med korrelations-ID. Levererad text betyder inte att arbete startat. Transporthändelse och domänövergång hålls separata; okänd avsändare eller otolkbar status leder inte till WORKING eller READY_FOR_REVIEW.
+
+**Acceptans**
+
+- [ ] **F-12.A1:** En skickad prompt når rätt session och matchande startbekräftelse blir ett verifierbart event.
+- [ ] **F-12.A2:** Utebliven bekräftelse ger timeout/fel och lämnar tasken före WORKING.
+- [ ] **F-12.A3:** Dubbel eller främmande status accepteras inte som nytt giltigt resultat.
+
+**Verifiering:** Kontrollerad transport med duplicerade/försenade signaler samt verkligt prompt/statusprov.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-13 Återanslut och stoppa registrerad runtime
+
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `83a64bd8-6bfd-4988-82dd-40f3aca590a5`.
+
+**Körbar:** Nej — invänta F-12 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 28, 37; W §§8, 17–18, 26, 38. **Berör:** Herdr/Codex-adapter, runtime-livscykel.
+
+**Beroenden:** F-12. **Externa förutsättningar:** X-01; park/resume måste vara styrkt innan F-31 och F-32 kan verifieras live.
+
+**Arbetsinstruktion för Codex:** Implementera återanslutning till registrerad Codex-session och idempotent stopp av ägd agent. Förbered verifierad park/resume-kapabilitet för fas 8. Dokumentera start, stop, timeout och skillnaden mellan tappad anslutning och förlorad session.
+
+**Resultat och kontrakt:** Återanslutning skapar inte ny task, branch eller worktree. Saknad session rapporteras och kan bara återupptas via runtime som verifierats stödja det. Stoppa inte en annan run; okänt stoppresultat måste avstämmas innan resursen betraktas som fri.
+
+**Acceptans**
+
+- [ ] **F-13.A1:** Återanslutning använder samma session-ID och korrekt worktree.
+- [ ] **F-13.A2:** Upprepat stopp av redan stoppad ägd session är säkert och påverkar inte en annan agent.
+- [ ] **F-13.A3:** Saknad session och obekräftat stopp ger tydliga resultat som kan eskaleras.
+
+**Verifiering:** Adapterprov samt verkligt start–återanslut–stopp med dokumenterade runtimebegränsningar.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-04 Låt en Worker leverera en verifierbar task
+
+**Fas:** 4. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `242ffa18-da4e-4496-8e9f-c4c1b4d8315c`.
+
+**Körbar:** Nej — E-03 Done på main; externa villkor anges per task. **Beroende:** E-03 Done på main.
+
+**Källa:** A §§19–20, 31, 38; W §§10–12, 15, 19, 38–40.
+
+### Resultat och omfattning
+
+Operatören kan lämna en explicit task och få committad implementation samt verifierad READY_FOR_REVIEW från en ensam Worker.
+
+**Ingår:** Taskinmatning, Worker-prompt, start, rapportkontrakt och ett verkligt taskprov. **Utanför:** Automatisk review, merge, TeamPlayer-koppling och två parallella Workers.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** En agentrapport kan vara felaktig. F-16 jämför rapporten med Git och F-17 provar faktiska runtime- och behörighetsgränser.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-14 | Beskriv ett Worker uppdrag och rapportkontrakt | E-03 | P1 |
+| F-15 | Starta en explicit task med en Worker | F-14 | P0 |
+| F-16 | Verifiera Worker rapport mot committat arbete | F-15 | P0 |
+| F-17 | Verifiera en verklig Worker leverans | F-16 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-04.A1:** En manuellt angiven task leder till arbete i eget worktree och giltig committad överlämning.
+- [ ] **E-04.A2:** READY_FOR_REVIEW registreras först efter oberoende kontroller av commit, arbetsläge och testunderlag.
+- [ ] **E-04.A3:** Ingen automatisk merge utförs och tasken blir inte Done i Worker-MVP.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-14 Beskriv ett Worker uppdrag och rapportkontrakt
+
+**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `10bfff5f-ba3a-4f10-8510-f8578da7a747`.
+
+**Körbar:** Nej — invänta E-03 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§20, 31, 38; W §§11–12, 19. **Berör:** Taskspecifikation, Pydantic-schema, Worker-prompt.
+
+**Beroenden:** E-03. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera validerad lokal taskinmatning och versionerat uppdrags/rapportformat. Skapa Worker-prompt med mål, krav, acceptans, källor, task/epic-ID, branch, worktree och bascommit. Dokumentera D-04 och hur äldre textvarianter normaliseras.
+
+**Resultat och kontrakt:** Task hör till exakt en epic. Rapport innehåller status, task/run-ID, branch, commit, sammanfattning, tester, ändrade filer och begränsningar. BLOCKED innehåller orsak och inputbehov. Metadata får inte tolkas som kommandon; prompten ger inte rollbehörighet.
+
+**Acceptans**
+
+- [ ] **F-14.A1:** En komplett lokal task ger ett reproducerbart uppdrag med alla källor och avgränsningar.
+- [ ] **F-14.A2:** Saknad acceptans, ogiltig epic-koppling eller okänd rapportversion avvisas innan start.
+- [ ] **F-14.A3:** STATUS/TASK-varianter från källexemplen normaliseras bara om identiteten kan verifieras.
+
+**Verifiering:** Schema- och promptprov med normalfall, saknade fält och rapporter från båda dokumentens exempel.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-15 Starta en explicit task med en Worker
+
+**Epic/fas/prioritet:** E-04 / 4 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `1d8feb08-94fe-42a1-a2ca-fefba83cc40d`.
+
+**Körbar:** Nej — invänta F-14 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§19, 29–30, 38; W §§10, 15, 40. **Berör:** Taskservice, MCP, Git/Herdr, persistens.
+
+**Beroenden:** F-14. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera task_start för explicit task med en slot i denna fas. Validera roll och task, claima atomiskt, skapa resurser, starta session och leverera prompt. Registrera varje delsteg och sätt WORKING först efter bekräftelse.
+
+**Resultat och kontrakt:** Flöde PLANNED → CLAIMED → STARTING → WORKING. CLAIMED/STARTING reserverar slot enligt D-03. Redan påbörjad task returnerar befintlig run. Delvis skapade resurser avstäms vid retry; en annan task eller session får inte tillägnas.
+
+**Acceptans**
+
+- [ ] **F-15.A1:** Giltig task får en enda run, korrekt bas, eget worktree och bekräftad Worker.
+- [ ] **F-15.A2:** Samtidiga eller upprepade starter av samma task skapar inte fler resurser.
+- [ ] **F-15.A3:** Startfel lämnar sparade delsteg och tasken ej WORKING; ingen extra slot kan bokas för att kringgå gränsen.
+
+**Verifiering:** Integrationsprov i temporärt Git med kontrollerad Herdr-adapter, dubbla starter och fel efter varje sidoeffekt.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-16 Verifiera Worker rapport mot committat arbete
+
+**Epic/fas/prioritet:** E-04 / 4 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `472fbfc1-4e51-4eba-bfbe-490edb090546`.
+
+**Körbar:** Nej — invänta F-15 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§20–22, 38; W §§19–20, 25. **Berör:** task_report_ready, Git-fakta, testunderlag.
+
+**Beroenden:** F-15. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera rapportmottagning för egen task. Verifiera commitexistens, branchinnehåll, rent worktree och testunderlag; spara validerad överlämning. Ta emot blockerarrapport utan att bygga hela parkflödet i denna task.
+
+**Resultat och kontrakt:** READY_FOR_REVIEW är möjligt efter WORKING och med matchande run/session. Testunderlag ska ange kommando, exitkod och commitkoppling; agentens PASS-sträng är inte ensam verifiering. Okänt eller otillräckligt underlag blockerar review. Full Attention/park kommer i E-08.
+
+**Acceptans**
+
+- [ ] **F-16.A1:** En giltig commit och spårbart testunderlag ger READY_FOR_REVIEW med Kanban-mappning Active.
+- [ ] **F-16.A2:** Påhittad SHA, smutsigt worktree, främmande task eller misslyckat test avvisas.
+- [ ] **F-16.A3:** Duplicerad överlämning återanvänds; tasken mergeas inte och blir inte Done.
+
+**Verifiering:** Git-fixtures och rapportprov med falska SHA, fel ägare, ocommittat arbete och kända testutfall.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-17 Verifiera en verklig Worker leverans
+
+**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9ae60f57-9194-4bf8-8763-d56cddfdc868`.
+
+**Körbar:** Nej — invänta F-16 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§31, 38, 50; W §§11–12, 19, 40. **Berör:** Worker-policy, runtimekonfiguration, manuellt integrationsprov.
+
+**Beroenden:** F-16. **Externa förutsättningar:** X-01 och möjligheten att köra ofarliga runtimebehörighetsprov.
+
+**Arbetsinstruktion för Codex:** Kör en liten ofarlig implementationstask genom hela Worker-MVP i testrepository. Aktivera och dokumentera verifierade runtimebegränsningar från D-02/F-10. Samla Git-, run- och testunderlag och beskriv exakt vilka gränser som tekniskt kan upprätthållas.
+
+**Resultat och kontrakt:** Ett eget worktree och promptregler ersätter inte OS/sandboxkontroll. Orchestratorns kritiska verktyg ska neka Worker start av annan task och merge. Om runtime kan kringgå nödvändiga gränser via shell registreras blockerare inför autonom drift i E-10; gränsen får inte redovisas som tekniskt säkrad.
+
+**Acceptans**
+
+- [ ] **F-17.A1:** En verklig Worker producerar ändrad kod, commit och verifierad överlämning i rätt task-worktree.
+- [ ] **F-17.A2:** Main och epic är oförändrade; ingen automatisk merge sker.
+- [ ] **F-17.A3:** Otillåtna orchestratoranrop avvisas och faktisk filesystem/kommandobehörighet redovisas med provresultat.
+
+**Verifiering:** Verkligt taskprov med före/efter-SHA, sandbox/policykontroll och kontroll av andra worktrees.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-05 Granska korrigera och integrera en task
+
+**Fas:** 5. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `9d4ff24d-71a6-4e02-9498-bbbaee7e1db8`.
+
+**Körbar:** Nej — E-04 Done på main; externa villkor anges per task. **Beroende:** E-04 Done på main.
+
+**Källa:** A §§20–22, 31, 39; W §§20–25, 38–40.
+
+### Resultat och omfattning
+
+En task kan gå från Worker-överlämning genom granskning och korrigering till verifierad integration i epic-branchen.
+
+**Ingår:** Reviewkontext, Integration-policy för review, feedback till samma Worker, versionsbunden approval och task-Done. **Utanför:** Långlivad Integration Agent som själv schemalägger hela epicen samt Coordinator-slutreview.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Review kan bli inaktuell under parallellt arbete. F-18 och F-20 binder underlag och beslut till exakta commits. En granskande Integration-session används innan E-09 etablerar dess hela livscykel.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-18 | Bygg komplett reviewkontext från aktuell epic | E-04 | P0 |
+| F-19 | Återför konkret reviewfeedback till samma Worker | F-18 | P1 |
+| F-20 | Bind taskgodkännande till granskat underlag | F-19 | P0 |
+| F-21 | Sätt task Done efter merge och integrationstester | F-20 | P0 |
+| F-22 | Verifiera review och fix till integrerad task | F-21 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-05.A1:** En verklig task går genom READY_FOR_REVIEW → CHANGES_REQUESTED → korrigering → APPROVED.
+- [ ] **E-05.A2:** Tasken synkroniseras och mergeas mot rätt epiccommit och integrationstester passerar innan Done.
+- [ ] **E-05.A3:** Testfel, konflikt eller ändrat reviewunderlag kan inte ge Done eller använda ett gammalt godkännande.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-18 Bygg komplett reviewkontext från aktuell epic
+
+**Epic/fas/prioritet:** E-05 / 5 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6dfd789c-25d6-465b-bb75-a81e4b5d4a34`.
+
+**Körbar:** Nej — invänta E-04 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§21–22, 39; W §§20, 23. **Berör:** Reviewservice, Git, testkörning, Review.
+
+**Beroenden:** E-04. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera task_review_request. Synkronisera task mot aktuell epic, kör konfigurerade relevanta tester och bygg kontext med taskspecifikation, acceptans, diff, ändrade filer, källor och epicregler. Spara underlagets identitet och båda commits.
+
+**Resultat och kontrakt:** Review går READY_FOR_REVIEW → REVIEWING först när aktuell bas och komplett underlag finns. Konflikt och testfel hindrar godkännandeflödet. Testkommandon kommer från betrodd projektkonfiguration, inte ett fritt shellkommando i agentrapporten.
+
+**Acceptans**
+
+- [ ] **F-18.A1:** Granskaren får samtliga specificerade underlag och aktuella task/epic-SHA.
+- [ ] **F-18.A2:** En task med äldre bas synkroniseras och testas före review; tidigare testresultat ersätter inte det nya provet.
+- [ ] **F-18.A3:** Konflikt, ofullständig diff eller testfel ger explicit ej-godkännbar review utan merge.
+
+**Verifiering:** Temporärt repository med basändring och konflikt; kontrollerad testprocess med både pass och fail.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-19 Återför konkret reviewfeedback till samma Worker
+
+**Epic/fas/prioritet:** E-05 / 5 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9deec5f8-e93d-4b71-9996-956049931e18`.
+
+**Körbar:** Nej — invänta F-18 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§21–22, 31, 39; W §§20–22, 38. **Berör:** Integration-prompt, reviewbeslut, feedbacktransport.
+
+**Beroenden:** F-18. **Externa förutsättningar:** X-01 för det verkliga reviewprovet.
+
+**Arbetsinstruktion för Codex:** Skapa Integration Agent-policy för taskreview och validera granskarens strukturerade beslut. Implementera task_request_changes med numrerade problem och berörda acceptanskriterier. Spara Review och skicka feedback till samma Worker-session.
+
+**Resultat och kontrakt:** CHANGES_REQUESTED behåller Kanban Active och återgår till WORKING när Worker bekräftar korrigeringen. Nya commits kräver ny överlämning och review. Extern beslutspunkt redovisas som blockerare; komplett parkering kopplas in i E-08. Granskaren får inte implementera Worker-tasken eller mergea main.
+
+**Acceptans**
+
+- [ ] **F-19.A1:** Ett negativt beslut sparar reviewnummer, commits, feedback och berörda kriterier.
+- [ ] **F-19.A2:** Korrigeringen görs i samma session, branch och worktree och kan lämnas till ny review.
+- [ ] **F-19.A3:** Tom feedback, fel task eller Worker som försöker godkänna sin egen task avvisas.
+
+**Verifiering:** Reviewserviceprov med kontrollerad transport och verkligt begränsat review/fix-prov när runtime finns.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-20 Bind taskgodkännande till granskat underlag
+
+**Epic/fas/prioritet:** E-05 / 5 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `5de9046f-4c8b-4f69-ae12-33fc5d213df3`.
+
+**Körbar:** Nej — invänta F-19 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§14, 21–22, 39; W §§20, 23–25. **Berör:** Review, policy, versionskontroll.
+
+**Beroenden:** F-19. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera APPROVED som ett beständigt granskningsbeslut från behörig Integration-roll. Kontrollera att allt obligatoriskt underlag finns och att task- och epic-SHA matchar. Ogiltigförklara användbarheten av äldre approval när kod eller bas ändras.
+
+**Resultat och kontrakt:** Reviewhistorik bevaras även när ett godkännande blir inaktuellt. APPROVED är Active och en förutsättning för merge, inte Done. Granskningsunderlag ska koppla tester och acceptans till samma versionspar.
+
+**Acceptans**
+
+- [ ] **F-20.A1:** Aktuell review från rätt roll ger APPROVED med versionsbundna referenser.
+- [ ] **F-20.A2:** Ny taskcommit eller ny epiccommit efter review hindrar användning av gamla approval.
+- [ ] **F-20.A3:** Workerbeslut, saknat testunderlag och approval för annan run avvisas utan statusframflyttning.
+
+**Verifiering:** Serviceprov med ändrade commits, upprepat approval och förbjudna aktörer i ett temporärt repository.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-21 Sätt task Done efter merge och integrationstester
+
+**Epic/fas/prioritet:** E-05 / 5 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `e931598a-4fa5-488e-aeea-0db91a570bdd`.
+
+**Körbar:** Nej — invänta F-20 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§21, 30, 39; W §§24–26, 39–40. **Berör:** task_merge, Git, verifieringsprocess, taskstatus.
+
+**Beroenden:** F-20. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Koppla versionsbunden approval till Git Managers taskmerge. Kör integrationskontroller på det integrerade resultatet, spara underlag och sätt DONE först vid framgång. Stoppa Worker och använd säker cleanup enligt resurspolicyn; synkning till TeamPlayer tillkommer i E-06.
+
+**Resultat och kontrakt:** APPROVED → MERGING → DONE kräver faktisk merge-SHA och verifieringsresultat. Fel efter merge sparas och blockerar Done; avstämning kan verifiera om utan andra merge. Slotrelease kräver bekräftad inaktiv Worker. Äldre review används inte om mål-HEAD har ändrats.
+
+**Acceptans**
+
+- [ ] **F-21.A1:** Godkänd task mergeas en gång och får DONE först efter godkända integrationstester.
+- [ ] **F-21.A2:** Ett fel efter Git-merge behåller merge-SHA men ger inte DONE eller osäker cleanup.
+- [ ] **F-21.A3:** Återförsök av känd merge verifierar befintligt resultat utan extra merge eller Worker.
+
+**Verifiering:** Git/serviceintegration med fel före merge, efter merge, under test och under sessionsstopp.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-22 Verifiera review och fix till integrerad task
+
+**Epic/fas/prioritet:** E-05 / 5 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `875b4e3d-e3de-40ae-bb76-6aee5e8705c2`.
+
+**Körbar:** Nej — invänta F-21 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§20–22, 39; W §§19–26. **Berör:** Verkligt testflöde, dokumentation.
+
+**Beroenden:** F-21. **Externa förutsättningar:** X-01 och en liten testtask vars acceptansfel kan verifieras oberoende.
+
+**Arbetsinstruktion för Codex:** Kör en liten verklig task med ett avsiktligt tydligt acceptansfel, begär korrigering, granska på nytt och integrera. Dokumentera taskhistorik, båda reviews, testkommandon och merge-SHA. Prova också en task med blockerande testfel.
+
+**Resultat och kontrakt:** Samma Worker används för korrigeringen. Reviewen körs via Integration-policy från F-19; den fullständiga långlivade epicruntime kommer i E-09. Main-merge ingår inte i detta prov.
+
+**Acceptans**
+
+- [ ] **F-22.A1:** Första review ger konkret CHANGES_REQUESTED och andra review godkänner den korrigerade committen.
+- [ ] **F-22.A2:** Tasken når Done med rätt merge och testunderlag; main är oförändrad.
+- [ ] **F-22.A3:** Blockerande testfel hindrar merge/Done enligt det steg där felet uppstår.
+
+**Verifiering:** Verkligt Herdr/Codex-prov i ofarligt repository med sanerad review- och commitrapport.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-06 Spegla arbetsflödet i TeamPlayer
+
+**Fas:** 6. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `e779c93c-7f75-43e0-97ed-53373bb0fd66`.
+
+**Körbar:** Nej — E-05 Done på main; externa villkor anges per task. **Beroende:** E-05 Done på main.
+
+**Källa:** A §§6, 11, 16, 23, 40; W §§5, 9, 13–18, 39.
+
+### Resultat och omfattning
+
+Operatören kan välja arbete från TeamPlayer och se rätt arbetsstatus, blockerare och verifieringsreferenser utan att tekniska runs går förlorade.
+
+**Ingår:** Verifierat MCP-adapterkontrakt, projekt/epic/task-läsning, beroenden, statusskrivning och återförsökbar synk. **Utanför:** Full scheduling, parkering och automatiskt val av flera epics.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Externa schema- och statusnamn ska verifieras i F-23. TeamPlayer och SQLite/Git saknar gemensam transaktion; F-25 behöver beständiga väntande skrivningar.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-23 | Verifiera TeamPlayer projekt och MCP kontrakt | E-05 | P1 |
+| F-24 | Läs epics tasks och beroenden till domänmodellen | F-23 | P1 |
+| F-25 | Synkronisera status och kommentarer utan nya sidoeffekter | F-24 | P0 |
+| F-26 | Verifiera TeamPlayer kopplingen på en testepic | F-25 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-06.A1:** En testepic och dess tasks kan läsas med riktiga ID:n, kriterier och beroenden.
+- [ ] **E-06.A2:** Active, Attention och Done skrivs på verifierade domänhändelser och med rätt ansvarig roll.
+- [ ] **E-06.A3:** Avbruten TeamPlayer-skrivning återförsöks utan att start, merge eller kommentar dupliceras.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-23 Verifiera TeamPlayer projekt och MCP kontrakt
+
+**Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6dd3f8a2-cfcf-4483-a124-944804a5f65f`.
+
+**Körbar:** Nej — invänta E-05 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§6, 40; W §§5, 9, 13, 39. **Berör:** TeamPlayer-adapterkontrakt, testprojekt.
+
+**Beroenden:** E-05. **Externa förutsättningar:** X-02: TeamPlayer MCP och en tillgänglig testepic med avsedd behörighet.
+
+**Arbetsinstruktion för Codex:** Verifiera MCP-anslutning, projektidentitet, epic/task-schema, acceptansfält, beroenden, statusar, kommentaroperationer och tillgängliga create/reopen-operationer inför epickorrigering. Dokumentera exakta verktygsnamn och konton/roller som adapterkonfiguration; anta ingen utförare från den äldre projektguiden.
+
+**Resultat och kontrakt:** Börja i en särskild testepic/testmiljö. Verifiera eventuell pagination, taskhierarki och hur Planned/Active/Attention/Done representeras. Separera läsbehörighet från skrivrättigheter och förvara credentials externt.
+
+**Acceptans**
+
+- [ ] **F-23.A1:** Rätt testprojekt och epic identifieras med verifierade externa ID:n.
+- [ ] **F-23.A2:** Varje nödvändig läs/skrivoperation har verifierat schema och behörighet eller konkret blockerare.
+- [ ] **F-23.A3:** Acceptans och beroenden kan återges utan att data tappas eller credentials loggas.
+
+**Verifiering:** Avgränsade verkliga MCP-prov mot testepic med sanerade request/resultatexempel.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-24 Läs epics tasks och beroenden till domänmodellen
+
+**Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7a9a311f-5f20-4247-9ef7-a5e5c57e39bc`.
+
+**Körbar:** Nej — invänta F-23 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§6, 18, 40; W §§5, 9, 28. **Berör:** TeamPlayer-adapter, taskinmatning, externa ID-kopplingar.
+
+**Beroenden:** F-23. **Externa förutsättningar:** X-02 och verifierat läskontrakt från F-23.
+
+**Arbetsinstruktion för Codex:** Implementera get_epic, get_epic_tasks, get_task_dependencies och läsning av kandidater för senare epicval. Mappa externa fält till validerade domänobjekt och bevara prioritet, acceptans, källor och lokala ID-kopplingar.
+
+**Resultat och kontrakt:** TeamPlayer är källa för arbetsstatus; SQLite behåller runtime. Alla sidor hämtas enligt verifierat API. Fel projektkoppling, saknad acceptans, okänt beroende eller cykel gör berört arbete ej körbart med konkret orsak. Läsning startar inga Workers.
+
+**Acceptans**
+
+- [ ] **F-24.A1:** En testepic med flera tasks återges komplett med prioriteringar, acceptans och beroenden.
+- [ ] **F-24.A2:** Pagination och upprepad läsning tappar eller duplicerar inga tasks.
+- [ ] **F-24.A3:** Fel projekt, beroendecykel eller borttagen task avvisas/flaggar berört arbete utan automatisk start.
+
+**Verifiering:** Adapterprov med kända sidresultat och felaktig graf samt verklig läsning av testepicen.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-25 Synkronisera status och kommentarer utan nya sidoeffekter
+
+**Epic/fas/prioritet:** E-06 / 6 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7ab4a0ac-405d-4905-bc46-a2d5f0431c86`.
+
+**Körbar:** Nej — invänta F-24 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§6, 16, 23, 30, 40; W §§15–18, 24–25, 39–40. **Berör:** TeamPlayer-adapter, väntande skrivningar, statuspolicy.
+
+**Beroenden:** F-24. **Externa förutsättningar:** X-02 och skrivkontrakt från F-23; avstämningsstöd måste vara verifierat.
+
+**Arbetsinstruktion för Codex:** Implementera rollstyrd set_task_status, set_epic_status och kommentarer med beständiga synkavsikter. Sätt Active efter startbekräftelse, Attention vid verifierad blockerare och Done först efter merge/verifiering. Spara retryläge och referens till domänhändelsen.
+
+**Resultat och kontrakt:** Integration initierar taskskrivning och Coordinator epicskrivning. Externt fel efter lokal framgång återförsöker endast TeamPlayer-steget. Okänt kommentarutfall avstäms med verifierad dedupliceringsmekanism; om API saknar den används dokumenterad readback eller Attention. Manuellt ändrad Kanban ger avvikelse, inte bevis för merge.
+
+**Acceptans**
+
+- [ ] **F-25.A1:** WORKING, BLOCKED/PARKED och DONE ger rätt taskstatus med orsak eller merge/testreferens.
+- [ ] **F-25.A2:** Nätfel efter lokal merge ger väntande synk och återförsök utan ny merge.
+- [ ] **F-25.A3:** Worker kan inte skriva status och upprepad samma kommentarhändelse ger inte flera identiska kommentarer.
+
+**Verifiering:** Adapterprov med fel före/efter externt svar samt verkliga statusskrivningar i testepicen.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-26 Verifiera TeamPlayer kopplingen på en testepic
+
+**Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `1626d7a9-387d-47cd-b20b-86cb2a9f0613`.
+
+**Körbar:** Nej — invänta F-25 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§6, 16, 40; W §§13–18, 25, 39. **Berör:** Kanban-prov, dokumentation, ID-mappning.
+
+**Beroenden:** F-25. **Externa förutsättningar:** X-01 och X-02; särskild testepic med tillåtna statusskrivningar.
+
+**Arbetsinstruktion för Codex:** Kör läsning, bekräftad Worker-start, blockerarrapport och verifierad taskintegration mot testepicen. Prova bortkoppling under en statusskrivning och återställ synk. Dokumentera aktuella projekt/epic/task-ID och återstående blockerare.
+
+**Resultat och kontrakt:** Attention-skrivning verifieras här; full sessionsparkering och återupptagning kommer i E-08. Testepicen ska särskiljas från projektets produktbacklogg. Runtime och TeamPlayer avstäms utan att Kanban ensam flyttar Git eller runs.
+
+**Acceptans**
+
+- [ ] **F-26.A1:** Testtaskens Kanban följer Planned → Active → Attention, manuellt tillförd input och bekräftad fortsättning till Active samt verifierad leverans till Done med rätt underlag.
+- [ ] **F-26.A2:** Nätfel lämnar synkavsikt som kan slutföras efter återanslutning.
+- [ ] **F-26.A3:** Ingen annan epic/task ändras och inga credentials hamnar i rapporten.
+
+**Verifiering:** Verkligt MCP-prov med ofarlig testtask, kontrollerad bortkoppling och före/efter-läsning.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-07 Genomför beroendestyrda tasks med två Workers
+
+**Fas:** 7. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `75285fe5-e9bb-46ea-b5fd-19135c40166d`.
+
+**Körbar:** Nej — E-06 Done på main; externa villkor anges per task. **Beroende:** E-06 Done på main.
+
+**Källa:** A §§17–18, 29–30, 41, 48; W §§8–10, 23, 27–28.
+
+### Resultat och omfattning
+
+En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manuell tilldelning och utan att beroenden startar för tidigt.
+
+**Ingår:** Körbarhetsbedömning, slotreservation, scheduling, serialiserad integration och prov med tre tasks. **Utanför:** Flera samtidiga epics, fler än två Workers och dynamisk scaling.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Kanban Active omfattar även review och får inte ensam användas som sloträknare. D-03 och F-28 definierar beständiga reservationer; F-29 serialiserar merge mot epicen.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-27 | Välj endast körbara tasks i rätt beroendeordning | E-06 | P0 |
+| F-28 | Reservera högst två aktiva Worker slots | F-27 | P0 |
+| F-29 | Driv scheduling och serialisera taskintegration | F-28 | P1 |
+| F-30 | Verifiera tre tasks med två parallella Workers | F-29 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-07.A1:** Två oberoende tasks kan arbeta samtidigt och tredje task startar när en säker slot är ledig.
+- [ ] **E-07.A2:** Ett taskberoende blir körbart först efter granskad merge och godkända integrationskontroller.
+- [ ] **E-07.A3:** Samtidiga starter och integrationsförsök bryter inte workergräns eller review mot aktuell epic.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-27 Välj endast körbara tasks i rätt beroendeordning
+
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `8c9e5322-28c7-4310-b444-4c3a843fb671`.
+
+**Körbar:** Nej — invänta E-06 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§17–18, 41; W §§9, 27–28. **Berör:** Scheduler, beroendegraf, Git/runtimeunderlag.
+
+**Beroenden:** E-06. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera task_get_next och beräkning av körbarhet från status, krav, externa förutsättningar, prioritet och beroenden. Använd stabil ordning vid lika prioritet och förklara varför varje task inte kan startas.
+
+**Resultat och kontrakt:** Planned och komplett specifikation krävs. Föregående task ska vara granskad, integrerad och verifierad; Kanban Done ensam räcker inte om Gitunderlag saknas. Beroenden till tidigare epics kräver main-merge. Cykler, okända ID:n och Attention gör relevant kandidat ej körbar.
+
+**Acceptans**
+
+- [ ] **F-27.A1:** Två oberoende Planned-tasks kan väljas medan en beroende task väntar.
+- [ ] **F-27.A2:** READY_FOR_REVIEW eller APPROVED hos beroendet öppnar inte nästa task; verifierad Done gör det.
+- [ ] **F-27.A3:** Cykel, okänt beroende och saknat mergeunderlag ger konkreta blockerare och ingen start.
+
+**Verifiering:** Kända beroendegrafer med oberoende tasks, cykler och avvikande Kanban/Gitdata.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-28 Reservera högst två aktiva Worker slots
+
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
+
+**Körbar:** Nej — invänta F-27 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§17, 29–30, 41; W §§8, 10, 18, 26. **Berör:** Scheduler, slotpersistens, taskclaim.
+
+**Beroenden:** F-27. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Utöka Worker-start från en till två slots med atomisk reservation och unikt ägarskap per run. Implementera claim/release enligt D-03 och verifiera race mellan ny start och återupptagning. Behåll stöd för workergräns ett i testläge.
+
+**Resultat och kontrakt:** CLAIMED och STARTING reserverar kapacitet. Reservationen hålls genom arbete och review/fix till bekräftad parkering eller avslut; parkerad session räknas inte. Ledig kapacitet beräknas från egna reservationer och bekräftad runtime, inte bara WORKING eller Kanban Active.
+
+**Acceptans**
+
+- [ ] **F-28.A1:** Tre samtidiga startförsök ger högst två reserverade aktiva Workers.
+- [ ] **F-28.A2:** Samma task kan inte äga två slots eller startas av två schedulervarv.
+- [ ] **F-28.A3:** Startfel och bekräftat sessionsavslut frigör rätt reservation; osäkert stopp frigör den inte.
+
+**Verifiering:** Samtidiga serviceanrop mot temporär SQLite och kontrollerad runtime med långsam start och okänt stopp.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-29 Driv scheduling och serialisera taskintegration
+
+**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `56b76e54-d870-452a-a477-4d4d4177260f`.
+
+**Körbar:** Nej — invänta F-28 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§17–18, 21, 29, 41; W §§23–28. **Berör:** Schedulerloop, mergekö, status/events.
+
+**Beroenden:** F-28. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera deterministisk service-loop för start, observation, reviewkö och påfyllnad efter avslut. Serialisera merge per epic och verifiera tasken mot den epicversion som gäller vid integration. Pausa berört arbete vid fel utan att starta samma task på nytt.
+
+**Resultat och kontrakt:** Loopen är servicebaserad i fas 7; den långlivade Integration Agent tar besluten via verktygen i E-09. Två arbetande tasks kan producera resultat samtidigt men endast en leveransmerge åt gången. Ändrad epic ogiltigförklarar ett äldre godkännande.
+
+**Acceptans**
+
+- [ ] **F-29.A1:** När task A avslutas startar nästa körbara task i frigjord slot utan manuell tilldelning.
+- [ ] **F-29.A2:** Två samtidiga taskresultat integreras seriellt och task B verifieras mot epic efter A.
+- [ ] **F-29.A3:** Ett upprepat eventsvar eller schedulervarv ger ingen dubbel Worker, review eller merge.
+
+**Verifiering:** Serviceintegration med två kontrollerade Workers, samtidigt färdigställande och förändrad epiccommit.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-30 Verifiera tre tasks med två parallella Workers
+
+**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `5618ec4b-f817-4789-b45c-284e29199936`.
+
+**Körbar:** Nej — invänta F-29 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§41, 48; W §§8–10, 23–28. **Berör:** Integrationsscenario, driftinstruktion.
+
+**Beroenden:** F-29. **Externa förutsättningar:** X-01 och X-02; testepic med tre små och oberoende verifierbara tasks.
+
+**Arbetsinstruktion för Codex:** Bygg en liten testepic med A och B oberoende samt C beroende av integrerad A. Kör serviceflödet med två Workers, review och taskmerge. Samla tidslinje, slotreservationer, commits och Kanbanförändringar.
+
+**Resultat och kontrakt:** Minst två Worker-intervall ska överlappa så att provet visar verklig parallellitet. C får starta först efter A:s granskade integration och verifiering. Epic-slutreview och main-merge tillkommer i E-10.
+
+**Acceptans**
+
+- [ ] **F-30.A1:** A och B arbetar samtidigt i olika worktrees och C tar ledig slot efter godkänd A-integration.
+- [ ] **F-30.A2:** Alla tre tasks blir Done med rätt commits och testunderlag utan manuell scheduling.
+- [ ] **F-30.A3:** Ingen tidpunkt visar fler än två aktiva/reserverade Workers eller merge mot stale approval.
+
+**Verifiering:** Verkligt Herdr/Codex- och TeamPlayer-prov samt maskinellt kontrollerad tidslinje från events.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-08 Parkera blockerade tasks och återuppta samma arbete
+
+**Fas:** 8. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `dc637987-8dce-49ef-a178-7ed819ce6db7`.
+
+**Körbar:** Nej — E-07 Done på main; externa villkor anges per task. **Beroende:** E-07 Done på main.
+
+**Källa:** A §§23, 42; W §§16–18, 22, 38–39.
+
+### Resultat och omfattning
+
+En blockerad task syns i Attention, frigör kapacitet och fortsätter i samma session när nödvändig input och en slot finns.
+
+**Ingår:** Blockerarrapport, verklig parkering, sparad input, väntan på slot och återupptagning. **Utanför:** Automatiskt gissade svar, ersättning av saknat worktree och osynligt skapande av ny task/session.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Parkering måste stoppa aktivitet innan sloten frigörs. Saknat bekräftat parkstöd från F-10/F-13 blockerar liveacceptans.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-31 | Registrera blockerare och parkera Worker säkert | E-07 | P0 |
+| F-32 | Återuppta Attention med sparat beslut och ledig slot | F-31 | P0 |
+| F-33 | Verifiera att Attention inte stoppar andra tasks | F-32 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-08.A1:** Blockerarrapport med konkret orsak och inputbehov ger Attention och bekräftat parkerad session.
+- [ ] **E-08.A2:** En annan körbar task använder frigjord slot medan den första väntar.
+- [ ] **E-08.A3:** Samma Worker återupptas med sparat beslut utan att workergränsen överskrids.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-31 Registrera blockerare och parkera Worker säkert
+
+**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
+
+**Körbar:** Nej — invänta E-07 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§23, 42; W §§16, 18, 22, 39. **Berör:** task_report_blocked, Herdr, persistens, TeamPlayer.
+
+**Beroenden:** E-07. **Externa förutsättningar:** X-01, X-02 och verifierad parkförmåga från F-10/F-13.
+
+**Arbetsinstruktion för Codex:** Implementera komplett blockerarflöde för Worker och review som kräver extern input. Spara orsak, efterfrågad input och ansvarig roll, skriv Attention och parkera registrerad session. Frigör slot först efter verifierad inaktivitet.
+
+**Resultat och kontrakt:** WORKING/REVIEWING → BLOCKED → PARKED. Parkering behåller session-ID, branch och worktree. TeamPlayer-nätfel hanteras genom synkavsikt. Parkfel eller okänt runtimeutfall behåller reservation och konkret fel, även om Kanban visar Attention.
+
+**Acceptans**
+
+- [ ] **F-31.A1:** Komplett blockerarrapport sparas och publiceras på rätt task med inputbehov.
+- [ ] **F-31.A2:** Bekräftad parkering bevarar resurser och frigör precis taskens slot.
+- [ ] **F-31.A3:** Dubbel blockerarrapport, främmande task eller misslyckad parkering ger ingen osäker slotrelease.
+
+**Verifiering:** Serviceprov med parkbekräftelse, timeout och TeamPlayer-fel samt verklig parkering.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-32 Återuppta Attention med sparat beslut och ledig slot
+
+**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `41cb49c7-c172-4182-8d17-8ba2e255f07a`.
+
+**Körbar:** Nej — invänta F-31 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§23, 42; W §§17–18, 22. **Berör:** worker_resume, slotkö, inputhistorik, status.
+
+**Beroenden:** F-31. **Externa förutsättningar:** X-01 och X-02; samma-session-resume verifierad i E-03.
+
+**Arbetsinstruktion för Codex:** Implementera resume_task/worker_resume för behörig Integration-roll. Spara beslutet, kontrollera session/worktree/branch och boka slot atomiskt innan Worker återupptas. Skicka beslutet till samma session och sätt WORKING/Active efter bekräftelse.
+
+**Resultat och kontrakt:** Input utan slot ligger kvar som väntande återupptagning i Attention. Varje svar har identitet och historik; dubbelt anrop skickar inte beslut eller start två gånger. Saknat worktree eller ej återupptagbar session kräver konkret åtgärd, inte en tyst ny Worker.
+
+**Acceptans**
+
+- [ ] **F-32.A1:** Med svar och ledig slot fortsätter samma session i samma branch/worktree och återgår till Active.
+- [ ] **F-32.A2:** Med fulla slots väntar återupptagningen utan att en tredje Worker startas.
+- [ ] **F-32.A3:** Dubbel input/resume och saknad session/worktree hanteras utan extra run eller förlorat beslut.
+
+**Verifiering:** Samtidiga resume/start-prov, återöppnad databas med väntande svar och verkligt resumeprov.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-33 Verifiera att Attention inte stoppar andra tasks
+
+**Epic/fas/prioritet:** E-08 / 8 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `f7a0c038-4f49-48d0-ba09-fbca7bfe0e92`.
+
+**Körbar:** Nej — invänta F-32 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§42, 48; W §§16–18, 22, 27. **Berör:** Integrationsscenario, operatörsinstruktion.
+
+**Beroenden:** F-32. **Externa förutsättningar:** X-01 och X-02; testepic med en tydlig blockerarfråga.
+
+**Arbetsinstruktion för Codex:** Kör ett scenario där A blockeras, B fortsätter och C tar A:s slot. Lämna svar till A medan båda slots är upptagna och verifiera senare återupptagning. Dokumentera hur operatören ser blockeraren och lämnar beslut.
+
+**Resultat och kontrakt:** Tidslinjen ska visa parkbekräftelse före slotrelease och bokning före resume. Kanban och runtime kan tillfälligt skilja sig under extern synk men skillnaden måste visas och avstämmas.
+
+**Acceptans**
+
+- [ ] **F-33.A1:** B och C kan leverera medan A är parkerad och Attention.
+- [ ] **F-33.A2:** A:s sparade svar leder till samma-session-resume först när en slot är ledig.
+- [ ] **F-33.A3:** Samtliga tasks kan senare bli Done utan förlorade worktrees, dubbla Workers eller fler än två aktiva.
+
+**Verifiering:** Verkligt Herdr/Codex/TeamPlayer-scenario med tidslinje, ID-jämförelse och verifierade merge-SHA.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-09 Låt en långlivad Integration Agent driva en epic
+
+**Fas:** 9. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `fd79802a-93dd-4b77-b4b4-71ba93060ad6`.
+
+**Körbar:** Nej — E-08 Done på main; externa villkor anges per task. **Beroende:** E-08 Done på main.
+
+**Källa:** A §§4.2, 19–24, 29, 31, 43; W §§7, 9, 20–30, 38–40.
+
+### Resultat och omfattning
+
+En Integration Agent kan själv välja körbara tasks, styra Workers, granska leveranser och lämna en samlat verifierad epic till Coordinator.
+
+**Ingår:** Epicruntime, långlivad integrationssession, verktyg för scheduling/review och EPIC_READY_FOR_REVIEW. **Utanför:** Slutgodkännande, main-merge och automatiskt val av nästa epic.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** En långlivad agent kan återupprepa beslut eller missa externa ändringar. Verktygen måste behålla deterministiska villkor och aktuell kontext.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-34 | Starta en enda långlivad Integration Agent per epic | E-08 | P0 |
+| F-35 | Låt Integration Agent styra tasks genom verktyg | F-34 | P1 |
+| F-36 | Verifiera epicen och lämna komplett reviewunderlag | F-35 | P0 |
+| F-37 | Verifiera en epic styrd av Integration Agent | F-36 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-09.A1:** En enda Integration Agent driver hela testepicens taskflöde genom orchestratorverktyg.
+- [ ] **E-09.A2:** Alla tasks är verifierat integrerade innan epicens samlade build/test/acceptans körs.
+- [ ] **E-09.A3:** EPIC_READY_FOR_REVIEW innehåller aktuell epiccommit och komplett underlag utan main-merge.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-34 Starta en enda långlivad Integration Agent per epic
+
+**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `678fb877-d9c7-4d07-a182-9ee79cc0cbdc`.
+
+**Körbar:** Nej — invänta E-08 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§4.2, 19, 29, 31, 43; W §§6–7, 38, 40. **Berör:** epic_start, EpicRun, Integration-prompt, Herdr.
+
+**Beroenden:** E-08. **Externa förutsättningar:** X-01 och X-02; registrerade rollanslutningar enligt F-04.
+
+**Arbetsinstruktion för Codex:** Implementera epic_start som skapar eller återfinner epicruntime och en långlivad integrationssession. Leverera epicmål, tasklista, acceptans, beroenden, källor och rollbegränsningar. Bind anslutningen till rätt epic genom MCP-policy.
+
+**Resultat och kontrakt:** En epic får en ägande Integration-session. Dubbel start återanvänder matchande runtime. Integration Agent får begära taskoperationer för egen epic men aldrig main-merge eller skriva i Workers worktrees. Epic sätts Active när starten är registrerad enligt workflow.
+
+**Acceptans**
+
+- [ ] **F-34.A1:** Giltig epic får en registrerad Integration-session och komplett uppdrag med aktuell branch.
+- [ ] **F-34.A2:** Två startanrop ger en enda ägande session och EpicRun.
+- [ ] **F-34.A3:** Fel projekt/epic och Integration-anrop för annan epic avvisas utan sidoeffekter.
+
+**Verifiering:** Serviceprov med samtidiga epicstarter och verkligt sessionsprov.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-35 Låt Integration Agent styra tasks genom verktyg
+
+**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
+
+**Körbar:** Nej — invänta F-34 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§4.2, 5, 17–23, 43; W §§7–10, 20–28, 39. **Berör:** MCP, scheduler, Review, Integration-policy.
+
+**Beroenden:** F-34. **Externa förutsättningar:** X-01 och X-02 för det verkliga flödet.
+
+**Arbetsinstruktion för Codex:** Koppla Integration Agent till task_get_next, task_start, review, ändringsbegäran, taskmerge och resume. Ge aktuell task/slot/runtimeöversikt efter varje operation. Låt agenten välja bland verifierat körbara kandidater medan servicekontrollerna verkställer besluten.
+
+**Resultat och kontrakt:** Agenten bygger inte egen shelllogik för kritiska operationer och implementerar normalt inte tasks. Alla svar visar aktuell state, nästa tillåtna operation och konkret blockerare. Repetition av beslut är säker; systemet kräver inte att agenten själv minns senaste commit.
+
+**Acceptans**
+
+- [ ] **F-35.A1:** Agenten kan starta två oberoende tasks, hantera review/fix och fylla ledig slot via verktygen.
+- [ ] **F-35.A2:** Förslag att starta beroende task för tidigt eller använda stale approval avvisas deterministiskt.
+- [ ] **F-35.A3:** Attention/resume och taskstatus hanteras genom rätt services och utan direkt TeamPlayer-skrivning från Worker.
+
+**Verifiering:** Scenario med inspelade agentsvar plus verkligt prov av verktygsstyrt taskflöde.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-36 Verifiera epicen och lämna komplett reviewunderlag
+
+**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `e8e489aa-0235-436a-adc0-4c61703dab9e`.
+
+**Körbar:** Nej — invänta F-35 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§24–25, 43; W §§29–31. **Berör:** epic_complete, epicacceptans, testkörning, rapport.
+
+**Beroenden:** F-35. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera samlad epicverifiering när alla ingående tasks är Done. Kör betrodd build/test/acceptanskonfiguration och sammanställ taskresultat, reviews, merge-SHA, diff mot main och kända begränsningar. Persistéra EPIC_READY_FOR_REVIEW med aktuella commits.
+
+**Resultat och kontrakt:** Taskmedlemskap och acceptansversion ingår i underlaget; ny eller återöppnad task gör det inaktuellt. En tom tasklista eller saknade kriterier räknas inte som verifierad epic. Testfel lämnar epicen Active med konkret åtgärd, inte Done.
+
+**Acceptans**
+
+- [ ] **F-36.A1:** Alla verifierade tasks och godkänd epicacceptans ger komplett EPIC_READY_FOR_REVIEW.
+- [ ] **F-36.A2:** Ej-Done-task, saknat underlag eller misslyckad build/test stoppar överlämningen.
+- [ ] **F-36.A3:** Ändrad epiccommit eller tasklista kräver nytt underlag; operationen gör ingen main-merge.
+
+**Verifiering:** Serviceprov med varierat taskmedlemskap, testfel och commits samt diffkontroll i temporärt Git.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-37 Verifiera en epic styrd av Integration Agent
+
+**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `b8e3bd6d-2287-447a-9f48-bb7863101cd6`.
+
+**Körbar:** Nej — invänta F-36 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§43, 48; W §§7–10, 20–30. **Berör:** Verkligt integrationsscenario, driftinstruktion.
+
+**Beroenden:** F-36. **Externa förutsättningar:** X-01, X-02 och möjlighet att ge specificerad blockerarinput.
+
+**Arbetsinstruktion för Codex:** Kör en testepic med tre tasks, ett beroende, en korrigering och en Attention-period. Låt Integration Agent styra alla taskbeslut genom MCP och lämna en verifierad epicrapport. Samla run-, sessions-, review- och mergehistorik.
+
+**Resultat och kontrakt:** Underlaget ska visa en långlivad integrationssession, egna Worker-sessioner per task och samma session vid fix/resume. En människa lämnar extern input när Attention behöver den. Main-merge lämnas till Coordinator-epicen.
+
+**Acceptans**
+
+- [ ] **F-37.A1:** Agenten driver testepicen till EPIC_READY_FOR_REVIEW utan manuell scheduling eller taskmerge.
+- [ ] **F-37.A2:** Beroende, korrigering och Attention hanteras med rätt sessionsidentitet och workergräns.
+- [ ] **F-37.A3:** Rapporten kan verifieras mot Git, tester och TeamPlayer; main är oförändrad.
+
+**Verifiering:** Verkligt testrepository och testepic med före/efter-SHA och fullständig rapport.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-10 Slutgranska integrera och välj nästa epic med Coordinator
+
+**Fas:** 10. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `559a4c95-3282-4b4b-a30f-97f9d0dbbaea`.
+
+**Körbar:** Nej — E-09 Done på main; externa villkor anges per task. **Beroende:** E-09 Done på main.
+
+**Källa:** A §§4.1, 25–27, 31, 44, 47–48, 50; W §§5–6, 30–34, 37–40.
+
+### Resultat och omfattning
+
+En långlivad Coordinator kan välja nästa körbara epic, ta emot verifierad leverans, begära korrigering, integrera till main och fortsätta med nästa epic.
+
+**Ingår:** Epicval/claim, Coordinator-policy, slutreview, korrigeringsloop, main-merge och första kompletta autonoma flödet. **Utanför:** Samtidiga epics och automatisk lösning av main/epickonflikter.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Slutreview måste gälla aktuell main och alla taskleveranser. Runtimebehörigheterna från D-02/F-17 måste vara verifierade innan autonom merge aktiveras.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-38 | Välj och claima nästa epic med Coordinator | E-09 | P0 |
+| F-39 | Slutgranska epic och återför korrigeringskrav | F-38 | P1 |
+| F-40 | Integrera epic och fortsätt efter slutverifiering | F-39 | P0 |
+| F-41 | Verifiera första kompletta autonoma epicflödet | F-40 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-10.A1:** Coordinator väljer endast prioriterad körbar epic och startar högst en aktiv epic i MVP.
+- [ ] **E-10.A2:** Slutreview kan begära korrigering och därefter godkänna aktuell epic för main-merge.
+- [ ] **E-10.A3:** Epicen blir Done efter main-merge och slutverifiering; nästa beroende epic startar från nya main.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-38 Välj och claima nästa epic med Coordinator
+
+**Epic/fas/prioritet:** E-10 / 10 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `64b97b6e-2251-4964-9b67-f67d709de9bf`.
+
+**Körbar:** Nej — invänta E-09 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§4.1, 5–6, 29, 31, 44; W §§5–6, 34, 38. **Berör:** Coordinator-session, epic_claim_next, projektpolicy.
+
+**Beroenden:** E-09. **Externa förutsättningar:** X-01, X-02 och verifierad runtimepolicy enligt D-02.
+
+**Arbetsinstruktion för Codex:** Implementera långlivad Coordinator-prompt/session och epic_claim_next från TeamPlayer med prioritet, beroenden och stabil ordning. Reservera projektets enda aktiva epic atomiskt. Kontrollera D-02/F-17 och blockera autonom körning vid olösta nödvändiga runtimegränser.
+
+**Resultat och kontrakt:** Epicberoenden kräver verifierad main-merge. Taskerna under vald epic måste ha tillräckligt underlag för planering. Dubbelt claim återfinner befintlig run. Om inga körbara epics finns lämnas vänteläge med orsaker, inte ett artificiellt Done eller oändlig startloop.
+
+**Acceptans**
+
+- [ ] **F-38.A1:** Högst prioriterad körbar epic väljs och startar sin Integration Agent från aktuell main.
+- [ ] **F-38.A2:** Samtidiga claimförsök skapar högst en aktiv epic och samma Coordinatorägarskap.
+- [ ] **F-38.A3:** Ej uppfyllt beroende, olöst runtimegräns eller tom kandidatlista ger väntan/blockerare utan start.
+
+**Verifiering:** Serviceprov med olika epicgrafer och parallella claim; verkligt Coordinator-startprov.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-39 Slutgranska epic och återför korrigeringskrav
+
+**Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `0657116a-4cf9-483f-aa9f-57612d7cee39`.
+
+**Körbar:** Nej — invänta F-38 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§25–26, 31, 44; W §§30–32. **Berör:** Coordinator-review, epicreviewhistorik, korrigerande tasks.
+
+**Beroenden:** F-38. **Externa förutsättningar:** X-02: verifierad create/reopen-förmåga behövs för automatisk korrigering; annars används tydlig Attention.
+
+**Arbetsinstruktion för Codex:** Implementera strukturerad epicreview med krav, acceptans, taskresultat, diff mot main och tester. Spara EPIC_APPROVED eller EPIC_CHANGES_REQUESTED från Coordinator. Vid korrigering återför kontrollen till samma Integration Agent och länka nya eller återöppnade tasks till beslutet.
+
+**Resultat och kontrakt:** Epicreview binds till epic-SHA, main-SHA, taskmedlemskap och acceptansversion. Korrigeringsarbete har egna commits/reviews och spårbar runhistorik; tidigare leveransbevis skrivs inte över. Nya tasks skapas via verifierad TeamPlayer-förmåga eller extern åtgärd och får inte fabriceras som existerande.
+
+**Acceptans**
+
+- [ ] **F-39.A1:** Coordinator kan underkänna epic med konkreta kriterier och Integration Agent kan genomföra kopplad korrigering.
+- [ ] **F-39.A2:** Ny epicreview bedömer uppdaterad kod/tasklista och bevarar tidigare beslut.
+- [ ] **F-39.A3:** Integration/Worker kan inte godkänna epicen för main; ändrad main gör gamla approval obrukbara.
+
+**Verifiering:** Serviceprov och verkligt korrigeringsscenario med före/efter-review och tasklänkar.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-40 Integrera epic och fortsätt efter slutverifiering
+
+**Epic/fas/prioritet:** E-10 / 10 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `4073e26d-b095-47e3-99a6-7704f757f485`.
+
+**Körbar:** Nej — invänta F-39 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§25–27, 30, 44; W §§33–34, 40. **Berör:** Epicservice, Git Manager, TeamPlayer, Coordinatorloop.
+
+**Beroenden:** F-39. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Koppla aktuell Coordinator-approval till epicmerge. Kör slutverifiering på main, registrera merge/testunderlag och skriv Epic Done. Frigör epicreservation och välj nästa körbara epic först när verifieringen lyckats.
+
+**Resultat och kontrakt:** Git Manager verifierar alla mergevillkor från F-08 igen. Nätfel efter main-merge återförsöker bara synk. Fel efter merge visar faktiska commits och lämnar epicen ej Done; ingen automatisk reset eller fortsatt beroende epic. Coordinator utför inte Worker-implementation.
+
+**Acceptans**
+
+- [ ] **F-40.A1:** Godkänd epic får en main-merge och Epic Done först efter godkänd slutverifiering.
+- [ ] **F-40.A2:** Nästa epic använder nya main-SHA och tidigare Integration-runtime avslutas enligt policy.
+- [ ] **F-40.A3:** Ändrad main, sluttestfel eller upprepat mergeanrop ger inte dubbla merges eller för tidigt nästa epic.
+
+**Verifiering:** Temporärt Git med två epics och fel efter merge/test/synk samt verkligt begränsat Coordinatorprov.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-41 Verifiera första kompletta autonoma epicflödet
+
+**Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb`.
+
+**Körbar:** Nej — invänta F-40 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§44, 47–48; W §§5–34, 41–42. **Berör:** End-to-end-prov, MVP-acceptans.
+
+**Beroenden:** F-40. **Externa förutsättningar:** X-01, X-02 och godkända runtimegränser; separata små testepics.
+
+**Arbetsinstruktion för Codex:** Kör målscenariot med en epic, tre tasks och två Workers från TeamPlayer-val till main-merge. Inkludera taskkorrigering och en epicändringsbegäran; lägg en liten efterföljande epic för att verifiera fortsatt loop. Samla en sammanhängande tidslinje.
+
+**Resultat och kontrakt:** Endast en epic är aktiv åt gången och varje leverans går genom rätt roll. Autonomi omfattar scheduling/review/merge; extern input hanteras i Attention. Själva produktbackloggens tasks ersätts inte av testepicens ID:n.
+
+**Acceptans**
+
+- [ ] **F-41.A1:** Tre tasks granskas, integreras och slutgranskad epic mergeas till main utan manuell scheduling/merge.
+- [ ] **F-41.A2:** Task- och epickorrigering återgår till rätt agenter och kräver nya aktuella godkännanden.
+- [ ] **F-41.A3:** Nästa epic startar från uppdaterad main; workergräns, rollgränser och Donevillkor kan bevisas.
+
+**Verifiering:** Verkligt Herdr/Codex/Git/TeamPlayer-prov med oberoende kontroll av Git, tester, roller och tidslinje.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-11 Återhämta körningar efter avbrott och omstart
+
+**Fas:** 11. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `c1a21c17-3fcf-4f15-800d-c69f61d07df8`.
+
+**Körbar:** Nej — E-10 Done på main; externa villkor anges per task. **Beroende:** E-10 Done på main.
+
+**Källa:** A §§11–14, 28, 45; W §§17–18, 23–25, 35–40.
+
+### Resultat och omfattning
+
+Operatören kan starta om orchestratorn och återuppta verifierbart arbete utan dubbla sessioner, förlorade beslut eller felaktiga Done-statusar.
+
+**Ingår:** Startavstämning, återanslutning, in-flight-operationer, väntande synk och kontrollerade avbrottsprov. **Utanför:** Automatiskt skapande av ersättningsworktree eller gissad återskapning av förlorad kod/session.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** SQLite, Git, Herdr och Kanban kan beskriva olika lägen. F-42 ger en explicit avstämningsrapport innan F-43/F-44 återupptar sidoeffekter.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-42 | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-10 | P0 |
+| F-43 | Återuppta verifierade sessioner och parkerade tasks | F-42 | P0 |
+| F-44 | Återställ halvfärdiga starter merges och synkskrivningar | F-43 | P0 |
+| F-45 | Verifiera återhämtning genom avsiktliga avbrott | F-44 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-11.A1:** Omstart återfinner fungerande runs och återupptar rätt session/övervakning.
+- [ ] **E-11.A2:** Halvfärdig start, merge och synk slutförs eller eskaleras utan dubbel operation.
+- [ ] **E-11.A3:** Saknade/avvikande resurser ger konkret Attention och avbrottsprov bevarar arbete.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-42 Stäm av SQLite Git Herdr och TeamPlayer vid start
+
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `995ac9d9-31d6-4e87-ba5b-d8524fb2b298`.
+
+**Körbar:** Nej — invänta E-10 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§11–14, 28, 45; W §§35–40. **Berör:** Recoveryservice, runtimeinventering, statusrapport.
+
+**Beroenden:** E-10. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera en läsande reconciliation av alla oavslutade runs, reservationer och väntande operationer innan ny scheduling aktiveras. Jämför beständiga referenser med Git, Herdr/sessionstatus och TeamPlayer; klassificera verifierad, återupptagbar eller avvikande körning.
+
+**Resultat och kontrakt:** Avstämningen får inte härleda färdig kod från Kanban eller skapa ny session för att dölja avvikelse. Extern tjänst som är otillgänglig ger osäker status och pausad berörd automation. Rapporten anger observerade ID:n/commits, orsak och nästa tillåtna åtgärd.
+
+**Acceptans**
+
+- [ ] **F-42.A1:** En komplett matchande run identifieras med samma worktree, branch, session och state.
+- [ ] **F-42.A2:** Saknat worktree, annan HEAD eller Kanban Done utan mergeunderlag ger konkret avvikelse.
+- [ ] **F-42.A3:** Herdr/TeamPlayer-nätfel stoppar ny osäker scheduling men ändrar inte Git eller bevisar förlust av session.
+
+**Verifiering:** Fixturekombinationer av SQLite, Git, runtime och Kanban inklusive otillgängliga adaptrar.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-43 Återuppta verifierade sessioner och parkerade tasks
+
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `bb3488c7-5c64-48ac-b105-72036fda275e`.
+
+**Körbar:** Nej — invänta F-42 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 23, 28, 45; W §§17–18, 38. **Berör:** Recovery, Herdr/resume, reservationsåterställning.
+
+**Beroenden:** F-42. **Externa förutsättningar:** X-01 och X-02 för verkliga återanslutningsprov.
+
+**Arbetsinstruktion för Codex:** Återanslut verifierade Coordinator-, Integration- och Worker-sessioner och återställ övervakning. Bevara parkerade tasks och sparade svar; använd samma slotkontroll vid resume. Hantera saknad anslutning separat från förlorad sessionsdata.
+
+**Resultat och kontrakt:** Kan runtime återuppta beständig Codex-session används samma sessionidentitet. Annars krävs Attention med explicit åtgärd. Ingen ny Worker tilldelas förrän ägarskap/inaktivitet är fastställt. Parkerat arbete återupptas bara med nödvändig input och ledig slot.
+
+**Acceptans**
+
+- [ ] **F-43.A1:** Omstart under arbete återansluter samma sessioner utan fler agents/runs.
+- [ ] **F-43.A2:** PARKED och väntande svar finns kvar efter omstart och följer workergränsen vid resume.
+- [ ] **F-43.A3:** Ej återupptagbar session ger Attention och inget automatiskt ersättningsworktree.
+
+**Verifiering:** Recoveryintegration med verklig anslutningsförlust och kontrollerat borttagen sessionsreferens.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-44 Återställ halvfärdiga starter merges och synkskrivningar
+
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6c45d324-00ea-473e-822b-9d31947efc75`.
+
+**Körbar:** Nej — invänta F-43 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§28–30, 45; W §§23–26, 33, 40. **Berör:** Operationsjournal, Git, TeamPlayer, slotstate.
+
+**Beroenden:** F-43. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Implementera återställning för avbrott före/efter varje start-, merge-, test- och synksteg. Återfinn skapade resurser och merge-SHA, avgör vilket verifieringssteg som saknas och fortsätt endast den säkert återförsökbara delen. Kontrollera reservationer mot faktisk runtime.
+
+**Resultat och kontrakt:** Git-merge som redan är utförd upprepas inte. Testunderlag utan säkrad commitkoppling körs om. Okänt externt utfört steg avstäms eller eskaleras. Manuella Git/Kanbanändringar skrivs inte över utan verifiering; cleanup påverkar inte osäkrat arbete.
+
+**Acceptans**
+
+- [ ] **F-44.A1:** Avbrott efter skapad session men före lokal slutregistrering återfinner ägd session eller eskalerar utan dubbel start.
+- [ ] **F-44.A2:** Avbrott efter task/main-merge återfinner merge-SHA och återupptar verifiering/statussynk utan ny merge.
+- [ ] **F-44.A3:** Okänt kommentarutfall och avvikande worktree ger avstämning/Attention i stället för dubbla sidoeffekter.
+
+**Verifiering:** Felinjicering vid dokumenterade operationsgränser i temporärt Git/SQLite och adaptrar med okända svar.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-45 Verifiera återhämtning genom avsiktliga avbrott
+
+**Epic/fas/prioritet:** E-11 / 11 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `da58688a-6542-49f4-be40-8df908a08ee0`.
+
+**Körbar:** Nej — invänta F-44 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§28, 45; W §§17–18, 35–40. **Berör:** Avbrottsmatris, verkliga integrationer, runbook.
+
+**Beroenden:** F-44. **Externa förutsättningar:** X-03: isolerad drift/testmaskin där process- och maskinomstart får provas; X-01 och X-02.
+
+**Arbetsinstruktion för Codex:** Kör avbrottsprov för dödad orchestrator, tappad SSH, omstartad Herdr, terminerad Codex och omstartad målmaskin. Dokumentera återställning av arbete, parkering, reviews, merges och synk. Pi-omstart körs om Pi är vald driftmiljö; annars anges faktisk målmaskin.
+
+**Resultat och kontrakt:** Avbrott görs i ofarlig testmiljö. Varje scenario definierar startläge, avbrottspunkt, förväntad fortsättning eller Attention och bevis efter återstart. En simulerad processdöd räknas inte som verifierad maskinomstart.
+
+**Acceptans**
+
+- [ ] **F-45.A1:** Verklig tjänst/Herdr/session-omstart återupptar verifierbart arbete utan dubbla Workers eller merges.
+- [ ] **F-45.A2:** Borttagen resurs ger begriplig Attention och sparat arbete/logghistorik bevaras.
+- [ ] **F-45.A3:** Samtliga avbrottstyper har resultat och återställningssteg; målmaskinomstart verifieras i vald miljö.
+
+**Verifiering:** Verklig avbrottsmatris plus kontroll av runs, sessions-ID, commits och synkavsikter efter omstart.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Epic E-12 Härda orchestrering och gör drift spårbar
+
+**Fas:** 12. **Prioritet:** P0. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `be200a7c-4dad-47a1-a785-e25e84903124`.
+
+**Körbar:** Nej — E-11 Done på main; externa villkor anges per task. **Beroende:** E-11 Done på main.
+
+**Källa:** A §§8, 29–33, 46, 49–50; W §§3–4, 23–26, 33, 39–40.
+
+### Resultat och omfattning
+
+Operatören kan köra och felsöka orchestratorn med verifierade locks, tidsgränser, retries, mergevillkor, audit och återställningsinstruktioner.
+
+**Ingår:** Fördjupad samtidighetskontroll, deadlines, idempotens, Git/policykontroller, runtime/auditlogg och driftacceptans. **Utanför:** Nya produktfunktioner utanför MVP, fler repositories/epics eller dynamisk scaling.
+
+**Gemensamma regler:** tillämpa samtliga sex kontrakt ovan och de ingående taskernas förvillkor. **Risk och beslutspunkt:** Stale locks och okända externa resultat kan leda till dubbla ägare. Härdning ska bygga vidare på tidigare skydd utan att automatiskt frigöra resurser enbart efter tid.
+
+### Tasks och beroenden
+
+| Task | Leverans | Taskberoenden utöver epicens beroende | Prioritet |
+| --- | --- | --- | --- |
+| F-46 | Härda project epic och task locks över processgränser | E-11 | P0 |
+| F-47 | Inför deadlines begränsade retries och strukturerade fel | F-46 | P0 |
+| F-48 | Verifiera idempotens och Git skydd vid konkurrerande ändringar | F-47 | P0 |
+| F-49 | Gör runtime och auditlogg tillräckliga för felsökning | F-48 | P1 |
+| F-50 | Verifiera robust drift och dokumentera återställning | F-49 | P1 |
+
+### Epicacceptans
+
+- [ ] **E-12.A1:** Flera konkurrerande processer kan inte äga samma project/epic/task eller mergea stale underlag.
+- [ ] **E-12.A2:** Timeouts, retries och okända svar leder till spårbar recovery eller Attention utan dubbel sidoeffekt.
+- [ ] **E-12.A3:** Operatören kan följa hela beslutskedjan och återställa bevarat arbete enligt verifierad runbook.
+
+Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+### Task F-46 Härda project epic och task locks över processgränser
+
+**Epic/fas/prioritet:** E-12 / 12 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `831d353a-a683-452f-864d-823b5908cd85`.
+
+**Körbar:** Nej — invänta E-11 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§29–30, 46; W §§4, 8, 23, 40. **Berör:** Locks, SQLite, leases, claim/mergepolicy.
+
+**Beroenden:** E-11. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Härda befintliga claims och reservationer för flera orchestratorprocesser. Implementera dokumenterad lockordning, ägartoken och säker återtagning efter avstämning. Skydda epicintegration och mainintegration med rätt granularitet.
+
+**Resultat och kontrakt:** Project låser aktiv epic/Coordinator, epic låser integrationsägare/merge och task låser run/slot. Föråldrad ägare får inte fortsätta utföra skrivningar efter återtagning. Tidens gång ensam bevisar inte att en Worker eller Git-operation är inaktiv.
+
+**Acceptans**
+
+- [ ] **F-46.A1:** Två processer som claimer samma project/epic/task får en enda giltig ägare.
+- [ ] **F-46.A2:** Processkrasch kan återställas utan att aktiv ägd runtime startas dubbelt.
+- [ ] **F-46.A3:** Gammal ägartoken och omvänd lockordning avvisas eller hanteras utan deadlock.
+
+**Verifiering:** Flera subprocesser mot samma temporära SQLite/repository med krasch, långsam operation och stale owner.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-47 Inför deadlines begränsade retries och strukturerade fel
+
+**Epic/fas/prioritet:** E-12 / 12 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `cf9a3d67-b839-45a1-88ed-023369d7e3e5`.
+
+**Körbar:** Nej — invänta F-46 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§7, 30, 46; W §§16, 22, 40. **Berör:** Adaptrar, processhantering, felkontrakt.
+
+**Beroenden:** F-46. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Definiera tidsgränser för start, bekräftelse, tester, reviewtransport, Git och extern synk. Klassificera permanent fel, transient fel och okänt utfört resultat. Inför begränsade retries med fördröjning och observerbar eskalering.
+
+**Resultat och kontrakt:** Återförsök av muterande steg kräver verifierad idempotens eller avstämning. Timeout stoppar inte per automatik en extern session och frigör inte en slot. Testprocesser och adapterprocesser får tydlig hantering för avbrytning och kvarvarande barnprocesser.
+
+**Acceptans**
+
+- [ ] **F-47.A1:** Transienta läsfel återförsöks enligt budget medan permanenta policyfel inte loopar.
+- [ ] **F-47.A2:** Timeout efter möjlig sessionstart eller merge avstäms innan nytt muterande försök.
+- [ ] **F-47.A3:** Uttömd retrybudget ger strukturerat fel/Attention med operation, run och konkret nästa steg.
+
+**Verifiering:** Kontrollerad klocka/transport och subprocess som hänger, avslutas sent eller lämnar okänt utfall.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-48 Verifiera idempotens och Git skydd vid konkurrerande ändringar
+
+**Epic/fas/prioritet:** E-12 / 12 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `fc88a25c-6fdc-468d-a817-145b88ccec19`.
+
+**Körbar:** Nej — invänta F-47 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§8–9, 27, 29–30, 46, 50; W §§23–25, 33, 40. **Berör:** Git Manager, operationer, roll/path/commitpolicy.
+
+**Beroenden:** F-47. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Härda idempotensnycklar, branch/pathkontroller och commitvillkor i samtliga kritiska operationer. Prova ändrat HEAD mellan review och merge, främmande repository, osäkra paths, dubbla anrop och avbrott runt Git. Dokumentera gränser för externa manuella Gitändringar.
+
+**Resultat och kontrakt:** Endast tilldelad roll/run kan utföra operationen. Förväntad HEAD kontrolleras precis vid skyddad ändring; förändring leder till ny verifiering. Ingen automatisk destructive reset, epic-konfliktlösning eller radering av osäkrat arbete. Externa skrivare ska upptäckas och stoppa berörd automation.
+
+**Acceptans**
+
+- [ ] **F-48.A1:** Dubbla start/merge/resume/cleanup/synkanrop ger samma kända resultat utan dubbla sidoeffekter.
+- [ ] **F-48.A2:** HEAD-race, smutsigt worktree, symlink/path-avvikelse och fel merge-riktning stoppar osäker ändring.
+- [ ] **F-48.A3:** Worker och Integration kan inte få main-merge genom ändrade argument eller återanvänd ägartoken.
+
+**Verifiering:** Konkurrerande Git/subprocess-prov och negativa policyprov med faktisk operationsjournal.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-49 Gör runtime och auditlogg tillräckliga för felsökning
+
+**Epic/fas/prioritet:** E-12 / 12 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `a57a04a3-af85-4742-b93e-b4591906915a`.
+
+**Körbar:** Nej — invänta F-48 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§32–33, 46; W §§16, 19–20, 30–33, 39. **Berör:** Strukturerade loggar, audit, MCP-status, export.
+
+**Beroenden:** F-48. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
+
+**Arbetsinstruktion för Codex:** Utöka befintlig loggning med separat audit för val av epic, tasktilldelning, Attention, reviewbeslut, merge-SHA och epicgodkännande. Exponera status och väntande operationer för rätt roll; dokumentera retention och sanerad export för felsökning.
+
+**Resultat och kontrakt:** Audit innehåller project/epic/task/run, aktör, operation, tid, relevanta commits och resultat. Credentials och råa hemligheter från prompts ska inte loggas. Runtime-logg förklarar felsituationer; beständiga beslut skrivs tillsammans med motsvarande state där möjligt.
+
+**Acceptans**
+
+- [ ] **F-49.A1:** En provleverans kan följas från epicval till main-merge med alla review- och blockerarbeslut.
+- [ ] **F-49.A2:** Efter omstart finns audit och väntande synkskrivningar kvar med korrekta kopplingar.
+- [ ] **F-49.A3:** Sanerad export och runtime-status avslöjar inte testcredentials eller data från obehörigt projekt.
+
+**Verifiering:** Granska tidslinje från verkligt prov och kontrollera sekretess med planterade testhemligheter.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+### Task F-50 Verifiera robust drift och dokumentera återställning
+
+**Epic/fas/prioritet:** E-12 / 12 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `98fb1a30-c456-4e69-b45d-b0778dd84e66`.
+
+**Körbar:** Nej — invänta F-49 och epicens beroende samt nedanstående externa villkor.
+
+**Källa:** A §§28–33, 45–50; W §§25–26, 33, 38–40. **Berör:** Drift/runbook, backup/restore, slutacceptans.
+
+**Beroenden:** F-49. **Externa förutsättningar:** X-01, X-02 och X-03; vald driftmiljö och säker testbackup.
+
+**Arbetsinstruktion för Codex:** Dokumentera installation, uppgradering, kontrollerat stopp, statebackup, retention, recovery och Attention. Verifiera återställning av SQLite tillsammans med nödvändiga Git/worktree- och runtimekopplingar. Kör slutlig MVP- och hardeningmatris med alla tidigare grindar.
+
+**Resultat och kontrakt:** Backup tas konsistent vid pausad/kontrollerad state och beskriver SQLite/WAL om relevant, Git/worktrees och externa referenser. Credentials återställs separat. Förlorad extern session efter restore kan kräva Attention; backup får inte beskrivas som garanti att runtime alltid kan återupptas. Godkänd drift kräver E-11-avbrottsprov.
+
+**Acceptans**
+
+- [ ] **F-50.A1:** Operatören kan följa runbook för start/stopp och återställning till verifierbar state utan förlorat committat arbete.
+- [ ] **F-50.A2:** Slutprov med tre tasks, två Workers, Attention, korrigering, main-merge och omstart uppfyller tidigare acceptans.
+- [ ] **F-50.A3:** Konkurrerande processer, nätfel och stale review stoppar osäker automation; kända begränsningar och återstående åtgärder är dokumenterade.
+
+**Verifiering:** Praktiskt restoreprov och samlad riskbaserad acceptansmatris med versions- och miljöuppgifter.
+
+**Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+## Kravtäckning
+
+Tabellen kopplar tvärgående krav till leveranser. Samtliga faser 1–12 täcks av motsvarande epic.
+
+| Kravområde | Kravkälla | Leveranser |
+| --- | --- | --- |
+| Deterministisk orchestrator och lokalt MCP | A §§2, 4–5, 50; W §§4, 40 | F-01, F-04, F-15, F-35, F-38 |
+| EpicRun, TaskRun, Review och interna tillstånd | A §§11–16; W §§35–37 | F-02–F-03, F-16, F-20, F-39 |
+| Git, worktrees, synk och merge | A §§8–10, 27, 36; W §§3–4, 23–26, 33 | F-05–F-09, F-18, F-21, F-40, F-48 |
+| Herdr/Codex-livscykel och Worker-policy | A §§7, 19–20, 31, 37–38; W §§10–12, 19, 38 | F-10–F-17 |
+| Taskreview, feedback och Done | A §§20–22, 39; W §§20–25 | F-18–F-22 |
+| TeamPlayer-läsning, status och ansvar | A §§6, 16, 40; W §§5, 9, 13–18, 39 | F-23–F-26 |
+| Två Workers och beroenden | A §§17–18, 41; W §§8–10, 27–28 | F-27–F-30 |
+| Attention, parkering och samma-session-resume | A §§23, 42; W §§16–18, 22 | F-31–F-33 |
+| Långlivad Integration Agent och epicöverlämning | A §§4.2, 24, 43; W §§7, 29–30 | F-34–F-37 |
+| Coordinator, slutreview, korrigering och nästa epic | A §§4.1, 25–27, 44; W §§5–6, 30–34 | F-38–F-41 |
+| Recovery vid alla angivna avbrott | A §§28, 45; W §§17–18, 38–40 | F-42–F-45 |
+| Locks, idempotens, deadlines, retries och skydd | A §§29–30, 46; W §§23–25, 33, 40 | F-15, F-25, F-28, F-46–F-48 |
+| Runtime-/auditlogg och operatörsunderlag | A §§32–33, 46; W §§19–20, 30–33 | F-01, F-02, F-49–F-50 |
+| MVP och första kompletta scenario | A §§47–48; W §§41–42 | F-30, F-33, F-37, F-41, F-50 |
+
+## Nästa steg
+
+Starta E-01 genom bootstrap och genomför F-01. Fastställ konfiguration, paketstruktur och lagringsval, verifiera lokal start och registrera leveransunderlaget. Därefter följer F-02, F-03 och F-04. E-02 får börja efter verifierad E-01-merge till main.
+
+Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunderlag, statuskälla och denna Kanbanöversikt. En extern blockerare ska ha konkret inputbehov och nästa ansvariga roll. Inga kriterier bockas av enbart för att dokumentet eller kodändringen finns.
+
+## Kanbanöversikt
+
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. Taskstatus Pending motsvarar Planned. Epicstatus är ännu planerad enligt leveransunderlaget. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+
+| Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Planned | Ja | 0/3 | Inget | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Planned | Ja | 0/3 | Inget | Implementera och verifiera lokal start via bootstrap. |
+| 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Planned | Nej | 0/3 | F-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Planned | Nej | 0/3 | F-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Planned | Nej | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Planned | Nej | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Planned | Nej | 0/3 | E-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Planned | Nej | 0/3 | E-01, F-05 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Planned | Nej | 0/3 | E-01, F-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Planned | Nej | 0/3 | E-01, F-07 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Nej | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Nej | 0/3 | E-02, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Nej | 0/3 | E-02, F-10, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Planned | Nej | 0/3 | E-02, F-11, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Planned | Nej | 0/3 | E-02, F-12, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Planned | Nej | 0/3 | E-03 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Planned | Nej | 0/3 | E-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Planned | Nej | 0/3 | E-03, F-14 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Planned | Nej | 0/3 | E-03, F-15 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Planned | Nej | 0/3 | E-03, F-16, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Planned | Nej | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Planned | Nej | 0/3 | E-04 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Planned | Nej | 0/3 | E-04, F-18, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Planned | Nej | 0/3 | E-04, F-19 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Planned | Nej | 0/3 | E-04, F-20 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 27 | F-22 | Task/feature | Verifiera review och fix till integrerad task | E-05 | 5 | 875b4e3d-e3de-40ae-bb76-6aee5e8705c2 | P1 | Planned | Nej | 0/3 | E-04, F-21, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Planned | Nej | 0/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Planned | Nej | 0/3 | E-05, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Planned | Nej | 0/3 | E-05, F-23, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Planned | Nej | 0/3 | E-05, F-24, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Nej | 0/3 | E-05, F-25, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Nej | 0/3 | E-06 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Nej | 0/3 | E-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Nej | 0/3 | E-06, F-27 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Nej | 0/3 | E-07, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Planned | Nej | 0/3 | E-07, F-32, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Planned | Nej | 0/3 | E-08, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Planned | Nej | 0/3 | E-08, F-34, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Planned | Nej | 0/3 | E-08, F-35 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Planned | Nej | 0/3 | E-08, F-36, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Planned | Nej | 0/3 | E-09, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Planned | Nej | 0/3 | E-09, F-38, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Planned | Nej | 0/3 | E-09, F-39 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Planned | Nej | 0/3 | E-09, F-40, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Nej | 0/3 | E-10 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Nej | 0/3 | E-10 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Planned | Nej | 0/3 | E-10, F-42, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Planned | Nej | 0/3 | E-10, F-43 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 57 | E-12 | Epic | Härda orchestrering och gör drift spårbar | — | 12 | be200a7c-4dad-47a1-a785-e25e84903124 | P0 | Planned | Nej | 0/3 | E-11 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 58 | F-46 | Task/feature | Härda project epic och task locks över processgränser | E-12 | 12 | 831d353a-a683-452f-864d-823b5908cd85 | P0 | Planned | Nej | 0/3 | E-11 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 59 | F-47 | Task/feature | Inför deadlines begränsade retries och strukturerade fel | E-12 | 12 | cf9a3d67-b839-45a1-88ed-023369d7e3e5 | P0 | Planned | Nej | 0/3 | E-11, F-46 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 60 | F-48 | Task/feature | Verifiera idempotens och Git skydd vid konkurrerande ändringar | E-12 | 12 | fc88a25c-6fdc-468d-a817-145b88ccec19 | P0 | Planned | Nej | 0/3 | E-11, F-47 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 61 | F-49 | Task/feature | Gör runtime och auditlogg tillräckliga för felsökning | E-12 | 12 | a57a04a3-af85-4742-b93e-b4591906915a | P1 | Planned | Nej | 0/3 | E-11, F-48 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 62 | F-50 | Task/feature | Verifiera robust drift och dokumentera återställning | E-12 | 12 | 98fb1a30-c456-4e69-b45d-b0778dd84e66 | P1 | Planned | Nej | 0/3 | E-11, F-49, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
