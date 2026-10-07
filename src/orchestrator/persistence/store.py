@@ -288,6 +288,37 @@ class StateStore:
                 ),
             )
 
+    def update_operation(self, record: Operation) -> None:
+        """Update an existing operation without changing its owning intent identity."""
+        with self.transaction() as db:
+            prior = self.get_operation(record.project_id, record.kind, record.idempotency_key)
+            mutable = {"status", "result", "error_code", "updated_at"}
+            if prior is None or prior.model_dump(exclude=mutable) != record.model_dump(
+                exclude=mutable
+            ):
+                raise StoreError("operation identity changed")
+            db.execute("UPDATE operations SET payload=? WHERE id=?", (
+                record.model_dump_json(), record.id,
+            ))
+
+    def update_run_metadata(self, record: EpicRun | TaskRun) -> None:
+        """Only commit metadata may change here; state changes use transition_events."""
+        with self.transaction() as db:
+            is_epic = isinstance(record, EpicRun)
+            prior = self.get_epic(record.id) if is_epic else self.get_task(record.id)
+            mutable = {
+                "current_commit", "approved_source_commit", "approved_target_commit",
+                "merge_commit",
+            }
+            if prior is None or prior.model_dump(exclude=mutable) != record.model_dump(
+                exclude=mutable
+            ):
+                raise StoreError("run identity or state changed during metadata update")
+            table = "epic_runs" if is_epic else "task_runs"
+            db.execute(f"UPDATE {table} SET payload=? WHERE id=?", (
+                record.model_dump_json(), record.id,
+            ))
+
     def get_tasks(self, epic_run_id: str) -> list[TaskRun]:
         return [
             TaskRun.model_validate_json(row[0])

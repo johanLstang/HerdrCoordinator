@@ -386,7 +386,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-07 Synkronisera task mot epic och integrera granskad task
 
-**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `4bc70580-208a-4c06-a18a-2adce002a5f7`.
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `4bc70580-208a-4c06-a18a-2adce002a5f7`.
+
+**Arbetsstart F-07 (2026-10-08):** TeamPlayer InProgress återläst, konto och beroenden verifierade. Worker använder `task/e02-f07` i `.worktrees/task-e02-f07` från epicbas `9a1118864c0db9b0ef9d376af5b59d09dbb75099`. Det äldre bootstrap-epicworktreet adopteras inte till produktens ägarskapsregister; GitAdapter används med verifierad branch/path/bas.
 
 **Körbar:** Ja — F-06 är Done och granskad/integrerad i E-02; E-01 är verifierad på main. Externa villkor är inga utöver projektets grundförutsättningar.
 
@@ -395,6 +397,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** F-06. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
 
 **Arbetsinstruktion för Codex:** Implementera sync_task_with_epic och merge_task_to_epic. Separera synkronisering till task från leveransmerge, kontrollera roll och commits och använd --no-ff vid leverans. Registrera operationens resultat även om efterföljande statusuppdatering misslyckas.
+
+**Konkreta kontrakt F-07 / D-05:** Sync går Epic → Task och ogiltigförklarar äldre approval när underlaget ändras; leverans går Task → Epic med --no-ff. Beständig Operation sparas före Git och commit binds till operationens ID och exakta parents för återläsning efter avbrott. Minimal repo-låsning och SQLite skyddar orchestratorns kritiska sektion; samtidiga manuella Git-ändringar ger avstämningsfel. Tester körs som operatörskonfigurerat argv under betrodd Integration; faktisk exitkod och source/target-SHA sparas, utan rå output. Manuell registrerad review kan bara godkänna detta färska test-/Git-underlag. Merge litar inte på en agents tests_passed-flagga och sätter inte Done; fas 5/10 bygger vidare på dessa primitiver.
 
 **Resultat och kontrakt:** Integration-rollen begär operationen; Worker mergear inte. Slutmerge kräver rent arbetsläge, godkännande och tester för exakt task-SHA och aktuell epic-SHA. Konflikt ger spårbar blockerare i task-worktree. Git-merge ensam sätter inte task till Done.
 
@@ -405,6 +409,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 - [ ] **F-07.A3:** Fel roll, smutsigt arbetsläge eller konflikt blockerar leveransmerge och lämnar tasken ej Done.
 
 **Verifiering:** Temporärt repository med två parallella tasks, konflikt, stale approval och avbrott efter Git-merge.
+
+**Worker-leverans F-07 (2026-10-08):** GitIntegrationService levererar synk, verklig argv-testkörning, registrerad manuell review och skyddad leveransmerge. Repo-flock/SQLite, PENDING-intent, exakta commits, operationstagg/parents och idempotenta återläsningar ger recovery utan dubbel merge. Konflikter och dolda arbetsändringar bevaras/blockerar leverans; test-/reviewreportflagga kan inte ersätta verkligt underlag. Ingen Task Done eller automatisk reviewagent införs. `uv run --locked pytest`: 141 passerade, exit 0 (22 nya Gitintegrationsprov). Ruff, diffkontroll och wheel/sdist-build passerar. Git, SQLite och subprocess-testkommandon är verkliga; runtime-handoff är testfixtures och ingen verklig Codex-runtime påstås här. Acceptansen inväntar Integration-review, no-ff-merge och verifiering på epicen.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -1812,7 +1818,7 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 | 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 1/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Done | — | 3/3 | E-01 | Granskad och integrerad via 5efca19; 88 integrationstester passerar. Fortsätt F-06. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Done | — | 3/3 | E-01, F-05 | Granskad och integrerad via aa373bd; 119 integrationstester passerar. Fortsätt F-07. |
-| 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Planned | Ja | 0/3 | E-01, F-06 | Nästa körbara task: plocka med färsk version, skapa eget task-worktree och följ instruktionen. |
+| 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Active | Ja | 0/3 | E-01, F-06 | Implementera i task/e02-f07; granska och integrera före Done. |
 | 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Planned | Nej | 0/3 | E-01, F-07 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Nej | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

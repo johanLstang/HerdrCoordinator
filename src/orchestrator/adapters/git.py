@@ -229,3 +229,52 @@ class GitAdapter:
             str(self.repository), str(self.common_dir), str(path), branch, base, current,
             contains, files, before, unsafe, committed, staged, unstaged, stable,
         )
+
+    def in_progress(self, path: Path) -> bool:
+        names = ("MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD", "rebase-merge", "rebase-apply")
+        for name in names:
+            location = self.run(
+                "rev-parse", "--path-format=absolute", "--git-path", name, cwd=path,
+            ).strip()
+            if Path(location).exists():
+                return True
+        return False
+
+    def parents(self, commit: str) -> tuple[str, ...]:
+        self.require_commit(commit)
+        return tuple(self.run("rev-list", "--parents", "-n", "1", commit).strip().split()[1:])
+
+    def find_operation_merge(
+        self, branch: str, operation_id: str, target: str, source: str,
+    ) -> str | None:
+        if self.head(branch) is None:
+            raise GitError("delivery branch is missing")
+        marker = f"herdr-operation:{operation_id}"
+        matches = self.run(
+            "log", "--first-parent", "--fixed-strings", f"--grep={marker}",
+            "--format=%H", f"refs/heads/{branch}", "--",
+        ).splitlines()
+        valid = []
+        for candidate in matches:
+            message = self.run("show", "-s", "--format=%B", candidate).strip()
+            if marker in message.splitlines() and self.parents(candidate) == (target, source):
+                valid.append(candidate)
+        if len(valid) > 1:
+            raise GitError("multiple merge results require reconciliation")
+        return valid[0] if valid else None
+
+    def merge_commit(self, path: Path, source: str, operation_id: str) -> None:
+        self.require_commit(source)
+        # A configured external merge/filter program must not execute repository-controlled code.
+        drivers = self.run(
+            "config", "--name-only", "--get-regexp",
+            r"^(merge\..*\.driver|filter\..*\.(process|clean|smudge))$", missing=True,
+        )
+        if drivers:
+            raise GitError("external merge or filter drivers require an explicit operator decision")
+        self.run(
+            "-c", "commit.gpgSign=false", "-c", "merge.autoStash=false",
+            "-c", "merge.renormalize=false", "-c", "rerere.enabled=false",
+            "merge", "--no-ff", "--no-edit", "-m", f"herdr-operation:{operation_id}",
+            source, cwd=path,
+        )
