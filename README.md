@@ -83,6 +83,34 @@ Policykontrollen känner även till `task_report_ready`, `task_report_blocked`, 
 
 **D-02:s tillitsgräns:** operatören/MCP-värden måste kontrollera startkommando, profil och databas. Worker får inte kunna skriva dessa eller starta en privilegierad anslutning. Filrättigheter isolerar inte agenter som delar samma OS-användare. Verkliga runtime-/sandboxgränser verifieras i F-10/F-17 innan autonom drift i F-38; denna leverans verifierar anslutningens behörighet och lokal MCP-transport.
 
+## Git-worktree-skapande (F-05)
+
+`WorktreeService` använder en intern, betrodd `Actor` från registrerad startkontext. Coordinator kan skapa epics inom sitt projekt; Integration kan skapa tasks i sin registrerade epic. Worker saknar denna behörighet. Servicen är ännu inte ett offentligt muterande MCP-verktyg.
+
+```python
+with StateStore(settings.sqlite_path) as store:
+    service = WorktreeService(settings, store)
+    epic = service.create_epic_worktree(
+        coordinator_principal, epic_id="E-02", run_id="epic-run-id"
+    )
+    task = service.create_task_worktree(
+        integration_principal,
+        epic_run_id=epic.id,
+        task_id="F-05",
+        run_id="task-run-id",
+    )
+```
+
+`coordinator_principal` och `integration_principal` är operatörsregistrerade profiler; den senare är bunden till `epic.id`. Repository i settings ska vara main-worktreets rot. Ny epic kräver ren main och skapas från dess aktuella HEAD; ny task kräver sin verifierade, rena epic och skapas från dess aktuella HEAD. Nya tasks tillåts i PLANNED, ACTIVE och CHANGES_REQUESTED, och stoppas när epicen går vidare till slutreview eller integration. Befintliga framgångsrika resurser återläses utan att ändra deras innehåll, även efter Worker-commits eller ocommittat arbete.
+
+Lokala ID:n `E-02`/`F-05` ger branches `feature/epic-e02` och `task/e02-f05`. UUID:n bevarar bindestreck. IDs i path/branch får innehålla bokstäver, siffror och bindestreck, högst 80 tecken; de normaliseras till gemener för Git-namn, men den exakta identiteten sparas i SQLite. Namnkollision innebär fel. Paths är `<worktree_root>/<project-id>/epic-<epic>` respektive `task-<epic>-<task>`. Ett explicit pathargument måste matcha samma normaliserade path; traversal och symlänkar utanför roten avvisas.
+
+Skapande lagrar run och `Operation(PENDING)` med repository/common-dir, branch, path och exakt bas-SHA **före** Git-mutation. Operationens UUID registreras som lokal branchägarmarkör `branch.<branch>.herdrOwner` före `git worktree add`. Därefter verifieras worktree, branch, ägare och HEAD; current_commit och `Operation(SUCCEEDED)` sparas atomiskt. Schema 2 används utan migration. SQLite-transaktioner serialiserar skapande även mellan separata serviceanslutningar.
+
+Vid avbrott bevaras intent, ägarmarkör och kända Git-resurser. Samma run-ID återanvänder en verifierad branch/worktree, även efter processomstart. Befintlig branch utan rätt ägarmarkör adopteras inte. Om en färdig resurs saknas, en ofärdig branch har ändrats eller källbasen ändrats innan resursen skapats stoppas återförsöket för avstämning. Servicen raderar, återställer eller force-checkar inte något arbete. Initial base_commit bevaras; färsk Git-status levereras av F-06.
+
+Git-anrop använder separata argv-argument, sanerad Git-miljö och timeout. Checkout-hooks och fsmonitor är avstängda; fel visar inte Git-output eller råa paths. `WorktreeError` avser policy/ägarskap/path/recovery, `GitError` Git-förvillkor eller transport/processfel och `StoreError` persistens. Dessa interna fel ska hanteras av kommande orchestratorflöden. Branchägarmarkören och SQLite måste ligga utanför Workers skrivbehörighet enligt D-02; detta prov ersätter inte kommande runtime-sandboxverifiering.
+
 ## Verifiering och paketering
 
 ```bash
