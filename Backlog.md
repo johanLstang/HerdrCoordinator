@@ -382,7 +382,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
-**Slutleverans F-06 (2026-10-07):** Bootstrap Integration-review godkänd för task `9765303e3faa42dfdbd2866328d09a4ba880d8ed` mot epic `5cc0969c23be8a2c16300b33d76112d815bbcf06`. Komplett slutdiff: 43625 bytes, SHA-256 `9678af05e7d3824a2e2fbc8619d8adcb9c031babc95f8b0dacb2cd6344e817e7`. Task → Epic --no-ff-merge `aa373bd7e9f4c8bec71d7a9482382432a5c4a5ce`; 119 pytesttester, Ruff, diffkontroll och wheel/sdist-build passerar på faktisk merge, exit 0. F-06.A1–A3 uppfyllda, TeamPlayer Done version 5 återläst. E-02 förblir Active med 1/3 egen acceptans; F-07 är nästa körbara task. Se [review och verifiering](docs/reviews/F-06.md).
+**Slutleverans F-06 (2026-10-08):** Bootstrap Integration-review godkänd för task `9765303e3faa42dfdbd2866328d09a4ba880d8ed` mot epic `5cc0969c23be8a2c16300b33d76112d815bbcf06`. Komplett slutdiff: 43625 bytes, SHA-256 `9678af05e7d3824a2e2fbc8619d8adcb9c031babc95f8b0dacb2cd6344e817e7`. Task → Epic --no-ff-merge `aa373bd7e9f4c8bec71d7a9482382432a5c4a5ce`; 119 pytesttester, Ruff, diffkontroll och wheel/sdist-build passerar på faktisk merge, exit 0. F-06.A1–A3 uppfyllda, TeamPlayer Done version 5 återläst. E-02 förblir Active med 1/3 egen acceptans; F-07 är nästa körbara task. Se [review och verifiering](docs/reviews/F-06.md).
 
 ### Task F-07 Synkronisera task mot epic och integrera granskad task
 
@@ -1800,7 +1800,7 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-07 efter E-01-main-merge och F-05/F-06-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05/F-06-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01 Done, E-02 InProgress/Active och E-03–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
