@@ -20,11 +20,23 @@ Credentials ligger i miljövariabler vars **namn** kan anges i `credential_env`.
 
 ## Runtime-lagring (F-02)
 
-`StateStore` lagrar EpicRun, TaskRun, Review, Operation och ExternalReference. SQLite-schema 1 använder `PRAGMA user_version`, foreign keys och explicita transaktioner; flera skrivningar kan grupperas med `store.transaction()`. Nästlade operationer använder savepoints. En misslyckad enhet återställs utan partiella rader.
+`StateStore` lagrar EpicRun, TaskRun, Review, Operation, ExternalReference och TransitionEvent. SQLite-schema 2 använder `PRAGMA user_version`, foreign keys och explicita transaktioner; flera skrivningar kan grupperas med `store.transaction()`. Nästlade operationer använder savepoints. En misslyckad enhet återställs utan partiella rader. F-03 migrerar schema 1 till 2 genom att lägga till transition_events i samma transaktion, utan att skriva om befintliga runs.
 
 Modellfälten lagras som validerad JSON tillsammans med relations- och indexkolumner. Tider är tidszonsmedvetna och normaliseras till UTC. Ett projekt/task-ID får bara ha en ofullbordad ägande run (`completed_at IS NULL`). Historiska avslutade runs kan bevaras. Taskens projekt måste matcha dess epic. Reviewnummer är unika per taskrun. Operationsnycklar är unika per projekt/operationstyp, och externa ID:n får inte bindas till två ägare inom samma projekt/provider/typ. Okända session-, workspace-, agent-, slot- och commitreferenser är null tills ett verkligt delresultat finns.
 
-Schema initieras bara i en tom, oversionerad databas; upprepad start bevarar data. Okänd schemaversion eller ofullständigt schema stoppar start. Ta inte bort databasen för att kringgå detta fel. Senare features levererar migrations- och recoveryflöden samt statusövergångar. F-02 startar inga agenter och återspelar inga externa operationer.
+Schema initieras bara i en tom, oversionerad databas; upprepad start bevarar data. Okänd schemaversion eller ofullständigt schema stoppar start. Ta inte bort databasen för att kringgå detta fel. Senare features levererar fullständiga recoveryflöden. Grundplattformen startar inga agenter och återspelar inga externa operationer.
+
+## Tillstånd och verifieringsgrindar (F-03)
+
+Taskflödet är `PLANNED → CLAIMED → STARTING → WORKING → READY_FOR_REVIEW → REVIEWING → APPROVED → MERGING → DONE`. Review kan ge `CHANGES_REQUESTED → WORKING`. Attention bevarar fasen genom `BLOCKED → PARKED`, och återupptar den sparade fasen med samma session och reserverad kapacitet.
+
+Epicflödet är `PLANNED → ACTIVE → READY_FOR_REVIEW → REVIEWING → APPROVED → MERGING → DONE`. `CHANGES_REQUESTED → ACTIVE` öppnar korrigeringsarbete. Integration lämnar samlad epicacceptans; Coordinator hanterar slutreview och main-merge.
+
+`StateService` kontrollerar aktörens projekt/epic/task och roll, aktuell förväntad state samt övergångens förvillkor. Claim kräver verifierade beroenden; start/resume kräver reserverad slot och bekräftad session; parkering kräver inaktivitet. Taskapproval binds till senaste sparade review och aktuella task/epic-SHA. Done kräver faktisk merge-SHA och passerad verifiering av just den commiten. Epicens finalreview binds till epic/main-SHA. Delvis genomförd merge sparas i MERGING; misslyckade tester tillåter varken Done eller upprepad merge.
+
+State och event skrivs atomiskt. Event-ID är unikt per projekt. Identisk replay returnerar det historiska resultatet utan att ändra aktuell state; samma ID med annan aktör eller annat innehåll avvisas. Läs aktuell runtime separat efter replay. Förlorat nätresultat betyder inte att transitionen behöver utföras igen.
+
+`Actor` och `VerifiedFacts` är interna servicekontrakt. De får inte konstrueras från agentens rollsträng eller egna påståenden om merge, test, slot eller stopp. F-03 verifierar state-reglerna med deterministiska fixtures; verkliga Git/runtime-fakta fastställs av adaptrarna i senare epics. Muterande agentverktyg registreras först när dessa kontroller finns. StateStore är intern persistens, inte ett offentligt sätt att kringgå state-servicen.
 
 ## Verifiering och paketering
 
