@@ -134,6 +134,42 @@ def test_staged_rename_preserves_both_paths_and_is_not_committed_diff(setup):
     assert not evidence.source.commit_diff.patch and evidence.source.staged_diff.patch
 
 
+@pytest.mark.parametrize("flag", ["--assume-unchanged", "--skip-worktree"])
+def test_index_flags_cannot_hide_dirty_files_as_reviewable(setup, flag):
+    service, _, i, _, task = setup
+    path = Path(task.worktree_path)
+    git(path, "update-index", flag, "file.txt")
+    (path / "file.txt").write_text("hidden dirty change\n")
+    assert git(path, "status", "--porcelain") == ""
+    evidence = service.task_review(i, task.id)
+    assert evidence.source.unsafe_index_paths == ("file.txt",)
+    assert not evidence.reviewable
+
+
+def test_target_hidden_index_flags_block_review(setup):
+    service, _, i, epic, task = setup
+    path = Path(epic.worktree_path)
+    git(path, "update-index", "--assume-unchanged", "file.txt")
+    (path / "file.txt").write_text("hidden target change\n")
+    evidence = service.task_review(i, task.id)
+    assert evidence.source.reviewable and not evidence.target_changes
+    assert evidence.target_unsafe_index_paths == ("file.txt",)
+    assert not evidence.reviewable
+
+
+def test_git_config_cannot_hide_committed_submodule_changes(setup):
+    service, _, _, _, task = setup
+    path = Path(task.worktree_path)
+    git(path, "update-index", "--add", "--cacheinfo", f"160000,{task.base_commit},module")
+    git(path, "commit", "--quiet", "-m", "gitlink")
+    current = git(path, "rev-parse", "HEAD")
+    git(path, "config", "diff.ignoreSubmodules", "all")
+    files = service.git.changed_files(task.base_commit, current)
+    assert any(f.path == "module" and f.status == "A" for f in files)
+    snapshot = service.git.snapshot(path, task.branch, task.base_commit)
+    assert b"Subproject commit" in snapshot.commit_diff.patch
+
+
 def test_large_diff_explicitly_blocks_review_and_can_be_retrieved_whole(setup):
     service, _, i, _, task = setup
     path = Path(task.worktree_path)

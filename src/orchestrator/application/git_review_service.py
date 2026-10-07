@@ -26,11 +26,15 @@ class ReviewEvidence:
     target_worktree_path: str
     target_commit: str
     target_changes: tuple[WorktreeChange, ...]
+    target_unsafe_index_paths: tuple[str, ...]
     target_stable: bool
 
     @property
     def reviewable(self) -> bool:
-        return self.source.reviewable and self.target_stable and not self.target_changes
+        return (
+            self.source.reviewable and self.target_stable and not self.target_changes
+            and not self.target_unsafe_index_paths
+        )
 
 
 class GitReviewService:
@@ -97,6 +101,7 @@ class GitReviewService:
         target_path, target_branch, target, expected_commit, limit,
     ):
         changes = self.git.working_changes(target_path)
+        unsafe = self.git.unsafe_index_paths(target_path)
         source = self.git.snapshot(
             source_path, source_branch, target, expected_commit=expected_commit,
             max_diff_bytes=limit,
@@ -104,8 +109,9 @@ class GitReviewService:
         stable = (
             self.git.inspect(target_path, target_branch, clean=False) == target
             and self.git.working_changes(target_path) == changes
+            and self.git.unsafe_index_paths(target_path) == unsafe
         )
         return ReviewEvidence(
             project_id, epic_run_id, task_run_id, source, target_branch, str(target_path),
-            target, changes, stable,
+            target, changes, unsafe, stable,
         )

@@ -151,7 +151,7 @@ class GitAdapter:
     def changed_files(self, base: str, current: str) -> tuple[ChangedFile, ...]:
         self.require_commit(base)
         self.require_commit(current)
-        options = ("--no-ext-diff", "--no-textconv", "--no-renames")
+        options = ("--no-ext-diff", "--no-textconv", "--no-renames", "--ignore-submodules=none")
         names = self.run("diff", *options, "--name-status", "-z", base, current, "--")
         fields = iter(names.split("\0")[:-1])
         statuses = {path: status for status, path in zip(fields, fields, strict=True)}
@@ -167,12 +167,20 @@ class GitAdapter:
             ))
         return tuple(files)
 
+    def unsafe_index_paths(self, path: Path) -> tuple[str, ...]:
+        # assume-unchanged and skip-worktree can make dirty files invisible to status/diff.
+        entries = self.run("ls-files", "-v", "-z", cwd=path).split("\0")
+        return tuple(entry[2:] for entry in entries if entry and (
+            entry[0].islower() or entry[0] == "S"
+        ))
+
     def _diff(self, path: Path, revisions: tuple[str, ...], max_bytes: int) -> GitDiff:
         if type(max_bytes) is not int or not 1 <= max_bytes <= self.MAX_DIFF_BYTES:
             raise GitError("diff byte limit must be a positive integer up to 64 MiB")
         command = self._command(
             "-c", "color.ui=false", "diff", "--no-ext-diff", "--no-textconv",
             "--no-renames", "--binary", "--full-index", "--submodule=short",
+            "--ignore-submodules=none",
             "--no-color", "--src-prefix=a/", "--dst-prefix=b/", *revisions, "--",
         )
         # Spool to a private temporary file: a large diff never floods process memory.
@@ -203,6 +211,7 @@ class GitAdapter:
         if expected_commit is not None and self.require_commit(expected_commit) != current:
             raise GitError("worktree HEAD differs from the expected review commit")
         before = self.working_changes(path)
+        unsafe = self.unsafe_index_paths(path)
         files = self.changed_files(base, current)
         committed = self._diff(path, (base, current), max_diff_bytes)
         staged = self._diff(path, ("--cached", current), max_diff_bytes)
@@ -212,10 +221,11 @@ class GitAdapter:
         stable = (
             self.inspect(path, branch, clean=False) == current
             and self.working_changes(path) == before
+            and self.unsafe_index_paths(path) == unsafe
             and self._diff(path, ("--cached", current), max_diff_bytes).sha256 == staged.sha256
             and self._diff(path, (), max_diff_bytes).sha256 == unstaged.sha256
         )
         return GitSnapshot(
             str(self.repository), str(self.common_dir), str(path), branch, base, current,
-            contains, files, before, committed, staged, unstaged, stable,
+            contains, files, before, unsafe, committed, staged, unstaged, stable,
         )

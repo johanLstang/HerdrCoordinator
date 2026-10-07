@@ -44,6 +44,7 @@ class GitSnapshot:
     contains_base: bool
     changed_files: tuple[ChangedFile, ...]
     changes: tuple[WorktreeChange, ...]
+    unsafe_index_paths: tuple[str, ...]
     commit_diff: GitDiff
     staged_diff: GitDiff
     unstaged_diff: GitDiff
@@ -59,6 +60,7 @@ class GitSnapshot:
             self.stable
             and self.contains_base
             and not self.dirty
+            and not self.unsafe_index_paths
             and self.commit_diff.complete
             and self.staged_diff.complete
             and self.unstaged_diff.complete
