@@ -107,6 +107,15 @@ class WorktreeService:
             else self.store.get_task(record.id)
         )
 
+    def verify_owned_worktree(self, record: EpicRun | TaskRun) -> str:
+        """Verify persisted creation ownership before returning the current Git HEAD."""
+        kind = "create_epic_worktree" if isinstance(record, EpicRun) else "create_task_worktree"
+        operation = self.store.get_operation(record.project_id, kind, record.id)
+        if operation is None or operation.status != "SUCCEEDED":
+            raise WorktreeError("worktree creation is not complete")
+        self._verify(record, operation, complete=True)
+        return self.git.inspect(Path(record.worktree_path), record.branch, clean=False)
+
     def _same(self, actual: EpicRun | TaskRun, requested: EpicRun | TaskRun) -> bool:
         fields = {
             "id",
