@@ -117,6 +117,15 @@ class GitAdapter:
         else:
             self.run("worktree", "add", "-b", branch, str(path), base)
 
+    def ignored_paths(self, path: Path) -> tuple[str, ...]:
+        return tuple(p for p in self.run(
+            "ls-files", "--others", "--ignored", "--exclude-standard", "-z", cwd=path
+        ).split("\0") if p)
+
+    def remove_worktree(self, path: Path) -> None:
+        # No force, recursive filesystem deletion, reset, or global prune.
+        self.run("worktree", "remove", str(path))
+
     def require_commit(self, commit: str) -> str:
         # Do not accept revision expressions, abbreviations or caller-controlled options.
         if not re.fullmatch(r"[0-9a-f]{40}", commit):

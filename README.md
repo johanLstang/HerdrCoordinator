@@ -187,3 +187,32 @@ endast tester och upprepar ingen merge. Epicen lämnas `MERGING` även vid godk�
 slutverifiering: completion/TeamPlayer-tjänsten måste senare kontrollera bevisen
 innan Done. Automatisk Coordinator-review och nästa-epic-loop införs i fas 10.
 Ingen schemaändring, runtime-start eller extern statusmutation görs här.
+
+### Worktree-cleanup och retention (F-09)
+
+`TaskCleanupService.remove_task_worktree` är ett explicit internt anrop från
+betrodd Integration, bundet till projekt/epic/task. Tasken ska vara Done med
+registrerad review/test och faktisk merge/parents/ancestry i epicen. Servicen
+kontrollerar ägarskap, exakt branch-HEAD, exklusiv runkoppling och rent arbetsläge.
+Även ignored-filer, dolda indexflaggor, Gitoperationer och worktree-lås blockerar.
+Ingen `--force`, reset, abort, global prune eller rekursiv filradering används.
+
+**Retention:** bara task-worktreet tas bort. Alla branches, ägarmarkörer,
+run-/review-/operation-/mergehistorik och externa referenser behålls. Epic-worktrees
+och branches städas inte automatiskt. Brancharkivering/radering kräver en separat
+operatörspolicy och verifierad backup; F-09 inför ingen sådan radering.
+Utvecklingens äldre bootstrap-worktrees används inte som cleanup-testresurser.
+
+En reserverad Worker-slot blockerar alltid. Registrerad agent, workspace, session
+eller runtime-reference kräver att en betrodd `inactivity_probe(TaskRun)` returnerar
+exakt `True`. Saknad, felande eller okänd probe skyddar resursen. F-09 stoppar ingen
+session och frigör ingen slot; verklig Herdr-probe/stopp kopplas in efter F-10/F-13.
+Prov med en probe-fixture visar policyn, inte verklig runtimeinaktivitet.
+
+Pending-intent sparas före Git. Retry efter lyckad borttagning stämmer av kvarvarande
+branch/ägarskap och frånvarande worktree; historiken ändras inte. En återuppstånden
+resurs tas inte bort igen. Saknad resurs utan tidigare cleanup-intent/resultat är
+ett avstämningsfel. Avbrott mitt i Git-remove med delvis kvarvarande path/registry
+kräver manuell avstämning; automatisk prune/radering används inte. Ignored-filer
+måste säkras eller tas bort av operatören före cleanup. Låset samordnar tjänsterna;
+oberoende manuella Git-/filsystemskrivare omfattas inte.

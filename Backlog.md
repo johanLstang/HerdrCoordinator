@@ -450,15 +450,19 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-09 Avsluta Git resurser efter verifierad leverans
 
-**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `96091ef5-be75-4d81-af5f-ffceda85b50c`.
 
 **Körbar:** Ja — F-07/F-08 Done och integrerade; E-01 verifierad på main.
+
+**Arbetsstart F-09 (2026-10-08):** TeamPlayer InProgress återläst, konto och beroenden verifierade. Worker i `task/e02-f09`, `.worktrees/task-e02-f09`, bas `6aebea8777acc3227b699318da44ee4b831e6e7e`. Äldre bootstrap-resurser adopteras inte och utvecklingsworktrees städas inte av produktproven.
 
 **Källa:** A §§8, 10, 36; W §§25–26, 38, 40. **Berör:** Git-adapter, resurspolicy, dokumentation.
 
 **Beroenden:** F-07, F-08. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
 
 **Arbetsinstruktion för Codex:** Implementera försiktig remove_worktree och eventuell branchradering enligt dokumenterad retention. Kontrollera integrerat arbete, arbetsläge, ägarskap och att ingen aktiv körning använder resursen. Behåll run-, review- och mergehistorik.
+
+**Konkreta kontrakt F-09 / retention:** Integration får explicit remove_task_worktree efter Done och faktisk registrerad taskmerge/review/test med aktuella Gitparents/ancestry. Repo-lås och SQLite skyddar kontroll/intention; Pending-operation före Git ger återförsök efter remove. Endast ägd taskpath under konfigurerad rot tas bort med Git worktree remove utan force. Dirty, ignored/ospårade filer, osäker index, pågående Git, ändrad branch/HEAD/ägare, annan resursägare eller Worker-slot blockerar. Registrerad runtime kräver bekräftad inaktivitet från betrodd adapter; frånvarande/okänd probe ger avstämningsbehov. Saknad resurs godtas bara med tidigare cleanup-intent/resultat. Branches och all run/review/mergehistorik behålls; branchradering och epiccleanup automatiseras inte. Schema 2 återanvänds.
 
 **Resultat och kontrakt:** Cleanup är explicit och återförsökbar. Ointegrerat eller smutsigt arbete och resurser som används av annan run får inte tas bort. Saknad redan städad resurs ger ett känt resultat. Sessionsstopp och slotrelease kopplas in i Worker-livscykeln senare.
 
@@ -471,6 +475,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Temporära worktrees med integrerade, ointegrerade och ocommittade ändringar samt upprepat cleanupanrop.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Worker-leverans F-09 (2026-10-08):** READY_FOR_REVIEW för task/e02-f09. TaskCleanupService kontrollerar registrerad faktisk leverans, F-05-ägarskap, exklusiv path/branch, inaktivitet och rent/olåst arbetsläge inklusive ignored-filer. Pending-intent före Git-remove utan force ger recovery med branch/historik bevarade; saknad okänd eller återuppstånden resurs raderas inte. Leveransbevis återanvänds av F-08 utan semantikändring. 24 cleanup-prov samt 22 epicintegrationsprov passerar (46 unika relevanta kontroller), Ruff/diffkontroll/wheel/sdist-build passerar, exit 0. Git/SQLite/subprocesser är verkliga; runtime-handoff/probe är fixtures, inget verkligt Herdr-stopp påstås. Hela suites integrationsgrind körs efter merge.
 
 ## Epic E-03 Starta och återanslut agentruntime genom Herdr
 
@@ -1828,7 +1834,7 @@ Fortsätt direkt med F-09. F-01–F-08 är Done; E-02 Active, 3/3 egen acceptans
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Done | — | 3/3 | E-01, F-05 | Granskad och integrerad via aa373bd; 119 integrationstester passerar. Fortsätt F-07. |
 | 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Done | — | 3/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
 | 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Done | — | 3/3 | E-01, F-07 | Granskad och integrerad via 1d6e2be; 163 tester passerar. Fortsätt F-09. |
-| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Ja | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Active | Ja | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Nej | 0/3 | E-02, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Nej | 0/3 | E-02, F-10, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

@@ -11,7 +11,6 @@ from orchestrator.application.state_service import StateService
 from orchestrator.domain.models import Operation
 from orchestrator.domain.policy import Role, VerifiedFacts
 from orchestrator.domain.states import EpicState as E
-from orchestrator.domain.states import TaskState as T
 
 
 class EpicIntegrationService(GitIntegrationService):
@@ -57,73 +56,7 @@ class EpicIntegrationService(GitIntegrationService):
         tasks = self.store.get_tasks(epic.id)
         if tuple(sorted(t.task_id for t in tasks)) != self.expected_task_ids:
             raise IntegrationError("epic task scope is incomplete or changed")
-        merges = self.store.get_operations(epic.id, kind="merge_task_to_epic")
-        manifest = []
-        for task in tasks:
-            matching = [
-                op
-                for op in merges
-                if op.task_run_id == task.id
-                and op.status == "SUCCEEDED"
-                and op.result.get("merge_commit") == task.merge_commit
-                and op.result.get("requires_reconciliation") is False
-            ]
-            reviews = self.store.get_reviews(task.id)
-            if (
-                task.internal_status != T.DONE
-                or not task.completed_at
-                or not task.merge_commit
-                or len(matching) != 1
-                or not reviews
-            ):
-                raise IntegrationError("all tasks require Done and actual registered delivery")
-            op, review = matching[0], reviews[-1]
-            pair = (task.approved_source_commit, task.approved_target_commit)
-            if (
-                pair != (op.result.get("source_commit"), op.result.get("target_commit"))
-                or task.current_commit != pair[0]
-                or self.git.head(task.branch) not in {None, pair[0]}
-                or review.review_result != "APPROVED"
-                or (review.review_commit, review.epic_commit) != pair
-                or self.git.parents(task.merge_commit) != (pair[1], pair[0])
-                or self.git.find_operation_merge(epic.branch, op.id, pair[1], pair[0])
-                != task.merge_commit
-                or not self.git.contains_commit(epic.branch, task.merge_commit)
-                or not self.git.contains_commit(epic.branch, pair[0])
-            ):
-                raise IntegrationError("task review and Git delivery proof disagree")
-            registered = self.store.get_operation(task.project_id, "task_review", review.id)
-            verified = (
-                self.store.get_operation(
-                    task.project_id, "verify_task", registered.result.get("verification_key")
-                )
-                if registered
-                else None
-            )
-            if (
-                registered is None
-                or registered.task_run_id != task.id
-                or registered.status != "SUCCEEDED"
-                or not registered.result.get("approved")
-                or verified is None
-                or verified.task_run_id != task.id
-                or verified.status != "SUCCEEDED"
-                or verified.result.get("exit_code") != 0
-                or (verified.result.get("source_commit"), verified.result.get("target_commit"))
-                != pair
-            ):
-                raise IntegrationError("task delivery lacks registered review/test evidence")
-            manifest.append(
-                {
-                    "task_run_id": task.id,
-                    "task_id": task.task_id,
-                    "source_commit": pair[0],
-                    "merge_commit": task.merge_commit,
-                    "review_id": review.id,
-                    "operation_id": op.id,
-                }
-            )
-        return manifest
+        return [self._delivery_proof(task, epic) for task in tasks]
 
     @staticmethod
     def _manifest_hash(manifest):
