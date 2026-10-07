@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är Done efter granskad integration i E-01. E-01 är Active; F-02 är Done, F-03 Done, F-04 InProgress och övriga 46 tasks Planned. F-01:s tre kriterier är verifierade; epicacceptansen återstår. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-04** under **E-01**.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är Done efter granskad integration i E-01. E-01 är Active; F-01–F-04 är Done och övriga 46 tasks Planned. Epicens tre kriterier är verifierade; PR och main-integration återstår. Alla externa epic/task-ID:n är registrerade nedan. Nästa leveransgrind är **E-01:s PR och main-integration**; därefter **F-05** under **E-02**.
 
 ## Styrande underlag
 
@@ -158,11 +158,13 @@ Operatören kan starta en lokal tjänst, konfigurera ett projekt och bevara epic
 
 ### Epicacceptans
 
-- [ ] **E-01.A1:** Tjänsten startar från dokumenterad konfiguration och en andra start bevarar tidigare runs.
-- [ ] **E-01.A2:** EpicRun, TaskRun och Review kan läsas efter omstart med samma relationer och identiteter.
-- [ ] **E-01.A3:** Ogiltiga övergångar och otillåtna rollanrop avvisas utan ändrad state.
+- [x] **E-01.A1:** Tjänsten startar från dokumenterad konfiguration och en andra start bevarar tidigare runs.
+- [x] **E-01.A2:** EpicRun, TaskRun och Review kan läsas efter omstart med samma relationer och identiteter.
+- [x] **E-01.A3:** Ogiltiga övergångar och otillåtna rollanrop avvisas utan ändrad state.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
+
+**Samlad verifiering E-01 (2026-10-07):** Epiccommit `d37fcfdffbac09677ab4a68df16302a770fcec16` mot main `7d1f832fee14ad43c7bec6e618c06da0684fbc78`. 64 pytesttester, Ruff, diffkontroll, wheel/sdist-build och CLI --check passerar. A1/A2: två riktiga MCP-serverstarter mot samma SQLite-fil och återläsning av epic/task/reviews. A3: otillåtna stateövergångar, stale approval, roll/scope och rollinjektion avvisas utan stateändring. E-01 är Active tills PR, main-merge och slutverifiering är genomförda.
 
 ### Task F-01 Starta ett konfigurerbart Python-projekt
 
@@ -244,9 +246,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-04 Exponera lokala MCP-kontrakt med betrodda roller
 
-**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `96cc0f5f-e737-4a19-897f-2419f690b2e0`.
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `96cc0f5f-e737-4a19-897f-2419f690b2e0`.
 
-**Körbar:** Pågår — task/e01-f04 från epicbas 8df53b4; F-03 är integrerad.
+**Körbar:** Levererad — integrerad i E-01 via d37fcfd.
 
 **Källa:** A §§2, 4–5, 31, 50; W §§4, 11–12, 39–40. **Berör:** MCP, applikationstjänster, policy, loggning.
 
@@ -264,7 +266,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Verifiering:** Lokalt MCP-prov och serviceprov med inspelande adapterstubbar som visar att avvisade anrop ger noll sidoeffekter.
 
-**Verifieringsunderlag F-04 (2026-10-07):** Python 3.13.14 och MCP SDK 2.3.0. `uv run --locked pytest`: 64 passerade, exit 0; Ruff och diffkontroll: exit 0. 11 MCP-prov omfattar riktig stdio-server som startas två gånger mot samma SQLite-fil, bibehållna epic/task/reviews, egen Worker-läsning, rollinjektion, fel scope, oregistrerad anslutning, okända/oimplementerade operationer, skyddad profil och sanerade fel/loggar. Avvisade anrop lämnar databasens ändringsräknare oförändrad; oregistrerad anslutning når inte ens runtime-läsning. Inga externa adaptrar finns eller körs i denna task. Runtime-sandboxprovet återstår i F-10/F-17. READY_FOR_REVIEW; review och integration återstår.
+**Verifieringsunderlag F-04 (2026-10-07):** Python 3.13.14 och MCP SDK 2.3.0. `uv run --locked pytest`: 64 passerade, exit 0; Ruff och diffkontroll: exit 0. 11 MCP-prov omfattar riktig stdio-server som startas två gånger mot samma SQLite-fil, bibehållna epic/task/reviews, egen Worker-läsning, rollinjektion, fel scope, oregistrerad anslutning, okända/oimplementerade operationer, skyddad profil och sanerade fel/loggar. Avvisade anrop lämnar databasens ändringsräknare oförändrad; oregistrerad anslutning når inte ens runtime-läsning. Inga externa adaptrar finns eller körs i denna task. Runtime-sandboxprovet återstår i F-10/F-17. Bootstrap Integration-review godkänd för task `950771fc62fa79b213e858109109fa1f0c656fab` mot epic `8df53b4797549d0fa9aa619f19c04260bb3030c1`. --no-ff-merge `d37fcfdffbac09677ab4a68df16302a770fcec16`; 64 integrationstester, Ruff, build och CLI-check passerar efter merge. TeamPlayer Done återläst.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -1770,11 +1772,11 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Active | Ja | 0/3 | Inget | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 1 | E-01 | Epic | Starta orchestratorn och bevara körningarnas tillstånd | — | 1 | 0da5c7c4-6e29-475e-aeb6-ce887f3864db | P0 | Active | Ja | 3/3 | Inget | Alla tasks Done; 64 tester och build passerar. PR/main-integration återstår. |
 | 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Done | — | 3/3 | Inget | Integrerad i E-01 via 7dc5d80; fortsätt med F-02. |
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Done | — | 3/3 | F-01 | Integrerad via 8e29ef2; fortsätt med F-03. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Done | — | 3/3 | F-02 | Integrerad via 904a022; fortsätt med F-04. |
-| 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Active | Ja | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Done | — | 3/3 | F-03 | Integrerad via d37fcfd; E-01 slutgranskas. |
 | 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Planned | Nej | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Planned | Nej | 0/3 | E-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Planned | Nej | 0/3 | E-01, F-05 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
