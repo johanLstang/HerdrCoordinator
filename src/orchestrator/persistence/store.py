@@ -328,6 +328,14 @@ class StateStore:
             )
         ]
 
+    def get_runs(self) -> list[EpicRun | TaskRun]:
+        """All persisted resource claims, including completed runs and other projects."""
+        return [
+            model.model_validate_json(row[0])
+            for table, model in (("epic_runs", EpicRun), ("task_runs", TaskRun))
+            for row in self.db.execute(f"SELECT payload FROM {table} ORDER BY id")
+        ]
+
     def get_tasks(self, epic_run_id: str) -> list[TaskRun]:
         return [
             TaskRun.model_validate_json(row[0])
