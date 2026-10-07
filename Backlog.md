@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är Done efter granskad integration i E-01. E-01 är Active; F-02 är Done, F-03 Done och övriga 47 tasks Planned. F-01:s tre kriterier är verifierade; epicacceptansen återstår. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-04** under **E-01**.
+**Planeringsdatum:** 2026-10-07. **Statuskälla:** TeamPlayer-projektet HerdrCoordinator, avstämt 2026-10-07T13:29:03+00:00. F-01 är Done efter granskad integration i E-01. E-01 är Active; F-02 är Done, F-03 Done, F-04 InProgress och övriga 46 tasks Planned. F-01:s tre kriterier är verifierade; epicacceptansen återstår. Alla externa epic/task-ID:n är registrerade nedan. Nästa konkreta leverans är **F-04** under **E-01**.
 
 ## Styrande underlag
 
@@ -101,7 +101,7 @@ Totalt 227 taskberoenden är registrerade. Ett beroende på en föregående epic
 | ID | Beslut eller förutsättning | Leverans som fastställer eller verifierar |
 | --- | --- | --- |
 | D-01 | F-01 fastställer Python 3.12+, asyncio, Pydantic 2 och sqlite3. src/orchestrator, TOML, Hatchling, pytest och Ruff; versionslås i uv.lock och verifieringsmiljö Python 3.13. | Beslut dokumenterat i README; persistens levereras i F-02. |
-| D-02 | Lokalt MCP behöver betrodd sessions/rollkoppling. Orchestratorbehörighet och runtime/shellbegränsningar ska redovisas separat; promptpolicy ensam upprätthåller inte teknisk isolering. | F-04, F-10 och F-17; olösta nödvändiga gränser blockerar F-38. |
+| D-02 | F-04: en stdio-process per betrodd aktör; operatören/MCP-värden styr startkommando och extern skyddad JSON-profil med roll/project/epicrun/taskrun. Verktygsargument ger ingen behörighet. Worker får inte skriva profil, startkonfiguration eller databas. Filrättigheter isolerar inte samma OS-användare; runtime/shellgränser verifieras separat. | Lokal MCP-behörighet verifierad i F-04. Verklig sandboxisolering återstår i F-10/F-17; olösta nödvändiga gränser blockerar F-38. |
 | D-03 | Slots reserveras från CLAIMED/STARTING och hålls genom review/fix tills bekräftad parkering eller avslut. Kanban Active är inte sloträknare. | F-15, F-28 och F-31–F-32. |
 | D-04 | Versionerat task/rapportformat med runidentitet väljs; textvarianterna TASK och TASK_ID i källorna normaliseras uttryckligen. | F-14 och F-16. |
 | D-05 | Epic → Task är en separat synkoperation enligt W §23. Leveransmerge går Task → Epic → main; synk utförs av Git Manager på Integration-rollens begäran. | F-07 och F-18. |
@@ -244,9 +244,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-04 Exponera lokala MCP-kontrakt med betrodda roller
 
-**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `96cc0f5f-e737-4a19-897f-2419f690b2e0`.
+**Epic/fas/prioritet:** E-01 / 1 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `96cc0f5f-e737-4a19-897f-2419f690b2e0`.
 
-**Körbar:** Ja — F-03 är Done och integrerad i E-01 via 904a022.
+**Körbar:** Pågår — task/e01-f04 från epicbas 8df53b4; F-03 är integrerad.
 
 **Källa:** A §§2, 4–5, 31, 50; W §§4, 11–12, 39–40. **Berör:** MCP, applikationstjänster, policy, loggning.
 
@@ -258,11 +258,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-04.A1:** En registrerad Worker kan läsa tillåten egen runtime men inte utge sig för att vara Coordinator genom ändrade argument.
-- [ ] **F-04.A2:** Fel projekt/task eller oregistrerad anslutning avvisas före adapteranrop och databasändring.
-- [ ] **F-04.A3:** MCP-servern startar lokalt; okända operationer och valideringsfel ger dokumenterade felkoder.
+- [x] **F-04.A1:** En registrerad Worker kan läsa tillåten egen runtime men inte utge sig för att vara Coordinator genom ändrade argument.
+- [x] **F-04.A2:** Fel projekt/task eller oregistrerad anslutning avvisas före adapteranrop och databasändring.
+- [x] **F-04.A3:** MCP-servern startar lokalt; okända operationer och valideringsfel ger dokumenterade felkoder.
 
 **Verifiering:** Lokalt MCP-prov och serviceprov med inspelande adapterstubbar som visar att avvisade anrop ger noll sidoeffekter.
+
+**Verifieringsunderlag F-04 (2026-10-07):** Python 3.13.14 och MCP SDK 2.3.0. `uv run --locked pytest`: 64 passerade, exit 0; Ruff och diffkontroll: exit 0. 11 MCP-prov omfattar riktig stdio-server som startas två gånger mot samma SQLite-fil, bibehållna epic/task/reviews, egen Worker-läsning, rollinjektion, fel scope, oregistrerad anslutning, okända/oimplementerade operationer, skyddad profil och sanerade fel/loggar. Avvisade anrop lämnar databasens ändringsräknare oförändrad; oregistrerad anslutning når inte ens runtime-läsning. Inga externa adaptrar finns eller körs i denna task. Runtime-sandboxprovet återstår i F-10/F-17. READY_FOR_REVIEW; review och integration återstår.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -1772,7 +1774,7 @@ Efter varje leverans uppdateras taskens kriterier, review-, test- och mergeunder
 | 2 | F-01 | Task/feature | Starta ett konfigurerbart Python-projekt | E-01 | 1 | 9bc95f85-f05d-4842-b517-c1f8132c49ab | P0 | Done | — | 3/3 | Inget | Integrerad i E-01 via 7dc5d80; fortsätt med F-02. |
 | 3 | F-02 | Task/feature | Spara runs och reviewhistorik i SQLite | E-01 | 1 | b555e011-5e55-4cae-8d14-9cdd57725e5c | P0 | Done | — | 3/3 | F-01 | Integrerad via 8e29ef2; fortsätt med F-03. |
 | 4 | F-03 | Task/feature | Validera task och epic genom explicita tillstånd | E-01 | 1 | 6ca76316-bff1-40e6-b57d-dd6407e449dd | P0 | Done | — | 3/3 | F-02 | Integrerad via 904a022; fortsätt med F-04. |
-| 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Planned | Ja | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 5 | F-04 | Task/feature | Exponera lokala MCP-kontrakt med betrodda roller | E-01 | 1 | 96cc0f5f-e737-4a19-897f-2419f690b2e0 | P0 | Active | Ja | 0/3 | F-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Planned | Nej | 0/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Planned | Nej | 0/3 | E-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Planned | Nej | 0/3 | E-01, F-05 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

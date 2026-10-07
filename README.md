@@ -1,6 +1,6 @@
 # HerdrCoordinator
 
-HerdrCoordinator ska automatisera utveckling av epics och tasks med Codex-agenter via Herdr, isolerade Git-worktrees och TeamPlayer Kanban. En deterministisk orchestrator ska validera och utföra kritiska operationer samt lagra runtime-information i SQLite. F-01–F-02 levererar lokal start, konfigurationsvalidering, sanerad loggning och beständig runtime-lagring. MCP och agentautomation levereras i efterföljande tasks.
+HerdrCoordinator ska automatisera utveckling av epics och tasks med Codex-agenter via Herdr, isolerade Git-worktrees och TeamPlayer Kanban. En deterministisk orchestrator ska validera och utföra kritiska operationer samt lagra runtime-information i SQLite. Grundplattformen F-01–F-04 levererar lokal start, konfiguration, sanerad loggning, beständig state, tillståndsregler och en lokal MCP-server. Agentautomation levereras i efterföljande epics.
 
 ## Lokal installation och start
 
@@ -12,7 +12,7 @@ uv run --locked herdr-coordinator --config herdr.example.toml --check
 uv run --locked herdr-coordinator --config herdr.example.toml
 ```
 
-Det första startkommandot validerar konfigurationen och avslutas utan att skapa resurser. Det andra initierar SQLite och håller grundtjänsten igång tills Ctrl+C eller SIGTERM. Inga worktrees eller agentsessioner skapas. JSON-loggar skrivs till stderr, med UTC-tid, nivå, operation och korrelations-ID. Stdout är reserverad för kommande MCP-transport.
+Det första startkommandot validerar konfigurationen och avslutas utan att skapa resurser. Det andra initierar SQLite och håller grundtjänsten igång tills Ctrl+C eller SIGTERM. Inga worktrees eller agentsessioner skapas. JSON-loggar skrivs till stderr, med UTC-tid, nivå, operation och korrelations-ID. Stdout används endast för MCP-transport när `--mcp` anges.
 
 Kopiera `herdr.example.toml` till den ignorerade `herdr.local.toml` för lokala val. Relativa paths räknas från konfigurationsfilens katalog. Repository ska vara en befintlig Git-arbetskatalog. Workergränsen är ett heltal 1–2. Worktree-roten får vara utanför repository eller under dess `.worktrees`; den får inte vara repository eller en överordnad katalog. Runtimepaths får inte använda skyddade metadata- eller systemkataloger. SQLite-pathen måste vara skild från worktrees. Symlänkar normaliseras före kontroll; saknade runtimekataloger får ha skrivbara överordnade kataloger.
 
@@ -37,6 +37,51 @@ Epicflödet är `PLANNED → ACTIVE → READY_FOR_REVIEW → REVIEWING → APPRO
 State och event skrivs atomiskt. Event-ID är unikt per projekt. Identisk replay returnerar det historiska resultatet utan att ändra aktuell state; samma ID med annan aktör eller annat innehåll avvisas. Läs aktuell runtime separat efter replay. Förlorat nätresultat betyder inte att transitionen behöver utföras igen.
 
 `Actor` och `VerifiedFacts` är interna servicekontrakt. De får inte konstrueras från agentens rollsträng eller egna påståenden om merge, test, slot eller stopp. F-03 verifierar state-reglerna med deterministiska fixtures; verkliga Git/runtime-fakta fastställs av adaptrarna i senare epics. Muterande agentverktyg registreras först när dessa kontroller finns. StateStore är intern persistens, inte ett offentligt sätt att kringgå state-servicen.
+
+## Lokal MCP och behörighet (F-04, beslut D-02)
+
+MCP-värden startar en separat stdio-process för varje operatörsregistrerad aktör:
+
+```bash
+uv run --locked herdr-coordinator --config /path/to/herdr.local.toml --mcp --principal /operator/config/worker.json
+```
+
+Operatören skapar JSON-profilen utanför Git-repositories och worktrees, med rättigheter `0600`, ägd av processens användare. Dess katalog får inte vara skrivbar av grupp eller andra. Exempel (ersätt run-ID:n med befintliga runtime-ID:n):
+
+```json
+{
+  "actor_id": "worker-1",
+  "role": "Worker",
+  "project_id": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "epic_run_id": "registered-epic-run",
+  "task_run_id": "registered-task-run"
+}
+```
+
+Rollen är `Worker`, `Integration` eller `Coordinator`. Integration binds till en epicrun och Worker dessutom till sin taskrun. Coordinator binds till projektet. Profilen laddas en gång före databasstart; verktygsargument och klientmetadata kan inte registrera eller byta aktör. Felaktig profil ger exitkod 4. Utan `--principal` kan verktyg upptäckas men alla anrop ger `UNAUTHENTICATED`. `--check` validerar endast TOML-konfigurationen.
+
+Två verktyg publiceras med validerade in- och resultatscheman:
+
+| Verktyg | Argument | Resultat |
+| --- | --- | --- |
+| `runtime_status` | `project_id` och exakt ett av `task_run_id`, `epic_run_id` | Tillåten runs identitet, state, branch/worktree och runtime-/commitreferenser. |
+| `policy_check` | Samma scope samt `operation` | Roll, scope och om operationens service finns; inga ändringar. |
+
+Worker kan bara läsa egen task. Integration kan läsa sin epic och dess tasks. Coordinator kan läsa projektets runs. Rollfält eller andra extra argument avvisas. Svaren innehåller `ok`, `code`, `message`, `data`; fel ger tom `data`. Loggar innehåller beslutskod och registrerad roll, utan råa anropsargument.
+
+| Kod | Betydelse |
+| --- | --- |
+| `OK` | Tillåten läsning eller policykontroll. |
+| `UNAUTHENTICATED` | Anslutningen saknar registrerad aktör. |
+| `INVALID_ARGUMENT` | Argumenten följer inte schemat. |
+| `FORBIDDEN` | Fel projekt/run eller otillåten roll. |
+| `UNKNOWN_OPERATION` | Okänt verktyg eller okänd policyoperation. |
+| `NOT_IMPLEMENTED` | Rollen tillåts principiellt, men operationens service saknas. |
+| `STATE_UNAVAILABLE` | Lagringen eller sparad state kan inte läsas. |
+
+Policykontrollen känner även till `task_report_ready`, `task_report_blocked`, `task_start`, `task_merge`, `epic_start`, `epic_merge`. Dessa utförs inte och registreras inte som muterande verktyg. Grundplattformen skapar inte runs via MCP och ansluter inte till Herdr eller TeamPlayer.
+
+**D-02:s tillitsgräns:** operatören/MCP-värden måste kontrollera startkommando, profil och databas. Worker får inte kunna skriva dessa eller starta en privilegierad anslutning. Filrättigheter isolerar inte agenter som delar samma OS-användare. Verkliga runtime-/sandboxgränser verifieras i F-10/F-17 innan autonom drift i F-38; denna leverans verifierar anslutningens behörighet och lokal MCP-transport.
 
 ## Verifiering och paketering
 
