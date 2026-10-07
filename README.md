@@ -83,6 +83,61 @@ Policykontrollen känner även till `task_report_ready`, `task_report_blocked`, 
 
 **D-02:s tillitsgräns:** operatören/MCP-värden måste kontrollera startkommando, profil och databas. Worker får inte kunna skriva dessa eller starta en privilegierad anslutning. Filrättigheter isolerar inte agenter som delar samma OS-användare. Verkliga runtime-/sandboxgränser verifieras i F-10/F-17 innan autonom drift i F-38; denna leverans verifierar anslutningens behörighet och lokal MCP-transport.
 
+## Git-worktree-skapande (F-05)
+
+`WorktreeService` använder en intern, betrodd `Actor` från registrerad startkontext. Coordinator kan skapa epics inom sitt projekt; Integration kan skapa tasks i sin registrerade epic. Worker saknar denna behörighet. Servicen är ännu inte ett offentligt muterande MCP-verktyg.
+
+```python
+with StateStore(settings.sqlite_path) as store:
+    service = WorktreeService(settings, store)
+    epic = service.create_epic_worktree(
+        coordinator_principal, epic_id="E-02", run_id="epic-run-id"
+    )
+    task = service.create_task_worktree(
+        integration_principal,
+        epic_run_id=epic.id,
+        task_id="F-05",
+        run_id="task-run-id",
+    )
+```
+
+`coordinator_principal` och `integration_principal` är operatörsregistrerade profiler; den senare är bunden till `epic.id`. Repository i settings ska vara main-worktreets rot. Ny epic kräver ren main och skapas från dess aktuella HEAD; ny task kräver sin verifierade, rena epic och skapas från dess aktuella HEAD. Nya tasks tillåts i PLANNED, ACTIVE och CHANGES_REQUESTED, och stoppas när epicen går vidare till slutreview eller integration. Befintliga framgångsrika resurser återläses utan att ändra deras innehåll, även efter Worker-commits eller ocommittat arbete.
+
+Lokala ID:n `E-02`/`F-05` ger branches `feature/epic-e02` och `task/e02-f05`. UUID:n bevarar bindestreck. IDs i path/branch får innehålla bokstäver, siffror och bindestreck, högst 80 tecken; de normaliseras till gemener för Git-namn, men den exakta identiteten sparas i SQLite. Namnkollision innebär fel. Paths är `<worktree_root>/<project-id>/epic-<epic>` respektive `task-<epic>-<task>`. Ett explicit pathargument måste matcha samma normaliserade path; traversal och symlänkar utanför roten avvisas.
+
+Skapande lagrar run och `Operation(PENDING)` med repository/common-dir, branch, path och exakt bas-SHA **före** Git-mutation. Operationens UUID registreras som lokal branchägarmarkör `branch.<branch>.herdrOwner` före `git worktree add`. Därefter verifieras worktree, branch, ägare och HEAD; current_commit och `Operation(SUCCEEDED)` sparas atomiskt. Schema 2 används utan migration. SQLite-transaktioner serialiserar skapande även mellan separata serviceanslutningar.
+
+Vid avbrott bevaras intent, ägarmarkör och kända Git-resurser. Samma run-ID återanvänder en verifierad branch/worktree, även efter processomstart. Befintlig branch utan rätt ägarmarkör adopteras inte. Om en färdig resurs saknas, en ofärdig branch har ändrats eller källbasen ändrats innan resursen skapats stoppas återförsöket för avstämning. Servicen raderar, återställer eller force-checkar inte något arbete. Initial base_commit bevaras; färsk Git-status levereras av F-06.
+
+Git-anrop använder separata argv-argument, sanerad Git-miljö och timeout. Checkout-hooks och fsmonitor är avstängda; fel visar inte Git-output eller råa paths. `WorktreeError` avser policy/ägarskap/path/recovery, `GitError` Git-förvillkor eller transport/processfel och `StoreError` persistens. Dessa interna fel ska hanteras av kommande orchestratorflöden. Branchägarmarkören och SQLite måste ligga utanför Workers skrivbehörighet enligt D-02; detta prov ersätter inte kommande runtime-sandboxverifiering.
+
+## Git-underlag för granskning (F-06)
+
+`GitAdapter.snapshot(path, branch, base, expected_commit=..., max_diff_bytes=...)` läser en registrerad worktree i konfigurerat repository. Commits anges som fullständiga SHA-1-ID:n; revisionsuttryck, okända objekt, fel branch/worktree och främmande repositories avvisas. `require_commit` verifierar ett commitobjekt och `contains_commit` kontrollerar branchens innehåll. Ingen av dessa operationer mergear eller godkänner arbete.
+
+Snapshoten innehåller repository/common-dir, worktree, branch, bas/current-SHA, om aktuell branch innehåller basen, ändrade filer med status och radantal samt binärmarkering. Filnamn läses med NUL-separation. `commit_diff` gäller endast de två angivna commits; `staged_diff`, `unstaged_diff` och `changes` visar arbetsläget separat. Ospårade filer redovisas i `changes` och inkluderas inte som om de vore committade. Rename i arbetsläget bevarar både gammal och ny path; commitdiff visar delete/add utan heuristisk rename-detektion. Binärfiler har en binär Git-patch och inga påhittade radantal.
+
+Diffar lagras tillfälligt i en privat, automatiskt borttagen fil och returneras som bytes. Standardgränsen är **1 MiB per diff**, med valbar gräns 1 byte–64 MiB. `total_bytes` och `sha256` gäller hela patchen; `complete=false` betyder uttryckligen att `patch` bara är ett förhandsutdrag. Höj `max_diff_bytes` upp till totalstorleken för att hämta hela diffen inom 64 MiB. För större underlag kan `full_command` köras som argumentlista i `worktree_path`, med Git-miljövariabler borttagna och output strömmad till en skyddad fil; kontrollera byteantal och SHA-256 mot snapshoten. Kommandot för commitdiffen använder redan verifierade, fasta commit-ID:n. Staged/unstaged-underlag gäller endast det observerade arbetsläget och måste hämtas om vid ändring.
+
+`GitReviewService(settings, store).task_review(actor, task_run_id, expected_commit=...)` ger Integration inom rätt epic eller Coordinator ett taskunderlag mot **aktuell epic-HEAD**. `epic_review(actor, epic_run_id, ...)` tillåter bara Coordinator och jämför mot aktuell main. Servicen verifierar beständig skapelseavsikt och Git-ägarmarkör från F-05 före och efter läsningen. Worker eller fel project/epic får inget reviewunderlag. API:t är internt; det registreras inte som nytt MCP-verktyg i denna task.
+
+Underlaget är `reviewable=false` vid smutsig källa/mål, saknad aktuell bas i tasken, ofullständig diff eller observerad ändring under insamlingen. HEAD, arbetsstatus och staged/unstaged-patcharnas hash återkontrolleras. Indexflaggorna assume-unchanged/skip-worktree redovisas i `unsafe_index_paths` (och `target_unsafe_index_paths`) och förhindrar reviewable eftersom de kan dölja arbetsändringar. Submoduleändringar inkluderas uttryckligen även om Git-konfigurationen vill ignorera dem. Det är ett läsunderlag, **inte** ett atomiskt lås, godkännande, testresultat eller bevis för merge. F-07/F-08 och senare reviewfeatures måste kontrollera aktuella commits i sina egna skyddade operationer. Ingen runtime-state eller SQLite-schema ändras av läsningen. Diffinnehåll och Git-feloutput skrivs inte till loggar; granskningsmaterial ska hanteras som repositoryinnehåll och inte publiceras osanerat i prompts eller loggar.
+
+## Synkronisering och taskintegration (F-07)
+
+`GitIntegrationService(settings, store, test_command=(...))` är ett internt API för en betrodd, registrerad Integration i rätt epic. Worker och Coordinator får inte utföra dess taskoperationer. Testkommandot och timeouten är operatörskonfiguration; de får inte hämtas från en agentrapport eller nya MCP-argument. Testprocessens output lagras/loggas inte. Schema 2 används utan migration.
+
+1. `sync_task_with_epic(actor, task_run_id, key=...)` synkar aktuell Epic → Task. Det är separat från leverans, ogiltigförklarar äldre approval vid ändrat underlag och bevarar konflikter i task-worktreet. En tidigare Approved-task går till ChangesRequested när reviewn måste göras om. Ingen reset, abort eller cleanup utförs automatiskt.
+2. `verify_task(actor, task_run_id, key=...)` kör det konfigurerade testkommandot som argv i task-worktreet. Operationen sparar faktiska source/target-SHA, kommandots hash och exitkod. Kod, bas eller arbetsläge som ändras under testkörningen ger FAILED/STALE_TEST_EVIDENCE. En okänd utgång efter processavbrott kräver en ny uttrycklig verifiering; en tests_passed-flagga godtas inte.
+3. `register_task_review(actor, task_run_id, verification_key=..., key=..., approved=True/False, feedback=...)` registrerar den manuella granskarens beslut mot komplett, aktuellt Git-underlag och en lyckad verklig testoperation. Det automatiserar inte reviewbeslutet. Runtime-handoff ska ha nått ReadyForReview/Reviewing; efter ChangesRequested lämnar Worker nytt underlag enligt normal livscykel. Återläsning av ett äldre review-ID ger dess ursprungliga beslut/SHA, inget nytt godkännande.
+4. `merge_task_to_epic(actor, task_run_id, key=...)` kräver senaste registrerade approval/testoperation för exakta, aktuella task- och epiccommits, synkroniserad task, rent arbetsläge och F-05-ägarskap. Leveransmerge använder `--no-ff` och sparar merge-SHA på operation/task samt aktuell epic-HEAD. Tasken lämnas i MERGING; varken lokal Kanban, TeamPlayer eller runtime-task blir Done genom enbart Git-merge. Relevant verifiering på mergecommiten och senare Done-service återstår.
+
+Nycklar är stabila per avsedd operation och får inte återanvändas för annan task eller ändrade test-/reviewindata. En privat låsfil i repositorys common-dir serialiserar integration mellan serviceinstanser/processer. SQLite-transaktioner skyddar state; en PENDING-Operation och MERGING/invaliderad approval sparas **före** Git. Git-commiten märks med operationens UUID. Efter avbrott verifieras markör, exakt parentpar och branchinnehåll innan det ursprungliga merge-SHA:t återregistreras; ingen andra merge skapas. En lyckad operation kan återläsas även när targetbranchen avancerat, och `current_destination_commit` anger observerad HEAD vid registrering, separat från ursprungligt merge-SHA; återläsning av en lyckad operation returnerar dess historiska observation, inte en ny Git-snapshot. Ändrad source efter Git-resultatet markeras `requires_reconciliation`; inga sådana fakta får användas som ny Done-evidens.
+
+Konflikt ger beständig CONFLICT/MERGE_CONFLICT och task-BLOCKED, utan att slänga index, konfliktfiler eller annan Git-state. Ett oförklarat branch-/ägarskapsbyte stoppas för avstämning. Externa merge-/filterprogram avvisas för operatörsbeslut; hooks, fsmonitor, autostash, rerere och commit-signering körs inte av mergeoperationen. Repo-låset skyddar samverkande services; externa manuella Git-skrivningar och Workers åtkomst till Git/SQLite måste dessutom begränsas av D-02:s runtimegräns. Detta är inte full scheduling, generell konfliktlösning eller en automatisk reviewagent.
+
+F-07-proven använder riktiga Git-repositories, SQLite och subprocesser med små fixture-testkommandon. Enbart runtime-handoffens faser är fixtures; ingen verklig Codex-session eller Worker-runtime påstås vara verifierad här.
+
 ## Verifiering och paketering
 
 ```bash
@@ -109,3 +164,55 @@ Paketet heter `herdr-coordinator`, med importpaket `orchestrator` under `src`. B
 Använd guiden när nya epics och features planeras. TeamPlayer är primär källa för arbetsstatus när kopplingen är etablerad; dokumentöversikten speglar den. En task blir `Done` efter godkänd review, merge till epic-branchen och integrationstester. En epic blir `Done` efter slutreview, merge till `main` och slutverifiering.
 
 Epics använder `Planned` före start, `Active` under arbete och hela review/integrationsflödet, och `Done` efter verifierad leverans till main. Hinder dokumenteras separat medan en påbörjad epic behåller Active. Coordinator synkar epicstatus via TeamPlayers `update_epic_status` med färsk version från `list_epics`; API-statusarna Pending/InProgress/Done motsvarar Planned/Active/Done. Tasks kan dessutom ha Attention.
+
+### Epic → main (F-08)
+
+`EpicIntegrationService` återanvänder F-07:s repo-lås, operationer och Git-adapter.
+Betrodd operatör konfigurerar `expected_task_ids` (externa task-ID:n för hela
+scope), `test_command` som argv och timeout. Agenten kan inte välja dessa i ett
+verktygsanrop. `verify_epic` kräver samtliga tasks Done, registrerade F-07-review/
+tester och faktisk operationstagg, mergeparents samt ancestry för varje leverans.
+Komplett diff och aktuella epic/main-SHA kontrolleras före och efter testprocessen.
+
+Coordinator registrerar ett manuellt beslut med `register_epic_review`, bundet
+till verifieringsnyckeln och taskmanifestet. `merge_epic_to_main` kontrollerar
+underlaget igen, skriver Pending-intent och utför `--no-ff`. Resultatet binds till
+operationstagg och exakta parents för återhämtning före/efter processavbrott.
+Ändrad main kräver explicit `sync_epic_with_main`, nya tester och review. Synk går
+Main → Epic och ändrar inte main. Konflikter bevaras och måste hanteras manuellt.
+
+Efter merge kör `verify_main_merge` faktisk verifiering på exakt registrerad
+main-merge. Testfel sparas med exitkod; återförsök med ny verifieringsnyckel kör
+endast tester och upprepar ingen merge. Epicen lämnas `MERGING` även vid godkänd
+slutverifiering: completion/TeamPlayer-tjänsten måste senare kontrollera bevisen
+innan Done. Automatisk Coordinator-review och nästa-epic-loop införs i fas 10.
+Ingen schemaändring, runtime-start eller extern statusmutation görs här.
+
+### Worktree-cleanup och retention (F-09)
+
+`TaskCleanupService.remove_task_worktree` är ett explicit internt anrop från
+betrodd Integration, bundet till projekt/epic/task. Tasken ska vara Done med
+registrerad review/test och faktisk merge/parents/ancestry i epicen. Servicen
+kontrollerar ägarskap, exakt branch-HEAD, exklusiv runkoppling och rent arbetsläge.
+Även ignored-filer, dolda indexflaggor, Gitoperationer och worktree-lås blockerar.
+Ingen `--force`, reset, abort, global prune eller rekursiv filradering används.
+
+**Retention:** bara task-worktreet tas bort. Alla branches, ägarmarkörer,
+run-/review-/operation-/mergehistorik och externa referenser behålls. Epic-worktrees
+och branches städas inte automatiskt. Brancharkivering/radering kräver en separat
+operatörspolicy och verifierad backup; F-09 inför ingen sådan radering.
+Utvecklingens äldre bootstrap-worktrees används inte som cleanup-testresurser.
+
+En reserverad Worker-slot blockerar alltid. Registrerad agent, workspace, session
+eller runtime-reference kräver att en betrodd `inactivity_probe(TaskRun)` returnerar
+exakt `True`. Saknad, felande eller okänd probe skyddar resursen. F-09 stoppar ingen
+session och frigör ingen slot; verklig Herdr-probe/stopp kopplas in efter F-10/F-13.
+Prov med en probe-fixture visar policyn, inte verklig runtimeinaktivitet.
+
+Pending-intent sparas före Git. Retry efter lyckad borttagning stämmer av kvarvarande
+branch/ägarskap och frånvarande worktree; historiken ändras inte. En återuppstånden
+resurs tas inte bort igen. Saknad resurs utan tidigare cleanup-intent/resultat är
+ett avstämningsfel. Avbrott mitt i Git-remove med delvis kvarvarande path/registry
+kräver manuell avstämning; automatisk prune/radering används inte. Ignored-filer
+måste säkras eller tas bort av operatören före cleanup. Låset samordnar tjänsterna;
+oberoende manuella Git-/filsystemskrivare omfattas inte.
