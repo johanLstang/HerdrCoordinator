@@ -319,6 +319,15 @@ class StateStore:
                 record.model_dump_json(), record.id,
             ))
 
+    def get_operations(self, epic_run_id: str, *, kind: str) -> list[Operation]:
+        return [
+            Operation.model_validate_json(row[0])
+            for row in self.db.execute(
+                "SELECT payload FROM operations WHERE epic_run_id=? AND kind=? ORDER BY rowid",
+                (epic_run_id, kind),
+            )
+        ]
+
     def get_tasks(self, epic_run_id: str) -> list[TaskRun]:
         return [
             TaskRun.model_validate_json(row[0])

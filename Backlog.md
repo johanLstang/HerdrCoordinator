@@ -418,15 +418,19 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-08 Integrera godkänd epic till aktuell main
 
-**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `a9c700e9-6200-4aa7-a19f-3b1535270e57`.
+**Epic/fas/prioritet:** E-02 / 2 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `a9c700e9-6200-4aa7-a19f-3b1535270e57`.
 
 **Körbar:** Ja — F-07 är Done och integrerad i E-02; E-01 verifierad på main.
+
+**Arbetsstart F-08 (2026-10-08):** TeamPlayer InProgress version 2 återläst; utförare och beroenden verifierade. Bootstrap Worker i `task/e02-f08`, `.worktrees/task-e02-f08`, bas `1e4d9b329bb04a6a0806bb132aed7e20d47a081b`. Första add_worktree-anropet avvisades före Git (saknad branch_exists); korrigerat anrop skapade och verifierade rätt worktree innan kodändring. Äldre bootstrap-resurser adopteras inte.
 
 **Källa:** A §§8–9, 25–27, 36; W §§29–33, 40. **Berör:** Git Manager, epicmerge, slutverifiering.
 
 **Beroenden:** F-07. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
 
 **Arbetsinstruktion för Codex:** Implementera merge_epic_to_main med Coordinator-policy och komplett mergeunderlag. Kontrollera att alla tasks är integrerade och att review/tester avser aktuella epic- och maincommits. Persistéra merge-SHA; lämna epicstatus till service som kan verifiera resultatet.
+
+**Konkreta kontrakt F-08:** Coordinator kör operatörskonfigurerad faktisk aggregate-/slutverifiering som argv. Scope binds till en explicit task-ID-lista från betrodd Coordinator-konfiguration; samtliga måste vara Done med registrerad F-07-merge, exakta parents och faktisk ancestry i epicen. Manuell review registreras som Operation för aktuella epic/main-SHA, testexitkod och taskmanifest; ändrad main kräver separat synk och ny verifiering. Pending-intent och operationstagg/parents ger idempotent recovery. Main-merge registrerar SHA och lämnar Epic MERGING; separat faktisk slutverifiering sparas även vid fel och sätter inte automatiskt Done. Ingen automatisk review eller scheduling. Schema 2 återanvänds.
 
 **Resultat och kontrakt:** En manuellt utfärdad och registrerad Coordinator-review används under bootstrap; fas 10 producerar den automatiskt. Ändrad main kräver synkronisering och ny relevant verifiering. Konflikter eskaleras. Misslyckad slutverifiering efter merge lämnar spårbart ej-Done-läge och blockerar nästa epic.
 
@@ -439,6 +443,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Temporärt repository med aktuellt/föråldrat main, otillåtna roller och felinjicerad verifiering.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Worker-leverans F-08 (2026-10-08):** READY_FOR_REVIEW för task/e02-f08. EpicIntegrationService levererar verklig aggregate-/main-verifiering, manuell review, main→epic-synk och Coordinator-only --no-ff-merge. Explicit scope och taskens registrerade review/test/merge/parents/ancestry kontrolleras; Pending-intent och operationstagg möjliggör recovery utan dubbel merge. Sluttestfel sparar SHA och lämnar MERGING, inte Done. `uv run --locked pytest`: 163 passerade, 22 nya epicintegrationsprov; Ruff, diffkontroll och wheel/sdist-build passerar, exit 0. Git/SQLite/subprocesser är verkliga, runtime-handoff är fixtures. Tidigare F-07-Kanbanrad korrigerad till redan verifierad Done 3/3. Taskens egen review, merge och integrationstest återstår.
 
 ### Task F-09 Avsluta Git resurser efter verifierad leverans
 
@@ -1818,8 +1824,8 @@ Fortsätt direkt med F-08, därefter F-09. F-01–F-07 är Done; E-02 förblir A
 | 6 | E-02 | Epic | Isolera och integrera arbete genom Git worktrees | — | 2 | 225cca70-7f09-4313-a020-52c8b0b7b069 | P0 | Active | Ja | 1/3 | E-01 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 7 | F-05 | Task/feature | Skapa och återfinn epic och task worktrees | E-02 | 2 | 9974ec4e-453c-4498-8994-f14e119c6e2d | P0 | Done | — | 3/3 | E-01 | Granskad och integrerad via 5efca19; 88 integrationstester passerar. Fortsätt F-06. |
 | 8 | F-06 | Task/feature | Leverera diff och aktuella Git fakta för granskning | E-02 | 2 | 56e322eb-8902-4e39-92f0-66ed47224ee7 | P0 | Done | — | 3/3 | E-01, F-05 | Granskad och integrerad via aa373bd; 119 integrationstester passerar. Fortsätt F-07. |
-| 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Active | Ja | 0/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
-| 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Planned | Ja | 0/3 | E-01, F-07 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 9 | F-07 | Task/feature | Synkronisera task mot epic och integrera granskad task | E-02 | 2 | 4bc70580-208a-4c06-a18a-2adce002a5f7 | P0 | Done | — | 3/3 | E-01, F-06 | Granskad och integrerad via a6a5953; 141 tester passerar. Fortsätt F-08. |
+| 10 | F-08 | Task/feature | Integrera godkänd epic till aktuell main | E-02 | 2 | a9c700e9-6200-4aa7-a19f-3b1535270e57 | P0 | Active | Ja | 0/3 | E-01, F-07 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Planned | Nej | 0/3 | E-01, F-07, F-08 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Planned | Nej | 0/3 | E-02 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Planned | Nej | 0/3 | E-02, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

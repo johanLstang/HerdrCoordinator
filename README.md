@@ -164,3 +164,26 @@ Paketet heter `herdr-coordinator`, med importpaket `orchestrator` under `src`. B
 Använd guiden när nya epics och features planeras. TeamPlayer är primär källa för arbetsstatus när kopplingen är etablerad; dokumentöversikten speglar den. En task blir `Done` efter godkänd review, merge till epic-branchen och integrationstester. En epic blir `Done` efter slutreview, merge till `main` och slutverifiering.
 
 Epics använder `Planned` före start, `Active` under arbete och hela review/integrationsflödet, och `Done` efter verifierad leverans till main. Hinder dokumenteras separat medan en påbörjad epic behåller Active. Coordinator synkar epicstatus via TeamPlayers `update_epic_status` med färsk version från `list_epics`; API-statusarna Pending/InProgress/Done motsvarar Planned/Active/Done. Tasks kan dessutom ha Attention.
+
+### Epic → main (F-08)
+
+`EpicIntegrationService` återanvänder F-07:s repo-lås, operationer och Git-adapter.
+Betrodd operatör konfigurerar `expected_task_ids` (externa task-ID:n för hela
+scope), `test_command` som argv och timeout. Agenten kan inte välja dessa i ett
+verktygsanrop. `verify_epic` kräver samtliga tasks Done, registrerade F-07-review/
+tester och faktisk operationstagg, mergeparents samt ancestry för varje leverans.
+Komplett diff och aktuella epic/main-SHA kontrolleras före och efter testprocessen.
+
+Coordinator registrerar ett manuellt beslut med `register_epic_review`, bundet
+till verifieringsnyckeln och taskmanifestet. `merge_epic_to_main` kontrollerar
+underlaget igen, skriver Pending-intent och utför `--no-ff`. Resultatet binds till
+operationstagg och exakta parents för återhämtning före/efter processavbrott.
+Ändrad main kräver explicit `sync_epic_with_main`, nya tester och review. Synk går
+Main → Epic och ändrar inte main. Konflikter bevaras och måste hanteras manuellt.
+
+Efter merge kör `verify_main_merge` faktisk verifiering på exakt registrerad
+main-merge. Testfel sparas med exitkod; återförsök med ny verifieringsnyckel kör
+endast tester och upprepar ingen merge. Epicen lämnas `MERGING` även vid godkänd
+slutverifiering: completion/TeamPlayer-tjänsten måste senare kontrollera bevisen
+innan Done. Automatisk Coordinator-review och nästa-epic-loop införs i fas 10.
+Ingen schemaändring, runtime-start eller extern statusmutation görs här.
