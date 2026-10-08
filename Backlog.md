@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-17 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active; F-14–F-17 Done, samlad acceptans 3/3 och PR/main/slutverifiering återstår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-04 och F-01–F-17 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. Nästa E-05/F-18 Planned och körbar. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -641,7 +641,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-04 Låt en Worker leverera en verifierbar task
 
-**Fas:** 4. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `242ffa18-da4e-4496-8e9f-c4c1b4d8315c`.
+**Fas:** 4. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `242ffa18-da4e-4496-8e9f-c4c1b4d8315c`.
 
 **Körbar:** Ja — E-03 Done på main; externa villkor anges per task. **Beroende:** E-03 Done på main.
 
@@ -794,11 +794,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Integration/verifierad leverans F-17 (2026-10-08):** APPROVED `7e0f8bbb13db8c74531dc0d7d5c64fa621bbf280` mot `a73db1d9c886fd8fdf4a920827179f704edae349`; komplett diff 56594 bytes/SHA256 `e55305faa71472f2140c2dcd4e389213cebb6c6ac217ec7846233db1cf921392`. Faktisk --no-ff Task → Epic `fe3eb71f34103da4e0a20ff55e24d3a34aca2f79`, exakta parents/tree. 365 tester (312.03 s), Ruff/build/diff/CLI exit 0 på faktisk merge. TeamPlayer Done återläst. [Review](docs/reviews/F-17.md). E-04 Active, egen acceptans 3/3 från samlad verklig Worker-MVP; PR/main/slutverifiering återstår. Föregående review/väntan ovan är nu avslutad historik.
 
+**Coordinator/verifierad slutleverans E-04 (2026-10-08):** APPROVED `e570eb7fef4e8026d8be6000b5bddc113af1355e` mot `92be75b6812a8f2f1e8f11aa892322fd81e21b92`; full diff 230015 bytes/SHA256 `170c61b2c0e2b65f7e86e4a2dd5f2ee017ac9dc0150ac6b570b85bba64ba6b5c`. [PR #4](https://github.com/johanLstang/HerdrCoordinator/pull/4), faktisk mainmerge `56c5aff928e4d093c2507c39afcc28b96e3229ba`, exakta parents/tree. `uv run --locked pytest`:365 passed (311.53s) på faktisk main, Ruff/build/diff/CLI exit0. E-04 Done återläst i TeamPlayer, egen acceptans3/3. [Slutreview](docs/reviews/E-04.md). Tidigare PR/main-väntan är avslutad historik; F38 runtimegate kvarstår. Nästa E-05/F-18 från verifierad main.
+
 ## Epic E-05 Granska korrigera och integrera en task
 
 **Fas:** 5. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `9d4ff24d-71a6-4e02-9498-bbbaee7e1db8`.
 
-**Körbar:** Nej — E-04 Done på main; externa villkor anges per task. **Beroende:** E-04 Done på main.
+**Körbar:** Ja — E-04 verifierad/Done på main; externa villkor anges per task. **Beroende:** E-04 Done på main.
 
 **Källa:** A §§20–22, 31, 39; W §§20–25, 38–40.
 
@@ -832,7 +834,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-05 / 5 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6dfd789c-25d6-465b-bb75-a81e4b5d4a34`.
 
-**Körbar:** Nej — invänta E-04 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — E-04 verifierad och Done på main; inga ytterligare externa villkor.
 
 **Källa:** A §§21–22, 39; W §§20, 23. **Berör:** Reviewservice, Git, testkörning, Review.
 
@@ -1900,13 +1902,13 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Done | — | 3/3 | E-02, F-10, X-01 | Granskad/integrerad via 4c9956ac; 213 sluttester passerar. Fortsätt F-12. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Done | — | 3/3 | E-02, F-11, X-01 | Granskad/integrerad via 06d64898; 240 sluttester passerar. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Done | — | 3/3 | E-02, F-12, X-01 | Granskad/integrerad via 1a16aea9; 262 sluttester passerar. |
-| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Active | Ja | 3/3 | E-03 Done på main | F-14–F-17 Done och egen acceptans 3/3. Väntar PR/main-integration/slutverifiering. |
+| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Done | Ja | 3/3 | E-03 Done på main | PR #4/main56c5aff; 365 sluttester/gates, egenacceptans3/3 och TeamPlayer Done. |
 | 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Done | — | 3/3 | E-03 | Granskad/integrerad via 258010c5; 297 regressionstester passerar. |
 | 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Done | — | 3/3 | E-03, F-14 | Granskad/integrerad via a61f181d; 329 regressionstester passerar. |
 | 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Done | — | 3/3 | E-03, F-15 | Granskad/integrerad via 575c8efa; 361 regressionstester passerar. |
 | 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Done | Ja | 3/3 | E-03, F-16, X-01 | APPROVED 7e0f8bb mot a73db1d; merge fe3eb71; 365 tester och gates; verkligt Worker/policyprov. F38 runtimegate dokumenterad. |
-| 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Planned | Nej | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Planned | Nej | 0/3 | E-04 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Planned | Ja | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Planned | Ja | 0/3 | E-04 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Planned | Nej | 0/3 | E-04, F-18, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Planned | Nej | 0/3 | E-04, F-19 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Planned | Nej | 0/3 | E-04, F-20 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
