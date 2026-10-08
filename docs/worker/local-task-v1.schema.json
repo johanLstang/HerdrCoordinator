@@ -1,0 +1,138 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "project_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "epic_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Epic Id",
+      "type": "string"
+    },
+    "task_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 32768,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "goal": {
+      "maxLength": 32768,
+      "minLength": 1,
+      "title": "Goal",
+      "type": "string"
+    },
+    "requirements": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Requirements",
+      "type": "array"
+    },
+    "scope": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Scope",
+      "type": "array"
+    },
+    "out_of_scope": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Out Of Scope",
+      "type": "array"
+    },
+    "acceptance_criteria": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Acceptance Criteria",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "pattern": "^[^\\x00\\r\\n]+$",
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "external_prerequisites": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "External Prerequisites",
+      "type": "array"
+    },
+    "verification_steps": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Verification Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "project_id",
+    "epic_id",
+    "task_id",
+    "name",
+    "goal",
+    "requirements",
+    "scope",
+    "out_of_scope",
+    "acceptance_criteria",
+    "sources",
+    "verification_steps"
+  ],
+  "title": "LocalTaskSpec",
+  "type": "object"
+}

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "project_id": "example-project",
+  "epic_id": "example-epic",
+  "task_id": "example-task",
+  "name": "Persist a result",
+  "goal": "Store and restore a bounded result",
+  "requirements": [
+    "Keep data across restart"
+  ],
+  "scope": [
+    "Add result storage and its test"
+  ],
+  "out_of_scope": [
+    "Runtime scheduling and merges"
+  ],
+  "acceptance_criteria": [
+    "A stored result survives reopening the database"
+  ],
+  "sources": [
+    "README.md",
+    "Backlog.md"
+  ],
+  "dependencies": [],
+  "external_prerequisites": [],
+  "verification_steps": [
+    "uv run --locked pytest tests/test_result.py"
+  ]
+}
