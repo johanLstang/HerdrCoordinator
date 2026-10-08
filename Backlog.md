@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-16 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active; F-14–F-16 Done och nästa F-17. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-16 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active; F-14–F-16 Done och F-17 pågår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -764,7 +764,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-17 Verifiera en verklig Worker leverans
 
-**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9ae60f57-9194-4bf8-8763-d56cddfdc868`.
+**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `9ae60f57-9194-4bf8-8763-d56cddfdc868`.
 
 **Körbar:** Ja — F-16 verifierad/mergad, E-03 Done på main och X-01 tidigare verifierad; aktuella runtimevillkor återkontrolleras före prov.
 
@@ -785,6 +785,12 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Verkligt taskprov med före/efter-SHA, sandbox/policykontroll och kontroll av andra worktrees.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/kontrakt F-17 (2026-10-08):** Task/e04-f17 från epic a73db1d med verifierad User och Done-beroenden. Verklig liten Python/unittest-Worker i redan godkänt F-10-testrepo, explicit server hc-f17-20261008 och F-05→F-15→F-16. Promptleveransen får inte vänta på hela implementationen före ACK-observation: Herdr använder --wait --until working --timeout enligt verifierad CLI-grammatik; anropet väntar på arbetsstart, F-12 observerar korrelerad native ACK separat före deadline. Faktiska Git-/filesystem-/kommandobegränsningar redovisas med ofarliga prover; olösta gränser registreras konkret inför E-10-autonomi enligt featurens kontrakt, inte som säkrad isolering. Ingen testmain-/epicmerge. Startbanner avfärdas manuellt i provets operatörspreflight; det ändrar inga säkerhetsinställningar. Misslyckade prov bevaras och F-13 stoppar/verifierar inaktivitet före slotrelease. Ingen blind omleverans efter timeout. Installerad Codex thread/read i separat metadata-child rekonstruerar pågående native turn som interrupted; ACK får godtas där endast med samtidigt verifierad fysisk working-runtime och oförändrad session/process samt exakt ny userprompt och korrelerad agentACK. Det är startbevis, aldrig slutrapport/Done. Avslutad rapport kräver fortsatt completed-turn och idle runtime.
+
+**Worker-underlag F-17 (2026-10-08):** Verklig native Worker-run `25bf44fa-2aff-45d0-b57d-e732fc722dce`, ACK under working före deadline och commit `5e23126269027af55e9fcb0d5a528238129792eb`. Sex riktiga unittest + oberoende F-16-verifiering gav READY_FOR_REVIEW; duplicate EXISTING utan ändring. Fixture main 7ce621a och epic 5027484 oförändrade, samtliga provworktrees rena, ingen merge/Done. F-13 bekräftade stopp/inaktivitet/slotrelease. [Verkligt prov och gränser](docs/worker/F-17-verklig-worker.md), [native underlag](docs/worker/F-17-prover.json). Bevarade misslyckade försök; inga återställda deadlines/retroaktiva ACK. Verifierad MCP-Worker nekas start/merge/främmande scope. Outside-read tillåts; faktisk Git-eskaleringsbegäran accepterades; F-16-testsubprocess kan skriva utanför worktree. Dessa gränser är inte säkrade. **Hinder före F-38/E-10-autonomi:** skyddad DB/config/credentials, kontrollerad Git/approval, isolerade tester och input-readiness måste verifieras i målmiljön av Coordinator/operatör och Integration. F-17 review/integration återstår.
+
+**Worker READY_FOR_REVIEW F-17 (2026-10-08):** 74 riktade ACK/rapport/MCP-prov passerar (77.39 s); tidigare ACK/taskstart 59 prov (62.10 s). Ruff, wheel/sdist-build, diff och faktiskt testserverstopp exit 0. Fyra nya ACK-projektionstester verifierar working, idle/done och främmande ACK; timeoutregressionen kvarstår. Verklig Worker, oberoende sex-test-handoff och negativa kapabilitetsprov enligt underlaget ovan. Hinder inför F-38 registrerat i både backlogg och TeamPlayer utan att starta den tasken. Integration review/merge/regression återstår.
 
 ## Epic E-05 Granska korrigera och integrera en task
 
@@ -1476,6 +1482,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Arbetsinstruktion för Codex:** Implementera långlivad Coordinator-prompt/session och epic_claim_next från TeamPlayer med prioritet, beroenden och stabil ordning. Reservera projektets enda aktiva epic atomiskt. Kontrollera D-02/F-17 och blockera autonom körning vid olösta nödvändiga runtimegränser.
 
+**Registrerat runtimehinder F-17 (2026-10-08):** Autonom drift/merge blockeras tills outside-read till skyddade resurser, Git-/approvaleskalering, osandboxade måltester och startup input-readiness har verifierade gränser. Se [prov och konkret nästa åtgärd](docs/worker/F-17-verklig-worker.md). Coordinator/operatör väljer och säkrar målmiljön; Integration gör faktiska negativa prov. F-38 förblir Planned fram till sin fas; detta är dess dokumenterade externa gate.
+
 **Resultat och kontrakt:** Epicberoenden kräver verifierad main-merge. Taskerna under vald epic måste ha tillräckligt underlag för planering. Dubbelt claim återfinner befintlig run. Om inga körbara epics finns lämnas vänteläge med orsaker, inte ett artificiellt Done eller oändlig startloop.
 
 **Acceptans**
@@ -1894,7 +1902,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Done | — | 3/3 | E-03 | Granskad/integrerad via 258010c5; 297 regressionstester passerar. |
 | 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Done | — | 3/3 | E-03, F-14 | Granskad/integrerad via a61f181d; 329 regressionstester passerar. |
 | 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Done | — | 3/3 | E-03, F-15 | Granskad/integrerad via 575c8efa; 361 regressionstester passerar. |
-| 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Planned | Ja | 0/3 | E-03, F-16, X-01 | Nästa kandidat; F-16 Done, X-01 åtkomlig. Verklig Worker och behörighetsprov. |
+| 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Active | Ja | 0/3 | E-03, F-16, X-01 | Pågår: verklig Worker i godkänt testrepo och behörighetsprov. |
 | 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Planned | Nej | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Planned | Nej | 0/3 | E-04 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Planned | Nej | 0/3 | E-04, F-18, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

@@ -273,7 +273,20 @@ def test_prompt_adapter_uses_explicit_name_timeout_and_literal_argument(monkeypa
     text = '{"instruction":"$(touch /tmp/should-not-run)"}'
     h.prompt("owned", text, timeout_ms=45000)
     assert seen == [
-        (("agent", "prompt", "owned", text, "--wait", "--timeout", "45000"), {"timeout": 50})
+        (
+            (
+                "agent",
+                "prompt",
+                "owned",
+                text,
+                "--wait",
+                "--until",
+                "working",
+                "--timeout",
+                "45000",
+            ),
+            {"timeout": 50},
+        )
     ]
 
 
@@ -321,3 +334,43 @@ def test_concurrent_dispatch_sends_only_once_and_keeps_one_ack_event(setup, monk
         result = future.result(timeout=10)
     assert s.observe(i, "t1") == result and len(h.sent) == 1
     assert s.store.get_event("p", result["event_id"]) is not None
+
+
+@pytest.mark.parametrize(
+    "runtime_status,expected", [("working", "CONFIRMED"), ("idle", "WAITING"), ("done", "WAITING")]
+)
+def test_unloaded_interrupted_projection_needs_verified_working_runtime(
+    setup, runtime_status, expected
+):
+    s, i, h, history = setup
+    original = h.prompt
+
+    def prompt(*args, **kwargs):
+        original(*args, **kwargs)
+        h.status = runtime_status
+        history.turns[-1]["status"] = "interrupted"
+
+    h.prompt = prompt
+    result = s.dispatch(i, "t1", "fixture")
+    assert result["status"] == expected
+    assert s.store.get_task("t1").internal_status == (
+        TaskState.WORKING if expected == "CONFIRMED" else TaskState.STARTING
+    )
+    assert len(h.sent) == 1
+
+
+def test_live_interrupted_projection_does_not_accept_foreign_ack(setup):
+    s, i, h, history = setup
+    original = h.prompt
+
+    def prompt(*args, **kwargs):
+        original(*args, **kwargs)
+        h.status = "working"
+        history.turns[-1]["status"] = "interrupted"
+        history.turns[-1]["items"][-1]["text"] = json.dumps(
+            {"status": "WORKING", "task_run_id": "foreign"}
+        )
+
+    h.prompt = prompt
+    assert s.dispatch(i, "t1", "fixture")["status"] == "WAITING"
+    assert s.store.get_task("t1").internal_status == TaskState.STARTING

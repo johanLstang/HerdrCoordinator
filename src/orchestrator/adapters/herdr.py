@@ -159,6 +159,8 @@ class HerdrAdapter:
             identity(name),
             text,
             "--wait",
+            "--until",
+            "working",
             "--timeout",
             str(timeout_ms),
             timeout=timeout_ms / 1000 + 5,
