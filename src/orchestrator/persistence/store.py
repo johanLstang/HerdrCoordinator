@@ -372,6 +372,29 @@ class StateStore:
         ).fetchone()
         return TransitionEvent.model_validate_json(row[0]) if row else None
 
+    def events(
+        self, project_id: str, epic_run_id: str, task_run_id: str | None = None
+    ) -> list[TransitionEvent]:
+        return [
+            TransitionEvent.model_validate_json(row[0])
+            for row in self.db.execute(
+                "SELECT payload FROM transition_events WHERE project_id=? AND epic_run_id=? "
+                "AND task_run_id IS ? ORDER BY rowid",
+                (project_id, epic_run_id, task_run_id),
+            )
+        ]
+
+    def latest_event(
+        self, project_id: str, epic_run_id: str, task_run_id: str | None = None
+    ) -> TransitionEvent | None:
+        """Insertion order is the durable local event order; timestamps need not be unique."""
+        row = self.db.execute(
+            "SELECT payload FROM transition_events WHERE project_id=? AND epic_run_id=? "
+            "AND task_run_id IS ? ORDER BY rowid DESC LIMIT 1",
+            (project_id, epic_run_id, task_run_id),
+        ).fetchone()
+        return TransitionEvent.model_validate_json(row[0]) if row else None
+
     def record_transition(self, record: EpicRun | TaskRun, event: TransitionEvent) -> None:
         with self.transaction() as db:
             if isinstance(record, TaskRun):

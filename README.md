@@ -291,3 +291,13 @@ ID-/källbindningar. Ofullständiga listor, cykler, saknade tasks, fel tilldelni
 ändrade snapshots ger fel/ej körbara kandidater. Läsningen startar ingen Worker och
 ändrar inga externa statusar eller runtime-records. Se [API och verifiering](docs/teamplayer/F-24-lasning.md);
 operatörens avgränsade native läsprov är `uv run --locked python scripts/probes/f24_read.py`.
+
+## TeamPlayer-synk (F25)
+
+`TeamPlayerSyncService` speglar verifierade domänhändelser med beständig outbox och
+explicit UUID-bindning. Integration synkar tasks och Coordinator epics; Worker
+nekas före nätanrop. En operatör kan injicera servicen i `RuntimeService` för
+MCP-anropen `set_task_status`/`set_epic_status`; anroparen väljer bara run-ID.
+Status och sanerad historik härleds från faktiska start-, review-, Git-, test-
+och stoppbevis. Återläsning efter nätfel återförsöker bara TeamPlayer-steget.
+Se [API, statusgrindar och recovery](docs/teamplayer/F-25-synk.md).

@@ -1,5 +1,6 @@
 from pydantic import ValidationError
 
+from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_changes_service import TaskChangesError
@@ -33,6 +34,8 @@ _ROLES = {
     "task_merge": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
+    "set_task_status": {Role.INTEGRATION},
+    "set_epic_status": {Role.COORDINATOR},
 }
 _PUBLIC_FIELDS = {
     "id",
@@ -77,6 +80,7 @@ class RuntimeService:
         task_changes=None,
         task_approval=None,
         task_merge=None,
+        teamplayer_sync=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -85,6 +89,7 @@ class RuntimeService:
         self.task_changes = task_changes
         self.task_approval = task_approval
         self.task_merge = task_merge
+        self.teamplayer_sync = teamplayer_sync
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -110,6 +115,54 @@ class RuntimeService:
             role=self.actor.role if self.actor else "Unregistered",
         )
         return response
+
+    async def call_async(self, operation, arguments):
+        if operation not in {"set_task_status", "set_epic_status"} or self.teamplayer_sync is None:
+            return self.call(operation, arguments)
+        response = await self._sync_teamplayer(operation, arguments)
+        self.log.emit(
+            "mcp.policy",
+            "INFO" if response.ok else "WARNING",
+            "tool decision",
+            code=response.code,
+            role=self.actor.role if self.actor else "Unregistered",
+        )
+        return response
+
+    async def _sync_teamplayer(self, operation, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role not in _ROLES[operation]:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot sync this target")
+        try:
+            request = Target.model_validate(arguments)
+            task = operation == "set_task_status"
+            identity = request.task_run_id if task else request.epic_run_id
+            if identity is None:
+                raise ValueError
+        except (ValidationError, ValueError):
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid sync target")
+        try:
+            self._target(request)
+            method = self.teamplayer_sync.sync_task if task else self.teamplayer_sync.sync_epic
+            result = await method(self.actor, identity)
+            ready = result["status"] in {"SYNCED", "EXISTING"}
+            return ToolResponse(
+                ok=ready,
+                code="OK" if ready else result["reason"],
+                message="TeamPlayer sync confirmed" if ready else "TeamPlayer sync pending",
+                data=result,
+            )
+        except StateError:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="sync scope denied")
+        except TeamPlayerError as error:
+            return ToolResponse(
+                ok=False, code=str(error), message="reconcile recorded sync and source evidence"
+            )
+        except Exception:
+            return ToolResponse(
+                ok=False, code="TEAMPLAYER_SYNC_UNAVAILABLE", message="reconcile recorded sync"
+            )
 
     def _call(self, operation: str, arguments: dict) -> ToolResponse:
         if self.actor is None:
@@ -188,6 +241,13 @@ class RuntimeService:
             if request.operation == "task_merge" and self.task_merge is not None:
                 return ToolResponse(
                     ok=True, code="OK", message="verified task delivery service is available"
+                )
+            if (
+                request.operation in {"set_task_status", "set_epic_status"}
+                and self.teamplayer_sync is not None
+            ):
+                return ToolResponse(
+                    ok=True, code="OK", message="durable TeamPlayer sync service is available"
                 )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(

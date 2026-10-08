@@ -1,4 +1,4 @@
-"""Read-only TeamPlayer MCP boundary; credentials and upstream errors never become facts."""
+"""Verified TeamPlayer MCP boundary; credentials and upstream errors never become facts."""
 
 import json
 import os
@@ -15,6 +15,10 @@ from mcp.client.streamable_http import streamable_http_client
 
 class TeamPlayerError(RuntimeError):
     """Fixed safe code only: no upstream messages, response bodies, URLs or headers."""
+
+    def __init__(self, code, *, current_version=None):
+        super().__init__(code)
+        self.current_version = current_version if type(current_version) is int else None
 
 
 READ_TOOLS = frozenset({"get_me", "list_projects", "list_epics", "list_tasks", "get_task"})
@@ -58,7 +62,9 @@ class OperatorHeaders:
 
 
 @asynccontextmanager
-async def teamplayer_connection(endpoint: str, headers: Callable, *, timeout_seconds=20):
+async def teamplayer_connection(
+    endpoint: str, headers: Callable, *, timeout_seconds=20, writable=False
+):
     """Only an operator supplies this endpoint/provider; no implicit connection or runtime start."""
     try:
         parsed = urlsplit(endpoint)
@@ -74,6 +80,7 @@ async def teamplayer_connection(endpoint: str, headers: Callable, *, timeout_sec
                     parsed.scheme == "http" and parsed.hostname in {"127.0.0.1", "localhost", "::1"}
                 )
             )
+            or type(writable) is not bool
             or type(timeout_seconds) is not int
             or not 1 <= timeout_seconds <= 120
         ):
@@ -82,14 +89,18 @@ async def teamplayer_connection(endpoint: str, headers: Callable, *, timeout_sec
         raise TeamPlayerError("TEAMPLAYER_CONNECTION_CONFIG_INVALID") from None
     try:
         # No token in URL or repr/model/state/log; refresh provider runs on each new connection.
-        async with httpx2.AsyncClient(headers=headers(), timeout=timeout_seconds) as http:
+        private_headers = headers()
+        async with httpx2.AsyncClient(headers=private_headers, timeout=timeout_seconds) as http:
             async with Client(
                 streamable_http_client(endpoint, http_client=http),
                 mode="legacy",
                 read_timeout_seconds=timeout_seconds,
             ) as client:
-                adapter = TeamPlayerMCPAdapter(client)
+                adapter_type = TeamPlayerMCPWriter if writable else TeamPlayerMCPAdapter
+                adapter = adapter_type(client, private_values=tuple(private_headers.values()))
                 await adapter.verify_catalog()
+                if writable:
+                    adapter.verify_write_catalog()
                 yield adapter
     except TeamPlayerError:
         raise
@@ -98,11 +109,20 @@ async def teamplayer_connection(endpoint: str, headers: Callable, *, timeout_sec
 
 
 class TeamPlayerMCPAdapter:
-    def __init__(self, client):
+    def __init__(self, client, *, private_values=()):
         self._client = client
+        self._private_values = tuple(v for v in private_values if v) + tuple(
+            v[7:] for v in private_values if v.startswith("Bearer ") and len(v) > 7
+        )
+
+    def redact_text(self, value):
+        for secret in sorted(self._private_values, key=len, reverse=True):
+            value = value.replace(secret, "[REDACTED]")
+        return value
 
     async def verify_catalog(self):
         names, seen, cursor = set(), set(), None
+        catalog = {}
         try:
             for _ in range(100):
                 page = await self._client.list_tools(cursor=cursor, cache_mode="bypass")
@@ -110,6 +130,7 @@ class TeamPlayerMCPAdapter:
                     if tool.name in names:
                         raise TeamPlayerError("TEAMPLAYER_CATALOG_DUPLICATE")
                     names.add(tool.name)
+                    catalog[tool.name] = tool
                     if tool.name in READ_TOOLS:
                         if not tool.annotations or tool.annotations.read_only_hint is not True:
                             raise TeamPlayerError("TEAMPLAYER_READ_CAPABILITY_CHANGED")
@@ -141,6 +162,7 @@ class TeamPlayerMCPAdapter:
                 raise TeamPlayerError("TEAMPLAYER_CATALOG_PAGE_LIMIT")
             if not READ_TOOLS <= names:
                 raise TeamPlayerError("TEAMPLAYER_READ_TOOLS_MISSING")
+            self._catalog = catalog
         except TeamPlayerError:
             raise
         except Exception:
@@ -149,6 +171,9 @@ class TeamPlayerMCPAdapter:
     async def read(self, name, arguments):
         if name not in READ_TOOLS:
             raise TeamPlayerError("TEAMPLAYER_READ_OPERATION_DENIED")
+        return await self._invoke(name, arguments)
+
+    async def _invoke(self, name, arguments, *, writing=False):
         try:
             result = await self._client.call_tool(name, arguments)
             texts = [block.text for block in result.content if block.type == "text"]
@@ -172,10 +197,53 @@ class TeamPlayerMCPAdapter:
                 safe = {
                     "task_not_found": "TEAMPLAYER_TASK_NOT_FOUND",
                     "permission_denied": "TEAMPLAYER_PERMISSION_DENIED",
+                    "version_conflict": "TEAMPLAYER_VERSION_CONFLICT",
+                    "approval_required": "TEAMPLAYER_APPROVAL_REQUIRED",
+                    "approval_rejected": "TEAMPLAYER_APPROVAL_REJECTED",
                 }
-                raise TeamPlayerError(safe.get(code, "TEAMPLAYER_READ_REJECTED"))
+                raise TeamPlayerError(
+                    safe.get(
+                        code, "TEAMPLAYER_WRITE_REJECTED" if writing else "TEAMPLAYER_READ_REJECTED"
+                    ),
+                    current_version=payload.get("currentVersion"),
+                )
             return payload["data"]
         except TeamPlayerError:
             raise
         except Exception:
-            raise TeamPlayerError("TEAMPLAYER_RESPONSE_UNAVAILABLE") from None
+            raise TeamPlayerError(
+                "TEAMPLAYER_WRITE_OUTCOME_UNKNOWN" if writing else "TEAMPLAYER_RESPONSE_UNAVAILABLE"
+            ) from None
+
+
+class TeamPlayerMCPWriter(TeamPlayerMCPAdapter):
+    """Operator transport; services independently authorize Actor, state and proof."""
+
+    WRITE_TOOLS = frozenset({"update_task_status", "update_task_details", "update_epic_status"})
+
+    def verify_write_catalog(self):
+        for name in self.WRITE_TOOLS:
+            tool = getattr(self, "_catalog", {}).get(name)
+            if tool is None or not tool.annotations or tool.annotations.read_only_hint is not False:
+                raise TeamPlayerError("TEAMPLAYER_WRITE_TOOLS_UNVERIFIED")
+            schema = tool.input_schema
+            required = (
+                {"projectId", "epicId", "version", "status"}
+                if name == "update_epic_status"
+                else {"request"}
+            )
+            if set(schema.get("required", [])) != required:
+                raise TeamPlayerError("TEAMPLAYER_WRITE_SCHEMA_CHANGED")
+            if name != "update_epic_status":
+                request = schema.get("properties", {}).get("request", {})
+                fields = {"projectId", "taskId", "version"} | (
+                    {"status"} if name == "update_task_status" else {"changeReason"}
+                )
+                if request.get("type") != "object" or set(request.get("required", [])) != fields:
+                    raise TeamPlayerError("TEAMPLAYER_WRITE_SCHEMA_CHANGED")
+
+    async def write(self, name, arguments):
+        if name not in self.WRITE_TOOLS:
+            raise TeamPlayerError("TEAMPLAYER_WRITE_OPERATION_DENIED")
+        self.verify_write_catalog()
+        return await self._invoke(name, arguments, writing=True)

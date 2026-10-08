@@ -1,0 +1,39 @@
+{
+  "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "userId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "epicId": "63cebf13-391f-4785-bdc4-e3e489cb25fa",
+  "epicStatus": "InProgress",
+  "epicVersion": 4,
+  "source": "Actual inactive F22 backup; original ownership/runtime/Git preserved",
+  "taskResults": [
+    {
+      "lostReply": {
+        "status": "PENDING",
+        "operation_id": "5fa4e410-fa06-47b9-8b3d-321019032d21",
+        "reason": "TEAMPLAYER_WRITE_OUTCOME_UNKNOWN"
+      }
+    },
+    {
+      "taskId": "2eabe2f5-9cc9-4eab-bd7b-c05349937f6f",
+      "runId": "b57c9cc5-9ad5-45ac-82eb-41678f1a0bda",
+      "status": "Done",
+      "version": 3,
+      "operationId": "5fa4e410-fa06-47b9-8b3d-321019032d21",
+      "exactlyOneHistoryEvent": true
+    },
+    {
+      "taskId": "cfe70b9f-75ae-4ea4-bbd1-f5aefa93b8dc",
+      "runId": "14faff65-6d6e-4278-b94c-adcf69b46389",
+      "status": "NeedsInput",
+      "version": 3,
+      "operationId": "7960b7df-7355-4a15-a46d-2e66fb457762",
+      "exactlyOneHistoryEvent": true
+    }
+  ],
+  "runtimeGitJournalUnchanged": true,
+  "journalDigest": "7348e2d1c6921e1cfff36c272ad173d1ed579ac481d62168526479d525f20c54",
+  "mainCommit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+  "fixtureEpicCommit": "77abb664a6077986d9b12956360aa6909484b7cc",
+  "workerDeniedBeforeNativeCall": true,
+  "injection": "One-shot injected reply loss after successful native Done write"
+}
