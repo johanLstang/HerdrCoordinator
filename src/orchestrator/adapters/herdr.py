@@ -117,7 +117,7 @@ class HerdrAdapter:
         except (KeyError, TypeError):
             raise HerdrError("INVALID_RUNTIME_RESPONSE") from None
 
-    def start_agent(self, name: str, pane_id: str, cwd: str) -> None:
+    def start_agent(self, name: str, pane_id: str, cwd: str, *, resume_session_id=None) -> None:
         self.call(
             "agent",
             "start",
@@ -129,6 +129,7 @@ class HerdrAdapter:
             "--timeout",
             "30000",
             "--",
+            *(["resume", str(UUID(resume_session_id))] if resume_session_id else []),
             "--no-daemon",
             "--sandbox",
             self.sandbox,
@@ -139,9 +140,27 @@ class HerdrAdapter:
             timeout=35,
         )
 
+    def resume_agent(self, name: str, pane_id: str, cwd: str, session_id: str) -> None:
+        self.start_agent(name, pane_id, cwd, resume_session_id=session_id)
+
+    def interrupt(self, name: str) -> None:
+        self.call("agent", "send-keys", identity(name), "esc")
+        self.call(
+            "agent", "wait", identity(name), "--until", "idle", "--timeout", "30000", timeout=35
+        )
+
+    def exit_agent(self, name: str) -> None:
+        self.call("agent", "send-keys", identity(name), "ctrl+d")
+
     def prompt(self, name: str, text: str, *, timeout_ms: int) -> None:
         self.call(
-            "agent", "prompt", identity(name), text, "--wait", "--timeout", str(timeout_ms),
+            "agent",
+            "prompt",
+            identity(name),
+            text,
+            "--wait",
+            "--timeout",
+            str(timeout_ms),
             timeout=timeout_ms / 1000 + 5,
         )
 
@@ -179,6 +198,7 @@ class HerdrAdapter:
                 raise HerdrError("CODEX_EXECUTABLE_UNVERIFIED")
             installed = Path(cli).resolve()
             processes = []
+            resumed_sessions = set()
             for process in info["foreground_processes"]:
                 args = process["argv"]
                 executable = Path(shutil.which(args[0]) or args[0]).resolve()
@@ -198,6 +218,9 @@ class HerdrAdapter:
                 ):
                     if process["cwd"] != cwd:
                         raise ValueError
+                    position = 2 if launcher else 1
+                    if len(args) > position and args[position] == "resume":
+                        resumed_sessions.add(str(UUID(args[position + 1])))
                     pid = process["pid"]
                     if type(pid) is not int or pid <= 0:
                         raise ValueError
@@ -210,6 +233,14 @@ class HerdrAdapter:
                 if session.get("source") != "herdr:codex" or session.get("kind") != "id":
                     raise ValueError
                 session_id = str(UUID(session["value"]))
+            if len(resumed_sessions) > 1:
+                raise ValueError
+            if resumed_sessions:
+                resumed = next(iter(resumed_sessions))
+                if session_id not in {None, resumed}:
+                    raise ValueError
+                session_id = resumed
+            if session_id:
                 try:
                     metadata = CodexAdapter().read_session(session_id, cwd)
                 except CodexError:
