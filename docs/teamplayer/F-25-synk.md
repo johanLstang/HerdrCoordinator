@@ -41,7 +41,7 @@ F40 behöver använda kontraktet när Coordinatorns slutreview implementeras.
 Testoperatören gör dessa roller sekventiellt i dagens bootstrap.
 
 Historisk task-Done kräver inte att en redan stoppad Codex-server startas igen.
-Review-, Git-, test-, process- och Done-journalerna kontrolleras direkt. Native
+Review-, Git-, test-, process- och Done-journalerna kontrolleras direkt. F13:s idempotenta stoppalias är tillåtna: parkering verifierar exakt det stopp-ID som dess domänhändelse namnger, och Done använder leveransens stopp-ID. Native
 ACK behövs för aktiva faser. En speglad boardstatus är aldrig bevis för runtime
 eller merge, och synktjänsten utför ingen start, test, stop, resume eller Git-mutation.
 

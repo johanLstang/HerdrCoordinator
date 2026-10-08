@@ -217,7 +217,10 @@ class TeamPlayerEvidence:
                         == self._start(task).result.get("generation", self._start(task).id)
                     )
                 if phase == TaskState.PARKED:
-                    stop = self._stop(task)
+                    require(event.id.startswith("runtime-park:"))
+                    # F13 may record idempotent alias stop operations. The actual
+                    # PARKED transition names the physical stop that must be checked.
+                    stop = self._stop(task, stop_id=event.id.removeprefix("runtime-park:"))
                     require(event.id == "runtime-park:" + stop.id)
                     proof["stop_id"] = stop.id
                 proof["block_source_id"] = source.id
