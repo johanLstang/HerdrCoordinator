@@ -79,6 +79,11 @@ def main(argv: list[str] | None = None) -> int:
 
                 task_start = None
                 worker_reports = None
+                task_review = None
+                if settings.review_context is not None and settings.worker_test_command:
+                    from orchestrator.application.task_review_service import TaskReviewService
+
+                    task_review = TaskReviewService(settings, store)
                 if args.herdr_session:
                     from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
                     from orchestrator.application.task_start_service import TaskStartService
@@ -97,7 +102,12 @@ def main(argv: list[str] | None = None) -> int:
                 asyncio.run(
                     serve_stdio(
                         RuntimeService(
-                            store, actor, log, task_start=task_start, worker_reports=worker_reports
+                            store,
+                            actor,
+                            log,
+                            task_start=task_start,
+                            worker_reports=worker_reports,
+                            task_review=task_review,
                         )
                     )
                 )
