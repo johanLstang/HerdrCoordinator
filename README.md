@@ -250,3 +250,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Verifierad Worker-rapport (F-16)
 
 `WorkerReportService` hämtar native slutrapport från registrerad Codex-session och kontrollerar ACK/proveniens, aktuell commit och rent worktree. Operatörens `worker_test_command` körs oberoende innan READY_FOR_REVIEW/Active; rapportens PASS och testkommandon är påståenden. BLOCKED sparar reason/input utan slotrelease. Explicit runtime-MCP har `task_report_ready/blocked` för eget Worker-target. Se [rapport-, test- och recoverykontrakt](docs/worker/F-16-rapporter.md).
+
+## Aktuell taskreviewkontext (F-18)
+
+`TaskReviewService` synkroniserar en verifierad Worker-leverans mot aktuell epic och kör operatörens testkommando på det nya versionsparet. Komplett diff, taskspecifikation, acceptans, versionerade källor, epicregler och testoperation sparas med context-ID och exakta task/epic-SHA. Först därefter går tasken till REVIEWING. MCP `task_review_request` aktiveras när både `review_context` och `worker_test_command` finns i operatörens TOML; endast registrerad Integration inom rätt epic får anropa det. Ingen Herdr-session startas implicit. Underlaget ger inget approval, leveransmerge eller Done. Se [konfiguration, gränser och recovery](docs/review/F-18-kontext.md).

@@ -1,11 +1,18 @@
 from pydantic import ValidationError
 
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.event_log import EventLog
-from orchestrator.mcp.contracts import PolicyRequest, Target, TaskStartRequest, ToolResponse
+from orchestrator.mcp.contracts import (
+    PolicyRequest,
+    Target,
+    TaskReviewRequest,
+    TaskStartRequest,
+    ToolResponse,
+)
 from orchestrator.persistence.store import StateStore, StoreError
 
 _ROLES = {
@@ -14,6 +21,7 @@ _ROLES = {
     "task_report_ready": {Role.WORKER},
     "task_report_blocked": {Role.WORKER},
     "task_start": {Role.INTEGRATION},
+    "task_review_request": {Role.INTEGRATION},
     "task_merge": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
@@ -57,10 +65,12 @@ class RuntimeService:
         *,
         task_start=None,
         worker_reports=None,
+        task_review=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
         self.worker_reports = worker_reports
+        self.task_review = task_review
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -99,6 +109,8 @@ class RuntimeService:
             return self._worker_report(operation, arguments)
         if operation == "task_start" and self.task_start is not None:
             return self._start_task(arguments)
+        if operation == "task_review_request" and self.task_review is not None:
+            return self._request_review(arguments)
         if operation not in {"runtime_status", "policy_check"}:
             return ToolResponse(
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
@@ -141,6 +153,10 @@ class RuntimeService:
                 )
             if request.operation == "task_start" and self.task_start is not None:
                 return ToolResponse(ok=True, code="OK", message="task start service is available")
+            if request.operation == "task_review_request" and self.task_review is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="review context service is available"
+                )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(
                     ok=False,
@@ -218,4 +234,43 @@ class RuntimeService:
         except ReportError as e:
             return ToolResponse(
                 ok=False, code=str(e), message="native report could not be verified"
+            )
+
+    def _request_review(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot request review")
+        try:
+            request = TaskReviewRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid review request")
+        if request.project_id != self.actor.project_id:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            result = self.task_review.request(
+                self.actor, request.task_run_id, key=request.request_key
+            )
+            ready = result["context"]["reviewable"]
+            return ToolResponse(
+                ok=ready,
+                code="OK" if ready else result["context"]["reason"],
+                message="review context verified" if ready else "review context is not approvable",
+                data=result,
+            )
+        except TaskReviewError as error:
+            return ToolResponse(
+                ok=False, code=str(error), message="reconcile review inputs and recorded operations"
+            )
+        except StateError:
+            return ToolResponse(
+                ok=False,
+                code="REVIEW_UNVERIFIED",
+                message="reconcile review inputs and recorded operations",
             )

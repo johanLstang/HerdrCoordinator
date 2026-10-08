@@ -13,7 +13,13 @@ from mcp.types import (
 )
 
 from orchestrator.application.runtime_service import RuntimeService
-from orchestrator.mcp.contracts import PolicyRequest, Target, TaskStartRequest, ToolResponse
+from orchestrator.mcp.contracts import (
+    PolicyRequest,
+    Target,
+    TaskReviewRequest,
+    TaskStartRequest,
+    ToolResponse,
+)
 
 
 def create_server(service: RuntimeService) -> Server:
@@ -57,6 +63,17 @@ def create_server(service: RuntimeService) -> Server:
                     annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
                 )
             )
+
+    if service.task_review is not None:
+        tools.append(
+            Tool(
+                name="task_review_request",
+                description="Prepare verified review material in the registered Integration scope.",
+                input_schema=TaskReviewRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
 
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)

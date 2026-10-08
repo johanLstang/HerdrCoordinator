@@ -16,6 +16,8 @@ from pydantic import (
     model_validator,
 )
 
+from orchestrator.domain.review_contracts import EpicReviewSpec
+
 _METADATA = {".git", ".codex", ".agents", ".aws"}
 _SYSTEM_ROOTS = tuple(Path(p) for p in ("/etc", "/usr", "/bin", "/sbin", "/proc", "/sys", "/dev"))
 _SHARED_ROOTS = {Path(p) for p in ("/tmp", "/var", "/var/tmp", "/home", "/opt", "/srv", "/run")}
@@ -46,6 +48,7 @@ class Settings(BaseModel):
     credential_env: tuple[str, ...] = ()
     worker_test_command: tuple[str, ...] = ()
     worker_test_timeout: int = Field(default=300, ge=1, le=3600, strict=True)
+    review_context: EpicReviewSpec | None = None
 
     @field_validator("worker_test_command")
     @classmethod
