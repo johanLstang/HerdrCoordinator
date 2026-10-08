@@ -1,0 +1,858 @@
+{
+  "task": "F-17",
+  "date": "2026-10-08",
+  "versions": {
+    "herdr": "0.9.3",
+    "codex": "0.161.0",
+    "protocol": 22
+  },
+  "server": "hc-f17-20261008",
+  "source_base": "a73db1d9c886fd8fdf4a920827179f704edae349",
+  "fixture_main_before": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+  "fixture_epic_before": "5027484401e654560164543bbccf2ed5bb308502",
+  "fixture_after": {
+    "main": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+    "epic": "5027484401e654560164543bbccf2ed5bb308502"
+  },
+  "native_ready": {
+    "status": "READY_FOR_REVIEW",
+    "operation_id": "8718167a-6ba7-4d8f-be02-948ca39d5155",
+    "task": {
+      "id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+      "project_id": "f17-probe",
+      "epic_run_id": "f17-epic-run",
+      "task_id": "f17-task-sixth-attempt",
+      "branch": "task/f17-epic-f17-task-sixth-attempt",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-sixth-attempt",
+      "resume_state": null,
+      "internal_status": "READY_FOR_REVIEW",
+      "kanban_status": "Active",
+      "worker_agent_id": "hc-44ce62c51e6c4d16b3436512",
+      "worker_slot": 1,
+      "herdr_workspace_id": "w6",
+      "herdr_server_session": "hc-f17-20261008",
+      "herdr_tab_id": "w6:t1",
+      "herdr_pane_id": "w6:p1",
+      "herdr_terminal_id": "term_65d5302754c0f6",
+      "codex_session_id": "01a11b65-0075-7251-b2bf-59477d00d8f3",
+      "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+      "current_commit": "5e23126269027af55e9fcb0d5a528238129792eb",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T12:02:44.528121Z",
+      "completed_at": null
+    }
+  },
+  "ack": {
+    "status": "CONFIRMED",
+    "event_id": "assignment-ack:e91c6d46-bd07-4026-b393-03399aaacd19",
+    "ack": {
+      "turn_id": "01a11b65-2479-7b12-89ff-e9b5bcede276",
+      "item_id": "msg_0ea2774cfeb02386016ac78672b1d08191b8fb062b0d1fd8e0",
+      "message_hash": "36d86d842ac915ad6fcaf0dc29b7b3de8e9099bdff59b4833ae6a15d603dca2b",
+      "session_id": "01a11b65-0075-7251-b2bf-59477d00d8f3",
+      "correlation_id": "108ce4f4-6587-4981-b2c8-8f1b0f65c3d1"
+    },
+    "runtime_status": "working",
+    "task": {
+      "id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+      "project_id": "f17-probe",
+      "epic_run_id": "f17-epic-run",
+      "task_id": "f17-task-sixth-attempt",
+      "branch": "task/f17-epic-f17-task-sixth-attempt",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-sixth-attempt",
+      "resume_state": null,
+      "internal_status": "WORKING",
+      "kanban_status": "Active",
+      "worker_agent_id": "hc-44ce62c51e6c4d16b3436512",
+      "worker_slot": 1,
+      "herdr_workspace_id": "w6",
+      "herdr_server_session": "hc-f17-20261008",
+      "herdr_tab_id": "w6:t1",
+      "herdr_pane_id": "w6:p1",
+      "herdr_terminal_id": "term_65d5302754c0f6",
+      "codex_session_id": "01a11b65-0075-7251-b2bf-59477d00d8f3",
+      "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+      "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T12:02:44.528121Z",
+      "completed_at": null
+    }
+  },
+  "handoff_operation": {
+    "id": "8718167a-6ba7-4d8f-be02-948ca39d5155",
+    "project_id": "f17-probe",
+    "epic_run_id": "f17-epic-run",
+    "task_run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+    "kind": "worker_report",
+    "idempotency_key": "25bf44fa-2aff-45d0-b57d-e732fc722dce:eb179baf81cdaebfd4e7e94766ba0cfd429d6e6094b969ec42f07a33b6b8e628",
+    "status": "SUCCEEDED",
+    "result": {
+      "report": {
+        "version": 1,
+        "status": "READY_FOR_REVIEW",
+        "project_id": "f17-probe",
+        "epic_id": "f17-epic",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task-sixth-attempt",
+        "task_run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+        "branch": "task/f17-epic-f17-task-sixth-attempt",
+        "commit": "5e23126269027af55e9fcb0d5a528238129792eb",
+        "summary": "Implemented Unicode-preserving label normalization, input validation, unittest coverage, and README test instructions. Committed on the assigned branch; main and epic branch tips remain unchanged.",
+        "test_summary": "All 6 unittest tests passed. Git whitespace checks passed, and the worktree is clean after commit.",
+        "tests": [
+          {
+            "command": [
+              "env",
+              "PYTHONDONTWRITEBYTECODE=1",
+              "python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-v"
+            ],
+            "exit_code": 0,
+            "summary": "6 tests passed covering whitespace normalization, Unicode preservation, empty strings, and non-string inputs."
+          },
+          {
+            "command": [
+              "git",
+              "diff",
+              "--cached",
+              "--check"
+            ],
+            "exit_code": 0,
+            "summary": "Staged changes passed whitespace checks before commit."
+          },
+          {
+            "command": [
+              "git",
+              "status",
+              "--short"
+            ],
+            "exit_code": 0,
+            "summary": "No output after commit; worktree is clean."
+          }
+        ],
+        "files_changed": [
+          "README.md",
+          "label_tools.py",
+          "tests/test_label_tools.py"
+        ],
+        "limitations": [],
+        "reason": "",
+        "input_required": ""
+      },
+      "provenance": {
+        "session_id": "01a11b65-0075-7251-b2bf-59477d00d8f3",
+        "turn_id": "01a11b65-2479-7b12-89ff-e9b5bcede276",
+        "item_id": "msg_0ea2774cfeb02386016ac786b211c881918ec795b4b9adfc63",
+        "message_hash": "219051bbc641590385fafa61ffb6ecff7c21bd14537e612f53f0bc52465c4f88",
+        "assignment_operation_id": "e91c6d46-bd07-4026-b393-03399aaacd19"
+      },
+      "stage": "READY_FOR_REVIEW",
+      "event_id": "worker-report:25bf44fa-2aff-45d0-b57d-e732fc722dce:eb179baf81cdaebfd4e7e94766ba0cfd429d6e6094b969ec42f07a33b6b8e628",
+      "verification_id": "ce0fbb09-47ee-4920-bd67-642dd256c853",
+      "verified_commit": "5e23126269027af55e9fcb0d5a528238129792eb",
+      "epic_commit": "5027484401e654560164543bbccf2ed5bb308502",
+      "actual_files": [
+        "README.md",
+        "label_tools.py",
+        "tests/test_label_tools.py"
+      ],
+      "test_command": [
+        "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e04-f17/.venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    "error_code": null,
+    "created_at": "2026-10-08T12:04:54.665419Z",
+    "updated_at": "2026-10-08T12:04:56.389466Z"
+  },
+  "independent_verification": {
+    "id": "ce0fbb09-47ee-4920-bd67-642dd256c853",
+    "project_id": "f17-probe",
+    "epic_run_id": "f17-epic-run",
+    "task_run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+    "kind": "verify_task",
+    "idempotency_key": "report-test:8718167a-6ba7-4d8f-be02-948ca39d5155",
+    "status": "SUCCEEDED",
+    "result": {
+      "source_commit": "5e23126269027af55e9fcb0d5a528238129792eb",
+      "target_commit": "5027484401e654560164543bbccf2ed5bb308502",
+      "command_hash": "cdb2564c9464d319eb1dea2e0c99641e0324eacad095f4779a1fb36743e8c31a",
+      "exit_code": 0
+    },
+    "error_code": null,
+    "created_at": "2026-10-08T12:04:54.927020Z",
+    "updated_at": "2026-10-08T12:04:55.307288Z"
+  },
+  "duplicate_reused_without_mutation": true,
+  "test_runs": [
+    {
+      "run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+      "task_id": "f17-task-sixth-attempt",
+      "branch": "task/f17-epic-f17-task-sixth-attempt",
+      "head": "5e23126269027af55e9fcb0d5a528238129792eb",
+      "clean": true,
+      "state": "READY_FOR_REVIEW",
+      "slot": 1,
+      "session": "01a11b65-0075-7251-b2bf-59477d00d8f3"
+    },
+    {
+      "run_id": "6a6bb7cd-1306-4678-b96a-d5c740714d88",
+      "task_id": "f17-task",
+      "branch": "task/f17-epic-f17-task",
+      "head": "5027484401e654560164543bbccf2ed5bb308502",
+      "clean": true,
+      "state": "PARKED",
+      "slot": null,
+      "session": null
+    },
+    {
+      "run_id": "7b1e6ed6-7640-463e-ba1b-e696261a6a4a",
+      "task_id": "f17-task-fifth-attempt",
+      "branch": "task/f17-epic-f17-task-fifth-attempt",
+      "head": "ad6bc7348b35384647021f3dda2d0c7ba517ab1c",
+      "clean": true,
+      "state": "PARKED",
+      "slot": null,
+      "session": "01a11b62-e2b1-7cb1-a5f3-7fe8ba7859e9"
+    },
+    {
+      "run_id": "7b9a1383-9eec-46f9-8657-0d6dba3d211b",
+      "task_id": "f17-task-third-attempt",
+      "branch": "task/f17-epic-f17-task-third-attempt",
+      "head": "5027484401e654560164543bbccf2ed5bb308502",
+      "clean": true,
+      "state": "PARKED",
+      "slot": null,
+      "session": null
+    },
+    {
+      "run_id": "a5dbeec5-294e-4966-9df9-699bacf9b4bf",
+      "task_id": "f17-task-second-attempt",
+      "branch": "task/f17-epic-f17-task-second-attempt",
+      "head": "5027484401e654560164543bbccf2ed5bb308502",
+      "clean": true,
+      "state": "PARKED",
+      "slot": null,
+      "session": null
+    },
+    {
+      "run_id": "eb9f153c-a87c-4c92-a9ed-3bab6354b335",
+      "task_id": "f17-task-fourth-attempt",
+      "branch": "task/f17-epic-f17-task-fourth-attempt",
+      "head": "5027484401e654560164543bbccf2ed5bb308502",
+      "clean": true,
+      "state": "PARKED",
+      "slot": null,
+      "session": null
+    }
+  ],
+  "mcp": {
+    "method": "real MCP Client/Server against registered Worker principal and actual fixture SQLite; services enabled; no native agent tool call impersonation",
+    "task_run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+    "results": [
+      {
+        "operation": "task_start",
+        "response": {
+          "ok": false,
+          "code": "FORBIDDEN",
+          "message": "role cannot start tasks",
+          "data": {}
+        },
+        "is_error": true
+      },
+      {
+        "operation": "policy_check",
+        "response": {
+          "ok": false,
+          "code": "FORBIDDEN",
+          "message": "role cannot request this operation",
+          "data": {}
+        },
+        "is_error": true
+      },
+      {
+        "operation": "policy_check",
+        "response": {
+          "ok": false,
+          "code": "FORBIDDEN",
+          "message": "role cannot request this operation",
+          "data": {}
+        },
+        "is_error": true
+      },
+      {
+        "operation": "runtime_status",
+        "response": {
+          "ok": false,
+          "code": "FORBIDDEN",
+          "message": "runtime scope is not authorized",
+          "data": {}
+        },
+        "is_error": true
+      },
+      {
+        "operation": "runtime_status",
+        "response": {
+          "ok": false,
+          "code": "INVALID_ARGUMENT",
+          "message": "arguments must match the advertised schema",
+          "data": {}
+        },
+        "is_error": true
+      },
+      {
+        "operation": "task_report_ready",
+        "response": {
+          "ok": false,
+          "code": "FORBIDDEN",
+          "message": "Worker task scope is not authorized",
+          "data": {}
+        },
+        "is_error": true
+      }
+    ],
+    "database_unchanged": true
+  },
+  "sandbox": {
+    "method": "installed Codex standalone command/exec, same workspaceWrite family; stricter tmp exclusions; parked test worktree; separate capability probe, not native Worker tool execution",
+    "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task",
+    "policy": {
+      "type": "workspaceWrite",
+      "writableRoots": [
+        "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task"
+      ],
+      "networkAccess": false,
+      "excludeSlashTmp": true,
+      "excludeTmpdirEnvVar": true
+    },
+    "response": {
+      "id": 2,
+      "result": {
+        "exitCode": 0,
+        "stdout": "{\"own_worktree_write\": {\"allowed\": true, \"result\": 14}, \"outside_write\": {\"allowed\": false, \"errno\": 30, \"type\": \"OSError\"}, \"outside_read\": {\"allowed\": true, \"result\": \"F17 harmless sentinel; contains no credentials\"}, \"other_worktree_write\": {\"allowed\": false, \"errno\": 30, \"type\": \"OSError\"}, \"process_visibility\": {\"allowed\": true, \"result\": false}, \"same_uid_signal_zero\": {\"allowed\": false, \"errno\": 3, \"type\": \"ProcessLookupError\"}, \"network_bind\": {\"allowed\": false, \"errno\": 1, \"type\": \"PermissionError\"}, \"owned_herdr_socket_connect\": {\"allowed\": false, \"errno\": 1, \"type\": \"PermissionError\"}, \"shared_git_dummy_ref_write\": {\"allowed\": false, \"exit_code\": 128, \"stderr\": \"fatal: update_ref failed for ref 'refs/herdr-probe/f17-permissions': cannot lock ref 'refs/herdr-probe/f17-permissions': unable to create directory for /home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.git/refs/herdr-probe/f17-permissions\\n\"}}\n",
+        "stderr": ""
+      }
+    }
+  },
+  "native_permissions": [
+    {
+      "type": "turn_context",
+      "approval_policy": "on-request",
+      "sandbox_policy": {
+        "type": "workspace-write",
+        "network_access": false,
+        "exclude_tmpdir_env_var": false,
+        "exclude_slash_tmp": false
+      }
+    },
+    {
+      "type": "native_git_tool_call",
+      "name": "exec",
+      "arguments": "text(await tools.exec_command({cmd:\"git add README.md label_tools.py tests/test_label_tools.py\\ngit diff --cached --check\\ngit diff --cached --stat\",max_output_tokens:2000}));\n"
+    },
+    {
+      "type": "native_git_tool_call",
+      "name": "exec",
+      "arguments": "text(await tools.exec_command({cmd:\"git add README.md label_tools.py tests/test_label_tools.py\",sandbox_permissions:\"require_escalated\",justification:\"May Git write the assigned worktree’s index so I can commit the completed code and passing tests?\",prefix_rule:[\"git\",\"add\"],max_output_tokens:2000}));\n"
+    },
+    {
+      "type": "native_git_tool_call",
+      "name": "exec",
+      "arguments": "text(await tools.exec_command({cmd:\"git commit -m \\\"Implement label normalization with unittest coverage\\\"\",max_output_tokens:2000}));\n"
+    }
+  ],
+  "failed_attempts_preserved": [
+    {
+      "stop": {
+        "id": "6e872509-ff83-4c99-a855-169768e760a6",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_run_id": "6a6bb7cd-1306-4678-b96a-d5c740714d88",
+        "kind": "stop_runtime",
+        "idempotency_key": "first-banner-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "06067500-7589-4fcb-b9b8-799ab9623070",
+          "reason": "First capability probe: optional Daybreak banner consumed input; no model turn or ACK. Preserve timeout and stop before a separately named second test attempt.",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 3925231,
+                "start_time": "93040936"
+              },
+              {
+                "pid": 3925238,
+                "start_time": "93040944"
+              },
+              {
+                "pid": 3925394,
+                "start_time": "93041104"
+              },
+              {
+                "pid": 3925395,
+                "start_time": "93041106"
+              },
+              {
+                "pid": 3925427,
+                "start_time": "93041129"
+              }
+            ],
+            "groups": [
+              3925231,
+              3925394,
+              3925395
+            ]
+          },
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-08T11:55:42.834547Z",
+        "updated_at": "2026-10-08T11:55:44.372117Z"
+      },
+      "task": {
+        "id": "6a6bb7cd-1306-4678-b96a-d5c740714d88",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task",
+        "branch": "task/f17-epic-f17-task",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task",
+        "resume_state": "STARTING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-0606750075894fcbb9b8799a",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1",
+        "herdr_server_session": "hc-f17-20261008",
+        "herdr_tab_id": "w1:t1",
+        "herdr_pane_id": "w1:p1",
+        "herdr_terminal_id": "term_65d52d6c6a0bb1",
+        "codex_session_id": null,
+        "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T11:50:31.851787Z",
+        "completed_at": null
+      }
+    },
+    {
+      "stop": {
+        "id": "97d85c7d-140d-4ac7-8357-539247ca158e",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_run_id": "a5dbeec5-294e-4966-9df9-699bacf9b4bf",
+        "kind": "stop_runtime",
+        "idempotency_key": "second-preflight-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "a1854f19-8547-4ced-aa4e-bb7efd35df99",
+          "reason": "Second capability probe: agent read is plain text, JSON adapter rejected preflight before prompt; no model turn or ACK. Preserve timeout and stop before a separately named second test attempt.",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 3929236,
+                "start_time": "93075840"
+              },
+              {
+                "pid": 3929243,
+                "start_time": "93075850"
+              },
+              {
+                "pid": 3929428,
+                "start_time": "93076043"
+              },
+              {
+                "pid": 3929442,
+                "start_time": "93076048"
+              },
+              {
+                "pid": 3929476,
+                "start_time": "93076074"
+              }
+            ],
+            "groups": [
+              3929236,
+              3929428,
+              3929442
+            ]
+          },
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-08T11:57:23.280260Z",
+        "updated_at": "2026-10-08T11:57:24.475706Z"
+      },
+      "task": {
+        "id": "a5dbeec5-294e-4966-9df9-699bacf9b4bf",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task-second-attempt",
+        "branch": "task/f17-epic-f17-task-second-attempt",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-second-attempt",
+        "resume_state": "STARTING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-a1854f1985474cedaa4ebb7e",
+        "worker_slot": null,
+        "herdr_workspace_id": "w2",
+        "herdr_server_session": "hc-f17-20261008",
+        "herdr_tab_id": "w2:t1",
+        "herdr_pane_id": "w2:p1",
+        "herdr_terminal_id": "term_65d52eb93ca9d2",
+        "codex_session_id": null,
+        "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T11:56:20.364236Z",
+        "completed_at": null
+      }
+    },
+    {
+      "stop": {
+        "id": "684b9435-9d11-43e6-812f-e88205c79342",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_run_id": "7b9a1383-9eec-46f9-8657-0d6dba3d211b",
+        "kind": "stop_runtime",
+        "idempotency_key": "third-ui-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "8c633c46-188b-443a-aa27-0d2277b99c7d",
+          "reason": "Third capability probe: asynchronous banner dismissal remained on screen during immediate reread; prompt was never submitted. Preserve timeout and stop before a separately named second test attempt.",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 3931428,
+                "start_time": "93082229"
+              },
+              {
+                "pid": 3931436,
+                "start_time": "93082233"
+              },
+              {
+                "pid": 3931589,
+                "start_time": "93082345"
+              },
+              {
+                "pid": 3931596,
+                "start_time": "93082349"
+              },
+              {
+                "pid": 3931606,
+                "start_time": "93082354"
+              }
+            ],
+            "groups": [
+              3931428,
+              3931589,
+              3931596
+            ]
+          },
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-08T11:57:50.595936Z",
+        "updated_at": "2026-10-08T11:57:52.202216Z"
+      },
+      "task": {
+        "id": "7b9a1383-9eec-46f9-8657-0d6dba3d211b",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task-third-attempt",
+        "branch": "task/f17-epic-f17-task-third-attempt",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-third-attempt",
+        "resume_state": "STARTING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-8c633c46188b443aaa270d22",
+        "worker_slot": null,
+        "herdr_workspace_id": "w3",
+        "herdr_server_session": "hc-f17-20261008",
+        "herdr_tab_id": "w3:t1",
+        "herdr_pane_id": "w3:p1",
+        "herdr_terminal_id": "term_65d52ef64241e3",
+        "codex_session_id": null,
+        "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T11:57:24.934145Z",
+        "completed_at": null
+      }
+    },
+    {
+      "stop": {
+        "id": "485fbc33-0851-490a-ac95-6fc47c42e500",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_run_id": "eb9f153c-a87c-4c92-a9ed-3bab6354b335",
+        "kind": "stop_runtime",
+        "idempotency_key": "fourth-cli-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "8b165d68-d917-4f68-9be5-9a122ca5c537",
+          "reason": "Fourth capability probe: native CLI rejects timeout without wait before sending input. Journal preserved; fix wait-until-working before separately named fifth attempt. Preserve timeout and stop before a separately named second test attempt.",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 3932923,
+                "start_time": "93088354"
+              },
+              {
+                "pid": 3932930,
+                "start_time": "93088359"
+              },
+              {
+                "pid": 3933072,
+                "start_time": "93088479"
+              },
+              {
+                "pid": 3933082,
+                "start_time": "93088481"
+              },
+              {
+                "pid": 3933106,
+                "start_time": "93088503"
+              }
+            ],
+            "groups": [
+              3932923,
+              3933072,
+              3933082
+            ]
+          },
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-08T12:00:24.774784Z",
+        "updated_at": "2026-10-08T12:00:25.974149Z"
+      },
+      "task": {
+        "id": "eb9f153c-a87c-4c92-a9ed-3bab6354b335",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task-fourth-attempt",
+        "branch": "task/f17-epic-f17-task-fourth-attempt",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-fourth-attempt",
+        "resume_state": "STARTING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-8b165d68d9174f689be59a12",
+        "worker_slot": null,
+        "herdr_workspace_id": "w4",
+        "herdr_server_session": "hc-f17-20261008",
+        "herdr_tab_id": "w4:t1",
+        "herdr_pane_id": "w4:p1",
+        "herdr_terminal_id": "term_65d52f1190b594",
+        "codex_session_id": null,
+        "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T11:57:53.123280Z",
+        "completed_at": null
+      }
+    },
+    {
+      "stop": {
+        "id": "d6ab9bfc-9688-4e96-ac31-b751b72e1a61",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_run_id": "7b1e6ed6-7640-463e-ba1b-e696261a6a4a",
+        "kind": "stop_runtime",
+        "idempotency_key": "fifth-projection-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "02ce2a19-d2f5-4cbe-99bc-b7652f3f806d",
+          "reason": "Fifth capability probe: real Worker committed code and tests; private metadata projects live turn interrupted, so ACK stayed unconfirmed before timeout. Keep actual commit/session; no retroactive READY. Sixth attempt will test corrected ACK recognition. Preserve timeout and stop before a separately named second test attempt.",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 3935776,
+                "start_time": "93100368"
+              },
+              {
+                "pid": 3935783,
+                "start_time": "93100371"
+              },
+              {
+                "pid": 3935936,
+                "start_time": "93100492"
+              },
+              {
+                "pid": 3935941,
+                "start_time": "93100495"
+              },
+              {
+                "pid": 3935965,
+                "start_time": "93100505"
+              },
+              {
+                "pid": 3937068,
+                "start_time": "93102769"
+              }
+            ],
+            "groups": [
+              3935776,
+              3935936,
+              3935941,
+              3937068
+            ]
+          },
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-08T12:02:41.508630Z",
+        "updated_at": "2026-10-08T12:02:43.786642Z"
+      },
+      "task": {
+        "id": "7b1e6ed6-7640-463e-ba1b-e696261a6a4a",
+        "project_id": "f17-probe",
+        "epic_run_id": "f17-epic-run",
+        "task_id": "f17-task-fifth-attempt",
+        "branch": "task/f17-epic-f17-task-fifth-attempt",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-fifth-attempt",
+        "resume_state": "STARTING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-02ce2a19d2f54cbe99bcb765",
+        "worker_slot": null,
+        "herdr_workspace_id": "w5",
+        "herdr_server_session": "hc-f17-20261008",
+        "herdr_tab_id": "w5:t1",
+        "herdr_pane_id": "w5:p1",
+        "herdr_terminal_id": "term_65d52fa33d64d5",
+        "codex_session_id": "01a11b62-e2b1-7cb1-a5f3-7fe8ba7859e9",
+        "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "current_commit": "5027484401e654560164543bbccf2ed5bb308502",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T12:00:26.385355Z",
+        "completed_at": null
+      }
+    }
+  ],
+  "operator_test_subprocess_probe": {
+    "environment_keys": [
+      "LANG",
+      "PATH",
+      "PYTHONDONTWRITEBYTECODE"
+    ],
+    "outside_write_allowed": true,
+    "exit_code": 0,
+    "method": "same minimal subprocess environment as F-16; separate harmless operator capability probe, not task test code"
+  },
+  "final_stop": {
+    "id": "bf7e537a-7b27-46da-adac-832eb05c546d",
+    "project_id": "f17-probe",
+    "epic_run_id": "f17-epic-run",
+    "task_run_id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+    "kind": "stop_runtime",
+    "idempotency_key": "sixth-verified-stop",
+    "status": "SUCCEEDED",
+    "result": {
+      "generation": "44ce62c5-1e6c-4d16-b343-65122e31cb14",
+      "reason": "F-17 actual READY handoff and independent tests captured; stop owned test Worker, preserve session/commit/history and verify inactivity before slot release.",
+      "stage": "STOPPED",
+      "process_proof": {
+        "identities": [
+          {
+            "pid": 3946914,
+            "start_time": "93114226"
+          },
+          {
+            "pid": 3946934,
+            "start_time": "93114234"
+          },
+          {
+            "pid": 3947368,
+            "start_time": "93114357"
+          },
+          {
+            "pid": 3947393,
+            "start_time": "93114360"
+          },
+          {
+            "pid": 3947440,
+            "start_time": "93114371"
+          },
+          {
+            "pid": 3953246,
+            "start_time": "93116106"
+          }
+        ],
+        "groups": [
+          3946914,
+          3947368,
+          3947393,
+          3953246
+        ]
+      },
+      "inactive": true
+    },
+    "error_code": null,
+    "created_at": "2026-10-08T12:06:58.072631Z",
+    "updated_at": "2026-10-08T12:07:00.013174Z"
+  },
+  "final_task": {
+    "id": "25bf44fa-2aff-45d0-b57d-e732fc722dce",
+    "project_id": "f17-probe",
+    "epic_run_id": "f17-epic-run",
+    "task_id": "f17-task-sixth-attempt",
+    "branch": "task/f17-epic-f17-task-sixth-attempt",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f17/f17-probe/task-f17-epic-f17-task-sixth-attempt",
+    "resume_state": "READY_FOR_REVIEW",
+    "internal_status": "PARKED",
+    "kanban_status": "Attention",
+    "worker_agent_id": "hc-44ce62c51e6c4d16b3436512",
+    "worker_slot": null,
+    "herdr_workspace_id": "w6",
+    "herdr_server_session": "hc-f17-20261008",
+    "herdr_tab_id": "w6:t1",
+    "herdr_pane_id": "w6:p1",
+    "herdr_terminal_id": "term_65d5302754c0f6",
+    "codex_session_id": "01a11b65-0075-7251-b2bf-59477d00d8f3",
+    "base_commit": "5027484401e654560164543bbccf2ed5bb308502",
+    "current_commit": "5e23126269027af55e9fcb0d5a528238129792eb",
+    "approved_source_commit": null,
+    "approved_target_commit": null,
+    "merge_commit": null,
+    "started_at": "2026-10-08T12:02:44.528121Z",
+    "completed_at": null
+  },
+  "limitations": [
+    "Native Worker requested require_escalated after git add failed with read-only index; request was accepted by current approval environment. A commit is therefore proven, but cannot be attributed to sandbox-only Git writes. No automatic escalation guarantee is claimed.",
+    "Standalone Codex sandbox denies outside writes, socket/network access and dummy shared Git ref write, but allows reads of a non-secret outside sentinel. Probe used stricter tmp exclusions than native Worker defaults.",
+    "F-16 operator test subprocess runs with minimal environment but no filesystem sandbox; harmless outside write succeeded.",
+    "MCP denial is verified using a real registered Worker Client/Server against actual run SQLite; native Codex Worker was not configured to call that MCP endpoint during its implementation.",
+    "Autonomous E-10/F-38 must remain blocked until protected config/DB/credentials, approval/escalation and executing target test code have independently verified runtime boundaries.",
+    "Optional Daybreak banner dismissed by operator-only test preflight; product has no automatic approval/banner responder."
+  ],
+  "herdr_server_final_state": "not running"
+}

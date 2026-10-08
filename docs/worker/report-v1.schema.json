@@ -1,0 +1,217 @@
+{
+  "$defs": {
+    "ReportedTest": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "items": {
+            "maxLength": 32768,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Command",
+          "type": "array"
+        },
+        "exit_code": {
+          "title": "Exit Code",
+          "type": "integer"
+        },
+        "summary": {
+          "maxLength": 32768,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command",
+        "exit_code",
+        "summary"
+      ],
+      "title": "ReportedTest",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "READY_FOR_REVIEW"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "commit": {
+            "pattern": "^[0-9a-f]{40}$",
+            "type": "string"
+          },
+          "test_summary": {
+            "pattern": "\\S",
+            "type": "string"
+          }
+        },
+        "required": [
+          "commit",
+          "test_summary"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "BLOCKED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason": {
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "input_required": {
+            "pattern": "\\S",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason",
+          "input_required"
+        ]
+      }
+    }
+  ],
+  "properties": {
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "READY_FOR_REVIEW",
+        "BLOCKED"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "project_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "epic_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Epic Id",
+      "type": "string"
+    },
+    "epic_run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Epic Run Id",
+      "type": "string"
+    },
+    "task_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[^\\x00\\r\\n]+$",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "branch": {
+      "maxLength": 32768,
+      "minLength": 1,
+      "title": "Branch",
+      "type": "string"
+    },
+    "commit": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{40}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Commit"
+    },
+    "summary": {
+      "maxLength": 32768,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "test_summary": {
+      "default": "",
+      "title": "Test Summary",
+      "type": "string"
+    },
+    "tests": {
+      "items": {
+        "$ref": "#/$defs/ReportedTest"
+      },
+      "title": "Tests",
+      "type": "array"
+    },
+    "files_changed": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Files Changed",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "maxLength": 32768,
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "reason": {
+      "default": "",
+      "title": "Reason",
+      "type": "string"
+    },
+    "input_required": {
+      "default": "",
+      "title": "Input Required",
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "status",
+    "project_id",
+    "epic_id",
+    "epic_run_id",
+    "task_id",
+    "task_run_id",
+    "branch",
+    "summary"
+  ],
+  "title": "WorkerReport",
+  "type": "object"
+}
