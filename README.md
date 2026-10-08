@@ -216,3 +216,25 @@ ett avstämningsfel. Avbrott mitt i Git-remove med delvis kvarvarande path/regis
 kräver manuell avstämning; automatisk prune/radering används inte. Ignored-filer
 måste säkras eller tas bort av operatören före cleanup. Låset samordnar tjänsterna;
 oberoende manuella Git-/filsystemskrivare omfattas inte.
+
+
+### Verifierad runtime-start (F-11)
+
+Den interna `RuntimeStartService` kopplar registrerade task-/epicworktrees till
+operatörens explicita Herdr-session. Integration startar CLAIMED tasks, Coordinator
+startar aktiva epics. Taskslot och STARTING-intent sparas före externa anrop;
+Codex körs med `--no-daemon`. Upprepade starter återläser samma ägda resurser.
+Okänd workspace-skrivning kräver avstämning, och en pending agentstart observeras
+utan blind ny start. Produktuppdrag/WORKING, park/stopp och slotrelease ingår i
+senare services. MCP-servern är fortfarande read-only.
+
+Se [startkontrakt och recovery](docs/runtime/F-11-start.md) samt
+[verkliga gränssnittsprov](docs/runtime/Herdr-Codex-kontrakt.md).
+
+## Uppdrag och startbekräftelse (F-12)
+
+Internt `RuntimeAssignmentService` skickar en beständig, korrelerad uppdragsprompt till registrerad Herdr/Codex-runtime. WORKING kräver ett matchande native agentmeddelande och verifierad promptleverans; timeout och okänt transportutfall ger ingen falsk start. Upprepning observerar samma operation. Se [uppdrags-/statuskontrakt](docs/runtime/F-12-uppdrag.md) och [verkliga prov](docs/runtime/F-12-prover.json). MCP är fortsatt read-only.
+
+## Runtime-livscykel (F-13)
+
+Internt `RuntimeLifecycleService` återansluter till ägd runtime, bekräftar stopp med processidentiteter/barn/grupper före slotrelease och återupptar samma sparade Codex-session efter kapacitetskontroll. Se [stopp-/resume-kontrakt](docs/runtime/F-13-livscykel.md) och [verkliga prov](docs/runtime/F-13-prover.json). Automatisk Attention-policy och full Worker-sandbox återstår i senare features.

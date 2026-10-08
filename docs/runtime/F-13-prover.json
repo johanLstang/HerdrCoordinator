@@ -1,0 +1,251 @@
+{
+  "task": "F-13",
+  "runtime": {
+    "herdr": "0.9.3",
+    "codex": "0.161.0"
+  },
+  "live": {
+    "initial": {
+      "status": "LIVE",
+      "session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+      "runtime_status": "idle",
+      "run": {
+        "id": "f13-task-run",
+        "project_id": "f13-probe",
+        "epic_run_id": "f13-epic-run",
+        "task_id": "F13-Probe",
+        "branch": "task/f13-probe-f13-probe",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f13-probe/task-f13-probe-f13-probe",
+        "resume_state": null,
+        "internal_status": "WORKING",
+        "kanban_status": "Active",
+        "worker_agent_id": "hc-8b5bc75e17e64db4a2be65c6",
+        "worker_slot": 1,
+        "herdr_workspace_id": "w1",
+        "herdr_server_session": "hc-f13-20261008",
+        "herdr_tab_id": "w1:t1",
+        "herdr_pane_id": "w1:p1",
+        "herdr_terminal_id": "term_65d51941953821",
+        "codex_session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+        "base_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "current_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T10:20:18.435406Z",
+        "completed_at": null
+      }
+    },
+    "stop": {
+      "id": "8f72dcd1-56a1-4efc-90c6-97fc6aaebda6",
+      "project_id": "f13-probe",
+      "epic_run_id": "f13-epic-run",
+      "task_run_id": "f13-task-run",
+      "kind": "stop_runtime",
+      "idempotency_key": "stop1",
+      "status": "SUCCEEDED",
+      "result": {
+        "generation": "8b5bc75e-17e6-4db4-a2be-65c647ea1b96",
+        "reason": "Operator requested runtime stop",
+        "stage": "STOPPED",
+        "process_proof": {
+          "identities": [
+            {
+              "pid": 3104238,
+              "start_time": "92499571"
+            },
+            {
+              "pid": 3104245,
+              "start_time": "92499575"
+            },
+            {
+              "pid": 3104434,
+              "start_time": "92499728"
+            },
+            {
+              "pid": 3104435,
+              "start_time": "92499730"
+            },
+            {
+              "pid": 3104464,
+              "start_time": "92499747"
+            }
+          ],
+          "groups": [
+            3104238,
+            3104434,
+            3104435
+          ]
+        },
+        "inactive": true
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T10:20:32.798135Z",
+      "updated_at": "2026-10-08T10:20:34.785613Z"
+    },
+    "parked": {
+      "id": "f13-task-run",
+      "project_id": "f13-probe",
+      "epic_run_id": "f13-epic-run",
+      "task_id": "F13-Probe",
+      "branch": "task/f13-probe-f13-probe",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f13-probe/task-f13-probe-f13-probe",
+      "resume_state": "WORKING",
+      "internal_status": "PARKED",
+      "kanban_status": "Attention",
+      "worker_agent_id": "hc-8b5bc75e17e64db4a2be65c6",
+      "worker_slot": null,
+      "herdr_workspace_id": "w1",
+      "herdr_server_session": "hc-f13-20261008",
+      "herdr_tab_id": "w1:t1",
+      "herdr_pane_id": "w1:p1",
+      "herdr_terminal_id": "term_65d51941953821",
+      "codex_session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+      "base_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+      "current_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T10:20:18.435406Z",
+      "completed_at": null
+    },
+    "reopen": {
+      "status": "STOPPED",
+      "session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+      "run": {
+        "id": "f13-task-run",
+        "project_id": "f13-probe",
+        "epic_run_id": "f13-epic-run",
+        "task_id": "F13-Probe",
+        "branch": "task/f13-probe-f13-probe",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f13-probe/task-f13-probe-f13-probe",
+        "resume_state": "WORKING",
+        "internal_status": "PARKED",
+        "kanban_status": "Attention",
+        "worker_agent_id": "hc-8b5bc75e17e64db4a2be65c6",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1",
+        "herdr_server_session": "hc-f13-20261008",
+        "herdr_tab_id": "w1:t1",
+        "herdr_pane_id": "w1:p1",
+        "herdr_terminal_id": "term_65d51941953821",
+        "codex_session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+        "base_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "current_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T10:20:18.435406Z",
+        "completed_at": null
+      }
+    },
+    "resume": {
+      "id": "55600760-df3b-4189-b6f6-484b9b6fef12",
+      "project_id": "f13-probe",
+      "epic_run_id": "f13-epic-run",
+      "task_run_id": "f13-task-run",
+      "kind": "resume_runtime",
+      "idempotency_key": "resume1",
+      "status": "SUCCEEDED",
+      "result": {
+        "session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+        "stop_operation_id": "8f72dcd1-56a1-4efc-90c6-97fc6aaebda6",
+        "stage": "RESUMED",
+        "processes": [
+          {
+            "pid": 3105650,
+            "start_time": "92501229"
+          },
+          {
+            "pid": 3105657,
+            "start_time": "92501233"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T10:20:35.295552Z",
+      "updated_at": "2026-10-08T10:20:40.022616Z"
+    },
+    "alive": {
+      "status": "LIVE",
+      "session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+      "runtime_status": "idle",
+      "run": {
+        "id": "f13-task-run",
+        "project_id": "f13-probe",
+        "epic_run_id": "f13-epic-run",
+        "task_id": "F13-Probe",
+        "branch": "task/f13-probe-f13-probe",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f13-probe/task-f13-probe-f13-probe",
+        "resume_state": null,
+        "internal_status": "WORKING",
+        "kanban_status": "Active",
+        "worker_agent_id": "hc-8b5bc75e17e64db4a2be65c6",
+        "worker_slot": 1,
+        "herdr_workspace_id": "w1",
+        "herdr_server_session": "hc-f13-20261008",
+        "herdr_tab_id": "w1:t1",
+        "herdr_pane_id": "w1:p1",
+        "herdr_terminal_id": "term_65d51941953821",
+        "codex_session_id": "01a11b07-3768-7651-b2c2-46e2ff817af8",
+        "base_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "current_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T10:20:18.435406Z",
+        "completed_at": null
+      }
+    },
+    "final_stop": {
+      "id": "1c5959e4-d6fa-4842-a872-b5e0f390c6e8",
+      "project_id": "f13-probe",
+      "epic_run_id": "f13-epic-run",
+      "task_run_id": "f13-task-run",
+      "kind": "stop_runtime",
+      "idempotency_key": "stop2",
+      "status": "SUCCEEDED",
+      "result": {
+        "generation": "55600760-df3b-4189-b6f6-484b9b6fef12",
+        "reason": "Operator requested runtime stop",
+        "stage": "STOPPED",
+        "process_proof": {
+          "identities": [
+            {
+              "pid": 3105650,
+              "start_time": "92501229"
+            },
+            {
+              "pid": 3105657,
+              "start_time": "92501233"
+            },
+            {
+              "pid": 3105759,
+              "start_time": "92501361"
+            },
+            {
+              "pid": 3105777,
+              "start_time": "92501363"
+            },
+            {
+              "pid": 3105822,
+              "start_time": "92501380"
+            }
+          ],
+          "groups": [
+            3105650,
+            3105759,
+            3105777
+          ]
+        },
+        "inactive": true
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T10:20:41.670128Z",
+      "updated_at": "2026-10-08T10:20:44.000918Z"
+    },
+    "same_session_and_repeat_reopen": true,
+    "domain_setup": "Controlled test principals and empty local dependencies; no TeamPlayer integration or implementation assignment.",
+    "test_server_stopped": true
+  }
+}
