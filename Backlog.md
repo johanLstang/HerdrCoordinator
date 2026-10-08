@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-12 Done. E-03 Active; nästa F-13 enligt verifierat runtimekontrakt. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-12 Done. E-03 Active; F-13 pågår enligt verifierat runtimekontrakt. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -609,7 +609,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-13 Återanslut och stoppa registrerad runtime
 
-**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `83a64bd8-6bfd-4988-82dd-40f3aca590a5`.
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `83a64bd8-6bfd-4988-82dd-40f3aca590a5`.
 
 **Körbar:** Ja — F-12 verifierad/integrerad på epicen, E-02 Done på main och X-01 verifierad.
 
@@ -623,13 +623,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-13.A1:** Återanslutning använder samma session-ID och korrekt worktree.
-- [ ] **F-13.A2:** Upprepat stopp av redan stoppad ägd session är säkert och påverkar inte en annan agent.
-- [ ] **F-13.A3:** Saknad session och obekräftat stopp ger tydliga resultat som kan eskaleras.
+- [x] **F-13.A1:** Återanslutning använder samma session-ID och korrekt worktree.
+- [x] **F-13.A2:** Upprepat stopp av redan stoppad ägd session är säkert och påverkar inte en annan agent.
+- [x] **F-13.A3:** Saknad session och obekräftat stopp ger tydliga resultat som kan eskaleras.
 
 **Verifiering:** Adapterprov samt verkligt start–återanslut–stopp med dokumenterade runtimebegränsningar.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/kontrakt F-13 (2026-10-08):** Task plockad med verifierad User-tilldelning och Done-beroenden; Worker i `task/e03-f13` från epic `d84792256fa2ee656fcdd7b78e6a4331327467f4`. Återanslut levande ägd runtime med observation, utan ny start. Stopp journalför intent och Linux PID/startTime, barn och foreground-processgrupper före signaler; registrerat namn, pane och process måste matcha. Ingen input till blocked/unknown-dialog. Aktiv turn avbryts före TUI-exit; agent frånvarande, shell-only och samtliga fångade identiteter/grupper inaktiva krävs före slotrelease. Aktiv task stoppas till PARKED via konkret BLOCKED-orsak; resumefas/session/worktree bevaras. Explicit resume från bekräftat stopp reserverar slot före exakt Codex resume UUID, ingen ny konversation. Okänt start/stopp/resultat observeras utan ersättningsresurser; nya generationer har eget operations-ID. Full Attention-policy/scheduling och svarstransport tillhör senare features.
+
+**Verifiering F-13:** 22 aktuella lifecycleprov passerar (20.69 s); F-11:s 26 startprov och F-12:s 27 uppdragsprov passerade med adapterändringen. Ruff/build/diff exit 0. Verklig F-05→F-11→F-12→F-13-livscykel styrks för Codex-session `01a11b07-3768-7651-b2c2-46e2ff817af8`: same-session reconnect/reopen, två verifierade stopp/park/slotrelease och resume till samma branch/worktree/fas utan ny konversation. Varje stopp fångade fem processidentiteter och tre grupper; namngiven testserver stoppad. Barn som lever kvar håller slotclaim i kontrollerat prov. [Livscykelkontrakt](docs/runtime/F-13-livscykel.md), [sanerade prov](docs/runtime/F-13-prover.json). Acceptans 3/3; review, Task→Epic-merge och integrationsgate återstår.
 
 ## Epic E-04 Låt en Worker leverera en verifierbar task
 
@@ -1863,7 +1867,7 @@ F-10–F-12 är granskade, integrerade och Done. Fortsätt direkt F-13 från akt
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Done | — | 3/3 | E-02, X-01 | Granskad/integrerad via 7dfc54b; dokument-/provlänkkontroller passerar. Fortsätt F-11. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Done | — | 3/3 | E-02, F-10, X-01 | Granskad/integrerad via 4c9956ac; 213 sluttester passerar. Fortsätt F-12. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Done | — | 3/3 | E-02, F-11, X-01 | Granskad/integrerad via 06d64898; 240 sluttester passerar. |
-| 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Planned | Ja | 0/3 | E-02, F-12, X-01 | Plocka F-13: återanslut, verifiera stopp/park och samma-session-resume. |
+| 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Active | Ja | 3/3 | E-02, F-12, X-01 | Livscykel verifierad; review/integration före Done. |
 | 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Planned | Nej | 0/3 | E-03 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Planned | Nej | 0/3 | E-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Planned | Nej | 0/3 | E-03, F-14 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

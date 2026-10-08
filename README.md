@@ -234,3 +234,7 @@ Se [startkontrakt och recovery](docs/runtime/F-11-start.md) samt
 ## Uppdrag och startbekräftelse (F-12)
 
 Internt `RuntimeAssignmentService` skickar en beständig, korrelerad uppdragsprompt till registrerad Herdr/Codex-runtime. WORKING kräver ett matchande native agentmeddelande och verifierad promptleverans; timeout och okänt transportutfall ger ingen falsk start. Upprepning observerar samma operation. Se [uppdrags-/statuskontrakt](docs/runtime/F-12-uppdrag.md) och [verkliga prov](docs/runtime/F-12-prover.json). MCP är fortsatt read-only.
+
+## Runtime-livscykel (F-13)
+
+Internt `RuntimeLifecycleService` återansluter till ägd runtime, bekräftar stopp med processidentiteter/barn/grupper före slotrelease och återupptar samma sparade Codex-session efter kapacitetskontroll. Se [stopp-/resume-kontrakt](docs/runtime/F-13-livscykel.md) och [verkliga prov](docs/runtime/F-13-prover.json). Automatisk Attention-policy och full Worker-sandbox återstår i senare features.
