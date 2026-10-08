@@ -275,3 +275,11 @@ separat faktiskt blockerande testfall. Operatören driver Integration-rollen enl
 paketerad policy; fixture-main hålls oförändrad. Se
 [prov, återkörning och begränsningar](docs/review/F-22-native.md). Använd alltid
 ett separat godkänt repository och en namngiven testserver.
+
+## TeamPlayer-kontrakt (F23)
+
+Verklig MCP-anslutning, schemas och avgränsade fixtureprov beskrivs i
+[TeamPlayer-kontraktet](docs/teamplayer/F-23-kontrakt.md). Konto, externa ID:n,
+versionskonflikter, numerisk prioritet och beskrivningshistorik är verifierade;
+produktreader och beständig statussynk följer i F24/F25. Credentials hålls i lokal
+operatörskonfiguration. Testepicen och dess tasks är separata från implementationen.
