@@ -81,10 +81,14 @@ def main(argv: list[str] | None = None) -> int:
                 worker_reports = None
                 task_review = None
                 task_changes = None
+                task_approval = None
                 if settings.review_context is not None and settings.worker_test_command:
                     from orchestrator.application.task_review_service import TaskReviewService
 
                     task_review = TaskReviewService(settings, store)
+                    from orchestrator.application.task_approval_service import TaskApprovalService
+
+                    task_approval = TaskApprovalService(settings, store)
                 if args.herdr_session:
                     from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
                     from orchestrator.application.task_start_service import TaskStartService
@@ -114,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
                             worker_reports=worker_reports,
                             task_review=task_review,
                             task_changes=task_changes,
+                            task_approval=task_approval,
                         )
                     )
                 )

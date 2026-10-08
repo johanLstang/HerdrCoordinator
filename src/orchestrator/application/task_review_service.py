@@ -218,6 +218,45 @@ class TaskReviewService:
             "context": context,
         }
 
+    def current_context(self, actor, run_id, identity):
+        task, epic = self._scope(actor, run_id, require_ready=False)
+        matches = [
+            op
+            for op in self.store.get_operations(epic.id, kind=self.KIND)
+            if op.task_run_id == task.id
+            and op.status == "SUCCEEDED"
+            and op.result.get("context", {}).get("context_id") == identity
+        ]
+        if len(matches) != 1:
+            raise TaskReviewError("REVIEW_CONTEXT_UNVERIFIED")
+        op = matches[0]
+        requests = [
+            item
+            for item in self.store.get_operations(epic.id, kind=self.KIND)
+            if item.task_run_id == task.id
+        ]
+        if max(requests, key=lambda item: item.created_at).id != op.id:
+            raise TaskReviewError("REVIEW_CONTEXT_SUPERSEDED")
+        spec, _ = self._spec(task, epic)
+        config = self._configuration(task, epic, spec)
+        context = self._saved(actor, task, op, config)["context"]
+        if self._handoff(task, context["task_commit"]).id != context["handoff_operation_id"]:
+            raise TaskReviewError("REVIEW_HANDOFF_CHANGED")
+        test = self.store.get_operation(task.project_id, "verify_task", context["tests"]["key"])
+        if (
+            test is None
+            or test.id != context["tests"]["operation_id"]
+            or test.task_run_id != task.id
+            or test.epic_run_id != epic.id
+            or test.status != "SUCCEEDED"
+            or test.result.get("exit_code") != 0
+            or test.result.get("source_commit") != context["task_commit"]
+            or test.result.get("target_commit") != context["epic_commit"]
+            or test.result.get("command_hash") != self.integration.command_hash
+        ):
+            raise TaskReviewError("REVIEW_TEST_UNVERIFIED")
+        return context
+
     def _source(self, revision, path, side):
         path = source_path(path)
         entry = self.git.run("ls-tree", "-z", revision, "--", path).rstrip("\0")
@@ -321,6 +360,12 @@ class TaskReviewService:
                     if op.status in {"SUCCEEDED", "FAILED"}:
                         return self._saved(actor, task, op, config)
                 else:
+                    if any(
+                        other.task_run_id == task.id and other.status == "PENDING"
+                        for kind in ("task_approve", "task_request_changes")
+                        for other in self.store.get_operations(epic.id, kind=kind)
+                    ):
+                        raise TaskReviewError("REVIEW_DECISION_PENDING")
                     op = Operation(
                         project_id=task.project_id,
                         epic_run_id=epic.id,

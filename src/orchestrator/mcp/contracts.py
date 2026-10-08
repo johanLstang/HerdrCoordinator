@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from orchestrator.domain.models import Identity
-from orchestrator.domain.review_contracts import ChangesDecision
+from orchestrator.domain.review_contracts import ApprovalDecision, ChangesDecision
 from orchestrator.domain.worker_contracts import LocalTaskSpec
 
 
@@ -45,3 +45,7 @@ class TaskReviewRequest(BaseModel):
 
 class TaskChangesRequest(TaskReviewRequest):
     decision: ChangesDecision
+
+
+class TaskApprovalRequest(TaskReviewRequest):
+    decision: ApprovalDecision
