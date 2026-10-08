@@ -80,6 +80,7 @@ def main(argv: list[str] | None = None) -> int:
                 task_start = None
                 worker_reports = None
                 task_review = None
+                task_changes = None
                 if settings.review_context is not None and settings.worker_test_command:
                     from orchestrator.application.task_review_service import TaskReviewService
 
@@ -99,6 +100,10 @@ def main(argv: list[str] | None = None) -> int:
                     from orchestrator.application.worker_report_service import WorkerReportService
 
                     worker_reports = WorkerReportService(settings, store, herdr)
+                    if task_review is not None:
+                        from orchestrator.application.task_changes_service import TaskChangesService
+
+                        task_changes = TaskChangesService(settings, store, herdr)
                 asyncio.run(
                     serve_stdio(
                         RuntimeService(
@@ -108,6 +113,7 @@ def main(argv: list[str] | None = None) -> int:
                             task_start=task_start,
                             worker_reports=worker_reports,
                             task_review=task_review,
+                            task_changes=task_changes,
                         )
                     )
                 )

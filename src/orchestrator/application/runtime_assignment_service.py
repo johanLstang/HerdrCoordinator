@@ -326,6 +326,10 @@ class RuntimeAssignmentService:
 
     def _match(self, run, op, thread, *, runtime_status):
         expected = self._ack(run, op.result["correlation_id"])
+        return self.match_native_ack(op, thread, expected, runtime_status=runtime_status)
+
+    @staticmethod
+    def match_native_ack(op, thread, expected, *, runtime_status):
         # A private metadata reader reconstructs a still-live, unloaded Codex turn
         # as interrupted. Accept that projection only while the independently
         # verified native process is working; all prompt/ACK checks still apply.

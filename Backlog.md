@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-04 och F-01–F-18 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Active; F-18 verifierad/Done på epic, F-19 nästa kandidat. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-04 och F-01–F-18 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Active; F-18 verifierad/Done på epic, F-19 pågår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -862,7 +862,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-19 Återför konkret reviewfeedback till samma Worker
 
-**Epic/fas/prioritet:** E-05 / 5 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `9deec5f8-e93d-4b71-9996-956049931e18`.
+**Epic/fas/prioritet:** E-05 / 5 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `9deec5f8-e93d-4b71-9996-956049931e18`.
 
 **Körbar:** Ja — F-18 verifierad/Done på epic och E-04 Done på main; separat, betrodd runtime finns för det avgränsade provet.
 
@@ -883,6 +883,12 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Reviewserviceprov med kontrollerad transport och verkligt begränsat review/fix-prov när runtime finns.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/kontrakt F-19 (2026-10-08):** Task/e05-f19 från verifierad epic ed3f85e efter F18 Done, review2129e00/mergeb2410b7/397tester. Konto/Write/User och beroenden återlästa. Integration-only task_request_changes validerar version1 CHANGES_REQUESTED-beslut mot sparat aktuellt F18 context-ID; problem numreras sammanhängande och hänvisar till befintliga acceptanskriterier. Reviewnummer, exakta SHA och strukturerad feedback sparas före transport. Betrodd runtimebindning, slot, samma native Codex-session/branch/worktree och idle krävs före första dispatch. Korrelerad native ACK krävs före CHANGES_REQUESTED→WORKING; okänd leverans återobserveras utan blind resend eller återställd deadline. Nya rapporter måste komma efter korrektions-ACK och genomgå F16/F18 på nytt. Versionerad Integration-reviewpolicy paketeras; inget reviewer-självimplementation, approval, leveransmerge, Done eller ny Worker-session. Kontrollerade negativa/recoveryprov och separat verkligt avgränsat native fixprov; F17-autonomigate inför F38 består.
+
+**Kontraktsförtydligande F-19 (verkligt prov 2026-10-08):** READY_FOR_REVIEW.tests avser den levererade commiten och ska inte blanda in historiska röda TDD-prov. Tidigare felresultat redovisas ärligt i test_summary/summary. F16:s avvisning av rapporterad testfail bevaras; ingen failure filtreras bort automatiskt. Worker- och korrektionsprompt förtydligas. Första provattempten sparas PARKED/inaktiv efter att harness missat F15-parentcompletion; separat second-attempt använder hela F15 före F16/F18. En explicit, journalförd operatörsfråga för rapportformat kan skickas till samma verifierade redo session utan ny kodtask eller fabricerad ACK/READY.
+
+**Worker F-19 READY_FOR_REVIEW (2026-10-08):** task/e05-f19. 27 review/fix/CLI-tester (94.11 s), 36 kontrakt/prompt-kontroller (6.65 s), Ruff/build/diff/CLI exit0. Verkligt [Herdr/Codex-prov](docs/review/F-19-verklig-korrigering.md): review1/operationcababba0 → samma session/branch/worktree-ACK → korrigerad native commit2b26b470 → nio tester, ny verifierad handoff och F18-context6dafbc49. Konflikt/historiska testclaims/harnessfel avvisas och bevaras; explicit rapportförtydligande, ingen automatisk filtrering. Native test-Worker bekräftat stoppad/slotnull, serverstoppad. A1–A3 styrks av verkligt prov samt separata MCP-/negativa-/recovery-/raceprov. Produktapproval/leveransmerge/Done och F17-autonomigate återstår utanför F19; manuell taskreview och --no-ff Task → Epic/integrationsgate återstår före Done.
 
 ### Task F-20 Bind taskgodkännande till granskat underlag
 
@@ -1915,7 +1921,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Done | Ja | 3/3 | E-03, F-16, X-01 | APPROVED 7e0f8bb mot a73db1d; merge fe3eb71; 365 tester och gates; verkligt Worker/policyprov. F38 runtimegate dokumenterad. |
 | 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Active | Ja | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Done | Nej | 3/3 | E-04 | Review 2129e00, merge b2410b7, 397 passed (380.33 s); se docs/reviews/F-18.md. |
-| 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Planned | Ja | 0/3 | E-04, F-18, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Active | Ja | 0/3 | E-04, F-18, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Planned | Nej | 0/3 | E-04, F-19 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Planned | Nej | 0/3 | E-04, F-20 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 27 | F-22 | Task/feature | Verifiera review och fix till integrerad task | E-05 | 5 | 875b4e3d-e3de-40ae-bb76-6aee5e8705c2 | P1 | Planned | Nej | 0/3 | E-04, F-21, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

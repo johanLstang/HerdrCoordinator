@@ -254,3 +254,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Aktuell taskreviewkontext (F-18)
 
 `TaskReviewService` synkroniserar en verifierad Worker-leverans mot aktuell epic och kör operatörens testkommando på det nya versionsparet. Komplett diff, taskspecifikation, acceptans, versionerade källor, epicregler och testoperation sparas med context-ID och exakta task/epic-SHA. Först därefter går tasken till REVIEWING. MCP `task_review_request` aktiveras när både `review_context` och `worker_test_command` finns i operatörens TOML; endast registrerad Integration inom rätt epic får anropa det. Ingen Herdr-session startas implicit. Underlaget ger inget approval, leveransmerge eller Done. Se [konfiguration, gränser och recovery](docs/review/F-18-kontext.md).
+
+## Korrigering i samma Worker-session (F-19)
+
+`TaskChangesService` validerar ett negativt granskningsbeslut mot aktuellt F-18-underlag och befintliga acceptanskriterier. Reviewnummer, commits och numrerad feedback sparas före leverans till registrerad Worker. CHANGES_REQUESTED ligger i Active; WORKING kräver korrelerad native ACK i samma Codex-session, branch och worktree. Nästa rapport måste komma efter ACK och verifieras på nytt genom F-16/F-18. MCP `task_request_changes` kräver både reviewkonfiguration och explicit `--herdr-session`; det ger inget approval, leveransmerge eller Done. Se [policy, schema och recovery](docs/review/F-19-korrigering.md).

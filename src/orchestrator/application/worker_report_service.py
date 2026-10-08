@@ -111,6 +111,47 @@ class WorkerReportService:
         )
         if len(ack_items) != 1 or not delivered:
             raise ReportError("REPORT_ACK_PROVENANCE_CHANGED")
+        corrections = [
+            op
+            for op in self.store.get_operations(task.epic_run_id, kind="task_request_changes")
+            if op.task_run_id == task.id and op.result.get("review_id") is not None
+        ]
+        correction = max(corrections, key=lambda op: op.created_at) if corrections else None
+        if correction is not None:
+            if correction.status != "SUCCEEDED":
+                raise ReportError("REPORT_CORRECTION_UNCONFIRMED")
+            ack = correction.result["ack"]
+            if (
+                ack["session_id"] != task.codex_session_id
+                or correction.result["session_id"] != task.codex_session_id
+                or correction.result["branch"] != task.branch
+                or correction.result["worktree_path"] != task.worktree_path
+                or correction.result["worker_agent_id"] != task.worker_agent_id
+                or correction.result["start_operation_id"] != start.id
+            ):
+                raise ReportError("REPORT_CORRECTION_BINDING_CHANGED")
+            positions = [i for i, turn in enumerate(turns) if turn["id"] == ack["turn_id"]]
+            if len(positions) != 1:
+                raise ReportError("REPORT_CORRECTION_ACK_MISSING")
+            ack_turn = turns[positions[0]]
+            ack_items = [
+                i
+                for i, item in enumerate(ack_turn["items"])
+                if item["id"] == ack["item_id"]
+                and item["type"] == "agentMessage"
+                and digest(item["text"]) == ack["message_hash"]
+            ]
+            delivered = any(
+                item["type"] == "userMessage"
+                and any(
+                    part.get("type") == "text"
+                    and digest(part.get("text", "")) == correction.result["prompt_hash"]
+                    for part in item.get("content", [])
+                )
+                for item in ack_turn["items"]
+            )
+            if len(ack_items) != 1 or not delivered:
+                raise ReportError("REPORT_CORRECTION_ACK_CHANGED")
         relevant = [ack_turn | {"items": ack_turn["items"][ack_items[0] + 1 :]}] + turns[
             positions[0] + 1 :
         ]
@@ -146,6 +187,7 @@ class WorkerReportService:
             "item_id": item["id"],
             "message_hash": digest(item["text"]),
             "assignment_operation_id": dispatch.id,
+            **({"correction_operation_id": correction.id} if correction else {}),
         }
 
     def _git(self, verifier, task, report):

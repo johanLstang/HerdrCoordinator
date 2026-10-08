@@ -114,7 +114,9 @@ def test_review_fix_park_resume_and_idempotent_replay(runtime):
     )
     move(service, T.REVIEWING, T.READY_FOR_REVIEW, "review")
     move(service, T.CHANGES_REQUESTED, T.REVIEWING, "fix", reason="missing acceptance")
-    move(service, T.WORKING, T.CHANGES_REQUESTED, "back")
+    with pytest.raises(StateError, match="correction has not been confirmed"):
+        move(service, T.WORKING, T.CHANGES_REQUESTED, "unconfirmed-back")
+    move(service, T.WORKING, T.CHANGES_REQUESTED, "back", start_confirmed=True, slot_reserved=True)
     first = move(service, T.BLOCKED, T.WORKING, "blocked", reason="input missing")
     with pytest.raises(StateError, match="inactivity"):
         move(service, T.PARKED, T.BLOCKED, "unsafe-park")
