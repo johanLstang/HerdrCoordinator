@@ -283,3 +283,11 @@ Verklig MCP-anslutning, schemas och avgränsade fixtureprov beskrivs i
 versionskonflikter, numerisk prioritet och beskrivningshistorik är verifierade;
 produktreader och beständig statussynk följer i F24/F25. Credentials hålls i lokal
 operatörskonfiguration. Testepicen och dess tasks är separata från implementationen.
+
+## TeamPlayer-läsare (F24)
+
+Internt `TeamPlayerReader` validerar kontot, hela boardgrafen och explicita lokala
+ID-/källbindningar. Ofullständiga listor, cykler, saknade tasks, fel tilldelning eller
+ändrade snapshots ger fel/ej körbara kandidater. Läsningen startar ingen Worker och
+ändrar inga externa statusar eller runtime-records. Se [API och verifiering](docs/teamplayer/F-24-lasning.md);
+operatörens avgränsade native läsprov är `uv run --locked python scripts/probes/f24_read.py`.
