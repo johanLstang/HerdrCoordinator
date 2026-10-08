@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-04 och F-01–F-22 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Active; F-18–F-22 verifierade/Done på epic, samlad verifiering/PR/main återstår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-05 och F-01–F-22 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Done; PR#5/main9d16c7f slutverifierad. E06/F23 nästa prioriterade kandidat. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -798,7 +798,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-05 Granska korrigera och integrera en task
 
-**Fas:** 5. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `9d4ff24d-71a6-4e02-9498-bbbaee7e1db8`.
+**Fas:** 5. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `9d4ff24d-71a6-4e02-9498-bbbaee7e1db8`.
 
 **Körbar:** Ja — E-04 verifierad/Done på main; externa villkor anges per task. **Beroende:** E-04 Done på main.
 
@@ -984,11 +984,13 @@ Provet använder användargodkänt ofarligt repo, separata f22-probe/f22-epic/ru
 
 **Verifierad leverans F-22 (2026-10-08):** F22 APPROVED 7f5b148a81af00a67de462cb1c147cf67e8c9635 mot 77b43c8322b5e9b56652505abcb6d6449c6237a1; full diff 50528bytes/SHA256 c6a8a789629e7d72354257c7b721ae03e1de3772e502c685367810e8392941c7, operation c6af9a03-fea1-47dc-8557-3a502f545531. Faktisk bootstrap Integration/GitAdapter --no-ff Task→Epic 944f86586ca147a19c1667a0e05d9ddc7936e6a1, exakta parents och identisk granskad tree, utan fabricerade produktruns. På faktisk merge:10CLItester passerade2.50s, Ruff/build/diff/CLI/fixtureguard/dokumentlänkar och public/nativejournal-identity/verifierhash/evidenskonsistens exit0. NativeA1: initial9a7bc990→corrected009f3dd0, regression1→0, tio tester, sammaSID01a11c29-16f7-73f1-a963-a45ffdb22ad3 och reviewsCHANGES_REQUESTED/APPROVED. A2: faktisk produktfixture-merge77abb664/posttest0/physicalstop före Done, replayEXISTING/enmerge; main7ce621ad oförändrad. A3: separat verklig Worker/source54ec8302, independenttestexit23/FAILED, rapportnekad/ingenReady/merge/Done; återläsning utan extra test, säkertPARKED utan slot/historikförlust. BådaWorkersfysisktinaktiva och endast ägd testserverstoppad. Applikationskod/tester/beroenden oförändrade sedan F21:s fulla actualmergegrind469pass957.77s; F22egenverifiering är nativeprov/harness/dokumentation. E05egenacceptans3/3 från nativekedjan och tidigare versions-/felprov, förblirActive tills samlad verifiering/slutreview/PR/mainmerge. Ingen långlivadIntegration/nativeWorkerMCP-claim; F17autonomigate införF38 kvarstår. TeamPlayer Done återläst med korrekt User-tilldelning. [Slutreview](docs/reviews/F-22.md).
 
+**Coordinator/verifierad slutleverans E-05 (2026-10-08):** Coordinator E05 APPROVED 4a046ea7b77319629eba5187063dc6c0fde77064 mot a0937fa70614df5ce0006cb60b4caaead6c5fe8c; komplett diff 316746bytes/SHA256 a7efbffc20031a06a01fe4989344e3a748517b3a5240b5ea8dd9cb08892f7f7a, operation b738935e-9e91-4e18-93f2-87b932f7ad00,43filer. Samlad epicgrind469pass681.55s och Ruff/build/diff/CLI/dokumentlänkar/exakta paketeradepolicyer exit0. PR https://github.com/johanLstang/HerdrCoordinator/pull/5, faktisk GitAdapter-bootstrap --no-ff mainmerge 9d16c7fd41825fc18927fcc00fca9e4138c1cab8, exakta parents(a0937fa70614df5ce0006cb60b4caaead6c5fe8c,4a046ea7b77319629eba5187063dc6c0fde77064) och identisk granskad tree; ordinaryfast-forwardpush utanforce, remoteHEAD och PRmerged/closed/exaktmergeSHA återlästa. På faktisk main: 469 passed (684.75s), exit0; övriga grindar/policypaket/länkar/rättimportkälla/rentworktree passerar. AllaF18–F22Done med färsk nativeUser/tilldelningsavstämning; egenacceptans3/3. A1 nativeF22CHANGES_REQUESTED→samma-sessionACK→korrigerad009f3dd0→färsktcontext/test→APPROVED. A2 nativeTaskEpic77abb664/posttest0/currentGenerationphysicalexit→slotrelease→Done, replayEXISTING/ingenextramerge/mainfixture7ce621adoförändrad. A3 separat nativeindependenttest23 nekadReady/merge/Done och säkertPARKED, samt F18–F21 stale/context/config/role/unknown/test/exit/recovery-prov. NativeWorkersfysisktinaktiva/testserverstoppad, retention bevarar fixturebranches/worktrees/session/state; ingencleanup. Ingen schemamigration; operatorIntegration föreE09, ingen directnativeWorkerMCP-claim. F17autonomigate införF38 består. FörstaF21fullgrind468pass/1intermittentWorkerReportfel1079.68s/okändrotorsak; isolerat1pass11.01s +sammaSHAfull469pass957.77s utan kod/testgräns/mergeändring; nu även aktuellepicfull469pass681.55s. Samtliga utfall sparade ärligt. BootstrapGitAdapterundantag utanfabriceratproduktägarskap. TeamPlayerepicDone och beskrivning återlästa; E06/F23 nästa prioriterade kandidat från verifieradmain. [Slutreview](docs/reviews/E-05.md). Tidigare PR/main-väntan är avslutad historik.
+
 ## Epic E-06 Spegla arbetsflödet i TeamPlayer
 
 **Fas:** 6. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `e779c93c-7f75-43e0-97ed-53373bb0fd66`.
 
-**Körbar:** Nej — E-05 Done på main; externa villkor anges per task. **Beroende:** E-05 Done på main.
+**Körbar:** Ja — E-05 verifierad/Done på main; externa villkor anges per task. **Beroende:** E-05 Done på main.
 
 **Källa:** A §§6, 11, 16, 23, 40; W §§5, 9, 13–18, 39.
 
@@ -1021,7 +1023,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `6dd3f8a2-cfcf-4483-a124-944804a5f65f`.
 
-**Körbar:** Nej — invänta E-05 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Nej — E-05 verifierad/Done på main; Coordinator förbereder X-02 separat testepic innan F23 plockas.
 
 **Källa:** A §§6, 40; W §§5, 9, 13, 39. **Berör:** TeamPlayer-adapterkontrakt, testprojekt.
 
@@ -1916,7 +1918,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01–E-04 Done, E-05 Active och E-06–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01–E-05 Done och E-06–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1941,14 +1943,14 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Done | — | 3/3 | E-03, F-14 | Granskad/integrerad via a61f181d; 329 regressionstester passerar. |
 | 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Done | — | 3/3 | E-03, F-15 | Granskad/integrerad via 575c8efa; 361 regressionstester passerar. |
 | 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Done | Ja | 3/3 | E-03, F-16, X-01 | APPROVED 7e0f8bb mot a73db1d; merge fe3eb71; 365 tester och gates; verkligt Worker/policyprov. F38 runtimegate dokumenterad. |
-| 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Active | Ja | 3/3 | E-04 Done på main | F18–F22Done; nativeacceptans3/3, samlad verifiering/slutreview/PR/main återstår. |
+| 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Done | Nej | 3/3 | E-04 Done på main | PR#5/main9d16c7f, slutverifierad; docs/reviews/E-05.md. |
 | 23 | F-18 | Task/feature | Bygg komplett reviewkontext från aktuell epic | E-05 | 5 | 6dfd789c-25d6-465b-bb75-a81e4b5d4a34 | P0 | Done | Nej | 3/3 | E-04 | Review 2129e00, merge b2410b7, 397 passed (380.33 s); se docs/reviews/F-18.md. |
 | 24 | F-19 | Task/feature | Återför konkret reviewfeedback till samma Worker | E-05 | 5 | 9deec5f8-e93d-4b71-9996-956049931e18 | P1 | Done | Nej | 3/3 | E-04, F-18, X-01 | Review a049fef, merge 22ea85d, 424 passed (460.14 s); native fix/prov och docs/reviews/F-19.md. |
 | 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Done | Nej | 3/3 | E-04, F-19 | Review e7e917c, merge 9d6cadb, 445 passed (540.48 s); docs/reviews/F-20.md. |
 | 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Done | Nej | 3/3 | E-04, F-20 | Review 9a064d0, merge 4486d10, 469 passed (957.77 s), exit0; docs/reviews/F-21.md. |
 | 27 | F-22 | Task/feature | Verifiera review och fix till integrerad task | E-05 | 5 | 875b4e3d-e3de-40ae-bb76-6aee5e8705c2 | P1 | Done | Nej | 3/3 | E-04, F-21, X-01 | Review7f5b148/merge944f865, nativeflow +test23,10CLIpass; docs/reviews/F-22.md. |
-| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Planned | Nej | 0/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Planned | Nej | 0/3 | E-05, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Planned | Ja | 0/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Planned | Nej | 0/3 | E-05, X-02 | E05Done; förbered separat X02-testepic och verifiera tilldelning före start. |
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Planned | Nej | 0/3 | E-05, F-23, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Planned | Nej | 0/3 | E-05, F-24, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Nej | 0/3 | E-05, F-25, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
