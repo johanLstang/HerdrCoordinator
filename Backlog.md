@@ -1015,7 +1015,7 @@ Operatören kan välja arbete från TeamPlayer och se rätt arbetsstatus, blocke
 
 - [x] **E-06.A1:** En testepic och dess tasks kan läsas med riktiga ID:n, kriterier och beroenden.
 - [ ] **E-06.A2:** Tasks får Active/Attention/Done och epics Planned/Active/Done på verifierade domänhändelser med rätt ansvarig roll; påbörjade epics behåller Active fram till verifierad main-leverans.
-- [ ] **E-06.A3:** Avbruten TeamPlayer-skrivning återförsöks utan att start, merge eller kommentar dupliceras.
+- [x] **E-06.A3:** Avbruten TeamPlayer-skrivning återförsöks utan att start, merge eller kommentar dupliceras.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
@@ -1081,9 +1081,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-25 Synkronisera status och kommentarer utan nya sidoeffekter
 
-**Epic/fas/prioritet:** E-06 / 6 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `7ab4a0ac-405d-4905-bc46-a2d5f0431c86`.
+**Epic/fas/prioritet:** E-06 / 6 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `7ab4a0ac-405d-4905-bc46-a2d5f0431c86`.
 
-**Körbar:** Ja — F24 Done/taskmergeeef679e, F23 write/readback/descriptionevent-kontrakt verifierat; E05 Done på main.
+**Körbar:** Nej — verifierad och integrerad till E06; ingen återstart.
 
 **Källa:** A §§6, 16, 23, 30, 40; W §§15–18, 24–25, 39–40. **Berör:** TeamPlayer-adapter, väntande skrivningar, statuspolicy.
 
@@ -1097,9 +1097,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-25.A1:** WORKING, BLOCKED/PARKED och DONE ger rätt taskstatus med orsak eller merge/testreferens; epicen är Planned före start, Active under arbete/review/hinder och väntan på main-integration, och Done först efter verifierad main-merge med samlad acceptans/slutreview.
-- [ ] **F-25.A2:** Nätfel efter lokal merge ger väntande synk och återförsök utan ny merge.
-- [ ] **F-25.A3:** Worker kan inte skriva status och upprepad samma kommentarhändelse ger inte flera identiska kommentarer.
+- [x] **F-25.A1:** WORKING, BLOCKED/PARKED och DONE ger rätt taskstatus med orsak eller merge/testreferens; epicen är Planned före start, Active under arbete/review/hinder och väntan på main-integration, och Done först efter verifierad main-merge med samlad acceptans/slutreview.
+- [x] **F-25.A2:** Nätfel efter lokal merge ger väntande synk och återförsök utan ny merge.
+- [x] **F-25.A3:** Worker kan inte skriva status och upprepad samma kommentarhändelse ger inte flera identiska kommentarer.
 
 **Verifiering:** Adapterprov med fel före/efter externt svar samt verkliga statusskrivningar i testepicen.
 
@@ -1111,11 +1111,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Integration/fix F25 (2026-10-08):** första --no-ff Task→Epic3fe0568aacc7d1fe1b5908b91b57d0c7384502c7, review6f851a4→e235a21/full111799bytes/digest199822c5;204tests367.53s samt native via faktiskEpicmodul/Ruff/build/CLI/diff/links/package PASS. Granskning hittade F13:s legitima stoppalias: tasken behåller Active medan exakt park-/leveransstop-ID införs och omverifieras. Integration synk Epic→Task7bc3525, inga fabricerade runbevis eller upprepningar av tidigare merge. Workerfixens12 berörda test passerade82.34s, nativeåterläsning samt Ruff/build PASS. Ny fixreview/merge och berörda postmergegrindar återstår före Done.
 
+**Slutleverans F25 (2026-10-08):** source589631efc4f16b3360d5749bdde9f60ac82547bf mot aktuellEpic3fe0568aacc7d1fe1b5908b91b57d0c7384502c7; fixdiff5882bytes/SHA25626f0d38870b218c80f06ea1fa233637192d4d8fa02937d886ae323424b4aeff2. Godkänd Integration-review och faktisk --no-ff Task→Epicde46d0febca95519d32526085dba1f67c235e4ae med exakta parents och granskad tree. Ursprunglig full14fildiff111799bytes/199822c5 och Taskmerge3fe bevaras; särskild Epic→Task-synk7bc före aliasfix. Faktisk slutmerge12 relevanta tests83.58s samt native produktmodul/Ruff/build/configCLI/diff/länkar/paketerad stop-ID-grind PASS; ursprunglig merge204tests367.53s. NativeF25 Donev6 efter dessa grindar. F25A1–A3 uppfyllda; E06A3 verifierad men A2 återstår för F26:s kompletta liveflöde. E06 fortsattActive/egen2av3. [Granskning och SHAs](docs/reviews/F-25.md).
+
 ### Task F-26 Verifiera TeamPlayer kopplingen på en testepic
 
 **Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `1626d7a9-387d-47cd-b20b-86cb2a9f0613`.
 
-**Körbar:** Nej — invänta F-25 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F25 Done/slutmergede46d0f; E05 Done på main och X01/X02 tidigare verifierade. Förbered separat färsk testfixture och named Herdr-server innan nativeprovet.
 
 **Källa:** A §§6, 16, 40; W §§13–18, 25, 39. **Berör:** Kanban-prov, dokumentation, ID-mappning.
 
@@ -1971,11 +1973,11 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Done | Nej | 3/3 | E-04, F-19 | Review e7e917c, merge 9d6cadb, 445 passed (540.48 s); docs/reviews/F-20.md. |
 | 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Done | Nej | 3/3 | E-04, F-20 | Review 9a064d0, merge 4486d10, 469 passed (957.77 s), exit0; docs/reviews/F-21.md. |
 | 27 | F-22 | Task/feature | Verifiera review och fix till integrerad task | E-05 | 5 | 875b4e3d-e3de-40ae-bb76-6aee5e8705c2 | P1 | Done | Nej | 3/3 | E-04, F-21, X-01 | Review7f5b148/merge944f865, nativeflow +test23,10CLIpass; docs/reviews/F-22.md. |
-| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Active | Ja | 1/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
+| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Active | Ja | 2/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Done | Nej | 3/3 | E-05, X-02 | Review8bc2517/merge173b7f6;23tests8.24s/nativeMCP PASS; docs/reviews/F-23.md. |
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
-| 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Active | Ja | 0/3 | E-05, F-24, X-02 | F24Done; förberedtaskbranch/plocka; beständig status/history-sync enligt F23. |
-| 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Nej | 0/3 | E-05, F-25, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
+| 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Ja | 0/3 | E-05, F-25, X-01, X-02 | F25 Done; nästa kandidat, separat färskt nativeflöde med input/resume. |
 | 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Nej | 0/3 | E-06 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Nej | 0/3 | E-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Nej | 0/3 | E-06, F-27 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
