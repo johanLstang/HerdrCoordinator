@@ -118,6 +118,14 @@ class StateService:
                     facts.start_confirmed and task.codex_session_id is not None,
                     "worker start has not been confirmed",
                 )
+            if target == T.WORKING and expected == T.CHANGES_REQUESTED:
+                require(
+                    facts.start_confirmed
+                    and facts.slot_reserved
+                    and task.worker_slot is not None
+                    and task.codex_session_id is not None,
+                    "worker correction has not been confirmed",
+                )
             if expected == T.STARTING and target == T.CLAIMED:
                 require(facts.inactivity_confirmed, "failed start is not confirmed inactive")
             if target in {T.BLOCKED, T.CHANGES_REQUESTED}:

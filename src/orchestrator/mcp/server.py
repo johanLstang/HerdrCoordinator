@@ -16,6 +16,7 @@ from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
     PolicyRequest,
     Target,
+    TaskChangesRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -70,6 +71,17 @@ def create_server(service: RuntimeService) -> Server:
                 name="task_review_request",
                 description="Prepare verified review material in the registered Integration scope.",
                 input_schema=TaskReviewRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
+
+    if service.task_changes is not None:
+        tools.append(
+            Tool(
+                name="task_request_changes",
+                description="Record negative review and correct in the same Worker session.",
+                input_schema=TaskChangesRequest.model_json_schema(),
                 output_schema=ToolResponse.model_json_schema(),
                 annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
             )

@@ -1,6 +1,7 @@
 from pydantic import ValidationError
 
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.task_changes_service import TaskChangesError
 from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
@@ -9,6 +10,7 @@ from orchestrator.event_log import EventLog
 from orchestrator.mcp.contracts import (
     PolicyRequest,
     Target,
+    TaskChangesRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -22,6 +24,7 @@ _ROLES = {
     "task_report_blocked": {Role.WORKER},
     "task_start": {Role.INTEGRATION},
     "task_review_request": {Role.INTEGRATION},
+    "task_request_changes": {Role.INTEGRATION},
     "task_merge": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
@@ -66,11 +69,13 @@ class RuntimeService:
         task_start=None,
         worker_reports=None,
         task_review=None,
+        task_changes=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
         self.worker_reports = worker_reports
         self.task_review = task_review
+        self.task_changes = task_changes
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -111,6 +116,8 @@ class RuntimeService:
             return self._start_task(arguments)
         if operation == "task_review_request" and self.task_review is not None:
             return self._request_review(arguments)
+        if operation == "task_request_changes" and self.task_changes is not None:
+            return self._request_changes(arguments)
         if operation not in {"runtime_status", "policy_check"}:
             return ToolResponse(
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
@@ -156,6 +163,10 @@ class RuntimeService:
             if request.operation == "task_review_request" and self.task_review is not None:
                 return ToolResponse(
                     ok=True, code="OK", message="review context service is available"
+                )
+            if request.operation == "task_request_changes" and self.task_changes is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="same-session correction service is available"
                 )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(
@@ -273,4 +284,31 @@ class RuntimeService:
                 ok=False,
                 code="REVIEW_UNVERIFIED",
                 message="reconcile review inputs and recorded operations",
+            )
+
+    def _request_changes(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot request changes")
+        try:
+            request = TaskChangesRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid review decision"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            result = self.task_changes.request(
+                self.actor, request.task_run_id, request.decision, key=request.request_key
+            )
+            return ToolResponse(ok=True, code="OK", message="correction recorded", data=result)
+        except TaskChangesError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile correction and native runtime evidence",
             )

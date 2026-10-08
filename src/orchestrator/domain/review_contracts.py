@@ -1,9 +1,9 @@
 """Operator-supplied epic requirements; a review request cannot replace these."""
 
 from pathlib import PurePosixPath
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from orchestrator.domain.worker_contracts import ID, Contract, Text, canonical_json
 
@@ -49,4 +49,34 @@ class EpicReviewSpec(Contract):
     def bounded(self):
         if len(canonical_json(self.model_dump(mode="json")).encode()) > 65536:
             raise ValueError("epic review specification exceeds bounded contract")
+        return self
+
+
+class ReviewIssue(BaseModel):
+    model_config = Contract.model_config
+    number: Annotated[int, Field(ge=1, le=32)]
+    problem: Text
+    requested_change: Text
+    acceptance_criteria: Annotated[list[Text], Field(min_length=1, max_length=128)]
+
+    @field_validator("problem", "requested_change", "acceptance_criteria")
+    @classmethod
+    def meaningful(cls, value):
+        values = value if isinstance(value, list) else [value]
+        if any(not item.strip() or "\x00" in item for item in values):
+            raise ValueError("review feedback must be meaningful")
+        return value
+
+
+class ChangesDecision(Contract):
+    result: Literal["CHANGES_REQUESTED"]
+    context_id: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    issues: Annotated[list[ReviewIssue], Field(min_length=1, max_length=32)]
+
+    @model_validator(mode="after")
+    def numbered_and_bounded(self):
+        if [item.number for item in self.issues] != list(range(1, len(self.issues) + 1)):
+            raise ValueError("review issues must be consecutively numbered")
+        if len(canonical_json(self.model_dump(mode="json")).encode()) > 16384:
+            raise ValueError("review decision exceeds bounded contract")
         return self

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from orchestrator.domain.models import Identity
+from orchestrator.domain.review_contracts import ChangesDecision
 from orchestrator.domain.worker_contracts import LocalTaskSpec
 
 
@@ -40,3 +41,7 @@ class TaskReviewRequest(BaseModel):
     project_id: Identity
     task_run_id: Identity
     request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
+class TaskChangesRequest(TaskReviewRequest):
+    decision: ChangesDecision

@@ -28,6 +28,7 @@ sources=["README.md"]
 
     async def serve(service):
         captured.append(service.task_review is not None)
+        assert service.task_changes is None
         assert service.task_start is None and service.worker_reports is None
         assert service.store.get_runs() == []
 
