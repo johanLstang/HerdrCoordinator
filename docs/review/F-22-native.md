@@ -104,4 +104,4 @@ Harness rättades och samma resultat återlästes; inga produktstatusar, tester 
 native rapporter ändrades. Syntax/lintfynd i harness korrigerades före leverans.
 Båda Workers bekräftades fysiskt inaktiva före stopp av endast den ägda testservern.
 F-22:s egen bootstrap review, Task → Epic-integration och relevanta grindar
-återstår innan backlogg-/TeamPlayer-Done.
+är verifierade; se [leveransreview](../reviews/F-22.md).
