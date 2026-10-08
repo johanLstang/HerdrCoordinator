@@ -78,6 +78,7 @@ def main(argv: list[str] | None = None) -> int:
                 from orchestrator.mcp.server import serve_stdio
 
                 task_start = None
+                worker_reports = None
                 if args.herdr_session:
                     from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
                     from orchestrator.application.task_start_service import TaskStartService
@@ -90,7 +91,16 @@ def main(argv: list[str] | None = None) -> int:
                         )
                         return 5
                     task_start = TaskStartService(settings, store, herdr)
-                asyncio.run(serve_stdio(RuntimeService(store, actor, log, task_start=task_start)))
+                    from orchestrator.application.worker_report_service import WorkerReportService
+
+                    worker_reports = WorkerReportService(settings, store, herdr)
+                asyncio.run(
+                    serve_stdio(
+                        RuntimeService(
+                            store, actor, log, task_start=task_start, worker_reports=worker_reports
+                        )
+                    )
+                )
             else:
                 asyncio.run(serve(log))
     except StoreError as exc:

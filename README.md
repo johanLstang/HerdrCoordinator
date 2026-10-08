@@ -246,3 +246,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Explicit Worker-start (F-15)
 
 `TaskStartService` binder en lokal version-1-task till en unik run och reserverar slot före Git/Herdr. F-11/F-12 utför start och korrelerad native ACK. Återförsök behåller samma resurser och prompt. MCP `task_start` aktiveras endast med operatörens explicita `--herdr-session` och skyddade Integration-principal; utan det är servern read-only. Fas 4 använder en Worker. Se [start, MCP och recovery](docs/worker/F-15-start.md).
+
+## Verifierad Worker-rapport (F-16)
+
+`WorkerReportService` hämtar native slutrapport från registrerad Codex-session och kontrollerar ACK/proveniens, aktuell commit och rent worktree. Operatörens `worker_test_command` körs oberoende innan READY_FOR_REVIEW/Active; rapportens PASS och testkommandon är påståenden. BLOCKED sparar reason/input utan slotrelease. Explicit runtime-MCP har `task_report_ready/blocked` för eget Worker-target. Se [rapport-, test- och recoverykontrakt](docs/worker/F-16-rapporter.md).

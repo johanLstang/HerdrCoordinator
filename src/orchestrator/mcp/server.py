@@ -46,6 +46,18 @@ def create_server(service: RuntimeService) -> Server:
             )
         )
 
+    if service.worker_reports is not None:
+        for name in ("task_report_ready", "task_report_blocked"):
+            tools.append(
+                Tool(
+                    name=name,
+                    description="Verify the assigned Worker's native final report.",
+                    input_schema=Target.model_json_schema(),
+                    output_schema=ToolResponse.model_json_schema(),
+                    annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+                )
+            )
+
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)
 

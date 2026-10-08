@@ -44,6 +44,17 @@ class Settings(BaseModel):
     sqlite_path: Path
     max_workers: int = Field(default=2, ge=1, le=2, strict=True)
     credential_env: tuple[str, ...] = ()
+    worker_test_command: tuple[str, ...] = ()
+    worker_test_timeout: int = Field(default=300, ge=1, le=3600, strict=True)
+
+    @field_validator("worker_test_command")
+    @classmethod
+    def test_arguments(cls, command):
+        if len(command) > 128 or any(
+            not arg or "\x00" in arg or len(arg) > 4096 for arg in command
+        ):
+            raise ValueError("worker test command must be bounded argv")
+        return command
 
     @field_validator("repository", "worktree_root", "sqlite_path", mode="before")
     @classmethod

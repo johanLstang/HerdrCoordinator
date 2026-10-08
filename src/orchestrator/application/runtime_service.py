@@ -2,6 +2,7 @@ from pydantic import ValidationError
 
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_start_service import TaskStartError
+from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.event_log import EventLog
 from orchestrator.mcp.contracts import PolicyRequest, Target, TaskStartRequest, ToolResponse
@@ -48,9 +49,18 @@ _PUBLIC_FIELDS = {
 class RuntimeService:
     """Scoped reads and an optional operator-enabled task_start for one trusted connection."""
 
-    def __init__(self, store: StateStore, actor: Actor | None, log: EventLog, *, task_start=None):
+    def __init__(
+        self,
+        store: StateStore,
+        actor: Actor | None,
+        log: EventLog,
+        *,
+        task_start=None,
+        worker_reports=None,
+    ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
+        self.worker_reports = worker_reports
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -82,6 +92,11 @@ class RuntimeService:
             return ToolResponse(
                 ok=False, code="UNAUTHENTICATED", message="connection has no registered principal"
             )
+        if (
+            operation in {"task_report_ready", "task_report_blocked"}
+            and self.worker_reports is not None
+        ):
+            return self._worker_report(operation, arguments)
         if operation == "task_start" and self.task_start is not None:
             return self._start_task(arguments)
         if operation not in {"runtime_status", "policy_check"}:
@@ -116,6 +131,13 @@ class RuntimeService:
             if self.actor.role not in roles:
                 return ToolResponse(
                     ok=False, code="FORBIDDEN", message="role cannot request this operation"
+                )
+            if (
+                request.operation in {"task_report_ready", "task_report_blocked"}
+                and self.worker_reports is not None
+            ):
+                return ToolResponse(
+                    ok=True, code="OK", message="native report service is available"
                 )
             if request.operation == "task_start" and self.task_start is not None:
                 return ToolResponse(ok=True, code="OK", message="task start service is available")
@@ -162,4 +184,38 @@ class RuntimeService:
                 code="TASK_START_UNVERIFIED",
                 message="reconcile recorded task start before retry",
                 data=data,
+            )
+
+    def _worker_report(self, operation, arguments):
+        if self.actor.role != Role.WORKER:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="only the assigned Worker may report"
+            )
+        try:
+            request = Target.model_validate(arguments)
+            if request.task_run_id is None:
+                raise ValueError
+        except (ValidationError, ValueError):
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="one task target required"
+            )
+        if (
+            request.project_id != self.actor.project_id
+            or request.task_run_id != self.actor.task_run_id
+        ):
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="Worker task scope is not authorized"
+            )
+        try:
+            result = self.worker_reports.collect(
+                self.actor,
+                request.task_run_id,
+                expected_status="READY_FOR_REVIEW"
+                if operation == "task_report_ready"
+                else "BLOCKED",
+            )
+            return ToolResponse(ok=True, code="OK", message="native report verified", data=result)
+        except ReportError as e:
+            return ToolResponse(
+                ok=False, code=str(e), message="native report could not be verified"
             )
