@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "project_id": "f22-probe",
+  "epic_run_id": "f22-epic-run",
+  "native_runtime": {
+    "herdr_version": "0.9.3",
+    "codex_same_session": "01a11c29-16f7-73f1-a963-a45ffdb22ad3",
+    "worker_start_count": 2,
+    "max_active_workers": 1,
+    "owned_server": "hc-f22-20261008",
+    "server_stopped_after_all_workers_physical_inactive": true
+  },
+  "delivered_task": {
+    "id": "b57c9cc5-9ad5-45ac-82eb-41678f1a0bda",
+    "task_id": "f22-display-name",
+    "branch": "task/f22-epic-f22-display-name",
+    "base_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+    "current_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+    "merge_commit": "77abb664a6077986d9b12956360aa6909484b7cc",
+    "internal_status": "DONE",
+    "worker_slot": null,
+    "completed_at": "2026-10-08T15:41:16.028449Z"
+  },
+  "initial_review_context": {
+    "context_id": "67ea8b321ada3ffdf101b405e6f1ff3e1c36dbaff01bf0be61489ee61b16dc0a",
+    "task_commit": "9a7bc990db31b8ea2e3221c515e929d62f09e01c",
+    "epic_commit": "e90b68ce91ab84a07edf98798121726af90e95e2"
+  },
+  "corrected_review_context": {
+    "context_id": "1a62e9631b35a62a44fff21be65bbe4d3664536a407dc4cc8182650fe0f0edbb",
+    "task_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+    "epic_commit": "e90b68ce91ab84a07edf98798121726af90e95e2"
+  },
+  "reviews": [
+    {
+      "id": "e9826cf2-a6be-44be-8a37-5d4642832c91",
+      "task_run_id": "b57c9cc5-9ad5-45ac-82eb-41678f1a0bda",
+      "review_number": 1,
+      "review_result": "CHANGES_REQUESTED",
+      "review_commit": "9a7bc990db31b8ea2e3221c515e929d62f09e01c",
+      "epic_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+      "feedback": "{\"context_id\":\"67ea8b321ada3ffdf101b405e6f1ff3e1c36dbaff01bf0be61489ee61b16dc0a\",\"issues\":[{\"acceptance_criteria\":[\"Underlying Unicode letters and combining marks are preserved even for a str subclass that overrides split and __str__; regression tests independently demonstrate this.\"],\"number\":1,\"problem\":\"The draft calls overridable value.split(): our str subclass with combining marks and Unicode whitespace returns replacement, losing its underlying text.\",\"requested_change\":\"Normalize the underlying str with standard str behavior even when split and __str__ are overridden. Add a subclass regression with input '  Jose\\\\u0301\\\\u2003李  ' and expected 'Jose\\\\u0301 李'. Preserve other edge cases, run tests, commit and report a fresh version-1 final JSON in this same session. The initial draft exercise is finished; fully meet the original final acceptance now.\"}],\"result\":\"CHANGES_REQUESTED\",\"version\":1}",
+      "created_at": "2026-10-08T15:39:02.156282Z"
+    },
+    {
+      "id": "f7533833-3129-4b6d-ade4-70761ab31d31",
+      "task_run_id": "b57c9cc5-9ad5-45ac-82eb-41678f1a0bda",
+      "review_number": 2,
+      "review_result": "APPROVED",
+      "review_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+      "epic_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+      "feedback": "{\"context_id\":\"1a62e9631b35a62a44fff21be65bbe4d3664536a407dc4cc8182650fe0f0edbb\",\"result\":\"APPROVED\",\"summary\":\"Operator reviewed full current diff, sources, tests and all criteria; independent subclass regression passes on the corrected commit.\",\"verified_criteria\":[\"ASCII spaces, tabs and line breaks collapse correctly.\",\"Underlying Unicode letters and combining marks are preserved even for a str subclass that overrides split and __str__; regression tests independently demonstrate this.\",\"Empty/all-whitespace strings and non-string inputs have passing edge-case tests.\",\"Own changes are committed on the assigned branch; main and epic stay unchanged before delivery.\"],\"version\":1}",
+      "created_at": "2026-10-08T15:40:57.671743Z"
+    }
+  ],
+  "regression_exit_codes": [
+    1,
+    0
+  ],
+  "correction": {
+    "id": "e9826cf2-a6be-44be-8a37-5d4642832c91",
+    "status": "SUCCEEDED",
+    "error_code": null,
+    "created_at": "2026-10-08T15:39:01.240646Z",
+    "updated_at": "2026-10-08T15:39:33.587331Z",
+    "kind": "task_request_changes",
+    "result": {
+      "session_id": "01a11c29-16f7-73f1-a963-a45ffdb22ad3",
+      "review_number": 1,
+      "task_commit": "9a7bc990db31b8ea2e3221c515e929d62f09e01c",
+      "epic_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+      "ack": {
+        "turn_id": "01a11c2b-0572-70a2-8820-d7fb63a7f742",
+        "item_id": "msg_061b007a5750897a016ac7b91a05608191a5f351ac8c605bae",
+        "message_hash": "fc4f4a2b61b522fa28350faba027bd97cef4f246f3d57848a083949ae7fbe235",
+        "session_id": "01a11c29-16f7-73f1-a963-a45ffdb22ad3",
+        "correlation_id": "b0d312fa-b4be-4ae0-ac70-9c3a6f4193bb"
+      }
+    }
+  },
+  "handoffs": [
+    {
+      "id": "85ede0f9-1839-42d7-9570-a9ca09708ece",
+      "status": "SUCCEEDED",
+      "error_code": null,
+      "created_at": "2026-10-08T15:38:36.183095Z",
+      "updated_at": "2026-10-08T15:38:37.938358Z",
+      "kind": "worker_report",
+      "result": {
+        "verified_commit": "9a7bc990db31b8ea2e3221c515e929d62f09e01c",
+        "exit_code": 0,
+        "provenance": {
+          "session_id": "01a11c29-16f7-73f1-a963-a45ffdb22ad3",
+          "turn_id": "01a11c29-3a1a-7623-a1e3-547641fc6967",
+          "item_id": "msg_061b007a5750897a016ac7b8e1182c81918ac870774cfeaf0a",
+          "message_hash": "4b6d20a96bf098d7842ba05284187c5fd285139e2c69dfb92bc8b451e6f4a97f",
+          "assignment_operation_id": "dcb5d310-eb3d-4e62-aa56-6ca3b530995d"
+        }
+      }
+    },
+    {
+      "id": "ef0ac895-bd58-40f8-b59c-e9612a573564",
+      "status": "SUCCEEDED",
+      "error_code": null,
+      "created_at": "2026-10-08T15:40:26.403254Z",
+      "updated_at": "2026-10-08T15:40:28.888277Z",
+      "kind": "worker_report",
+      "result": {
+        "verified_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+        "exit_code": 0,
+        "provenance": {
+          "session_id": "01a11c29-16f7-73f1-a963-a45ffdb22ad3",
+          "turn_id": "01a11c2b-0572-70a2-8820-d7fb63a7f742",
+          "item_id": "msg_061b007a5750897a016ac7b9528fd481918107cf2eb3d77ac4",
+          "message_hash": "6fb09780d011cc058437c7549be49dc74f8ee28623ca1458faf0a2a5874842e1",
+          "assignment_operation_id": "dcb5d310-eb3d-4e62-aa56-6ca3b530995d",
+          "correction_operation_id": "e9826cf2-a6be-44be-8a37-5d4642832c91"
+        }
+      }
+    }
+  ],
+  "delivery": {
+    "id": "6ba2ab2b-7635-4890-9a8d-c9745f7fa747",
+    "status": "SUCCEEDED",
+    "error_code": null,
+    "created_at": "2026-10-08T15:41:10.327427Z",
+    "updated_at": "2026-10-08T15:41:16.028947Z",
+    "kind": "task_merge",
+    "result": {
+      "stage": "DONE",
+      "approval_id": "f7533833-3129-4b6d-ade4-70761ab31d31",
+      "review_id": "f7533833-3129-4b6d-ade4-70761ab31d31",
+      "context_id": "1a62e9631b35a62a44fff21be65bbe4d3664536a407dc4cc8182650fe0f0edbb",
+      "source_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+      "target_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+      "merge_commit": "77abb664a6077986d9b12956360aa6909484b7cc",
+      "merge_operation_id": "10ae4dad-8772-4468-9d31-b156f9c6be64",
+      "test_id": "d00fb45d-7bd6-4317-b262-78f57864f57c",
+      "stop_id": "e16b9614-01db-436a-9f75-7672c593d867"
+    }
+  },
+  "merge_parents": [
+    "e90b68ce91ab84a07edf98798121726af90e95e2",
+    "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed"
+  ],
+  "post_merge_test": {
+    "id": "d00fb45d-7bd6-4317-b262-78f57864f57c",
+    "status": "SUCCEEDED",
+    "error_code": null,
+    "created_at": "2026-10-08T15:41:13.016795Z",
+    "updated_at": "2026-10-08T15:41:13.338652Z",
+    "kind": "task_delivery_test",
+    "result": {
+      "merge_commit": "77abb664a6077986d9b12956360aa6909484b7cc",
+      "source_commit": "009f3dd033dc9ff07daaca79ca79e5d7735ac3ed",
+      "target_commit": "e90b68ce91ab84a07edf98798121726af90e95e2",
+      "command_hash": "70bd4f22a573ed3b317d584875fff9df1c50b9a0e55b274089b8820e723db419",
+      "timeout": 45,
+      "exit_code": 0
+    }
+  },
+  "stop": {
+    "id": "e16b9614-01db-436a-9f75-7672c593d867",
+    "status": "SUCCEEDED",
+    "error_code": null,
+    "created_at": "2026-10-08T15:41:13.923463Z",
+    "updated_at": "2026-10-08T15:41:15.863176Z",
+    "kind": "stop_runtime",
+    "result": {
+      "stage": "STOPPED",
+      "generation": "70c5c1ed-c5b3-423a-948f-4e58a750dabb",
+      "delivery_key": "f22-deliver",
+      "reason": "Verified task delivery"
+    }
+  },
+  "blocked_task": {
+    "id": "14faff65-6d6e-4278-b94c-adcf69b46389",
+    "task_id": "f22-blocked-test",
+    "branch": "task/f22-epic-f22-blocked-test",
+    "codex_session_id": "01a11c2d-7885-7b01-bc0c-ae63f191f404",
+    "base_commit": "77abb664a6077986d9b12956360aa6909484b7cc",
+    "current_commit": "54ec83027ed22724d54b8f37a4a5629dab91b623",
+    "merge_commit": null,
+    "internal_status": "PARKED",
+    "worker_slot": null
+  },
+  "blocked_independent_test": {
+    "id": "b2063920-be8d-4673-a7ad-35e170261171",
+    "status": "FAILED",
+    "error_code": "TEST_FAILED",
+    "created_at": "2026-10-08T15:43:08.180231Z",
+    "updated_at": "2026-10-08T15:43:08.566569Z",
+    "kind": "verify_task",
+    "result": {
+      "source_commit": "54ec83027ed22724d54b8f37a4a5629dab91b623",
+      "target_commit": "77abb664a6077986d9b12956360aa6909484b7cc",
+      "command_hash": "70bd4f22a573ed3b317d584875fff9df1c50b9a0e55b274089b8820e723db419",
+      "exit_code": 23
+    }
+  },
+  "blocked_report_error": "REPORT_TEST_FAILED",
+  "blocked_replay_error": "REPORT_VERIFICATION_FAILED",
+  "blocked_stop": "02f8055c-8533-4091-a029-1aa0d0131209",
+  "main_before": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+  "main_after": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+  "operator_verifier_sha256": "826a4afbe7d3fe2453a366c2092ed680fb69fbe868a7de78973117d21ea9bf54",
+  "limits": [
+    "Operator Integration drove services and reviewed full contexts using packaged policy; no long-lived Integration Agent before E09.",
+    "Native Workers did not call product MCP directly.",
+    "Declared initial draft defect and operator missing-prerequisite test are controlled exercises.",
+    "F17 filesystem/Git approval/autonomy gate before F38 remains; this is not proof of full sandboxed autonomy.",
+    "Worktrees, branches, sessions and full private state retained; no cleanup.",
+    "Harness evidence-export TypeError corrected; same-key replay reread existing failed test without rerunning."
+  ]
+}
