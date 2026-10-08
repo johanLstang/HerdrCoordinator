@@ -238,3 +238,7 @@ Internt `RuntimeAssignmentService` skickar en beständig, korrelerad uppdragspro
 ## Runtime-livscykel (F-13)
 
 Internt `RuntimeLifecycleService` återansluter till ägd runtime, bekräftar stopp med processidentiteter/barn/grupper före slotrelease och återupptar samma sparade Codex-session efter kapacitetskontroll. Se [stopp-/resume-kontrakt](docs/runtime/F-13-livscykel.md) och [verkliga prov](docs/runtime/F-13-prover.json). Automatisk Attention-policy och full Worker-sandbox återstår i senare features.
+
+## Worker-uppdrag och rapportformat (F-14)
+
+Version 1 validerar lokal taskspec, binder den till registrerad task/epic och bygger en reproducerbar Worker-prompt med paketerad policy. Rapportparsern kräver betrodd sessionsproveniens och normaliserar äldre textformat utan att godkänna Git-/testpåståenden. Se [D-04, schema och exempel](docs/worker/F-14-kontrakt.md). Runtime-start levereras i F-15 och oberoende rapportverifiering i F-16.

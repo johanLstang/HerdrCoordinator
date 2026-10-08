@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-13 Done. PR #3/main 0395728 slutverifierad med 262 tester; nästa E-04/F-14. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-13 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active/F-14 pågår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -109,7 +109,7 @@ Totalt 227 taskberoenden är registrerade. Ett beroende på en föregående epic
 | D-01 | F-01 fastställer Python 3.12+, asyncio, Pydantic 2 och sqlite3. src/orchestrator, TOML, Hatchling, pytest och Ruff; versionslås i uv.lock och verifieringsmiljö Python 3.13. | Beslut dokumenterat i README; persistens levereras i F-02. |
 | D-02 | F-04: en stdio-process per betrodd aktör; operatören/MCP-värden styr startkommando och extern skyddad JSON-profil med roll/project/epicrun/taskrun. Verktygsargument ger ingen behörighet. Worker får inte skriva profil, startkonfiguration eller databas. Filrättigheter isolerar inte samma OS-användare; runtime/shellgränser verifieras separat. | Lokal MCP-behörighet verifierad i F-04. Verklig sandboxisolering återstår i F-10/F-17; olösta nödvändiga gränser blockerar F-38. |
 | D-03 | Slots reserveras från CLAIMED/STARTING och hålls genom review/fix tills bekräftad parkering eller avslut. Kanban Active är inte sloträknare. | F-15, F-28 och F-31–F-32. |
-| D-04 | Versionerat task/rapportformat med runidentitet väljs; textvarianterna TASK och TASK_ID i källorna normaliseras uttryckligen. | F-14 och F-16. |
+| D-04 | F-14: JSON schema/prompt/rapport version 1. READY_FOR_REVIEW/BLOCKED skiljs från E-03 WORKING-ACK. Legacy TASK/TASK_ID kräver verifierad sessions-/runidentitet; Git/testpåståenden verifieras i F-16. | F-14 och F-16. |
 | D-05 | Epic → Task är en separat synkoperation enligt W §23. Leveransmerge går Task → Epic → main; synk utförs av Git Manager på Integration-rollens begäran. | F-07 och F-18. |
 | D-06 | Run-, operations-, väntande synk- och epicreviewhistorik konkretiserar källornas runtime/recoverykrav. Backup/restore i F-50 kompletterar recovery med ett verifierbart driftprov. | F-02, F-25, F-39 och F-42–F-50. |
 | X-01 | Installerad och åtkomlig Herdr/Codex-runtime och ett ofarligt testrepository. Start/resume/park/sandboxkapabiliteter fastställs i respektive verifieringstask; de krävs inte som förkunskap för F-10. | F-10–F-13. Credentials förvaras externt. |
@@ -641,7 +641,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-04 Låt en Worker leverera en verifierbar task
 
-**Fas:** 4. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `242ffa18-da4e-4496-8e9f-c4c1b4d8315c`.
+**Fas:** 4. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `242ffa18-da4e-4496-8e9f-c4c1b4d8315c`.
 
 **Körbar:** Ja — E-03 Done på main; externa villkor anges per task. **Beroende:** E-03 Done på main.
 
@@ -674,7 +674,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-14 Beskriv ett Worker uppdrag och rapportkontrakt
 
-**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `10bfff5f-ba3a-4f10-8510-f8578da7a747`.
+**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `10bfff5f-ba3a-4f10-8510-f8578da7a747`.
 
 **Körbar:** Ja — E-03 PR #3/main 0395728 slutverifierad; inga ytterligare externa villkor.
 
@@ -695,6 +695,10 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Schema- och promptprov med normalfall, saknade fält och rapporter från båda dokumentens exempel.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/D-04 F-14 (2026-10-08):** Task plockad med verifierad User-tilldelning och Done-beroenden, `task/e04-f14` från aktuell main/epic `92be75b6812a8f2f1e8f11aa892322fd81e21b92`. Lokal taskspec och uppdrag använder schema/prompt version 1; slutrapporter version 1 med READY_FOR_REVIEW eller BLOCKED. E-03:s korrelerade WORKING-ACK är separat transportkontrakt. Rapportmetadata är påståenden: sessionproveniens kommer från betrodd adapter, Git/testbevis verifieras i F-16. Legacy STATUS/TASK/TASK_ID normaliseras endast med matchande registrerad session och run/epic/task/branch; kort commit kräver matchande full observerad taskcommit, annars avvisas. Okänd version/extra eller dubbla JSON-/textfält och fel identitet avvisas. Worker-policy versioneras under prompts och paketeras; data JSON-kodas och körs inte som kommandon.
+
+**Worker READY_FOR_REVIEW F-14 (2026-10-08):** 35 schema-/prompt-/rapporttester passerar (0.54 s), Ruff, wheel/sdist-build och diffkontroll exit 0. Installerad/extraherad wheel innehåller och läser den identiska Worker-policyn utan checkout-fallback. D-04 dokumenteras med tre genererade scheman och validerat lokalt exempel i [kontraktet](docs/worker/F-14-kontrakt.md). Ingen runtime/state/Gitbevisverifiering införs. Integration review/merge och regression återstår; tasken förblir Active.
 
 ### Task F-15 Starta en explicit task med en Worker
 
@@ -1872,8 +1876,8 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Done | — | 3/3 | E-02, F-10, X-01 | Granskad/integrerad via 4c9956ac; 213 sluttester passerar. Fortsätt F-12. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Done | — | 3/3 | E-02, F-11, X-01 | Granskad/integrerad via 06d64898; 240 sluttester passerar. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Done | — | 3/3 | E-02, F-12, X-01 | Granskad/integrerad via 1a16aea9; 262 sluttester passerar. |
-| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Planned | Ja | 0/3 | E-03 Done på main | Starta E-04/F-14 från uppdaterad main. |
-| 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Planned | Ja | 0/3 | E-03 | Plocka F-14: validerad task, Worker-prompt och versionerat rapportkontrakt. |
+| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Active | Ja | 0/3 | E-03 Done på main | F-14 pågår: validerad task, uppdrag och rapportkontrakt. |
+| 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Active | Ja | 0/3 | E-03 | Implementera D-04/schema/prompt och säker legacy-normalisering. |
 | 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Planned | Nej | 0/3 | E-03, F-14 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Planned | Nej | 0/3 | E-03, F-15 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Planned | Nej | 0/3 | E-03, F-16, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
