@@ -217,6 +217,7 @@ name = "herdr-coordinator"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx2" },
     { name = "mcp" },
     { name = "pydantic" },
 ]
@@ -229,6 +230,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx2", specifier = ">=2.13,<3" },
     { name = "mcp", specifier = ">=2.3,<3" },
     { name = "pydantic", specifier = ">=2.12,<3" },
 ]

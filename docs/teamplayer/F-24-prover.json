@@ -1,0 +1,67 @@
+{
+  "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "userId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+  "epicCount": 13,
+  "taskCount": 52,
+  "repeatIdentical": true,
+  "binding": {
+    "local_id": "test-e06",
+    "sources": [
+      "docs/teamplayer/F-23-kontrakt.md"
+    ]
+  },
+  "tasks": [
+    {
+      "taskId": "c650f6d0-ffff-4ca0-a772-16c59af8baf2",
+      "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+      "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+      "name": "[TEST] F23 kontrakt 2",
+      "description": "[TEST] Avgränsat MCP-kontraktsprov, ingen produktleverans.\nBehåll historik och ID.",
+      "taskType": "Task",
+      "status": "Pending",
+      "priority": 2,
+      "version": 1,
+      "acceptanceCriteria": [
+        "Återge Unicode: åäö, é och 東京.",
+        "Bevara kriteriernas ordning.\nAndra raden."
+      ],
+      "dependencyTaskIds": [
+        "f29251bf-a8c0-4c42-b3a4-1d5a426193db"
+      ],
+      "traceabilityArtifactIds": [],
+      "executionOwnerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "responsibleAgentId": "b2ca16ca-1f87-4a16-bce8-41a703b4d5ce",
+      "binding": null
+    },
+    {
+      "taskId": "f29251bf-a8c0-4c42-b3a4-1d5a426193db",
+      "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+      "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+      "name": "[TEST] F23 kontrakt 1",
+      "description": "[TEST] Avgränsat MCP-kontraktsprov, ingen produktleverans.\nBehåll historik och ID.\n\n[herdr-event:f23-contract-20261008]\nVerifierad historik: saknat fristående kommentarverktyg.",
+      "taskType": "Task",
+      "status": "Pending",
+      "priority": 2,
+      "version": 6,
+      "acceptanceCriteria": [
+        "Återge Unicode: åäö, é och 東京.",
+        "Bevara kriteriernas ordning.\nAndra raden."
+      ],
+      "dependencyTaskIds": [],
+      "traceabilityArtifactIds": [],
+      "executionOwnerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "responsibleAgentId": "b2ca16ca-1f87-4a16-bce8-41a703b4d5ce",
+      "binding": null
+    }
+  ],
+  "fixtureIssues": [
+    {
+      "code": "DEPENDENCY_NOT_DONE",
+      "task_id": "c650f6d0-ffff-4ca0-a772-16c59af8baf2",
+      "related_id": "f29251bf-a8c0-4c42-b3a4-1d5a426193db"
+    }
+  ]
+}
