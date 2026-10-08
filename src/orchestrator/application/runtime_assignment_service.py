@@ -240,7 +240,7 @@ class RuntimeAssignmentService:
             if op.result["baseline_session_id"] not in {None, sid}:
                 raise AssignmentError("CODEX_SESSION_CHANGED")
             thread = self.codex.read_thread(sid, run.worktree_path) if sid else None
-            proof = self._match(run, op, thread) if thread else None
+            proof = self._match(run, op, thread, runtime_status=facts["status"]) if thread else None
             with self.store.transaction():
                 run, current_start = self._validate(actor, run_id)
                 current = self.store.get_operation(run.project_id, self.KIND, run.id)
@@ -324,13 +324,16 @@ class RuntimeAssignmentService:
                 e.code if isinstance(e, HerdrError) else "ASSIGNMENT_UNVERIFIED"
             ) from None
 
-    def _match(self, run, op, thread):
+    def _match(self, run, op, thread, *, runtime_status):
         expected = self._ack(run, op.result["correlation_id"])
+        # A private metadata reader reconstructs a still-live, unloaded Codex turn
+        # as interrupted. Accept that projection only while the independently
+        # verified native process is working; all prompt/ACK checks still apply.
+        statuses = {"completed", "inProgress"}
+        if runtime_status == "working":
+            statuses.add("interrupted")
         for turn in thread["turns"]:
-            if turn["id"] in op.result["baseline_turns"] or turn["status"] not in {
-                "completed",
-                "inProgress",
-            }:
+            if turn["id"] in op.result["baseline_turns"] or turn["status"] not in statuses:
                 continue
             # Verify delivered user prompt in that same new turn; no screen scraping.
             delivered = any(
