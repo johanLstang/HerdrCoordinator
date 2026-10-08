@@ -1,0 +1,125 @@
+{
+  "task": "F-12",
+  "runtime": {
+    "herdr": "0.9.3",
+    "codex": "0.161.0"
+  },
+  "live": {
+    "result": {
+      "status": "CONFIRMED",
+      "event_id": "assignment-ack:5893003e-7d35-4218-988b-c25c7dded725",
+      "ack": {
+        "turn_id": "01a11af6-9410-7490-8715-c77f418a6923",
+        "item_id": "msg_096ce25e5c2df774016ac76a265860819194dedd5ecc28f71a",
+        "message_hash": "b5489b976932b6697f7d4a9dc641a04f17cc8073d8e6f86c1d9e883520fb0ffe",
+        "session_id": "01a11af6-8719-7763-a6d8-2a50050b8574",
+        "correlation_id": "044587c2-3182-4701-a95f-1bb66a5a16df"
+      },
+      "runtime_status": "idle",
+      "task": {
+        "id": "f12-task-run",
+        "project_id": "f12-probe",
+        "epic_run_id": "f12-epic-run",
+        "task_id": "F12-Probe",
+        "branch": "task/f12-probe-f12-probe",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f12-probe/task-f12-probe-f12-probe",
+        "resume_state": null,
+        "internal_status": "WORKING",
+        "kanban_status": "Active",
+        "worker_agent_id": "hc-8cfededa23074c3d8ad1d7d1",
+        "worker_slot": 1,
+        "herdr_workspace_id": "w1",
+        "herdr_server_session": "hc-f12-20261008",
+        "herdr_tab_id": "w1:t1",
+        "herdr_pane_id": "w1:p1",
+        "herdr_terminal_id": "term_65d5152eeeef51",
+        "codex_session_id": "01a11af6-8719-7763-a6d8-2a50050b8574",
+        "base_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "current_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+        "approved_source_commit": null,
+        "approved_target_commit": null,
+        "merge_commit": null,
+        "started_at": "2026-10-08T10:02:05.163766Z",
+        "completed_at": null
+      }
+    },
+    "same_repeat_and_reopen": true,
+    "dispatch": {
+      "id": "5893003e-7d35-4218-988b-c25c7dded725",
+      "project_id": "f12-probe",
+      "epic_run_id": "f12-epic-run",
+      "task_run_id": "f12-task-run",
+      "kind": "dispatch_assignment",
+      "idempotency_key": "f12-task-run",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "CONFIRMED",
+        "correlation_id": "044587c2-3182-4701-a95f-1bb66a5a16df",
+        "instruction_hash": "58264451b1180629696a8b2cfcac6207b77024bf59af53f3bda39b1b997ef491",
+        "prompt_hash": "8726b05d3767f1def5ae02ca97c06b81134aa4c4df1680dc1d9d6c969cf1cfee",
+        "timeout_seconds": 45,
+        "deadline": "2026-10-08T10:02:54.443311+00:00",
+        "start_operation_id": "8cfededa-2307-4c3d-8ad1-d7d13ef3c9d1",
+        "baseline_session_id": null,
+        "baseline_turns": [],
+        "transport": "RETURNED",
+        "ack": {
+          "turn_id": "01a11af6-9410-7490-8715-c77f418a6923",
+          "item_id": "msg_096ce25e5c2df774016ac76a265860819194dedd5ecc28f71a",
+          "message_hash": "b5489b976932b6697f7d4a9dc641a04f17cc8073d8e6f86c1d9e883520fb0ffe",
+          "session_id": "01a11af6-8719-7763-a6d8-2a50050b8574",
+          "correlation_id": "044587c2-3182-4701-a95f-1bb66a5a16df"
+        },
+        "event_id": "assignment-ack:5893003e-7d35-4218-988b-c25c7dded725"
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T10:02:09.443403Z",
+      "updated_at": "2026-10-08T10:02:16.782799Z"
+    },
+    "start": {
+      "id": "8cfededa-2307-4c3d-8ad1-d7d13ef3c9d1",
+      "project_id": "f12-probe",
+      "epic_run_id": "f12-epic-run",
+      "task_run_id": "f12-task-run",
+      "kind": "start_runtime",
+      "idempotency_key": "f12-task-run",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "READY",
+        "server_session": "hc-f12-20261008",
+        "sandbox": "read-only",
+        "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f12-probe/task-f12-probe-f12-probe",
+        "branch": "task/f12-probe-f12-probe",
+        "name": "hc-8cfededa23074c3d8ad1d7d1",
+        "label": "hc-8cfededa-2307-4c3d-8ad1-d7d13ef3c9d1",
+        "binding": {
+          "workspace_id": "w1",
+          "tab_id": "w1:t1",
+          "pane_id": "w1:p1",
+          "terminal_id": "term_65d5152eeeef51"
+        },
+        "processes": [
+          {
+            "pid": 2937296,
+            "start_time": "92390241"
+          },
+          {
+            "pid": 2937303,
+            "start_time": "92390244"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T10:02:05.370366Z",
+      "updated_at": "2026-10-08T10:02:09.379298Z"
+    },
+    "domain_setup": "Controlled test principals, empty local dependencies, no TeamPlayer integration or implementation assignment.",
+    "cleanup": {
+      "agent_absent": true,
+      "shell_only": true,
+      "foreground_identities_gone": true,
+      "slot_retained": true,
+      "server": "hc-f12-20261008"
+    }
+  }
+}

@@ -14,6 +14,10 @@ class CodexError(RuntimeError):
 
 class CodexAdapter:
     def read_session(self, session_id: str, cwd: str) -> dict:
+        thread = self.read_thread(session_id, cwd, include_turns=False)
+        return {"id": thread["id"], "session_id": thread["sessionId"], "cwd": thread["cwd"]}
+
+    def read_thread(self, session_id: str, cwd: str, *, include_turns: bool = True) -> dict:
         try:
             p = subprocess.Popen(
                 ["codex", "app-server", "--listen", "stdio://"],
@@ -60,11 +64,34 @@ class CodexAdapter:
                 1, "initialize", {"clientInfo": {"name": "herdr_coordinator", "version": "0.1"}}
             )
             write({"method": "initialized"})
-            thread = request(2, "thread/read", {"threadId": session_id})["thread"]
-            if thread["id"] != session_id or Path(thread["cwd"]) != Path(cwd):
+            thread = request(
+                2, "thread/read", {"threadId": session_id, "includeTurns": include_turns}
+            )["thread"]
+            if (
+                thread["id"] != session_id
+                or thread["sessionId"] != session_id
+                or Path(thread["cwd"]) != Path(cwd)
+            ):
                 raise CodexError("CODEX_SESSION_MISMATCH")
-            return {"id": thread["id"], "session_id": thread["sessionId"], "cwd": thread["cwd"]}
-        except (OSError, ValueError, KeyError, TypeError):
+            if include_turns:
+                if not isinstance(thread["turns"], list):
+                    raise ValueError
+                for turn in thread["turns"]:
+                    if (
+                        not isinstance(turn["id"], str)
+                        or not isinstance(turn["status"], str)
+                        or not isinstance(turn["items"], list)
+                    ):
+                        raise ValueError
+                    for item in turn["items"]:
+                        if not isinstance(item["id"], str) or not isinstance(item["type"], str):
+                            raise ValueError
+                        if item["type"] == "agentMessage" and not isinstance(item["text"], str):
+                            raise ValueError
+                        if item["type"] == "userMessage" and not isinstance(item["content"], list):
+                            raise ValueError
+            return thread
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
             raise CodexError("CODEX_METADATA_UNVERIFIED") from None
         finally:
             selector.close()

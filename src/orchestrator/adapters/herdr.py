@@ -1,4 +1,4 @@
-"""Bounded Herdr CLI calls; no implicit server selection or prompt submission."""
+"""Bounded Herdr CLI calls; no implicit server selection."""
 
 import json
 import os
@@ -137,6 +137,12 @@ class HerdrAdapter:
             "--cd",
             cwd,
             timeout=35,
+        )
+
+    def prompt(self, name: str, text: str, *, timeout_ms: int) -> None:
+        self.call(
+            "agent", "prompt", identity(name), text, "--wait", "--timeout", str(timeout_ms),
+            timeout=timeout_ms / 1000 + 5,
         )
 
     def process_info(self, pane_id: str) -> dict:
