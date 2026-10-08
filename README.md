@@ -262,3 +262,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Versionsbundet taskgodkännande (F-20)
 
 `TaskApprovalService` kräver registrerad Integration, senaste kompletta reviewkontext, aktuell verklig verifiering och ett positivt beslut för samtliga acceptanskriterier. Approval sparar granskare, context/review/test-ID:n och exakt task/epic-par. Ändrad kod, bas, konfiguration eller ersatt context avvisar användning av äldre approval och bevarar historiken. MCP `task_approve` aktiveras med reviewkonfiguration; det startar ingen runtime och mergear inte. APPROVED ligger kvar i Active med slotreservation. Se [beslut, kontroll och recovery](docs/review/F-20-godkannande.md).
+
+### Verifierad taskleverans (F-21)
+
+`task_merge` kräver registrerad Integration, F-20:s aktuella kompletta approval och explicit Herdr-session. Servicen gör Task → Epic med `--no-ff`, testar exakt merge-SHA och bekräftar fysisk Worker-exit före slotrelease och Done. Stabil leveransnyckel och separat verifieringsnyckel gör att fel/omstart återanvänder känd merge. Samma misslyckade/okända testförsök körs inte om; ny verifieringsnyckel begär explicit eftertest. `DELIVERY_BUSY` kräver återläsning/återförsök med samma nycklar efter pågående operation. Cleanup är ett separat explicit F-09-anrop efter Done, med faktisk F-13-inaktivitetsprobe; worktree, branches och historik bevaras tills resurspolicyn tillåter borttagning. Se [leverans, stopp och recovery](docs/review/F-21-leverans.md). TeamPlayer-produktadapter följer i E-06 och samlat native prov i F-22.

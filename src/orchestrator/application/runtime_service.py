@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_changes_service import TaskChangesError
+from orchestrator.application.task_merge_service import TaskMergeError
 from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
@@ -13,6 +14,7 @@ from orchestrator.mcp.contracts import (
     Target,
     TaskApprovalRequest,
     TaskChangesRequest,
+    TaskMergeRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -74,6 +76,7 @@ class RuntimeService:
         task_review=None,
         task_changes=None,
         task_approval=None,
+        task_merge=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -81,6 +84,7 @@ class RuntimeService:
         self.task_review = task_review
         self.task_changes = task_changes
         self.task_approval = task_approval
+        self.task_merge = task_merge
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -125,6 +129,8 @@ class RuntimeService:
             return self._request_changes(arguments)
         if operation == "task_approve" and self.task_approval is not None:
             return self._approve_task(arguments)
+        if operation == "task_merge" and self.task_merge is not None:
+            return self._merge_task(arguments)
         if operation not in {"runtime_status", "policy_check"}:
             return ToolResponse(
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
@@ -178,6 +184,10 @@ class RuntimeService:
             if request.operation == "task_approve" and self.task_approval is not None:
                 return ToolResponse(
                     ok=True, code="OK", message="task approval service is available"
+                )
+            if request.operation == "task_merge" and self.task_merge is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="verified task delivery service is available"
                 )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(
@@ -351,4 +361,36 @@ class RuntimeService:
                 ok=False,
                 code=str(error),
                 message="reconcile current review and verification evidence",
+            )
+
+    def _merge_task(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot deliver tasks")
+        try:
+            request = TaskMergeRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid delivery request"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="delivery scope is not authorized"
+            )
+        try:
+            result = self.task_merge.merge(
+                self.actor,
+                request.task_run_id,
+                key=request.request_key,
+                verification_key=request.verification_key,
+            )
+            return ToolResponse(
+                ok=True, code="OK", message="delivery outcome recorded", data=result
+            )
+        except TaskMergeError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile saved merge, test and physical stop evidence",
             )

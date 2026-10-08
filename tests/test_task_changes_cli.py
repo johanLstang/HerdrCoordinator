@@ -31,6 +31,7 @@ sources=["README.md"]
 
     async def serve(service):
         captured.append(service.task_changes is not None)
+        assert (service.task_merge is not None) == configured
         assert service.store.get_runs() == []
 
     monkeypatch.setattr("orchestrator.adapters.herdr.HerdrAdapter", adapter)

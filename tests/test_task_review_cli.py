@@ -7,7 +7,9 @@ from orchestrator.domain.review_contracts import EpicReviewSpec
 
 @pytest.mark.parametrize("configured", [True, False])
 def test_operator_review_configuration_enables_mcp_without_implicit_runtime(
-    launch, monkeypatch, configured  # noqa: F811
+    launch,  # noqa: F811
+    monkeypatch,
+    configured,  # noqa: F811
 ):
     config, principal = launch
     if configured:
@@ -30,6 +32,7 @@ sources=["README.md"]
         captured.append(service.task_review is not None)
         assert (service.task_approval is not None) == configured
         assert service.task_changes is None
+        assert service.task_merge is None
         assert service.task_start is None and service.worker_reports is None
         assert service.store.get_runs() == []
 

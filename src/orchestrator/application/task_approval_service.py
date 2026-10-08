@@ -28,8 +28,9 @@ class TaskApprovalService:
         self.contexts = TaskReviewService(settings, store)
         self.integration = self.contexts.integration
 
-    def _proof(self, actor, task, op):
-        if op.status != "SUCCEEDED" or task.internal_status != TaskState.APPROVED:
+    def _proof(self, actor, task, op, *, merging=False):
+        phases = {TaskState.APPROVED, TaskState.MERGING} if merging else {TaskState.APPROVED}
+        if op.status != "SUCCEEDED" or task.internal_status not in phases:
             raise TaskApprovalError("APPROVAL_NOT_CURRENT")
         reviewer = Actor.model_validate(op.result["reviewer"])
         StateService.authorize_scope(reviewer, task)

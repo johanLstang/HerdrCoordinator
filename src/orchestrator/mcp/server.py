@@ -18,6 +18,7 @@ from orchestrator.mcp.contracts import (
     Target,
     TaskApprovalRequest,
     TaskChangesRequest,
+    TaskMergeRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -94,6 +95,17 @@ def create_server(service: RuntimeService) -> Server:
                 name="task_approve",
                 description="Approve current context in the registered Integration scope.",
                 input_schema=TaskApprovalRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
+
+    if service.task_merge is not None:
+        tools.append(
+            Tool(
+                name="task_merge",
+                description="Verify delivery, integration tests and Worker stop before Done.",
+                input_schema=TaskMergeRequest.model_json_schema(),
                 output_schema=ToolResponse.model_json_schema(),
                 annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
             )
