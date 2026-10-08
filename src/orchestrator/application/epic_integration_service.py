@@ -134,17 +134,35 @@ class EpicIntegrationService(GitIntegrationService):
             return self._finish(op, "FAILED" if error else "SUCCEEDED", error=error, exit_code=code)
 
     def register_epic_review(
-        self, actor, run_id, *, verification_key, key, approved: bool, feedback=""
+        self,
+        actor,
+        run_id,
+        *,
+        verification_key,
+        key,
+        approved: bool,
+        feedback="",
+        verified_criteria=None,
     ):
         if type(approved) is not bool or (not approved and not feedback.strip()):
             raise IntegrationError("explicit review decision and rejection reason required")
         with self._lock(), self.store.transaction():
             epic = self._epic(actor, run_id)
+            if verified_criteria is not None and (
+                not approved
+                or self.worktrees.settings.review_context is None
+                or verified_criteria != self.worktrees.settings.review_context.acceptance_criteria
+            ):
+                raise IntegrationError(
+                    "explicit acceptance must match the complete registered criteria"
+                )
             request = dict(
                 verification_key=verification_key,
                 approved=approved,
                 feedback_hash=hashlib.sha256(feedback.encode()).hexdigest(),
             )
+            if verified_criteria is not None:
+                request["verified_criteria"] = verified_criteria
             old = self._epic_prior(epic, "epic_review", key)
             if old:
                 if any(old.result.get(k) != v for k, v in request.items()):

@@ -111,11 +111,25 @@ def create_server(service: RuntimeService) -> Server:
             )
         )
 
+    if service.teamplayer_sync is not None:
+        for name in ("set_task_status", "set_epic_status"):
+            tools.append(
+                Tool(
+                    name=name,
+                    description="Mirror verified state; caller cannot choose status or evidence.",
+                    input_schema=Target.model_json_schema(),
+                    output_schema=ToolResponse.model_json_schema(),
+                    annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+                )
+            )
+
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)
 
     async def call_tool(ctx: ServerRequestContext, params: CallToolRequestParams):
-        result = service.call(params.name, params.arguments or {}).model_dump(mode="json")
+        result = (await service.call_async(params.name, params.arguments or {})).model_dump(
+            mode="json"
+        )
         return CallToolResult(
             content=[TextContent(type="text", text=json.dumps(result))],
             structured_content=result,

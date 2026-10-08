@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-05 och F-01–F-22 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Done; PR#5/main9d16c7f slutverifierad. E06 Active/F23–F24 Done; F25 nästa; E07–E12 och återstående tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-05 och F-01–F-22 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Done; PR #4/main56c5aff slutverifierad med365tester. E-05 Done; PR#5/main9d16c7f slutverifierad. E06 Active/F23–F24 Done; F25 pågår; E07–E12 och återstående tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -1081,7 +1081,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-25 Synkronisera status och kommentarer utan nya sidoeffekter
 
-**Epic/fas/prioritet:** E-06 / 6 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7ab4a0ac-405d-4905-bc46-a2d5f0431c86`.
+**Epic/fas/prioritet:** E-06 / 6 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `7ab4a0ac-405d-4905-bc46-a2d5f0431c86`.
 
 **Körbar:** Ja — F24 Done/taskmergeeef679e, F23 write/readback/descriptionevent-kontrakt verifierat; E05 Done på main.
 
@@ -1093,7 +1093,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Verifierat MCP-kontrakt F23:** saknat fristående kommentarverktyg; logiska kommentarer blir markerade beskrivningshändelser via update_task_details med färsk get_task-version, stabilt event-ID/innehållsdigest och readback. Bevara manuell text; okänt/avvikande utfall kräver avstämning. Ingen native kommentar- eller reopen-kapabilitet fabriceras. Se [F23-kontrakt](docs/teamplayer/F-23-kontrakt.md).
 
-**Resultat och kontrakt:** Integration initierar taskskrivning och Coordinator epicskrivning. Externt fel efter lokal framgång återförsöker endast TeamPlayer-steget. Okänt kommentarutfall avstäms med verifierad dedupliceringsmekanism; om API saknar den används dokumenterad readback eller Attention. Manuellt ändrad Kanban ger avvikelse, inte bevis för merge.
+**Resultat och kontrakt:** Integration initierar taskskrivning och Coordinator epicskrivning. Externt fel efter lokal framgång återförsöker endast TeamPlayer-steget. Okänt kommentarutfall avstäms med verifierad dedupliceringsmekanism; om API saknar den används dokumenterad readback eller Attention. Manuellt ändrad Kanban ger avvikelse, inte bevis för merge. Epic-Done kräver dessutom explicit SHA-bunden komplett checklista via register_epic_review(verified_criteria=...), aktuellt verifierat scope och native tasks Done; äldre review utan checklista räcker inte. F40 använder detta reviewkontrakt vid Coordinatorns slutreview.
 
 **Acceptans**
 
@@ -1104,6 +1104,10 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Adapterprov med fel före/efter externt svar samt verkliga statusskrivningar i testepicen.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start F25 (2026-10-08):** rättWrite/User och samtliga6taskberoendenDone verifierade, E05Donepåmain/F24Done+revieweef679e/113tests14.01s/nativeReaderPASS. Ren task/e06-f25 från renaktuell epice235a21 före nativePending→InProgressv5. E06 Active/egen1av3. Worker implementerar beständig rollbunden status/history-sync enligt verifieratF23kontrakt; inga privata credentialvärden eller fabricerade Git/runtimebevis.
+
+**Worker-verifiering F25 (2026-10-08):** 91 sync/writer/MCP/startup-test passerade291.33s; separat129 reader/writer/persistence/state/epicintegration passerade104.95s; efter skärpt scopekontroll6 epicacceptansfall passerade51.67s. Ruff/build/configCLI/diff/länkar/paketerade moduler PASS. Native fixture63cebf13: faktiskF22-backup, task2eabe2f5 Donev3/taskcfe70b9f NeedsInputv3/epicActivev4, injicerat förlorat klientsvar efter riktig Donewrite→Pending→readback→en historikhändelse, oförändrad Git/runtimejournal. Återläsning/replay PASS; inget nytt Worker-start/merge. Tre första testfixturfel och en ruff-borttagen fixtureimport samt fel förväntad F05-resultattyp rättades utan sänkta grindar; senaste kontroller gröna. Sourceleverans väntar Integration-review/Task→Epic och postmergegate; lokal och TeamPlayer-task fortsattActive. [API och avstämning](docs/teamplayer/F-25-synk.md), [native underlag](docs/teamplayer/F-25-prover.json).
 
 ### Task F-26 Verifiera TeamPlayer kopplingen på en testepic
 
@@ -1968,7 +1972,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Active | Ja | 1/3 | E-05 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Done | Nej | 3/3 | E-05, X-02 | Review8bc2517/merge173b7f6;23tests8.24s/nativeMCP PASS; docs/reviews/F-23.md. |
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
-| 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Planned | Ja | 0/3 | E-05, F-24, X-02 | F24Done; förberedtaskbranch/plocka; beständig status/history-sync enligt F23. |
+| 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Active | Ja | 0/3 | E-05, F-24, X-02 | F24Done; förberedtaskbranch/plocka; beständig status/history-sync enligt F23. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Nej | 0/3 | E-05, F-25, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Nej | 0/3 | E-06 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Nej | 0/3 | E-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
