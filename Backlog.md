@@ -1115,9 +1115,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-26 Verifiera TeamPlayer kopplingen på en testepic
 
-**Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `1626d7a9-387d-47cd-b20b-86cb2a9f0613`.
+**Epic/fas/prioritet:** E-06 / 6 / P1. **Kanban-status:** Attention. **TeamPlayer Task-ID:** `1626d7a9-387d-47cd-b20b-86cb2a9f0613`.
 
-**Körbar:** Ja — F25 Done/slutmergede46d0f; E05 Done på main och X01/X02 tidigare verifierade. Förbered separat färsk testfixture och named Herdr-server innan nativeprovet.
+**Körbar:** Beroenden uppfyllda — F25 Done/slutmergede46d0f; E05 Done på main och X01/X02 verifierade. Liveprovet väntar nu på användarbeslut för den nya fixturesökvägens trust-dialog; återuppta samma run efter beslut.
 
 **Källa:** A §§6, 16, 40; W §§13–18, 25, 39. **Berör:** Kanban-prov, dokumentation, ID-mappning.
 
@@ -1125,7 +1125,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Arbetsinstruktion för Codex:** Kör läsning, bekräftad Worker-start, blockerarrapport och verifierad taskintegration mot testepicen. Prova bortkoppling under en statusskrivning och återställ synk. Dokumentera aktuella projekt/epic/task-ID och återstående blockerare.
 
-**Resultat och kontrakt:** Attention-skrivning verifieras här; full sessionsparkering och återupptagning kommer i E-08. Testepicen ska särskiljas från projektets produktbacklogg. Runtime och TeamPlayer avstäms utan att Kanban ensam flyttar Git eller runs.
+**Resultat och kontrakt:** Attention-skrivning, manuellt tillförd provinput och bekräftad fortsättning verifieras här. Bootstrap-operatören använder redan levererad F13-park/resume och lämnar ett beständigt avgränsat inputmeddelande i samma session; automatisk Attention-policy/input-loop kommer i E-08/F43. Testepicen ska särskiljas från projektets produktbacklogg. Runtime och TeamPlayer avstäms utan att Kanban ensam flyttar Git eller runs.
 
 **Acceptans**
 
@@ -1138,6 +1138,12 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
 **Coordinator/start E-06 (2026-10-08):** från ren verifierad main84fb77a3141cae25710554b497b8705f7768cbe8 efter E05 PR#5/main9d16c7f/469pass684.75s och Donev17/descriptionmatch. Ren feature/epic-e06 i eget worktree, NativeE06 InProgress/Activev7. Write/get_me verifierar HerdrCoordinator och Userblitterbot@gmail.com. X02 separat namngiven [TEST]epic8051e9de-f4dc-4277-8f80-62b1c36c4690 skapad Pending med unik idempotencyKeyherdr-coordinator-e06-mcp-probe-20261008 och återläst. Fixtureepic är externa kontraktsprov/testdata, ingen implementations-/produktrun eller förtäckt produkt-Done; alla skapade testtasks får verifiedUser105f26a7-0648-438d-94fd-3260ac3af4ee. Inga andra projekt ändras, IDs/historik bevaras. F23 första kandidat efter X02; lokala credentialvärden har inte skrivits till dokument/logg/prompt.
+
+**Start F26 (2026-10-08):** list_projects/get_me verifierar HerdrCoordinator/Write/User105f26a7 (blitterbot@gmail.com); list_epics/list_tasks visar14epics/54tasks, inga tidigare egna pågående implementationstasks, E06Activev12/egen2av3 och samtliga6native beroendenDone. F25review589631e/slutmergede46d0f/final12tests83.58s/nativeprodukt/Ruff/build PASS, NativeDonev7 med exaktbeskrivning. Task/e06-f26 i separat worktree från ren aktuell epic90d2d3c810d45957e6900ed287324525d54ded45. Native Pendingv1→InProgressv2 och återläst User-tilldelning före kod/runtimearbete. Första bootstrap-preparationskommandot kördes felaktigt utan uv och saknade paketimport; claim fortsatte därför före lyckad worktree-preparation. Avvikelsen rättades direkt med uv/GitAdapter, ren branch/bas verifierades och tasken återlästes innan någon kod/runtime ändrades. Ingen beroendeordning eller ownership ersattes. Färsk isolerad fixture bevarar alla äldre prov; en Worker, inga parallella backloggfeatures.
+
+**Verkligt hinder F26 (2026-10-08):** native Codex visar Folder access/Trust and continue för den nya ofarliga fixturesökvägen `.worktrees/task-e06-f26/.herdr/probes/f26/repo`, skild från tidigare betrodd F10-fixture. Herdr-skillen kräver användarbeslut före svar på faktisk trust-/approval-UI. Fråga skickad asynkront, inget svar har automatiskt valts. Runtime STARTING/runf5b1db25-7a1a-4baa-b69c-dad545c507b1/start4dc1c848/PENDING/RUNTIME_BLOCKED, agenthc-4dc1c8486db84b23a587425a/panew1:p1 på egen serverhc-f26-20261008. Slot1 hålls; inga ACK/session/prompt/kod/merge ännu. NativeF26 NeedsApprovalv4; E06Active. Fixtureepicf74e4cbb/task88460303 är separata test-ID:n; fixturetaskPending, ingen fabricerad Active/Attention. Nästa ansvariga roll testoperatör: efter användarbeslut besvara exakt dialog och avstäm samma start/runtime innan återförsök. Ingen senare beroende feature väljs.
+
+**Bevarat arbetsläge F26 (2026-10-08):** harness [scripts/probes/f26_native.py](scripts/probes/f26_native.py) och [liveprov/återupptagning](docs/teamplayer/F-26-liveprov.md) är förberedda. Ruff och diffkontroll PASS; inga F26-kriterier markeras uppfyllda. Verklig fixtureepic Pendingv2→InProgressv3 via levererad synkservice/op4a9485c3 medan fixturetask fortfarande saknar ACK och ligger Pending. Skrivgräns/journal begränsar produktprovets statusskrivningar till fixtureepic/task-ID. Före/efter-avstämningen redovisar F26-utvecklingstaskens separata workflowändringar i status/version/beskrivning; harnessen får inte skriva den tasken. Övriga boardobjekt och dess övriga fält ska förbli oförändrade. F26 fortfarande Attention/NeedsApproval, E06Active/egen2av3; full livekedja och återanslutning återstår efter beslut.
 
 ## Epic E-07 Genomför beroendestyrda tasks med två Workers
 
@@ -1977,7 +1983,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Done | Nej | 3/3 | E-05, X-02 | Review8bc2517/merge173b7f6;23tests8.24s/nativeMCP PASS; docs/reviews/F-23.md. |
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
-| 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Planned | Ja | 0/3 | E-05, F-25, X-01, X-02 | F25 Done; nästa kandidat, separat färskt nativeflöde med input/resume. |
+| 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Attention | Nej | 0/3 | E-05, F-25, X-01, X-02 | NeedsApprovalv4: ny fixturetrust-UI; användarbeslut krävs, samma STARTING-run/slot bevaras. |
 | 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Nej | 0/3 | E-06 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Nej | 0/3 | E-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Nej | 0/3 | E-06, F-27 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
