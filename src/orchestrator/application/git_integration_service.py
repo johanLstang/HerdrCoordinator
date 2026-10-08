@@ -32,6 +32,7 @@ class GitIntegrationService:
         *,
         test_command: tuple[str, ...] = (),
         test_timeout: float = 300,
+        test_environment: dict[str, str] | None = None,
     ):
         self.store = store
         self.worktrees = WorktreeService(settings, store)
@@ -39,7 +40,14 @@ class GitIntegrationService:
         self.git = self.worktrees.git
         # Operator configuration, never an agent-supplied tool argument.
         self.test_command, self.test_timeout = test_command, test_timeout
-        self.command_hash = hashlib.sha256(json.dumps(test_command).encode()).hexdigest()
+        self.test_environment = dict(test_environment) if test_environment is not None else None
+        test_context = (
+            test_command if self.test_environment is None
+            else {"command": test_command, "environment": self.test_environment}
+        )
+        self.command_hash = hashlib.sha256(
+            json.dumps(test_context, sort_keys=True).encode()
+        ).hexdigest()
 
     @contextmanager
     def _lock(self):
@@ -228,7 +236,10 @@ class GitIntegrationService:
                 exit_code = subprocess.run(
                     self.test_command,
                     cwd=task.worktree_path,
-                    env=self.git._environment(),
+                    env=(
+                        self.test_environment
+                        if self.test_environment is not None else self.git._environment()
+                    ),
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
                     timeout=self.test_timeout,

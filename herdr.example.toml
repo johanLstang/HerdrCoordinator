@@ -2,6 +2,12 @@
 repository = "."
 worktree_root = ".worktrees/runtime"
 sqlite_path = ".herdr/state.sqlite3"
-max_workers = 2
+# Phase 4 Worker MVP: one Worker. Phase 7 will enable two.
+max_workers = 1
 # Optional names of environment variables to redact; values never belong in TOML.
 credential_env = ["HERDR_TEAMPLAYER_TOKEN", "HERDR_CODEX_API_KEY"]
+
+# Operator-selected argv for the target repository, needed before READY_FOR_REVIEW.
+# Set this in a local TOML after reading that repository's README.
+# worker_test_command = ["uv", "run", "--locked", "pytest"]
+# worker_test_timeout = 300
