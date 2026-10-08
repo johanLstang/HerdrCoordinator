@@ -277,6 +277,10 @@ def test_task_attention_retains_session_branch_worktree_and_epic_active(setup):
         a, task.id, key="input", reason="Missing test resource; operator supplies file."
     )
     assert stopped.status == "SUCCEEDED" and stopped.result["stage"] == "STOPPED"
+    alias = s.lifecycle.stop_task(
+        a, task.id, key="alias-input", reason="Same already parked runtime"
+    )
+    assert alias.result["prior_stop_id"] == stopped.id and h.exits == 1
     assert (
         run(sync.sync_task(a, task.id))["status"] == "SYNCED" and b.task["status"] == "NeedsInput"
     )
@@ -506,3 +510,14 @@ def test_partial_epic_acceptance_cannot_register_a_complete_review(setup):
         )
     assert not s.store.get_operations(a.epic_run_id, kind="epic_review")
     assert s.store.get_epic(a.epic_run_id).status == EpicState.ACTIVE
+
+
+def test_done_stop_alias_does_not_rewrite_done_event_or_repeat_native_history(setup):
+    sync, b, s, a, w, _, h, _, _ = setup
+    deliver(s, a, w)
+    task = s.store.get_task(w.task_run_id)
+    parent = s.store.get_operation("p", "task_merge", "deliver")
+    alias = s.lifecycle.stop_task(a, task.id, key="already-delivered", reason="Already inactive")
+    assert alias.result["prior_stop_id"] == parent.result["stop_id"] and h.exits == 1
+    assert run(sync.sync_task(a, task.id))["status"] == "SYNCED" and b.task["status"] == "Done"
+    assert run(sync.sync_task(a, task.id))["status"] == "EXISTING" and len(b.applied) == 2
