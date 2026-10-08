@@ -1,6 +1,7 @@
 from pydantic import ValidationError
 
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_changes_service import TaskChangesError
 from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_start_service import TaskStartError
@@ -10,6 +11,7 @@ from orchestrator.event_log import EventLog
 from orchestrator.mcp.contracts import (
     PolicyRequest,
     Target,
+    TaskApprovalRequest,
     TaskChangesRequest,
     TaskReviewRequest,
     TaskStartRequest,
@@ -25,6 +27,7 @@ _ROLES = {
     "task_start": {Role.INTEGRATION},
     "task_review_request": {Role.INTEGRATION},
     "task_request_changes": {Role.INTEGRATION},
+    "task_approve": {Role.INTEGRATION},
     "task_merge": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
@@ -70,12 +73,14 @@ class RuntimeService:
         worker_reports=None,
         task_review=None,
         task_changes=None,
+        task_approval=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
         self.worker_reports = worker_reports
         self.task_review = task_review
         self.task_changes = task_changes
+        self.task_approval = task_approval
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -118,6 +123,8 @@ class RuntimeService:
             return self._request_review(arguments)
         if operation == "task_request_changes" and self.task_changes is not None:
             return self._request_changes(arguments)
+        if operation == "task_approve" and self.task_approval is not None:
+            return self._approve_task(arguments)
         if operation not in {"runtime_status", "policy_check"}:
             return ToolResponse(
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
@@ -167,6 +174,10 @@ class RuntimeService:
             if request.operation == "task_request_changes" and self.task_changes is not None:
                 return ToolResponse(
                     ok=True, code="OK", message="same-session correction service is available"
+                )
+            if request.operation == "task_approve" and self.task_approval is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="task approval service is available"
                 )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(
@@ -311,4 +322,33 @@ class RuntimeService:
                 ok=False,
                 code=str(error),
                 message="reconcile correction and native runtime evidence",
+            )
+
+    def _approve_task(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot approve tasks")
+        try:
+            request = TaskApprovalRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid approval decision"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="approval scope is not authorized"
+            )
+        try:
+            result = self.task_approval.approve(
+                self.actor, request.task_run_id, request.decision, key=request.request_key
+            )
+            return ToolResponse(
+                ok=True, code="OK", message="current approval verified", data=result
+            )
+        except TaskApprovalError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile current review and verification evidence",
             )

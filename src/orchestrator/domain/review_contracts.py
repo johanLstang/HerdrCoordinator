@@ -80,3 +80,20 @@ class ChangesDecision(Contract):
         if len(canonical_json(self.model_dump(mode="json")).encode()) > 16384:
             raise ValueError("review decision exceeds bounded contract")
         return self
+
+
+class ApprovalDecision(Contract):
+    result: Literal["APPROVED"]
+    context_id: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    summary: Text
+    verified_criteria: Annotated[list[Text], Field(min_length=1, max_length=128)]
+
+    @model_validator(mode="after")
+    def meaningful_and_bounded(self):
+        if any(
+            not text.strip() or "\x00" in text for text in [self.summary, *self.verified_criteria]
+        ):
+            raise ValueError("approval must contain meaningful acceptance verification")
+        if len(canonical_json(self.model_dump(mode="json")).encode()) > 65536:
+            raise ValueError("approval decision exceeds bounded contract")
+        return self

@@ -52,33 +52,7 @@ class TaskChangesService:
         return task, epic
 
     def _context(self, actor, task, epic, identity):
-        matches = [
-            op
-            for op in self.store.get_operations(epic.id, kind=self.contexts.KIND)
-            if op.task_run_id == task.id
-            and op.status == "SUCCEEDED"
-            and op.result.get("context", {}).get("context_id") == identity
-        ]
-        if len(matches) != 1:
-            raise TaskChangesError("CORRECTION_CONTEXT_UNVERIFIED")
-        op = matches[0]
-        spec, _ = self.contexts._spec(task, epic)
-        config = self.contexts._configuration(task, epic, spec)
-        context = self.contexts._saved(actor, task, op, config)["context"]
-        test = self.store.get_operation(task.project_id, "verify_task", context["tests"]["key"])
-        if (
-            test is None
-            or test.id != context["tests"]["operation_id"]
-            or test.task_run_id != task.id
-            or test.epic_run_id != epic.id
-            or test.status != "SUCCEEDED"
-            or test.result.get("exit_code") != 0
-            or test.result.get("source_commit") != context["task_commit"]
-            or test.result.get("target_commit") != context["epic_commit"]
-            or test.result.get("command_hash") != self.integration.command_hash
-        ):
-            raise TaskChangesError("CORRECTION_TEST_UNVERIFIED")
-        return context
+        return self.contexts.current_context(actor, task.id, identity)
 
     def _runtime(self, actor, task, op=None):
         run, start = self.assignment._validate(actor, task.id)
@@ -218,7 +192,8 @@ class TaskChangesService:
                         raise TaskChangesError("CORRECTION_TASK_NOT_REVIEWING")
                     if any(
                         other.task_run_id == task.id and other.status == "PENDING"
-                        for other in self.store.get_operations(epic.id, kind=self.KIND)
+                        for kind in (self.KIND, "task_approve")
+                        for other in self.store.get_operations(epic.id, kind=kind)
                     ):
                         raise TaskChangesError("CORRECTION_ALREADY_PENDING")
                     context = self._context(actor, task, epic, parsed.context_id)

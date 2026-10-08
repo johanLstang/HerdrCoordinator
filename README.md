@@ -258,3 +258,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Korrigering i samma Worker-session (F-19)
 
 `TaskChangesService` validerar ett negativt granskningsbeslut mot aktuellt F-18-underlag och befintliga acceptanskriterier. Reviewnummer, commits och numrerad feedback sparas före leverans till registrerad Worker. CHANGES_REQUESTED ligger i Active; WORKING kräver korrelerad native ACK i samma Codex-session, branch och worktree. Nästa rapport måste komma efter ACK och verifieras på nytt genom F-16/F-18. MCP `task_request_changes` kräver både reviewkonfiguration och explicit `--herdr-session`; det ger inget approval, leveransmerge eller Done. Se [policy, schema och recovery](docs/review/F-19-korrigering.md).
+
+## Versionsbundet taskgodkännande (F-20)
+
+`TaskApprovalService` kräver registrerad Integration, senaste kompletta reviewkontext, aktuell verklig verifiering och ett positivt beslut för samtliga acceptanskriterier. Approval sparar granskare, context/review/test-ID:n och exakt task/epic-par. Ändrad kod, bas, konfiguration eller ersatt context avvisar användning av äldre approval och bevarar historiken. MCP `task_approve` aktiveras med reviewkonfiguration; det startar ingen runtime och mergear inte. APPROVED ligger kvar i Active med slotreservation. Se [beslut, kontroll och recovery](docs/review/F-20-godkannande.md).
