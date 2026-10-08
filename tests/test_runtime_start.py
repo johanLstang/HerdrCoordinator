@@ -353,6 +353,10 @@ def test_adapter_confirms_native_session_against_recorded_codex_cwd(monkeypatch)
     from orchestrator.adapters.codex import CodexError
 
     monkeypatch.setenv("HERDR_ENV", "1")
+    monkeypatch.setattr(
+        "orchestrator.adapters.herdr.shutil.which",
+        lambda name: "/installed/bin/codex" if name == "codex" else None,
+    )
     a = HerdrAdapter("isolated")
     b = {"workspace_id": "w1", "tab_id": "w1:t1", "pane_id": "w1:p1", "terminal_id": "term_1"}
     sid = "00000000-0000-4000-8000-000000000001"

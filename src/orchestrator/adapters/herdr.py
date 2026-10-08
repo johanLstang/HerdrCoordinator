@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 from uuid import UUID
@@ -167,10 +168,25 @@ class HerdrAdapter:
                 "--cd",
                 cwd,
             ]
+            cli = shutil.which("codex")
+            if cli is None:
+                raise HerdrError("CODEX_EXECUTABLE_UNVERIFIED")
+            installed = Path(cli).resolve()
             processes = []
             for process in info["foreground_processes"]:
                 args = process["argv"]
-                if any(
+                executable = Path(shutil.which(args[0]) or args[0]).resolve()
+                launcher = (
+                    len(args) > 1
+                    and Path(args[0]).name == "node"
+                    and (Path(args[1]).resolve() == installed)
+                )
+                native = executable == installed or (
+                    installed.suffix == ".js"
+                    and installed.parent.parent in executable.parents
+                    and executable.name == "codex"
+                )
+                if (launcher or native) and any(
                     args[i : i + len(required)] == required
                     for i in range(len(args) - len(required) + 1)
                 ):
@@ -204,5 +220,5 @@ class HerdrAdapter:
                 "session_id": session_id,
                 "processes": processes,
             }
-        except (KeyError, TypeError, ValueError, AttributeError):
+        except (KeyError, IndexError, TypeError, ValueError, AttributeError):
             raise HerdrError("RUNTIME_IDENTITY_MISMATCH") from None
