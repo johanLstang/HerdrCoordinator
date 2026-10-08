@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-08",
+  "task": "F-10",
+  "versions": {
+    "herdr": "0.9.3",
+    "codex": "0.161.0",
+    "herdrProtocol": 22
+  },
+  "trustDecision": "User explicitly approved exactly isolated F-10 repo",
+  "herdrSession": "hc-f10-20261008",
+  "workspace": "w1",
+  "tab": "w1:t1",
+  "pane": "w1:p1",
+  "terminal": "term_65d4844f4bcd91",
+  "originalCodexSession": "01a11ab3-c066-7260-9c11-762acfcfaa37",
+  "selectedCodexSession": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+  "selectedRuntimeFlags": [
+    "--no-daemon",
+    "--sandbox",
+    "read-only",
+    "--ask-for-approval",
+    "on-request"
+  ],
+  "nativeSessionSource": "herdr:codex",
+  "sandbox": [
+    {
+      "method": "command/exec",
+      "response": {
+        "id": 3,
+        "result": {
+          "exitCode": 0,
+          "stdout": "{\"cwd_write\": \"OSError:30\", \"outside_write\": \"OSError:30\", \"outside_read\": \"f10-non-secret-read-probe\", \"network_bind\": \"PermissionError:1\"}\n",
+          "stderr": ""
+        }
+      }
+    },
+    {
+      "method": "command/exec",
+      "response": {
+        "id": 4,
+        "result": {
+          "exitCode": 0,
+          "stdout": "{\"cwd_write\": \"allowed\", \"outside_write\": \"OSError:30\", \"outside_read\": \"f10-non-secret-read-probe\", \"network_bind\": \"PermissionError:1\"}\n",
+          "stderr": ""
+        }
+      }
+    }
+  ],
+  "persistedSessionProbe": [
+    {
+      "method": "thread/list",
+      "threads": [
+        {
+          "id": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+          "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo",
+          "status": {
+            "type": "notLoaded"
+          }
+        },
+        {
+          "id": "01a11ab3-c066-7260-9c11-762acfcfaa37",
+          "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo",
+          "status": {
+            "type": "notLoaded"
+          }
+        }
+      ],
+      "error": null
+    },
+    {
+      "method": "thread/read",
+      "threadId": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+      "sessionId": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+      "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo",
+      "status": {
+        "type": "notLoaded"
+      },
+      "turnCount": 3,
+      "turnStatuses": [
+        "completed",
+        "completed",
+        "interrupted"
+      ],
+      "markerPresent": true,
+      "sandbox": null,
+      "error": null
+    },
+    {
+      "method": "thread/resume",
+      "threadId": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+      "sessionId": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+      "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo",
+      "status": {
+        "type": "idle"
+      },
+      "turnCount": 3,
+      "turnStatuses": [
+        "completed",
+        "completed",
+        "interrupted"
+      ],
+      "markerPresent": true,
+      "sandbox": {
+        "type": "readOnly",
+        "networkAccess": false
+      },
+      "error": null
+    }
+  ],
+  "processStopProof": {
+    "all_owned_process_identities_gone": true,
+    "sessionId": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+    "tracked_count": 5
+  },
+  "herdrServerFinalState": "not running",
+  "limitations": [
+    "Shared daemon retains active writer after TUI exit",
+    "Proxy initialize timed out; not chosen",
+    "Session identity may be unavailable before first turn",
+    "Sandbox allows outside read",
+    "Full Worker role/recovery policy not proven by CLI probe"
+  ]
+}
