@@ -70,6 +70,7 @@ class WorktreeService:
         task_id: str,
         run_id: str,
         path: Path | None = None,
+        prepare_only: bool = False,
     ) -> TaskRun:
         if actor.role != Role.INTEGRATION or actor.epic_run_id != epic_run_id:
             raise WorktreeError("only the epic's Integration principal may create tasks")
@@ -97,7 +98,12 @@ class WorktreeService:
             worktree_path=str(destination),
         )
         return self._create(
-            record, "create_task_worktree", epic.branch, Path(epic.worktree_path), epic.id
+            record,
+            "create_task_worktree",
+            epic.branch,
+            Path(epic.worktree_path),
+            epic.id,
+            prepare_only=prepare_only,
         )
 
     def _load(self, record: EpicRun | TaskRun):
@@ -215,6 +221,8 @@ class WorktreeService:
         source_branch: str,
         source_path: Path,
         source_epic_id: str | None = None,
+        *,
+        prepare_only: bool = False,
     ):
         # Commit intent before any Git mutation. SQLite serializes creation attempts.
         with self.store.transaction():
@@ -250,6 +258,8 @@ class WorktreeService:
                 else:
                     self.store.add_task(actual)
                 self.store.add_operation(operation)
+        if prepare_only:
+            return actual
         with self.store.transaction():
             actual = self._load(requested)
             operation = self.store.get_operation(requested.project_id, kind, requested.id)

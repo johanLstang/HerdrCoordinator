@@ -1,4 +1,4 @@
-"""Foundation lifecycle; adapters and agent startup are delivered by later tasks."""
+"""Local lifecycle and explicit operator-controlled MCP/runtime configuration."""
 
 import argparse
 import asyncio
@@ -38,7 +38,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--principal", type=Path, help="operator-controlled external principal JSON"
     )
+    parser.add_argument(
+        "--herdr-session", help="explicit operator-selected Herdr session for task_start"
+    )
+    parser.add_argument(
+        "--worker-sandbox", choices=["read-only", "workspace-write"], default="workspace-write"
+    )
     args = parser.parse_args(argv)
+    if args.herdr_session and not args.mcp:
+        parser.error("--herdr-session requires --mcp")
     log = EventLog()
     try:
         settings = load_settings(args.config)
@@ -69,7 +77,20 @@ def main(argv: list[str] | None = None) -> int:
                 from orchestrator.application.runtime_service import RuntimeService
                 from orchestrator.mcp.server import serve_stdio
 
-                asyncio.run(serve_stdio(RuntimeService(store, actor, log)))
+                task_start = None
+                if args.herdr_session:
+                    from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
+                    from orchestrator.application.task_start_service import TaskStartService
+
+                    try:
+                        herdr = HerdrAdapter(args.herdr_session, sandbox=args.worker_sandbox)
+                    except HerdrError:
+                        log.emit(
+                            "runtime.configure", "ERROR", "explicit Herdr environment unavailable"
+                        )
+                        return 5
+                    task_start = TaskStartService(settings, store, herdr)
+                asyncio.run(serve_stdio(RuntimeService(store, actor, log, task_start=task_start)))
             else:
                 asyncio.run(serve(log))
     except StoreError as exc:

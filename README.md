@@ -146,7 +146,7 @@ uv run --locked ruff check .
 uv build
 ```
 
-`uv.lock` låser beroendeversionerna. Ett byggt wheel installeras med `python -m pip install dist/herdr_coordinator-0.1.0-py3-none-any.whl` i en separat Python 3.12+-miljö. Startkommandot är därefter `herdr-coordinator --config /path/to/herdr.local.toml`. Herdr-integration finns ännu inte i denna leverans.
+`uv.lock` låser beroendeversionerna. Ett byggt wheel installeras med `python -m pip install dist/herdr_coordinator-0.1.0-py3-none-any.whl` i en separat Python 3.12+-miljö. Startkommandot är därefter `herdr-coordinator --config /path/to/herdr.local.toml`. Herdr-runtime kopplas genom operatörens explicita MCP-konfiguration enligt Worker-start nedan.
 
 ### Teknikbeslut D-01
 
@@ -242,3 +242,7 @@ Internt `RuntimeLifecycleService` återansluter till ägd runtime, bekräftar st
 ## Worker-uppdrag och rapportformat (F-14)
 
 Version 1 validerar lokal taskspec, binder den till registrerad task/epic och bygger en reproducerbar Worker-prompt med paketerad policy. Rapportparsern kräver betrodd sessionsproveniens och normaliserar äldre textformat utan att godkänna Git-/testpåståenden. Se [D-04, schema och exempel](docs/worker/F-14-kontrakt.md). Runtime-start levereras i F-15 och oberoende rapportverifiering i F-16.
+
+## Explicit Worker-start (F-15)
+
+`TaskStartService` binder en lokal version-1-task till en unik run och reserverar slot före Git/Herdr. F-11/F-12 utför start och korrelerad native ACK. Återförsök behåller samma resurser och prompt. MCP `task_start` aktiveras endast med operatörens explicita `--herdr-session` och skyddade Integration-principal; utan det är servern read-only. Fas 4 använder en Worker. Se [start, MCP och recovery](docs/worker/F-15-start.md).

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, JsonValue, model_validator
 
 from orchestrator.domain.models import Identity
+from orchestrator.domain.worker_contracts import LocalTaskSpec
 
 
 class Target(BaseModel):
@@ -25,3 +26,10 @@ class ToolResponse(BaseModel):
     code: str
     message: str
     data: dict[str, JsonValue] = {}
+
+
+class TaskStartRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True, hide_input_in_errors=True)
+    project_id: Identity
+    epic_run_id: Identity
+    task: LocalTaskSpec
