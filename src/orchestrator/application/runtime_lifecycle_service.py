@@ -7,8 +7,10 @@ from orchestrator.adapters.codex import CodexAdapter, CodexError
 from orchestrator.adapters.git import GitError
 from orchestrator.adapters.herdr import HerdrError
 from orchestrator.adapters.processes import ProcessError, ProcessObserver
+from orchestrator.application.git_integration_service import IntegrationError
 from orchestrator.application.runtime_start_service import RuntimeStartError, RuntimeStartService
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.task_delivery_evidence import known_merge, passed_test
 from orchestrator.application.worktree_service import WorktreeError
 from orchestrator.domain.models import Operation, TaskRun, utc_now
 from orchestrator.domain.policy import Role, VerifiedFacts
@@ -29,14 +31,15 @@ class RuntimeLifecycleService:
     def _load(self, run_id, task):
         return self.store.get_task(run_id) if task else self.store.get_epic(run_id)
 
-    def _validate(self, actor, run_id, task):
+    def _validate(self, actor, run_id, task, *, require_worktree=True):
         run = self._load(run_id, task)
         if run is None:
             raise LifecycleError("RUN_NOT_FOUND")
         StateService.authorize_scope(actor, run)
         if actor.role != (Role.INTEGRATION if task else Role.COORDINATOR):
             raise LifecycleError("LIFECYCLE_ROLE_DENIED")
-        self.start.worktrees.verify_owned_worktree(run)
+        if require_worktree:
+            self.start.worktrees.verify_owned_worktree(run)
         op = self.store.get_operation(run.project_id, self.start.KIND, run.id)
         name = run.worker_agent_id if task else run.integration_agent_id
         if (
@@ -121,6 +124,33 @@ class RuntimeLifecycleService:
     def reconnect_task(self, actor, run_id):
         return self._call(self._reconnect, actor, run_id, True)
 
+    def require_task_idle(self, actor, run_id):
+        return self._call(self._idle, actor, run_id)
+
+    def _idle(self, actor, run_id):
+        run, start = self._validate(actor, run_id, True)
+        self.start._slot(run)
+        live = self._live(run, start)
+        if live is None or not live["ready"] or live["status"] not in {"idle", "done"}:
+            raise LifecycleError("DELIVERY_WORKER_NOT_READY")
+        thread = self.codex.read_thread(run.codex_session_id, run.worktree_path)
+        if any(turn["status"] == "inProgress" for turn in thread["turns"]):
+            raise LifecycleError("DELIVERY_WORKER_NOT_READY")
+
+    def confirm_task_inactive(self, actor, run_id):
+        """Physical evidence also usable after verified worktree cleanup."""
+        return self._call(self._confirm_inactive, actor, run_id)
+
+    def _confirm_inactive(self, actor, run_id):
+        run, start = self._validate(actor, run_id, True, require_worktree=False)
+        stopped = [
+            o
+            for o in self._ops(run, "stop_runtime")
+            if o.status == "SUCCEEDED"
+            and o.result["generation"] == start.result.get("generation", start.id)
+        ]
+        return run.worker_slot is None and bool(stopped) and self._inactive(run, start, stopped[-1])
+
     def reconnect_epic(self, actor, run_id):
         return self._call(self._reconnect, actor, run_id, False)
 
@@ -153,10 +183,28 @@ class RuntimeLifecycleService:
     def stop_task(self, actor, run_id, *, key, reason="Operator requested runtime stop"):
         return self._call(self._stop, actor, run_id, True, key, reason)
 
+    def stop_delivered_task(self, actor, run_id, *, key, delivery_key):
+        """Internal delivery service entry point; no caller-supplied inactivity facts."""
+        return self._call(
+            self._stop, actor, run_id, True, key, "Verified task delivery", delivery_key
+        )
+
+    def _delivery_ready(self, run, delivery_key):
+        if delivery_key is None:
+            return
+        try:
+            parent = self.store.get_operation(run.project_id, "task_merge", delivery_key)
+            if parent is None:
+                raise LifecycleError("DELIVERY_STOP_UNVERIFIED")
+            sha = known_merge(self.settings, self.store, run, parent)
+            passed_test(self.store, run, parent, sha)
+        except (IntegrationError, KeyError, TypeError, ValueError):
+            raise LifecycleError("DELIVERY_STOP_UNVERIFIED") from None
+
     def stop_epic(self, actor, run_id, *, key):
         return self._call(self._stop, actor, run_id, False, key, "")
 
-    def _stop(self, actor, run_id, task, key, reason):
+    def _stop(self, actor, run_id, task, key, reason, delivery_key=None):
         if (
             not isinstance(key, str)
             or not key
@@ -167,12 +215,14 @@ class RuntimeLifecycleService:
             raise LifecycleError("INVALID_LIFECYCLE_REQUEST")
         with self.store.transaction():
             run, start = self._validate(actor, run_id, task)
+            self._delivery_ready(run, delivery_key)
             generation = start.result.get("generation", start.id)
             op = self.store.get_operation(run.project_id, "stop_runtime", key)
             if op and (
                 op.task_run_id != (run.id if task else None)
                 or op.result["generation"] != generation
                 or op.result["reason"] != reason
+                or op.result.get("delivery_key") != delivery_key
             ):
                 raise LifecycleError("STALE_STOP_INTENT")
             self._busy(run, op.id if op else None)
@@ -193,7 +243,11 @@ class RuntimeLifecycleService:
                         idempotency_key=key,
                         status="SUCCEEDED",
                         result=previous[-1].result
-                        | {"reason": reason, "prior_stop_id": previous[-1].id},
+                        | {
+                            "reason": reason,
+                            "prior_stop_id": previous[-1].id,
+                            "delivery_key": delivery_key,
+                        },
                     )
                     self.store.add_operation(alias)
                     return alias
@@ -215,10 +269,15 @@ class RuntimeLifecycleService:
                         "reason": reason,
                         "stage": "STOP_REQUESTED",
                         "process_proof": proof,
+                        "delivery_key": delivery_key,
                     },
                 )
                 self.store.add_operation(op)
-                if task and run.internal_status not in {TaskState.DONE, TaskState.BLOCKED}:
+                if (
+                    task
+                    and delivery_key is None
+                    and run.internal_status not in {TaskState.DONE, TaskState.BLOCKED}
+                ):
                     run = StateService(self.store).transition_task(
                         run.id,
                         TaskState.BLOCKED,
@@ -232,6 +291,7 @@ class RuntimeLifecycleService:
                     raise LifecycleError("STOPPED_RUNTIME_REAPPEARED")
                 return op
         run, start = self._validate(actor, run_id, task)
+        self._delivery_ready(run, delivery_key)
         facts = self._live(run, start)
         if facts is not None:
             if facts["status"] == "working":
@@ -266,6 +326,7 @@ class RuntimeLifecycleService:
             time.sleep(0.1)
         with self.store.transaction():
             run, current = self._validate(actor, run_id, task)
+            self._delivery_ready(run, delivery_key)
             if current.result.get("generation", current.id) != generation:
                 raise LifecycleError("STOP_GENERATION_CHANGED")
             if not self._inactive(run, current, op):

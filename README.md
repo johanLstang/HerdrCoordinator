@@ -250,3 +250,28 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ## Verifierad Worker-rapport (F-16)
 
 `WorkerReportService` hämtar native slutrapport från registrerad Codex-session och kontrollerar ACK/proveniens, aktuell commit och rent worktree. Operatörens `worker_test_command` körs oberoende innan READY_FOR_REVIEW/Active; rapportens PASS och testkommandon är påståenden. BLOCKED sparar reason/input utan slotrelease. Explicit runtime-MCP har `task_report_ready/blocked` för eget Worker-target. Se [rapport-, test- och recoverykontrakt](docs/worker/F-16-rapporter.md).
+
+## Aktuell taskreviewkontext (F-18)
+
+`TaskReviewService` synkroniserar en verifierad Worker-leverans mot aktuell epic och kör operatörens testkommando på det nya versionsparet. Komplett diff, taskspecifikation, acceptans, versionerade källor, epicregler och testoperation sparas med context-ID och exakta task/epic-SHA. Först därefter går tasken till REVIEWING. MCP `task_review_request` aktiveras när både `review_context` och `worker_test_command` finns i operatörens TOML; endast registrerad Integration inom rätt epic får anropa det. Ingen Herdr-session startas implicit. Underlaget ger inget approval, leveransmerge eller Done. Se [konfiguration, gränser och recovery](docs/review/F-18-kontext.md).
+
+## Korrigering i samma Worker-session (F-19)
+
+`TaskChangesService` validerar ett negativt granskningsbeslut mot aktuellt F-18-underlag och befintliga acceptanskriterier. Reviewnummer, commits och numrerad feedback sparas före leverans till registrerad Worker. CHANGES_REQUESTED ligger i Active; WORKING kräver korrelerad native ACK i samma Codex-session, branch och worktree. Nästa rapport måste komma efter ACK och verifieras på nytt genom F-16/F-18. MCP `task_request_changes` kräver både reviewkonfiguration och explicit `--herdr-session`; det ger inget approval, leveransmerge eller Done. Se [policy, schema och recovery](docs/review/F-19-korrigering.md).
+
+## Versionsbundet taskgodkännande (F-20)
+
+`TaskApprovalService` kräver registrerad Integration, senaste kompletta reviewkontext, aktuell verklig verifiering och ett positivt beslut för samtliga acceptanskriterier. Approval sparar granskare, context/review/test-ID:n och exakt task/epic-par. Ändrad kod, bas, konfiguration eller ersatt context avvisar användning av äldre approval och bevarar historiken. MCP `task_approve` aktiveras med reviewkonfiguration; det startar ingen runtime och mergear inte. APPROVED ligger kvar i Active med slotreservation. Se [beslut, kontroll och recovery](docs/review/F-20-godkannande.md).
+
+### Verifierad taskleverans (F-21)
+
+`task_merge` kräver registrerad Integration, F-20:s aktuella kompletta approval och explicit Herdr-session. Servicen gör Task → Epic med `--no-ff`, testar exakt merge-SHA och bekräftar fysisk Worker-exit före slotrelease och Done. Stabil leveransnyckel och separat verifieringsnyckel gör att fel/omstart återanvänder känd merge. Samma misslyckade/okända testförsök körs inte om; ny verifieringsnyckel begär explicit eftertest. `DELIVERY_BUSY` kräver återläsning/återförsök med samma nycklar efter pågående operation. Cleanup är ett separat explicit F-09-anrop efter Done, med faktisk F-13-inaktivitetsprobe; worktree, branches och historik bevaras tills resurspolicyn tillåter borttagning. Se [leverans, stopp och recovery](docs/review/F-21-leverans.md). TeamPlayer-produktadapter följer i E-06 och samlat native prov i F-22.
+
+## Verkligt review- och leveransprov (F-22)
+
+En avgränsad native harness provar draft → negativ review → korrigering i samma
+Worker-session → aktuellt godkännande → taskmerge/test/fysiskt stopp/Done samt ett
+separat faktiskt blockerande testfall. Operatören driver Integration-rollen enligt
+paketerad policy; fixture-main hålls oförändrad. Se
+[prov, återkörning och begränsningar](docs/review/F-22-native.md). Använd alltid
+ett separat godkänt repository och en namngiven testserver.

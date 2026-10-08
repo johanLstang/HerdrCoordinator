@@ -1,0 +1,142 @@
+{
+  "recorded_at": "2026-10-08T13:40:56.583772+00:00",
+  "fixture_project": "f19-probe",
+  "epic_id": "f19-epic",
+  "epic_run_id": "f19-epic-run",
+  "task_id": "f19-label-second-attempt",
+  "task_run_id": "afe1ebb6-890c-4b95-8d23-4ec86ff5d94c",
+  "branch": "task/f19-epic-f19-label-second-attempt",
+  "worktree": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f19/f19-probe/task-f19-epic-f19-label-second-attempt",
+  "server_session": "hc-f19-20261008",
+  "worker_agent": "hc-d9ad7e4310f241b3bb92bb37",
+  "pane": "w2:p1",
+  "codex_session": "01a11bb4-60bb-7fe1-8987-c9bf8e00cb4c",
+  "start_parent_id": "7a6be678-8ea8-4e75-acf6-c62f50fd7892",
+  "start_parent_status": "SUCCEEDED",
+  "initial_commit": "16fd50fbb76d10d80f86f8862d6541109dd693c1",
+  "corrected_commit": "2b26b470ee8aac5c222479af2000dab1fa291b18",
+  "epic_commit": "288b85d6f130e504ae1d0f7043979b6287abf378",
+  "main_commit": "7ce621ade256d1f7f6e35d94c9a6348ee21e87fe",
+  "initial_context_id": "c707eab4e9502808cef912b6866d11a9ca56abddd9db71768e3c74393432d9f6",
+  "corrected_context_id": "6dafbc492e5a8081637b5bd115e4e3a8642738c102d86bf7141c955418552bf1",
+  "review": {
+    "id": "cababba0-a603-4ab6-a292-cafd116fada4",
+    "task_run_id": "afe1ebb6-890c-4b95-8d23-4ec86ff5d94c",
+    "review_number": 1,
+    "review_result": "CHANGES_REQUESTED",
+    "review_commit": "16fd50fbb76d10d80f86f8862d6541109dd693c1",
+    "epic_commit": "288b85d6f130e504ae1d0f7043979b6287abf378",
+    "feedback": "{\"context_id\":\"c707eab4e9502808cef912b6866d11a9ca56abddd9db71768e3c74393432d9f6\",\"issues\":[{\"acceptance_criteria\":[\"Unicode letters and combining marks are preserved while Unicode whitespace collapses; regression tests demonstrate this.\"],\"number\":1,\"problem\":\"normalize_display_name accepts a str subclass via isinstance but calls its overrideable split method. A subclass containing \\\"  Jose\\\\u0301\\\\u2003李  \\\" whose split returns [\\\"replacement\\\"] produces replacement instead of preserving its underlying Unicode contents.\",\"requested_change\":\"Normalize the actual underlying str contents with standard whitespace semantics even when a str subclass overrides split or __str__. Add a regression using such a subclass with combining marks and Unicode whitespace, assert \\\"Jose\\\\u0301 李\\\", keep existing edge cases passing, commit and return a fresh final version-1 READY_FOR_REVIEW report in this same session.\"}],\"result\":\"CHANGES_REQUESTED\",\"version\":1}",
+    "created_at": "2026-10-08T13:33:43.840767Z"
+  },
+  "correction_operation_id": "cababba0-a603-4ab6-a292-cafd116fada4",
+  "correction_ack": {
+    "turn_id": "01a11bb8-4f30-72e1-906e-d789f1eebccc",
+    "item_id": "msg_06787b9240963b75016ac79bbc4f008191a7258f718d45e37b",
+    "message_hash": "25037ca9d5a68c464019226c347ef4a131376f58f6ca70940a609ea1d9934bb8",
+    "session_id": "01a11bb4-60bb-7fe1-8987-c9bf8e00cb4c",
+    "correlation_id": "bc2bcadd-5664-4777-80cf-c083a09b5f9e"
+  },
+  "deadline": "2026-10-08T13:34:30.466932+00:00",
+  "baseline_turns": [
+    "01a11bb4-856d-7cc1-b2d3-f4c2cc53aaee"
+  ],
+  "prompt_hash": "e0a6861e5239ecb98ed6fea230590ff04c466288142e5fa0f56ead988ce3c5f7",
+  "correction_prompt_count": 1,
+  "handoffs": [
+    {
+      "id": "fd9486c2-dead-438b-83ea-8719804e2eaa",
+      "status": "SUCCEEDED",
+      "stage": "READY_FOR_REVIEW",
+      "commit": "16fd50fbb76d10d80f86f8862d6541109dd693c1",
+      "verification_id": "b86ae30d-610f-4684-9858-6a2ef449dd54",
+      "exit_code": 0,
+      "provenance": {
+        "session_id": "01a11bb4-60bb-7fe1-8987-c9bf8e00cb4c",
+        "turn_id": "01a11bb4-856d-7cc1-b2d3-f4c2cc53aaee",
+        "item_id": "msg_06787b9240963b75016ac79b0a627c81919790d936596afd08",
+        "message_hash": "5bf89e457bdb511dda1118f7cfd859a267b093ed970e5109aa75d169b608dd0a",
+        "assignment_operation_id": "d71d89eb-646b-4f6f-a858-7ae1f1b021ce"
+      }
+    },
+    {
+      "id": "1a44668f-eed0-4aa0-b9cf-f1848cc92a38",
+      "status": "SUCCEEDED",
+      "stage": "READY_FOR_REVIEW",
+      "commit": "2b26b470ee8aac5c222479af2000dab1fa291b18",
+      "verification_id": "ea7b16e4-2682-4006-87b0-61de88c130d8",
+      "exit_code": 0,
+      "provenance": {
+        "session_id": "01a11bb4-60bb-7fe1-8987-c9bf8e00cb4c",
+        "turn_id": "01a11bbc-a074-7db3-ad0f-9523993b608a",
+        "item_id": "msg_06787b9240963b75016ac79cdf2a948191b5e47ea42f6d6190",
+        "message_hash": "0d32f0bb8bf98ddeb114c46803ecebbfb2b156618bbcc280e369e8fa33fcf17e",
+        "assignment_operation_id": "d71d89eb-646b-4f6f-a858-7ae1f1b021ce",
+        "correction_operation_id": "cababba0-a603-4ab6-a292-cafd116fada4"
+      }
+    }
+  ],
+  "tests": {
+    "initial": {
+      "operation_id": "8ca1219d-6dd5-4f11-a4d3-7a5e31a943a4",
+      "key": "review-test:c06cee96-a6a8-41c5-b59f-52951c06dc77",
+      "status": "SUCCEEDED",
+      "source_commit": "16fd50fbb76d10d80f86f8862d6541109dd693c1",
+      "target_commit": "288b85d6f130e504ae1d0f7043979b6287abf378",
+      "command_hash": "5d9cc0edf10d825105d128d7abf1d407e80c99fe6fd4742fb245f57c1598ccfc",
+      "exit_code": 0,
+      "command": [
+        "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e05-f19/.venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "timeout": 45
+    },
+    "corrected": {
+      "operation_id": "f16c7dd9-e0f1-4314-86ab-e11640328358",
+      "key": "review-test:3269ff6f-ddd0-4ee7-ab26-a419806b71f9",
+      "status": "SUCCEEDED",
+      "source_commit": "2b26b470ee8aac5c222479af2000dab1fa291b18",
+      "target_commit": "288b85d6f130e504ae1d0f7043979b6287abf378",
+      "command_hash": "5d9cc0edf10d825105d128d7abf1d407e80c99fe6fd4742fb245f57c1598ccfc",
+      "exit_code": 0,
+      "command": [
+        "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e05-f19/.venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "timeout": 45
+    },
+    "native_test_count": 9,
+    "independent_subclass_regression": true
+  },
+  "report_clarification": {
+    "id": "f02be60a-ecc3-4983-82a7-b51720974684",
+    "status": "SUCCEEDED",
+    "stage": "VERIFIED_NEW_REPORT",
+    "prompt_count": 1,
+    "preserved_rejected_report": "Ignored harness file corrected-report-rejected-historical-tests.json; native history preserved; historical red TDD checks disclosed honestly in new summary."
+  },
+  "stop_operation_id": "539cc485-032e-4bf3-8095-35f0f6c4acf8",
+  "inactive_confirmed": true,
+  "after_stop": "PARKED",
+  "resume_state": "REVIEWING",
+  "slot_after_stop": null,
+  "first_attempt": {
+    "task": "28b490c6-c071-49f0-96aa-8a63d03ae2e4",
+    "status": "PARKED",
+    "slot": null,
+    "stop_id": "81f86650-a914-44d2-bde4-0b1efc25e6ea",
+    "inactive": true,
+    "reason": "Harness omitted F15 parent completion before F16; F18 correctly rejected. Separate corrected attempt; no reset or fabricated completion."
+  },
+  "limits": "No product approval/delivery merge/Done. Native Worker did not call MCP directly. F17 autonomy/sandbox gate remains."
+}

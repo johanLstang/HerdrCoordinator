@@ -11,3 +11,14 @@ credential_env = ["HERDR_TEAMPLAYER_TOKEN", "HERDR_CODEX_API_KEY"]
 # Set this in a local TOML after reading that repository's README.
 # worker_test_command = ["uv", "run", "--locked", "pytest"]
 # worker_test_timeout = 300
+
+# Optional F-18 review rules, selected by the operator for the registered epic.
+# Both this section and worker_test_command are required for task_review_request.
+# Sources are regular files tracked at the epic commit, never external paths.
+# [review_context]
+# version = 1
+# project_id = "registered-project-id"
+# epic_id = "registered-epic-id"
+# requirements = ["Preserve task scope and task-worktree isolation"]
+# acceptance_criteria = ["Review uses current task and epic commits"]
+# sources = ["README.md"]

@@ -1,11 +1,24 @@
 from pydantic import ValidationError
 
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.task_approval_service import TaskApprovalError
+from orchestrator.application.task_changes_service import TaskChangesError
+from orchestrator.application.task_merge_service import TaskMergeError
+from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.event_log import EventLog
-from orchestrator.mcp.contracts import PolicyRequest, Target, TaskStartRequest, ToolResponse
+from orchestrator.mcp.contracts import (
+    PolicyRequest,
+    Target,
+    TaskApprovalRequest,
+    TaskChangesRequest,
+    TaskMergeRequest,
+    TaskReviewRequest,
+    TaskStartRequest,
+    ToolResponse,
+)
 from orchestrator.persistence.store import StateStore, StoreError
 
 _ROLES = {
@@ -14,6 +27,9 @@ _ROLES = {
     "task_report_ready": {Role.WORKER},
     "task_report_blocked": {Role.WORKER},
     "task_start": {Role.INTEGRATION},
+    "task_review_request": {Role.INTEGRATION},
+    "task_request_changes": {Role.INTEGRATION},
+    "task_approve": {Role.INTEGRATION},
     "task_merge": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
@@ -57,10 +73,18 @@ class RuntimeService:
         *,
         task_start=None,
         worker_reports=None,
+        task_review=None,
+        task_changes=None,
+        task_approval=None,
+        task_merge=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
         self.worker_reports = worker_reports
+        self.task_review = task_review
+        self.task_changes = task_changes
+        self.task_approval = task_approval
+        self.task_merge = task_merge
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -99,6 +123,14 @@ class RuntimeService:
             return self._worker_report(operation, arguments)
         if operation == "task_start" and self.task_start is not None:
             return self._start_task(arguments)
+        if operation == "task_review_request" and self.task_review is not None:
+            return self._request_review(arguments)
+        if operation == "task_request_changes" and self.task_changes is not None:
+            return self._request_changes(arguments)
+        if operation == "task_approve" and self.task_approval is not None:
+            return self._approve_task(arguments)
+        if operation == "task_merge" and self.task_merge is not None:
+            return self._merge_task(arguments)
         if operation not in {"runtime_status", "policy_check"}:
             return ToolResponse(
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
@@ -141,6 +173,22 @@ class RuntimeService:
                 )
             if request.operation == "task_start" and self.task_start is not None:
                 return ToolResponse(ok=True, code="OK", message="task start service is available")
+            if request.operation == "task_review_request" and self.task_review is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="review context service is available"
+                )
+            if request.operation == "task_request_changes" and self.task_changes is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="same-session correction service is available"
+                )
+            if request.operation == "task_approve" and self.task_approval is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="task approval service is available"
+                )
+            if request.operation == "task_merge" and self.task_merge is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="verified task delivery service is available"
+                )
             if request.operation not in {"runtime_status", "policy_check"}:
                 return ToolResponse(
                     ok=False,
@@ -218,4 +266,131 @@ class RuntimeService:
         except ReportError as e:
             return ToolResponse(
                 ok=False, code=str(e), message="native report could not be verified"
+            )
+
+    def _request_review(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot request review")
+        try:
+            request = TaskReviewRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid review request")
+        if request.project_id != self.actor.project_id:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            result = self.task_review.request(
+                self.actor, request.task_run_id, key=request.request_key
+            )
+            ready = result["context"]["reviewable"]
+            return ToolResponse(
+                ok=ready,
+                code="OK" if ready else result["context"]["reason"],
+                message="review context verified" if ready else "review context is not approvable",
+                data=result,
+            )
+        except TaskReviewError as error:
+            return ToolResponse(
+                ok=False, code=str(error), message="reconcile review inputs and recorded operations"
+            )
+        except StateError:
+            return ToolResponse(
+                ok=False,
+                code="REVIEW_UNVERIFIED",
+                message="reconcile review inputs and recorded operations",
+            )
+
+    def _request_changes(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot request changes")
+        try:
+            request = TaskChangesRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid review decision"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="review scope is not authorized"
+            )
+        try:
+            result = self.task_changes.request(
+                self.actor, request.task_run_id, request.decision, key=request.request_key
+            )
+            return ToolResponse(ok=True, code="OK", message="correction recorded", data=result)
+        except TaskChangesError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile correction and native runtime evidence",
+            )
+
+    def _approve_task(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot approve tasks")
+        try:
+            request = TaskApprovalRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid approval decision"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="approval scope is not authorized"
+            )
+        try:
+            result = self.task_approval.approve(
+                self.actor, request.task_run_id, request.decision, key=request.request_key
+            )
+            return ToolResponse(
+                ok=True, code="OK", message="current approval verified", data=result
+            )
+        except TaskApprovalError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile current review and verification evidence",
+            )
+
+    def _merge_task(self, arguments):
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot deliver tasks")
+        try:
+            request = TaskMergeRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid delivery request"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(
+                ok=False, code="FORBIDDEN", message="delivery scope is not authorized"
+            )
+        try:
+            result = self.task_merge.merge(
+                self.actor,
+                request.task_run_id,
+                key=request.request_key,
+                verification_key=request.verification_key,
+            )
+            return ToolResponse(
+                ok=True, code="OK", message="delivery outcome recorded", data=result
+            )
+        except TaskMergeError as error:
+            return ToolResponse(
+                ok=False,
+                code=str(error),
+                message="reconcile saved merge, test and physical stop evidence",
             )

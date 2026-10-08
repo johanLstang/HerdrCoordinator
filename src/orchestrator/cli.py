@@ -79,6 +79,17 @@ def main(argv: list[str] | None = None) -> int:
 
                 task_start = None
                 worker_reports = None
+                task_review = None
+                task_changes = None
+                task_approval = None
+                task_merge = None
+                if settings.review_context is not None and settings.worker_test_command:
+                    from orchestrator.application.task_review_service import TaskReviewService
+
+                    task_review = TaskReviewService(settings, store)
+                    from orchestrator.application.task_approval_service import TaskApprovalService
+
+                    task_approval = TaskApprovalService(settings, store)
                 if args.herdr_session:
                     from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
                     from orchestrator.application.task_start_service import TaskStartService
@@ -94,10 +105,25 @@ def main(argv: list[str] | None = None) -> int:
                     from orchestrator.application.worker_report_service import WorkerReportService
 
                     worker_reports = WorkerReportService(settings, store, herdr)
+                    if task_review is not None:
+                        from orchestrator.application.task_changes_service import TaskChangesService
+
+                        task_changes = TaskChangesService(settings, store, herdr)
+                        from orchestrator.application.task_merge_service import TaskMergeService
+
+                        task_merge = TaskMergeService(settings, store, herdr)
                 asyncio.run(
                     serve_stdio(
                         RuntimeService(
-                            store, actor, log, task_start=task_start, worker_reports=worker_reports
+                            store,
+                            actor,
+                            log,
+                            task_start=task_start,
+                            worker_reports=worker_reports,
+                            task_review=task_review,
+                            task_changes=task_changes,
+                            task_approval=task_approval,
+                            task_merge=task_merge,
                         )
                     )
                 )
