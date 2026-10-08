@@ -266,3 +266,12 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 ### Verifierad taskleverans (F-21)
 
 `task_merge` kräver registrerad Integration, F-20:s aktuella kompletta approval och explicit Herdr-session. Servicen gör Task → Epic med `--no-ff`, testar exakt merge-SHA och bekräftar fysisk Worker-exit före slotrelease och Done. Stabil leveransnyckel och separat verifieringsnyckel gör att fel/omstart återanvänder känd merge. Samma misslyckade/okända testförsök körs inte om; ny verifieringsnyckel begär explicit eftertest. `DELIVERY_BUSY` kräver återläsning/återförsök med samma nycklar efter pågående operation. Cleanup är ett separat explicit F-09-anrop efter Done, med faktisk F-13-inaktivitetsprobe; worktree, branches och historik bevaras tills resurspolicyn tillåter borttagning. Se [leverans, stopp och recovery](docs/review/F-21-leverans.md). TeamPlayer-produktadapter följer i E-06 och samlat native prov i F-22.
+
+## Verkligt review- och leveransprov (F-22)
+
+En avgränsad native harness provar draft → negativ review → korrigering i samma
+Worker-session → aktuellt godkännande → taskmerge/test/fysiskt stopp/Done samt ett
+separat faktiskt blockerande testfall. Operatören driver Integration-rollen enligt
+paketerad policy; fixture-main hålls oförändrad. Se
+[prov, återkörning och begränsningar](docs/review/F-22-native.md). Använd alltid
+ett separat godkänt repository och en namngiven testserver.
