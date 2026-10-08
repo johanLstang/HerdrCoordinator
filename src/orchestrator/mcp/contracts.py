@@ -49,3 +49,7 @@ class TaskChangesRequest(TaskReviewRequest):
 
 class TaskApprovalRequest(TaskReviewRequest):
     decision: ApprovalDecision
+
+
+class TaskMergeRequest(TaskReviewRequest):
+    verification_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")

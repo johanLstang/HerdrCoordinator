@@ -82,6 +82,7 @@ def main(argv: list[str] | None = None) -> int:
                 task_review = None
                 task_changes = None
                 task_approval = None
+                task_merge = None
                 if settings.review_context is not None and settings.worker_test_command:
                     from orchestrator.application.task_review_service import TaskReviewService
 
@@ -108,6 +109,9 @@ def main(argv: list[str] | None = None) -> int:
                         from orchestrator.application.task_changes_service import TaskChangesService
 
                         task_changes = TaskChangesService(settings, store, herdr)
+                        from orchestrator.application.task_merge_service import TaskMergeService
+
+                        task_merge = TaskMergeService(settings, store, herdr)
                 asyncio.run(
                     serve_stdio(
                         RuntimeService(
@@ -119,6 +123,7 @@ def main(argv: list[str] | None = None) -> int:
                             task_review=task_review,
                             task_changes=task_changes,
                             task_approval=task_approval,
+                            task_merge=task_merge,
                         )
                     )
                 )
