@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-13 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active/F-14 pågår. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01–E-03 och F-01–F-14 Done. PR #3/main 0395728 slutverifierad med 262 tester; E-04 Active; F-14 Done och nästa F-15. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -674,7 +674,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-14 Beskriv ett Worker uppdrag och rapportkontrakt
 
-**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `10bfff5f-ba3a-4f10-8510-f8578da7a747`.
+**Epic/fas/prioritet:** E-04 / 4 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `10bfff5f-ba3a-4f10-8510-f8578da7a747`.
 
 **Körbar:** Ja — E-03 PR #3/main 0395728 slutverifierad; inga ytterligare externa villkor.
 
@@ -688,9 +688,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-14.A1:** En komplett lokal task ger ett reproducerbart uppdrag med alla källor och avgränsningar.
-- [ ] **F-14.A2:** Saknad acceptans, ogiltig epic-koppling eller okänd rapportversion avvisas innan start.
-- [ ] **F-14.A3:** STATUS/TASK-varianter från källexemplen normaliseras bara om identiteten kan verifieras.
+- [x] **F-14.A1:** En komplett lokal task ger ett reproducerbart uppdrag med alla källor och avgränsningar.
+- [x] **F-14.A2:** Saknad acceptans, ogiltig epic-koppling eller okänd rapportversion avvisas innan start.
+- [x] **F-14.A3:** STATUS/TASK-varianter från källexemplen normaliseras bara om identiteten kan verifieras.
 
 **Verifiering:** Schema- och promptprov med normalfall, saknade fält och rapporter från båda dokumentens exempel.
 
@@ -700,11 +700,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker READY_FOR_REVIEW F-14 (2026-10-08):** 35 schema-/prompt-/rapporttester passerar (0.54 s), Ruff, wheel/sdist-build och diffkontroll exit 0. Installerad/extraherad wheel innehåller och läser den identiska Worker-policyn utan checkout-fallback. D-04 dokumenteras med tre genererade scheman och validerat lokalt exempel i [kontraktet](docs/worker/F-14-kontrakt.md). Ingen runtime/state/Gitbevisverifiering införs. Integration review/merge och regression återstår; tasken förblir Active.
 
+**Integration/verifierad leverans F-14 (2026-10-08):** APPROVED cef6a699e8358e205d57ae2751d3303cf9f8adb7 mot epic 92be75b6812a8f2f1e8f11aa892322fd81e21b92; komplett diff 57213 bytes/SHA256 dc6225be8db9a848ffbc64a010c49800def2ae8f6ef98aa65f1a5f06e98917b6. Faktisk --no-ff Task → Epic 258010c5b655d103df3f385ce17984983c892b9b, exakta parents och identisk granskad tree verifierade. 297 pytesttester passerar (263.25 s), Ruff/build/diff/CLI --check exit 0. Kriterier A1–A3 verifierade genom 35 kontraktprov. TeamPlayer Done återläst; [review](docs/reviews/F-14.md). E-04 Active med egen acceptans 0/3 till samlad Worker-leverans. Nästa F-15.
+
 ### Task F-15 Starta en explicit task med en Worker
 
 **Epic/fas/prioritet:** E-04 / 4 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `1d8feb08-94fe-42a1-a2ca-fefba83cc40d`.
 
-**Körbar:** Nej — invänta F-14 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F-14 verifierad och mergad till aktuell epic; E-03 Done på main.
 
 **Källa:** A §§19, 29–30, 38; W §§10, 15, 40. **Berör:** Taskservice, MCP, Git/Herdr, persistens.
 
@@ -1856,7 +1858,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 
 ## Kanbanöversikt
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01–E-03 Done och E-04–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämt 2026-10-08 efter E-01-main-merge och F-05–F-09-integration. Taskstatus Pending motsvarar Planned. Epicstatus är återläst i TeamPlayer: E-01–E-03 Done och E-04 Active och E-05–E-12 Pending/Planned. Epics använder endast Planned/Active/Done. Verifierat räknar endast implementationsacceptans; skapade TeamPlayer-uppgifter bockar inte av dessa kriterier. Den gemensamma definitionen av Done krävs dessutom. Ordningen nedan är planerad leveransordning, med epicen före dess tasks.
 
 | Ordning | ID | Typ | Namn | Epic | Fas | TeamPlayer-ID | Prioritet | Kanban-status | Körbar | Verifierat | Beroende eller blockerare | Nästa steg |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -1876,9 +1878,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Done | — | 3/3 | E-02, F-10, X-01 | Granskad/integrerad via 4c9956ac; 213 sluttester passerar. Fortsätt F-12. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Done | — | 3/3 | E-02, F-11, X-01 | Granskad/integrerad via 06d64898; 240 sluttester passerar. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Done | — | 3/3 | E-02, F-12, X-01 | Granskad/integrerad via 1a16aea9; 262 sluttester passerar. |
-| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Active | Ja | 0/3 | E-03 Done på main | F-14 pågår: validerad task, uppdrag och rapportkontrakt. |
-| 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Active | Ja | 0/3 | E-03 | Implementera D-04/schema/prompt och säker legacy-normalisering. |
-| 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Planned | Nej | 0/3 | E-03, F-14 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Active | Ja | 0/3 | E-03 Done på main | F-14 Done; fortsätt F-15. Egen acceptans 0/3 till verifierad Worker-leverans. |
+| 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Done | — | 3/3 | E-03 | Granskad/integrerad via 258010c5; 297 regressionstester passerar. |
+| 19 | F-15 | Task/feature | Starta en explicit task med en Worker | E-04 | 4 | 1d8feb08-94fe-42a1-a2ca-fefba83cc40d | P0 | Planned | Ja | 0/3 | E-03, F-14 | Nästa kandidat; F-14 Done på aktuell epic. |
 | 20 | F-16 | Task/feature | Verifiera Worker rapport mot committat arbete | E-04 | 4 | 472fbfc1-4e51-4eba-bfbe-490edb090546 | P0 | Planned | Nej | 0/3 | E-03, F-15 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 21 | F-17 | Task/feature | Verifiera en verklig Worker leverans | E-04 | 4 | 9ae60f57-9194-4bf8-8763-d56cddfdc868 | P1 | Planned | Nej | 0/3 | E-03, F-16, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 22 | E-05 | Epic | Granska korrigera och integrera en task | — | 5 | 9d4ff24d-71a6-4e02-9498-bbbaee7e1db8 | P1 | Planned | Nej | 0/3 | E-04 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
