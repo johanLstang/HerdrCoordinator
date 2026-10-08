@@ -1,6 +1,6 @@
 # Verifiering av Herdr/Codex-gränssnitt — F-10
 
-Datum: 2026-10-08. Status: **ofullständig — trust-beslut krävs**. Detta är ett underlag för F-11–F-13, inte ett påstående om färdig runtimeintegration.
+Datum: 2026-10-08. Status: **prov avslutade — redo för Integration-review**. Detta är ett underlag för F-11–F-13, inte ett påstående om färdig runtimeintegration.
 
 ## Miljö och avgränsning
 
@@ -32,11 +32,32 @@ Alla kontrollkommandon nedan har prefix `herdr --session hc-f10-20261008`. Start
 | Bekräfta process/cwd | `pane process-info --pane w1:p1` | Shell och foreground Codex-processer hittade; argv innehåller read-only/on-request och rätt absolut cwd. Dessa fakta bekräftar process, inte färdig start eller uppdragsacceptans. |
 | Saknad agent | `agent get hc-f10-absent` | Exit 1, `agent_not_found`; inget implicit nyagentsskapande. |
 
-### Väntande verkliga prov
+### Genomförda prov efter användarbeslut
 
-Användarbeslut om testrepots trust-dialog är begärt. Herdrs inbyggda skill kräver användarinput före svar på approval-/frågedialoger och tillåter inte `--trust-repository` som retrylösning. Dialogen har lämnats obesvarad. Nästa ansvariga roll: operatören beslutar, därefter Integration/Worker fortsätter samma registrerade pane.
+Användaren godkände uttryckligen trust för exakt testrepo. `agent send-keys hc-f10-codex enter` besvarade den återlästa trust-dialogen i samma pane. Därefter rapporterades `interactive_ready=true`, idle och rätt cwd. Kontots frivilliga security-setup-banner stängdes med esc; ingen säkerhetsinställning ändrades.
 
-Följande är **inte verifierat**: lyckad interaktiv readiness, godkänd prompt och arbetsstart, beständigt Codex-session-ID, återanslutning efter transport-/processomstart, riktat stopp samt parkering och resume. Inget av detta får användas som bevis för ledig workerslot eller task Done. F-11 och senare beroende implementation väntar på avslutad F-10.
+| Operation | Faktiskt prov och resultat |
+| --- | --- |
+| Prompt/startobservation | Korrelationsprompt HC_F10_TURN_1 med `--wait --timeout 45000` gav `agent_prompted`, idle efter activity gate, state_change_seq 6 och exakt `HC_F10_TURN_1_OK` i agent read. |
+| Beständig originalsession | Codex `/status` i rätt pane visade `01a11ab3-c066-7260-9c11-762acfcfaa37`; app-server thread/read bekräftade samma ID/sessionId/cwd och testmarkören i lagrad historik. |
+| TUI-stopp och återupptagning | ctrl+d följt av avstämning gav agent_not_found och enbart bash som foreground. `agent start ... -- resume <original-ID> --sandbox read-only --ask-for-approval on-request --cd <testrepo>` återupptog samma session. Nästa prompt fick exakt `HC_F10_TURN_1_OK HC_F10_TURN_2_OK`, alltså bibehållen historik. |
+| Delad daemon-begränsning | Efter TUI-stopp av originalsession gav en separat app-server thread/resume fel -32600 “already has an active writer”. Lokal thread/read visade notLoaded trots annan servers writer. `codex app-server proxy` initialize nådde inte svar inom 40 s; anslutningen stängdes utan runtimeändring. Dessa vägar väljs inte för produktens stoppbevis. Global Codex-daemon stoppades inte. |
+| Isolerad runtime | En andra, uttryckligt avgränsad kapabilitetssession startades i samma testpane efter original-TUI-stopp: `agent start hc-f10-private --kind codex --pane w1:p1 --timeout 30000 -- --no-daemon --sandbox read-only --ask-for-approval on-request --cd <testrepo>`. Readiness, cwd och argv bekräftades. Detta är ett separat dokumenterat prov, ingen ersättning av en produkt-run. |
+| Native sessionsignal | Efter första korrelationsprompten rapporterade Herdr `agent_session={agent:codex,kind:id,source:herdr:codex,value:01a11ab7-a01c-7e70-8203-e7a26abd3526}`. Svar `HC_F10_PRIVATE_1_OK`. Ingen sessionsrapport injicerades manuellt. |
+| Park/stopp av isolerad runtime | ctrl+d gav först fortfarande agent/process — signalack är asynkront. Vid återläsning var agentnamnet borta, endast shell foreground och alla fem fångade processidentiteter (PID + Linux startTime) borta, inklusive barn. Herdr workspace/pane och repo behölls. |
+| Strukturerad resume | Efter bekräftat stopp lyckades separat stdio app-server thread/read och thread/resume med exakt private-ID, cwd och read-only/on-request. Samma ID/sessionId, idle, bevarad markör och readOnly/networkAccess=false. Probechild stängdes därefter. |
+| Herdr-resume av parkerad session | `agent start hc-f10-private ... -- resume <private-ID> --no-daemon --sandbox read-only --ask-for-approval on-request --cd <testrepo>` gav agent_started/interactive_ready. Prompt gav exakt `HC_F10_PRIVATE_1_OK HC_F10_PRIVATE_2_OK`; Herdr rapporterade samma native session-ID. |
+| Avbryt aktiv turn | En ofarlig lång textsvarsprompt med `--wait --until working --timeout 20000` gav working seq 23. esc följt av `agent wait ... --until idle --timeout 30000` gav idle seq 24 och synlig “Conversation interrupted”. Därefter ctrl+d och avstämning till agent_not_found/shell. Persisted thread/read visar tre turns: completed, completed, interrupted. |
+| Upprepat stopp | Ny `agent send-keys hc-f10-private ctrl+d` efter bekräftat stopp avvisades agent_not_found; inget skickades till shell eller annan agent. En adapter kan tolka detta som redan stoppad bara med sparat ownership och separat inaktivitetsbevis. |
+| Avslut av testserver | Efter stopp/read/resume-proven stängdes probechild. `herdr --session hc-f10-20261008 server stop` och efterföljande status gav not running för exakt denna namngivna socket. Repor/historik finns kvar; ingen global server eller användarworkspace stoppades. |
+
+### Valt kontrakt för F-11–F-13
+
+Använd explicit Herdr-serveridentitet, registrerad workspace/pane/terminal, unik agentidentitet och `codex --no-daemon` med operatörens valda sandbox/approval-policy. Start räknas endast med interactive_ready, rätt kind/cwd/pane/terminal och matching process-argv. Ett nytt Codex-session-ID kan saknas före första turn; lagra tillgängliga ID:n direkt och fånga native agent_session när den blir tillgänglig. Krävs session-ID innan uppdrag ska avsaknad ge ett uttryckligt vänteläge, inte ett fabricerat ID.
+
+Parkering här är **stopp av den ägda isolerade runtimeprocessen med bevarad beständig konversation**, följt av explicit `codex resume <exakt-ID> --no-daemon` i samma ägda worktree. Det är inte OS-suspend. Avbryt aktiv turn först, bekräfta upphörd aktivitet, stoppa TUI och verifiera ägda processidentiteter inklusive barn. Först därefter kan slot frigöras. Bevarad konversation verifieras med thread/read och vid återstart med samma native ID och cwd. Återanslutning till redan levande runtime använder get/read, aldrig ytterligare start.
+
+Idempotens, scopekontroll, processidentitet, operation journal och slots måste implementeras i F-11–F-13/efterföljande services. CLI ensam erbjuder inte runownership eller idempotens. En saknad/förändrad pane eller osäkra processfakta kräver avstämning och får inte leda till breda kill-kommandon, ny implicit session eller slot-release. Återstart av Herdr-server, faktisk approval-blockerare under aktiv turn, verktygsbarn som inte avslutas, helautomatisk Worker-policy och begränsade läsrötter verifieras senare; de påstås inte bevisade här.
 
 ## Installerad Herdr-semantik (hjälp/skill/schema; ej livebevis)
 
@@ -46,7 +67,7 @@ Följande är **inte verifierat**: lyckad interaktiv readiness, godkänd prompt 
 
 Herdr-statusar är idle/working/blocked/done/unknown. Unknown är varken klar, stoppad eller parkerad. `pane report-agent-session` kan rapportera ID/path och resume-argv; rapporterat värde måste jämföras med faktisk runtime innan det blir ownership- eller sessionsbevis. Det får inte fabriceras för att fylla ett saknat fält.
 
-`agent send-keys` kan skicka esc/ctrl+c, `agent attach` öppnar terminalanslutning och `session stop <name>` stoppar hela namngivna Herdr-sessionen. Dessa är inte ännu verifierade som produktens riktade park/stopp. Parkering kräver bevis för upphörd aktivitet och bevarad återupptagbar Codex-session, inte bara terminalstatus eller signalens returkod.
+`agent send-keys` kan skicka esc/ctrl+c, `agent attach` öppnar terminalanslutning och `session stop <name>` stoppar hela namngivna Herdr-sessionen. esc/ctrl+d och explicit testserverstopp är verifierade ovan; terminalattach och generellt ctrl+c-stopp är endast inventerade. Parkering kräver bevis för upphörd aktivitet och bevarad återupptagbar Codex-session, inte bara terminalstatus eller signalens returkod.
 
 ## Codex app-server och installerat schema
 
@@ -54,7 +75,7 @@ Herdr-statusar är idle/working/blocked/done/unknown. Unknown är varken klar, s
 
 `permissionProfile/list` returnerade `:read-only`, `:workspace`, `:danger-full-access`, alla allowed. Allowed är konfigurationskapabilitet, inte användarens tillstånd att använda farlig profil; den senare användes inte. Ny CLI kräver `codex sandbox --permission-profile <NAME>`; äldre försök med bara sandbox_mode-konfiguration avvisades med exit 2 innan något kommando kördes.
 
-Installerat genererat schema anger `thread/start`, `thread/resume(threadId)`, `turn/start(threadId,input)` och `turn/interrupt(threadId,turnId)`. Den [officiella app-serverdokumentationen](https://learn.chatgpt.com/docs/app-server) beskriver handshake, beständig thread/resume, turnnotifikationer och interrupted-resultat. Det är ett möjligt strukturerat gränssnitt; live thread/resume/interrupt har ännu inte provats och är inte valt som ersättning för obekräftad Herdr-runtime.
+Installerat genererat schema anger `thread/start`, `thread/resume(threadId)`, `turn/start(threadId,input)` och `turn/interrupt(threadId,turnId)`. Den [officiella app-serverdokumentationen](https://learn.chatgpt.com/docs/app-server) beskriver handshake, beständig thread/resume, turnnotifikationer och interrupted-resultat. thread/list med exakt cwd-filter, thread/read och thread/resume är nu verifierade för den stoppade isolerade sessionsvarianten. thread/start och turn/interrupt är endast inventerade; verklig avbrytning provades med Herdr esc och lagrad interrupted-status. App-server startar inte en ersättningssession på resume-fel.
 
 Schemas framställdes med `herdr api schema --output <fil>` och `codex app-server generate-json-schema --out <dir>`. SHA256 för Herdr-schemat: `9e2af207e9aa8183d4aeca5fde9cc48e7909bb40cdbd7cf21608a6d3ea78075b`; Codex v2-schema: `62f227e897351f20fe8b8984341512d1cc4ebf42def4487bc65d36fb7c40bba6`. Regenerera vid versionsbyte; API-ytan ska inte antas stabil över uppgraderingar.
 
@@ -71,10 +92,10 @@ Via app-server `command/exec` kördes en Python-process med explicit cwd, sandbo
 
 Proven styrker dessa kommandoprocessers filskrivnings-/nätgränser, inte att all läsning utanför tasken spärras eller att MCP, plugin, ärvda credentials och alla runtimeverktyg isoleras på samma sätt. Read-only och workspace-write skyddar inte i sig read-secrets. Gitmetadata kan dessutom delas mellan riktiga worktrees; den särskilda gränsen måste provas i F-17. Betrodd MCP-rollprofil måste ligga utanför Workerns skrivområde. TeamPlayer- och Gitservicepolicy behövs även när sandboxen fungerar. Autonom merge får inte aktiveras enbart med dessa prov.
 
-## Återstående acceptans
+## Taskacceptans och underlag
 
-- F-10.A1: delvis verifierad; lyckad prompt, resume, stopp/park återstår enligt ovan.
-- F-10.A2: inte verifierad; beständig Codex-session och faktisk återanslutning återstår.
-- F-10.A3: verifierade sandboxresultat och startupblockerare finns; parkering är fortfarande uttryckligen obekräftad.
+- F-10.A1: verifierade anrop/resultat för workspace/pane, start, prompt, status, återanslutning och stopp; konkreta begränsningar för delad daemon/proxy och uppgraderingar dokumenterade.
+- F-10.A2: båda nya testkonversationerna identifierades beständigt; faktisk Herdr-resume bevarade respektive ID/cwd/historik. Isolerad private-session verifierades dessutom med native Herdr-session-ID och strukturerad resume efter processstopp.
+- F-10.A3: park genom isolerat processstopp/resume, asynkron start/stopp och observerade sandboxgränser skiljs från inventerade/obekräftade funktioner.
 
-F-10 är inte READY_FOR_REVIEW eller Done. Spara nästa prov på samma resurs, dokumentera användarbeslut och kör återstående livscykelprov innan review/integration.
+Sanerat maskinläsbart [provunderlag](F-10-prover.json). Detta verifierar gränssnitt och kapabiliteter; produktens runtimeadapter och ownership/recovery implementeras i F-11–F-13. E-03:s samlade acceptans är inte automatiskt uppfylld av manuella CLI-prov.
