@@ -230,3 +230,7 @@ senare services. MCP-servern är fortfarande read-only.
 
 Se [startkontrakt och recovery](docs/runtime/F-11-start.md) samt
 [verkliga gränssnittsprov](docs/runtime/Herdr-Codex-kontrakt.md).
+
+## Uppdrag och startbekräftelse (F-12)
+
+Internt `RuntimeAssignmentService` skickar en beständig, korrelerad uppdragsprompt till registrerad Herdr/Codex-runtime. WORKING kräver ett matchande native agentmeddelande och verifierad promptleverans; timeout och okänt transportutfall ger ingen falsk start. Upprepning observerar samma operation. Se [uppdrags-/statuskontrakt](docs/runtime/F-12-uppdrag.md) och [verkliga prov](docs/runtime/F-12-prover.json). MCP är fortsatt read-only.

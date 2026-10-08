@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-11 Done. E-03 Active; nästa F-12 enligt verifierat runtimekontrakt. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-08. E-01/E-02 och F-01–F-11 Done. E-03 Active; F-12 pågår enligt verifierat runtimekontrakt. Resterande epics/tasks Planned. E-02 PR #2/main 9beaf34 verifierad med 187 sluttester.
 
 ## Styrande underlag
 
@@ -581,7 +581,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-12 Skicka uppdrag och observera start och status
 
-**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `8f1c732d-8ada-4e39-b2f1-b140f2795517`.
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `8f1c732d-8ada-4e39-b2f1-b140f2795517`.
 
 **Körbar:** Ja — F-11 integrerad/verifierad på epicen och E-02 Done på main; X-01/statuskontrakt verifierade.
 
@@ -595,13 +595,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-12.A1:** En skickad prompt når rätt session och matchande startbekräftelse blir ett verifierbart event.
-- [ ] **F-12.A2:** Utebliven bekräftelse ger timeout/fel och lämnar tasken före WORKING.
-- [ ] **F-12.A3:** Dubbel eller främmande status accepteras inte som nytt giltigt resultat.
+- [x] **F-12.A1:** En skickad prompt når rätt session och matchande startbekräftelse blir ett verifierbart event.
+- [x] **F-12.A2:** Utebliven bekräftelse ger timeout/fel och lämnar tasken före WORKING.
+- [x] **F-12.A3:** Dubbel eller främmande status accepteras inte som nytt giltigt resultat.
 
 **Verifiering:** Kontrollerad transport med duplicerade/försenade signaler samt verkligt prompt/statusprov.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/kontrakt F-12 (2026-10-08):** Integration plockade tasken med verifierad User-tilldelning och Done-beroenden; Worker i `task/e03-f12` från epic `2b23924fc6cbab3ccc65c79a66f6a0c54c962393`. Beständig unik dispatchoperation per run, nonce/korrelations-ID och prompt-hash före sändning. Matchande WORKING-ACK måste vara ett faktiskt Codex-agentmeddelande från registrerad session och ny turn/item efter sparad baslinje, med exakt project/epic/run/task/korrelation. Generisk Herdr-status eller promptens egen text räcker inte. Okänt transportutfall observeras utan blind omsändning; timeout håller STARTING/slot. Dubletter registrerar inget nytt event. API är internt; implementation/taskreview/TeamPlayer-automation tillhör senare epics.
+
+**Verifiering F-12:** 27 aktuella uppdragsprov passerar (24.59 s); tidigare kombinerat prov 51 start-/transportfall passerade. Ruff, build och diffkontroll exit 0. Verklig F-05/F-11-start, prompt/hash/ACK från Codex-session `01a11af6-8719-7763-a6d8-2a50050b8574`, turn/item/event och upprepning/SQLite-reopen verifierade utan ny prompt. Explicit testserver stoppad efter agent frånvarande/shell-only/processidentiteter borta; historik och slotclaim bevarade. [Uppdragskontrakt](docs/runtime/F-12-uppdrag.md), [sanerade prov](docs/runtime/F-12-prover.json). Acceptans 3/3; review, Task→Epic-merge och integrationsgate återstår.
 
 ### Task F-13 Återanslut och stoppa registrerad runtime
 
@@ -1858,7 +1862,7 @@ F-10/F-11 är granskade, integrerade och Done. Fortsätt direkt F-12 från aktue
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Active | Ja | 0/3 | E-02 Done på main | F-10/F-11 Done med verkliga runtimeprov; fortsätt F-12 med uppdragskorrelation. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Done | — | 3/3 | E-02, X-01 | Granskad/integrerad via 7dfc54b; dokument-/provlänkkontroller passerar. Fortsätt F-11. |
 | 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Done | — | 3/3 | E-02, F-10, X-01 | Granskad/integrerad via 4c9956ac; 213 sluttester passerar. Fortsätt F-12. |
-| 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Planned | Ja | 0/3 | E-02, F-11, X-01 | Plocka F-12 från aktuell epicbas; korrelera verklig startbekräftelse. |
+| 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Active | Ja | 3/3 | E-02, F-11, X-01 | ACK/timeout/dubbletter verifierade; review/integration före Done. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Planned | Nej | 0/3 | E-02, F-12, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Planned | Nej | 0/3 | E-03 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 18 | F-14 | Task/feature | Beskriv ett Worker uppdrag och rapportkontrakt | E-04 | 4 | 10bfff5f-ba3a-4f10-8510-f8578da7a747 | P1 | Planned | Nej | 0/3 | E-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
