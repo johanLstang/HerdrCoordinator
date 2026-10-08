@@ -40,6 +40,10 @@ class EpicRun(Record):
     status: EpicState = EpicState.PLANNED
     integration_agent_id: str | None = None
     herdr_workspace_id: str | None = None
+    herdr_server_session: str | None = None
+    herdr_tab_id: str | None = None
+    herdr_pane_id: str | None = None
+    herdr_terminal_id: str | None = None
     codex_session_id: str | None = None
     base_commit: Commit | None = None
     current_commit: Commit | None = None
@@ -62,6 +66,10 @@ class TaskRun(Record):
     worker_agent_id: str | None = None
     worker_slot: Annotated[int, Field(ge=1, le=2, strict=True)] | None = None
     herdr_workspace_id: str | None = None
+    herdr_server_session: str | None = None
+    herdr_tab_id: str | None = None
+    herdr_pane_id: str | None = None
+    herdr_terminal_id: str | None = None
     codex_session_id: str | None = None
     base_commit: Commit | None = None
     current_commit: Commit | None = None

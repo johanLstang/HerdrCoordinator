@@ -319,6 +319,27 @@ class StateStore:
                 record.model_dump_json(), record.id,
             ))
 
+    def update_runtime_metadata(self, record: EpicRun | TaskRun) -> None:
+        """Persist runtime binding/slot only; domain state uses StateService events."""
+        with self.transaction() as db:
+            is_epic = isinstance(record, EpicRun)
+            prior = self.get_epic(record.id) if is_epic else self.get_task(record.id)
+            mutable = {
+                "herdr_server_session", "herdr_workspace_id", "herdr_tab_id",
+                "herdr_pane_id", "herdr_terminal_id", "codex_session_id",
+                "integration_agent_id" if is_epic else "worker_agent_id",
+            }
+            if not is_epic:
+                mutable.add("worker_slot")
+            if prior is None or prior.model_dump(exclude=mutable) != record.model_dump(
+                exclude=mutable
+            ):
+                raise StoreError("runtime metadata changed run identity or state")
+            table = "epic_runs" if is_epic else "task_runs"
+            db.execute(f"UPDATE {table} SET payload=? WHERE id=?", (
+                record.model_dump_json(), record.id,
+            ))
+
     def get_operations(self, epic_run_id: str, *, kind: str) -> list[Operation]:
         return [
             Operation.model_validate_json(row[0])

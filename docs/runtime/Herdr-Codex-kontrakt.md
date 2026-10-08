@@ -12,7 +12,7 @@ Ofarlig Git-testrepo: `.herdr/probes/f10/repo` i `task/e03-f10`-worktreet. Den i
 
 ## Transport och resursidentitet
 
-Herdr CLI:s kontrollkommandon returnerar JSON `{id,result}` eller `{id,error:{code,message}}`. Använd argv-listor, explicit `--session` och faktiskt återlästa ID:n. Exitkod och JSON-resultat kontrolleras tillsammans. Här är `id` ett anrops-ID (`cli:...`), inte en idempotensnyckel. Återförsök på okänt nät-/processutfall får inte automatiskt skapa en ny workspace/agent eller skicka samma prompt igen.
+Herdr CLI:s kontrollkommandon returnerar JSON `{id,result}` på stdout vid exit 0 eller `{id,error:{code,message}}` på stderr vid fel. Kanaluppdelningen verifierades under F-11:s adapterprov. Använd argv-listor, explicit `--session` och faktiskt återlästa ID:n. Exitkod och JSON-resultat kontrolleras tillsammans. Här är `id` ett anrops-ID (`cli:...`), inte en idempotensnyckel. Återförsök på okänt nät-/processutfall får inte automatiskt skapa en ny workspace/agent eller skicka samma prompt igen.
 
 Workspace/pane-ID är serverlokala och måste lagras tillsammans med server/sessionidentiteten. Agentnamn följer aktuell paneoccupant och ersätter inte ett beständigt Codex-session-ID. Process-PID är ett ögonblicksvärde och kan återanvändas. Produktens run-ID, roll och ownership fastställs av orchestratorn, inte av agentnamn eller CLI-argument.
 
