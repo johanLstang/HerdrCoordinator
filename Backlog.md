@@ -553,7 +553,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-11 Skapa workspace och starta Codex i rätt worktree
 
-**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `784fbbcf-dcf5-475d-940f-bb4039cf40fe`.
+**Epic/fas/prioritet:** E-03 / 3 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `784fbbcf-dcf5-475d-940f-bb4039cf40fe`.
 
 **Körbar:** Ja — F-10 verifierad/integrerad, E-02 Done på main och X-01 verifierad i samma testrepo.
 
@@ -567,13 +567,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-11.A1:** En session startar i tilldelat worktree och alla tillgängliga runtime-ID:n sparas.
-- [ ] **F-11.A2:** Dubbel start ger samma ägda session utan extra agent.
-- [ ] **F-11.A3:** Fel cwd och fel efter workspace-skapande redovisas utan falsk startbekräftelse.
+- [x] **F-11.A1:** En session startar i tilldelat worktree och alla tillgängliga runtime-ID:n sparas.
+- [x] **F-11.A2:** Dubbel start ger samma ägda session utan extra agent.
+- [x] **F-11.A3:** Fel cwd och fel efter workspace-skapande redovisas utan falsk startbekräftelse.
 
 **Verifiering:** Adapterprov med fel efter varje delsteg samt verkligt startprov enligt F-10.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Start/kontrakt F-11 (2026-10-08):** Task plockad med verifierad User-tilldelning och alla TeamPlayer-beroenden Done. `task/e03-f11` från aktuell epic `e7bdf34eb142838ab7a66a9a70769c747e354376`. Använd det [verifierade runtimekontraktet](docs/runtime/Herdr-Codex-kontrakt.md): explicit Herdr-session, codex --no-daemon, operatörsvald sandbox, branch/path/ägare före start. Beständig STARTING/slotreservation före sidoeffekter; inga produktuppdrag eller WORKING i denna task. Workspace- och agent-ID sparas efter kända svar. Efter okänd skapandeskrivning återförsök inte; efter okänt startutfall återläs endast känd pane/agent och bekräfta faktisk process/cwd/readiness. Saknat nytt Codex-ID före första turn förblir nullable och fylls av senare verifierad signal.
+
+**Verifiering F-11:** 26 kontrollerade startprov passerar på aktuell kod; tidigare full regression 211 passerade före de sista branch-/cwdkontrollerna. Verkliga Herdr/Codex-start/repeat/reopen med F-05-registrerade Git/SQLite-test-runs använder samma agent, slot och workspace/tab/pane/terminal/process-ID. Ingen produktprompt skickad, Codex-ID nullable före första turn. Kodens CodexAdapter thread/read verifierad separat mot bevarad F-10-session. Readiness bekräftas via actual /proc argv/cwd/startTime; kända partialfel och CLI-stderr hanteras. Ruff, diffkontroll och wheel/sdist-build passerar. [Start-/recoverykontrakt](docs/runtime/F-11-start.md), [sanerade prov](docs/runtime/F-11-prover.json). F-11 acceptans 3/3, review/integration återstår.
 
 ### Task F-12 Skicka uppdrag och observera start och status
 
@@ -1853,7 +1857,7 @@ F-10 är granskad, integrerad och Done. Fortsätt direkt F-11 från aktuell epic
 | 11 | F-09 | Task/feature | Avsluta Git resurser efter verifierad leverans | E-02 | 2 | 96091ef5-be75-4d81-af5f-ffceda85b50c | P0 | Done | — | 3/3 | E-01, F-07, F-08 | Granskad och integrerad via 65097a8; 187 tester passerar. E-02 slutgranskas. |
 | 12 | E-03 | Epic | Starta och återanslut agentruntime genom Herdr | — | 3 | 3b52b7d6-7527-4d44-a873-238f26067246 | P1 | Active | Ja | 0/3 | E-02 Done på main | F-10 Done med verkliga livscykelprov; fortsätt F-11 enligt --no-daemon-kontraktet. |
 | 13 | F-10 | Task/feature | Verifiera Herdr och Codex gränssnitt | E-03 | 3 | fd25939b-3ae9-4215-8edc-dd3415a696b5 | P1 | Done | — | 3/3 | E-02, X-01 | Granskad/integrerad via 7dfc54b; dokument-/provlänkkontroller passerar. Fortsätt F-11. |
-| 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Planned | Ja | 0/3 | E-02, F-10, X-01 | Plocka F-11 från aktuell epicbas; bygg adapter enligt verifierat --no-daemon-kontrakt. |
+| 14 | F-11 | Task/feature | Skapa workspace och starta Codex i rätt worktree | E-03 | 3 | 784fbbcf-dcf5-475d-940f-bb4039cf40fe | P1 | Active | Ja | 3/3 | E-02, F-10, X-01 | Kontrollerade/verkliga starter verifierade; review/integration före Done. |
 | 15 | F-12 | Task/feature | Skicka uppdrag och observera start och status | E-03 | 3 | 8f1c732d-8ada-4e39-b2f1-b140f2795517 | P1 | Planned | Nej | 0/3 | E-02, F-11, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 16 | F-13 | Task/feature | Återanslut och stoppa registrerad runtime | E-03 | 3 | 83a64bd8-6bfd-4988-82dd-40f3aca590a5 | P1 | Planned | Nej | 0/3 | E-02, F-12, X-01 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 17 | E-04 | Epic | Låt en Worker leverera en verifierbar task | — | 4 | 242ffa18-da4e-4496-8e9f-c4c1b4d8315c | P1 | Planned | Nej | 0/3 | E-03 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

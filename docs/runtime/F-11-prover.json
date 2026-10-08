@@ -1,0 +1,457 @@
+{
+  "task": "F-11",
+  "date": "2026-10-08",
+  "versions": {
+    "herdr": "0.9.3",
+    "codex": "0.161.0"
+  },
+  "first_probe": {
+    "same_after_repeated_start_and_reopen": true,
+    "task": {
+      "id": "f11-task-run",
+      "project_id": "f11-probe",
+      "epic_run_id": "f11-epic-run",
+      "task_id": "F11-Probe",
+      "branch": "task/f11-probe-f11-probe",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/task-f11-probe-f11-probe",
+      "resume_state": null,
+      "internal_status": "STARTING",
+      "kanban_status": "Planned",
+      "worker_agent_id": "hc-2c26735d961a4938af663590",
+      "worker_slot": 1,
+      "herdr_workspace_id": "w1",
+      "herdr_server_session": "hc-f11-20261008",
+      "herdr_tab_id": "w1:t1",
+      "herdr_pane_id": "w1:p1",
+      "herdr_terminal_id": "term_65d50b6fd66971",
+      "codex_session_id": null,
+      "base_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "current_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T09:18:28.879715Z",
+      "completed_at": null
+    },
+    "operation": {
+      "id": "2c26735d-961a-4938-af66-359066819c31",
+      "project_id": "f11-probe",
+      "epic_run_id": "f11-epic-run",
+      "task_run_id": "f11-task-run",
+      "kind": "start_runtime",
+      "idempotency_key": "f11-task-run",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "READY",
+        "server_session": "hc-f11-20261008",
+        "sandbox": "read-only",
+        "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/task-f11-probe-f11-probe",
+        "branch": "task/f11-probe-f11-probe",
+        "name": "hc-2c26735d961a4938af663590",
+        "label": "hc-2c26735d-961a-4938-af66-359066819c31",
+        "binding": {
+          "workspace_id": "w1",
+          "tab_id": "w1:t1",
+          "pane_id": "w1:p1",
+          "terminal_id": "term_65d50b6fd66971"
+        },
+        "processes": [
+          {
+            "pid": 2672632,
+            "start_time": "92131911"
+          },
+          {
+            "pid": 2672639,
+            "start_time": "92131915"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T09:18:29.074340Z",
+      "updated_at": "2026-10-08T09:19:05.616688Z"
+    },
+    "references": [
+      {
+        "id": "6e4b63e6-294f-4a41-8d96-bcaefaa45001",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w1:t1",
+        "created_at": "2026-10-08T09:18:29.093709Z"
+      },
+      {
+        "id": "888aed31-6c48-4630-9c3b-4973326699ac",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w1",
+        "created_at": "2026-10-08T09:18:29.093249Z"
+      },
+      {
+        "id": "9863d274-5831-4fdc-80e3-a9098ccaeb22",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50b6fd66971",
+        "created_at": "2026-10-08T09:18:29.093943Z"
+      },
+      {
+        "id": "eb0c814c-03ef-4245-a961-641ee31f9e60",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w1:p1",
+        "created_at": "2026-10-08T09:18:29.093865Z"
+      }
+    ],
+    "domain_setup": "Manually controlled test principals; empty test dependencies verified locally, no TeamPlayer integration claimed."
+  },
+  "current_guard_probe": {
+    "same_after_repeated_start_and_reopen": true,
+    "task": {
+      "id": "f11-current-run",
+      "project_id": "f11-probe",
+      "epic_run_id": "f11-epic-run",
+      "task_id": "F11-current",
+      "branch": "task/f11-probe-f11-current",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/task-f11-probe-f11-current",
+      "resume_state": null,
+      "internal_status": "STARTING",
+      "kanban_status": "Planned",
+      "worker_agent_id": "hc-b5c6ef5e161d4ed9ba0a1f4f",
+      "worker_slot": 2,
+      "herdr_workspace_id": "w2",
+      "herdr_server_session": "hc-f11-20261008",
+      "herdr_tab_id": "w2:t1",
+      "herdr_pane_id": "w2:p1",
+      "herdr_terminal_id": "term_65d50cb5c0cd52",
+      "codex_session_id": null,
+      "base_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "current_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T09:23:53.718359Z",
+      "completed_at": null
+    },
+    "operation": {
+      "id": "b5c6ef5e-161d-4ed9-ba0a-1f4f98464cdd",
+      "project_id": "f11-probe",
+      "epic_run_id": "f11-epic-run",
+      "task_run_id": "f11-current-run",
+      "kind": "start_runtime",
+      "idempotency_key": "f11-current-run",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "READY",
+        "server_session": "hc-f11-20261008",
+        "sandbox": "read-only",
+        "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/task-f11-probe-f11-current",
+        "branch": "task/f11-probe-f11-current",
+        "name": "hc-b5c6ef5e161d4ed9ba0a1f4f",
+        "label": "hc-b5c6ef5e-161d-4ed9-ba0a-1f4f98464cdd",
+        "binding": {
+          "workspace_id": "w2",
+          "tab_id": "w2:t1",
+          "pane_id": "w2:p1",
+          "terminal_id": "term_65d50cb5c0cd52"
+        },
+        "processes": [
+          {
+            "pid": 2769985,
+            "start_time": "92162791"
+          },
+          {
+            "pid": 2770019,
+            "start_time": "92162798"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T09:24:10.802540Z",
+      "updated_at": "2026-10-08T09:24:14.941618Z"
+    },
+    "references": [
+      {
+        "id": "0812b764-02a0-400a-af0e-19953f53f107",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w2:p1",
+        "created_at": "2026-10-08T09:24:10.846364Z"
+      },
+      {
+        "id": "1422fc4a-8bbe-459c-be69-36e096dedea1",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50cb5c0cd52",
+        "created_at": "2026-10-08T09:24:10.846649Z"
+      },
+      {
+        "id": "6e4b63e6-294f-4a41-8d96-bcaefaa45001",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w1:t1",
+        "created_at": "2026-10-08T09:18:29.093709Z"
+      },
+      {
+        "id": "888aed31-6c48-4630-9c3b-4973326699ac",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w1",
+        "created_at": "2026-10-08T09:18:29.093249Z"
+      },
+      {
+        "id": "9863d274-5831-4fdc-80e3-a9098ccaeb22",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50b6fd66971",
+        "created_at": "2026-10-08T09:18:29.093943Z"
+      },
+      {
+        "id": "9887cb9e-fe9f-4d5c-a280-6d7ffbb4b68e",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w2:t1",
+        "created_at": "2026-10-08T09:24:10.846116Z"
+      },
+      {
+        "id": "a1a37b38-11df-4ee7-8f34-432d9a6d4fc3",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w2",
+        "created_at": "2026-10-08T09:24:10.845732Z"
+      },
+      {
+        "id": "eb0c814c-03ef-4245-a961-641ee31f9e60",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w1:p1",
+        "created_at": "2026-10-08T09:18:29.093865Z"
+      }
+    ],
+    "domain_setup": "Manually controlled test principals; empty test dependencies verified locally, no TeamPlayer integration claimed."
+  },
+  "scope": "real Git/SQLite/Herdr/Codex startup; manual test principals and local empty dependency proof; no product prompt or TeamPlayer integration",
+  "codex_adapter_live_metadata": {
+    "id": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+    "session_id": "01a11ab7-a01c-7e70-8203-e7a26abd3526",
+    "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo"
+  },
+  "epic_runtime_probe": {
+    "same_after_repeated_start_and_reopen": true,
+    "task": {
+      "id": "f11-epic-run",
+      "project_id": "f11-probe",
+      "epic_id": "F11-Probe",
+      "branch": "feature/epic-f11-probe",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/epic-f11-probe",
+      "status": "ACTIVE",
+      "integration_agent_id": "hc-3b87ece09bc14a8db51ada87",
+      "herdr_workspace_id": "w3",
+      "herdr_server_session": "hc-f11-20261008",
+      "herdr_tab_id": "w3:t1",
+      "herdr_pane_id": "w3:p1",
+      "herdr_terminal_id": "term_65d50fe874e0f3",
+      "codex_session_id": null,
+      "base_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "current_commit": "62424f483ba084fa7ec6133cc8bc6eb174a9ebfd",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-08T09:18:28.760234Z",
+      "completed_at": null
+    },
+    "operation": {
+      "id": "3b87ece0-9bc1-4a8d-b51a-da8762543f2e",
+      "project_id": "f11-probe",
+      "epic_run_id": "f11-epic-run",
+      "task_run_id": null,
+      "kind": "start_runtime",
+      "idempotency_key": "f11-epic-run",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "READY",
+        "server_session": "hc-f11-20261008",
+        "sandbox": "read-only",
+        "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e03-f10/.herdr/probes/f10/repo/.worktrees/f11-probe/epic-f11-probe",
+        "branch": "feature/epic-f11-probe",
+        "name": "hc-3b87ece09bc14a8db51ada87",
+        "label": "hc-3b87ece0-9bc1-4a8d-b51a-da8762543f2e",
+        "binding": {
+          "workspace_id": "w3",
+          "tab_id": "w3:t1",
+          "pane_id": "w3:p1",
+          "terminal_id": "term_65d50fe874e0f3"
+        },
+        "processes": [
+          {
+            "pid": 2806018,
+            "start_time": "92248632"
+          },
+          {
+            "pid": 2806027,
+            "start_time": "92248636"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-08T09:38:29.290903Z",
+      "updated_at": "2026-10-08T09:38:33.288223Z"
+    },
+    "references": [
+      {
+        "id": "0812b764-02a0-400a-af0e-19953f53f107",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w2:p1",
+        "created_at": "2026-10-08T09:24:10.846364Z"
+      },
+      {
+        "id": "1422fc4a-8bbe-459c-be69-36e096dedea1",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50cb5c0cd52",
+        "created_at": "2026-10-08T09:24:10.846649Z"
+      },
+      {
+        "id": "6e4b63e6-294f-4a41-8d96-bcaefaa45001",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w1:t1",
+        "created_at": "2026-10-08T09:18:29.093709Z"
+      },
+      {
+        "id": "70e04f45-9e9c-4e75-822c-40851e07ab06",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": null,
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w3:p1",
+        "created_at": "2026-10-08T09:38:29.315266Z"
+      },
+      {
+        "id": "888aed31-6c48-4630-9c3b-4973326699ac",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w1",
+        "created_at": "2026-10-08T09:18:29.093249Z"
+      },
+      {
+        "id": "9863d274-5831-4fdc-80e3-a9098ccaeb22",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50b6fd66971",
+        "created_at": "2026-10-08T09:18:29.093943Z"
+      },
+      {
+        "id": "9887cb9e-fe9f-4d5c-a280-6d7ffbb4b68e",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w2:t1",
+        "created_at": "2026-10-08T09:24:10.846116Z"
+      },
+      {
+        "id": "a1a37b38-11df-4ee7-8f34-432d9a6d4fc3",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-current-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w2",
+        "created_at": "2026-10-08T09:24:10.845732Z"
+      },
+      {
+        "id": "c414792e-0cb2-4f1d-973d-02a0467cc601",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": null,
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "tab_id",
+        "external_id": "w3:t1",
+        "created_at": "2026-10-08T09:38:29.315082Z"
+      },
+      {
+        "id": "d9aed70c-1fbb-4987-96b0-3fe58d97cbfc",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": null,
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "terminal_id",
+        "external_id": "term_65d50fe874e0f3",
+        "created_at": "2026-10-08T09:38:29.315356Z"
+      },
+      {
+        "id": "eb0c814c-03ef-4245-a961-641ee31f9e60",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": "f11-task-run",
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "pane_id",
+        "external_id": "w1:p1",
+        "created_at": "2026-10-08T09:18:29.093865Z"
+      },
+      {
+        "id": "fecdb5ec-0fe0-482a-ac59-fec558d5a1e0",
+        "project_id": "f11-probe",
+        "epic_run_id": "f11-epic-run",
+        "task_run_id": null,
+        "provider": "herdr:hc-f11-20261008",
+        "kind": "workspace_id",
+        "external_id": "w3",
+        "created_at": "2026-10-08T09:38:29.314509Z"
+      }
+    ],
+    "domain_setup": "Manually controlled test principals; empty test dependencies verified locally, no TeamPlayer integration claimed."
+  }
+}
