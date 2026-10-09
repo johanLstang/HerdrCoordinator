@@ -4,8 +4,11 @@ from orchestrator.adapters.codex import CodexAdapter
 from orchestrator.adapters.processes import ProcessObserver
 from orchestrator.application.epic_integration_service import EpicIntegrationService
 from orchestrator.application.runtime_assignment_service import digest
+from orchestrator.application.task_attention_service import attention_hash, attention_subject
 from orchestrator.application.task_delivery_evidence import known_merge, passed_test
+from orchestrator.application.task_review_service import TaskReviewService
 from orchestrator.application.worktree_service import WorktreeService
+from orchestrator.domain.attention import BlockerDetails, ReviewBlockDecision
 from orchestrator.domain.states import EpicState, TaskState
 from orchestrator.domain.worker_contracts import LocalTaskSpec, canonical_json
 
@@ -131,6 +134,104 @@ class TeamPlayerEvidence:
         )
         return stop
 
+    def _attention(self, task, block, source, proof):
+        matches = [
+            o
+            for o in self.operations(task, "task_attention")
+            if o.result.get("block_event_id") == block.id
+        ]
+        if not matches:
+            require(source.kind != "task_attention")
+            return None
+        require(len(matches) == 1)
+        attention = matches[0]
+        data = attention.result
+        require(
+            data.get("intent_hash") == attention_hash(data)
+            and data["subject"] == attention_subject(task, self._start(task))
+            and data["block_event_hash"] == digest(canonical_json(block.model_dump(mode="json")))
+            and data["stop_key"] == "attention-park:" + attention.id
+            and data["reserved_slot"] in range(1, self.settings.max_workers + 1)
+            and data["actor"]["role"] == "Integration"
+            and data["actor"]["project_id"] == task.project_id
+            and data["actor"]["epic_run_id"] == task.epic_run_id
+        )
+        details = BlockerDetails.model_validate(data["details"])
+        if data["source_kind"] == "worker":
+            require(source.kind == "worker_report" and source.id == data["source_id"])
+            report = source.result["report"]
+            require(
+                details.reason == report["reason"]
+                and details.input_required == report["input_required"]
+            )
+            original = source
+        else:
+            require(data["source_kind"] == "review" and source.id == attention.id)
+            require(block.id == "attention-block:" + attention.id)
+            original = next(
+                (
+                    o
+                    for o in self.operations(task, "task_review_request")
+                    if o.id == data["source_id"]
+                ),
+                None,
+            )
+            require(original and original.status == "SUCCEEDED")
+            context = original.result["context"]
+            decision = ReviewBlockDecision.model_validate(data["decision"])
+            require(
+                decision.context_id == context["context_id"]
+                and BlockerDetails.model_validate(
+                    decision.model_dump(
+                        include={
+                            "reason",
+                            "input_required",
+                            "responsible_role",
+                        }
+                    )
+                )
+                == details
+                and block.request["facts"]["reason"] == details.message()
+                and block.request["actor"] == data["actor"]
+                and digest(canonical_json({k: v for k, v in context.items() if k != "context_id"}))
+                == context["context_id"]
+                and context["reviewable"] is True
+                and context["task_run_id"] == task.id
+                and context["epic_run_id"] == task.epic_run_id
+                and context["project_id"] == task.project_id
+                and context["task_branch"] == task.branch
+                and context["task_worktree"] == task.worktree_path
+            )
+            review = TaskReviewService(self.settings, self.store)
+            epic = self.store.get_epic(task.epic_run_id)
+            spec, _ = review._spec(task, epic)
+            require(original.result["configuration"] == review._configuration(task, epic, spec))
+            # A historical input decision is not approval against a newer epic.
+            # The original exact source/test must remain, target may advance by ancestry.
+            require(
+                review.git.head(task.branch) == context["task_commit"]
+                and review.git.contains_commit(epic.branch, context["epic_commit"])
+                and review._handoff(task, context["task_commit"]).id
+                == context["handoff_operation_id"]
+            )
+            test = self.store.get_operation(task.project_id, "verify_task", context["tests"]["key"])
+            require(
+                test
+                and test.id == context["tests"]["operation_id"]
+                and test.task_run_id == task.id
+                and test.epic_run_id == task.epic_run_id
+                and test.status == "SUCCEEDED"
+                and test.result.get("exit_code") == 0
+                and test.result.get("source_commit") == context["task_commit"]
+                and test.result.get("target_commit") == context["epic_commit"]
+                and test.result.get("command_hash") == review.integration.command_hash
+            )
+            proof.update(self._ack(task))
+            proof["review_context_id"] = context["context_id"]
+        require(data["source_hash"] == digest(canonical_json(original.model_dump(mode="json"))))
+        proof.update(attention_id=attention.id, attention_hash=data["intent_hash"])
+        return details.message()
+
     def task(self, task):
         self.spec(task)
         event = self.store.latest_event(task.project_id, task.epic_run_id, task.id)
@@ -180,9 +281,14 @@ class TeamPlayerEvidence:
                 require(isinstance(reason, str) and reason.strip())
                 sources = [
                     o
-                    for kind in ("stop_runtime", "worker_report")
+                    for kind in ("stop_runtime", "worker_report", "task_attention")
                     for o in self.operations(task, kind)
-                    if block.id in {"runtime-block:" + o.id, o.result.get("event_id")}
+                    if block.id
+                    in {
+                        "runtime-block:" + o.id,
+                        o.result.get("event_id"),
+                        "attention-block:" + o.id if o.kind == "task_attention" else None,
+                    }
                 ]
                 require(len(sources) == 1)
                 source = sources[0]
@@ -210,12 +316,15 @@ class TeamPlayerEvidence:
                         and digest(i.get("text", "")) == provenance["message_hash"]
                     ]
                     require(thread["id"] == task.codex_session_id and len(matches) == 1)
-                else:
+                elif source.kind == "stop_runtime":
                     require(
                         source.result["reason"] == reason
                         and source.result["generation"]
                         == self._start(task).result.get("generation", self._start(task).id)
                     )
+                routed = self._attention(task, block, source, proof)
+                if routed is not None:
+                    reason = routed
                 if phase == TaskState.PARKED:
                     require(event.id.startswith("runtime-park:"))
                     # F13 may record idempotent alias stop operations. The actual
