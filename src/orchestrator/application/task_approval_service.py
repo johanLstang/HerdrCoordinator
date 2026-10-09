@@ -173,7 +173,7 @@ class TaskApprovalService:
                     )
                 ):
                     raise TaskApprovalError("APPROVAL_INVALIDATION_PROOF_UNVERIFIED")
-                self.store.update_runtime_metadata(
+                self.store.update_run_metadata(
                     epic.model_copy(update={"current_commit": target})
                 )
                 return StateService(self.store).transition_task(

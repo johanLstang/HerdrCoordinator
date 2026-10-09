@@ -164,8 +164,14 @@ print('F30 independent acceptance PASS')
         g.run("add", "--", "AGENTS.md", "README.md", cwd=p)
         g.run("commit", "-m", "seed F30 bounded parallel fixture rules", cwd=p)
         seed = g.inspect(p, epic.branch, clean=True)
-        db.update_runtime_metadata(epic.model_copy(update={"current_commit": seed}))
+        db.update_run_metadata(epic.model_copy(update={"current_commit": seed}))
         save("seed", {"commit": seed, "epic": epic.model_dump(mode="json")})
+    save("specs", build_specs())
+    print("F30 prepared actual F05 epic/seed; native fixture creation and operator binding next")
+
+
+def build_specs():
+    """Pure bounded assignment construction, also used after a known setup checkpoint loss."""
     requirements = {
         "A": [
             "Implement f30_names.clean_name(str): strip whitespace, normalize NFC, "
@@ -212,8 +218,64 @@ print('F30 independent acceptance PASS')
             ],
         )
         specs[identity] = spec.model_dump(mode="json")
-    save("specs", specs)
-    print("F30 prepared actual F05 epic/seed; native fixture creation and operator binding next")
+    return specs
+
+
+def finish_prepare(expected_seed):
+    """Operator reconciliation of this known seed commit, never an adoption or new commit."""
+    settings = Settings.model_validate(load("settings"))
+    before = load("before-git")
+    g = GitAdapter(settings.repository)
+    with StateStore(settings.sqlite_path) as db:
+        epic = db.get_epic(RUN)
+        if (
+            epic is None
+            or epic.status != EpicState.PLANNED
+            or epic.project_id != PROJECT
+            or epic.epic_id != EPIC
+            or db.get_tasks(RUN)
+            or epic.base_commit != before["main"]
+            or epic.current_commit not in (epic.base_commit, expected_seed)
+            or g.head("main") != before["main"]
+        ):
+            raise RuntimeError("Setup checkpoint no longer matches the known preparation")
+        actual = WorktreeService(settings, db).verify_owned_worktree(epic)
+        snapshot = g.snapshot(
+            Path(epic.worktree_path),
+            epic.branch,
+            epic.base_commit,
+            expected_commit=expected_seed,
+        )
+        if (
+            actual != expected_seed
+            or g.parents(actual) != (epic.base_commit,)
+            or not snapshot.reviewable
+            or {f.path for f in snapshot.changed_files} != {"AGENTS.md", "README.md"}
+            or g.in_progress(Path(epic.worktree_path))
+        ):
+            raise RuntimeError("Actual seed ownership, parent or complete clean diff differs")
+        for ref, commit in before["refs"].items():
+            if g.run("rev-parse", "--verify", ref).strip() != commit:
+                raise RuntimeError("Historical fixture ref changed")
+        for path in before["worktrees"]:
+            if Path(path) not in g.worktrees():
+                raise RuntimeError("Historical worktree missing")
+        epic = epic.model_copy(update={"current_commit": actual})
+        db.update_run_metadata(epic)
+        save("seed", {"commit": actual, "epic": epic.model_dump(mode="json")})
+        save("specs", build_specs())
+        save(
+            "setup-reconciliation",
+            {
+                "kind": "known_seed_metadata_checkpoint",
+                "commit": actual,
+                "base": epic.base_commit,
+                "diff_sha256": snapshot.commit_diff.sha256,
+                "new_git_operations": 0,
+                "new_runs": 0,
+            },
+        )
+    print("F30 known seed checkpoint reconciled; no Git commit or runtime created")
 
 
 def connection():
@@ -590,9 +652,12 @@ async def operate(phase, *, seconds=45, task=None, decision_file=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("phase", choices=("prepare", "bind", "tick", "drive", "approve", "export"))
+    parser.add_argument(
+        "phase", choices=("prepare", "finish-prepare", "bind", "tick", "drive", "approve", "export")
+    )
     parser.add_argument("--repository", type=Path)
     parser.add_argument("--server")
+    parser.add_argument("--expected-seed")
     parser.add_argument("--seconds", type=int, default=45)
     parser.add_argument("--task", choices=tuple("ABC"))
     parser.add_argument("--decision-file", type=Path)
@@ -605,6 +670,10 @@ def main():
             if args.repository is None or args.server is None:
                 parser.error("prepare requires approved repository and owned named server")
             prepare(args.repository, args.server)
+        elif args.phase == "finish-prepare":
+            if args.expected_seed is None:
+                parser.error("finish-prepare requires the actually reviewed full seed SHA")
+            finish_prepare(args.expected_seed)
         else:
             if args.phase == "approve" and (args.task is None or args.decision_file is None):
                 parser.error("approve requires actual reviewed task/context decision-file")
