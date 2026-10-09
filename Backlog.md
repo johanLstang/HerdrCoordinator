@@ -1284,7 +1284,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-30 Verifiera tre tasks med två parallella Workers
 
-**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `5618ec4b-f817-4789-b45c-284e29199936`.
+**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `5618ec4b-f817-4789-b45c-284e29199936`.
 
 **Körbar:** Ja — F29 Done efter granskad E07-merge 66f381e och 103 eftertester; E06 Done på main. X01/X02 kontrolleras på nytt i avgränsat native prov.
 
@@ -1293,6 +1293,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** F-29. **Externa förutsättningar:** X-01 och X-02; testepic med tre små och oberoende verifierbara tasks.
 
 **Arbetsinstruktion för Codex:** Bygg en liten testepic med A och B oberoende samt C beroende av integrerad A. Kör serviceflödet med två Workers, review och taskmerge. Samla tidslinje, slotreservationer, commits och Kanbanförändringar.
+
+**Start/avgränsning F30 (2026-10-09):** Integration verifierade User105/Write, F29 Done v6 efter granskad E07-merge 66f381e/103 eftertester och samtliga native beroenden Done; E06 finns verifierad på main. task/e07-f30 från aktuell E07 6c711d5 genom bootstrap-GitAdapter, inga produkt-runs adopterade. Separata F30-native test-ID:n, egen databas/provjournal och uttryckligt namngiven Herdr-server. Återanvänd den tidigare faktiskt godkända ofarliga F26-reporoten; bevara dess main, gamla branches/worktrees/provjournaler och skapa nya faktiskt F05-ägda F30-resurser utan adoption. En registrerad test-Coordinator förbereder nya epicens AGENTS/README-regler före taskstart så gamla F26-prefixinstruktioner inte gäller F30. A/B är oberoende små funktioner, C använder granskad/integrerad A. F29:s tick väljer/startar/levererar/synkar tasks; operatören ger aktuella faktiska reviews, ingen manuell scheduling eller implicit approval. Samla SQLite-events, operationer, exakta source/target/review/merge/test/stoppbevis, native session/process/worktree samt överlappande working-observationer och skyddad full boardbaslinje. Kontrollera högst två reservationer vid varje domänövergång och observerad native snapshot, samt A-Done/merge/test före C-claim. Fixture-epicen förblir Active efter task-Done eftersom detta prov inte omfattar dess mainintegration/E10. F38:s autonomi-/miljögate kvarstår. Native fixture-skrivningar sker i separat provoperatörsroll efter granskad harness, aldrig som utvecklingens Worker-roll.
 
 **Resultat och kontrakt:** Minst två Worker-intervall ska överlappa så att provet visar verklig parallellitet. C får starta först efter A:s granskade integration och verifiering. Epic-slutreview och main-merge tillkommer i E-10.
 
@@ -2020,7 +2022,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Review cb4fd0d/merge ba47a8a; 98 eftertester PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
-| 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Ja | 0/3 | E-06, F-29, X-01, X-02 | F29 Done; verifiera native X01/X02 och tre tasks med högst två Workers. |
+| 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Active | Ja | 0/3 | E-06, F-29, X-01, X-02 | Pågår i task/e07-f30 från 6c711d5; separat native tre-task/två-Worker-prov. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Nej | 0/3 | E-07, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
