@@ -988,9 +988,9 @@ Provet använder användargodkänt ofarligt repo, separata f22-probe/f22-epic/ru
 
 ## Epic E-06 Spegla arbetsflödet i TeamPlayer
 
-**Fas:** 6. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `e779c93c-7f75-43e0-97ed-53373bb0fd66`.
+**Fas:** 6. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `e779c93c-7f75-43e0-97ed-53373bb0fd66`.
 
-**Körbar:** Ja — E-05 verifierad/Done på main; externa villkor anges per task. **Beroende:** E-05 Done på main.
+**Körbar:** Nej — samtliga F23–F26 granskade/Done; E06 slutgranskad, mergad och slutverifierad på main. **Beroende:** E-05 Done på main.
 
 **Källa:** A §§6, 11, 16, 23, 40; W §§5, 9, 13–18, 39.
 
@@ -1153,11 +1153,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Slutleverans F26 (2026-10-09):** source918bb1d8cd91426d02b1129ba8756cd48babe751 mot aktuellEpic90d2d3c810d45957e6900ed287324525d54ded45; full5fildiff64027bytes/SHA256089f656d5045e909f0b89fa9bab74599d70a77bb620f451dd1cda1592609b919. Integration APPROVED och faktisk bootstrapGitAdapter no-ffTask→Epic6d6ebd956b548df40c36e2ae89420c3f47c15965, exakta parents och granskad tree utan adopterade manuella produktruns. På merge20starttestsPASS6.98s samt Ruff/build/configCLI/diff och full nativeexport med faktisk Epicproduktmodul PASS; source20PASS9.37s/links/credentials PASS. F26A1–A3uppfyllda; NativeDonev9 med verifiedUser105. E06Active/egen3av3 inför samlad verifiering/PR/mainintegration. NativeWorker fysiskt inaktiv/agentlista tom och endast egen testserverhc-f26-20261008stoppad; samtliga gamla/newfixtures och historik bevaras. [Slutreview](docs/reviews/F-26.md).
 
+**Coordinator/slutleverans E06 (2026-10-09):** aktuell APPROVED epic1fb14a47a62d42e5af8ba148e3b9318f26b521fd mot main84fb77a3141cae25710554b497b8705f7768cbe8; komplett34fildiff292847bytes/SHA256a335040866f1bb915e4a892dfd396a65a74cd5e44770a2a871c655f4559ae0b3/operation794a18b7-1c7a-4221-9273-39a5da16d5bf. Samlad uv run --locked pytest:588PASS1146.77s; Ruff/build/CLI/diff/exakta wheelmoduler/rollprompter/länkar PASS. PR https://github.com/johanLstang/HerdrCoordinator/pull/6; faktisk bootstrapGitAdapter no-ffMainmerge54e346da7fa2c9ff9eeb3856c8e64907b8bd6901 med exakta parents och identisk granskad tree. På faktisk Mainmerge205relevanta tester380.28s/exit0 för alla ändrade produktgränser/MCP/state/persistens/epicintegration/CLI samt Ruff/build/config/diff/wheel/länkar PASS; full588grind låg på identisk granskad tree före merge. Ordinarie push/remoteMain och PRmerged/closed/exaktmergeSHA återlästa. Alla4tasksNativeDone/verifiedUser105; egenacceptans3/3. NativeE06Donev14 återläst efter fulla leveransgrindar. Läs-/ägarskaps-/roll-/statusbevis, beständig outbox/CAS/readback/exakt-en-gång-historik samt native same-sessioninput/park/resume/task/epic-main/liveclosedtransport verifierade. Schema2/oförändrade beroendeversioner; långlivade loopar och F38OS-autonomigate är senare arbete. NativeWorkers inaktiva/egenF26testserverstoppad; avbruten originalstart/slot/journaler och lyckat prov bevaras utan fabricerad recovery. [Slutreview](docs/reviews/E-06.md). Nästa genomförbara feature F27 i E07 från verifierad aktuellmain.
+
 ## Epic E-07 Genomför beroendestyrda tasks med två Workers
 
 **Fas:** 7. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `75285fe5-e9bb-46ea-b5fd-19135c40166d`.
 
-**Körbar:** Nej — E-06 Done på main; externa villkor anges per task. **Beroende:** E-06 Done på main.
+**Körbar:** Ja — E06 Done/PR#6/main54e346d och205sluttester verifierade; externa villkor anges per task. **Beroende:** E-06 Done på main.
 
 **Källa:** A §§17–18, 29–30, 41, 48; W §§8–10, 23, 27–28.
 
@@ -1190,7 +1192,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `8c9e5322-28c7-4310-b444-4c3a843fb671`.
 
-**Körbar:** Nej — invänta E-06 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — E06 Done/main54e346d med samlad588grind och205sluttester; inga ytterligare externa villkor.
 
 **Källa:** A §§17–18, 41; W §§9, 27–28. **Berör:** Scheduler, beroendegraf, Git/runtimeunderlag.
 
@@ -1987,13 +1989,13 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 25 | F-20 | Task/feature | Bind taskgodkännande till granskat underlag | E-05 | 5 | 5de9046f-4c8b-4f69-ae12-33fc5d213df3 | P0 | Done | Nej | 3/3 | E-04, F-19 | Review e7e917c, merge 9d6cadb, 445 passed (540.48 s); docs/reviews/F-20.md. |
 | 26 | F-21 | Task/feature | Sätt task Done efter merge och integrationstester | E-05 | 5 | e931598a-4fa5-488e-aeea-0db91a570bdd | P0 | Done | Nej | 3/3 | E-04, F-20 | Review 9a064d0, merge 4486d10, 469 passed (957.77 s), exit0; docs/reviews/F-21.md. |
 | 27 | F-22 | Task/feature | Verifiera review och fix till integrerad task | E-05 | 5 | 875b4e3d-e3de-40ae-bb76-6aee5e8705c2 | P1 | Done | Nej | 3/3 | E-04, F-21, X-01 | Review7f5b148/merge944f865, nativeflow +test23,10CLIpass; docs/reviews/F-22.md. |
-| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Active | Ja | 3/3 | E-05 Done på main | AllaF23–F26Done; egen3/3; samlad verifiering, PR och mainintegration återstår. |
+| 28 | E-06 | Epic | Spegla arbetsflödet i TeamPlayer | — | 6 | e779c93c-7f75-43e0-97ed-53373bb0fd66 | P1 | Done | Nej | 3/3 | E-05 Done på main | PR#6/main54e346d;588aggregate/205final PASS; docs/reviews/E-06.md. |
 | 29 | F-23 | Task/feature | Verifiera TeamPlayer projekt och MCP kontrakt | E-06 | 6 | 6dd3f8a2-cfcf-4483-a124-944804a5f65f | P1 | Done | Nej | 3/3 | E-05, X-02 | Review8bc2517/merge173b7f6;23tests8.24s/nativeMCP PASS; docs/reviews/F-23.md. |
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Nej | 0/3 | E-06 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Nej | 0/3 | E-06 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Planned | Ja | 0/3 | E-06 Done på main | E06 Done på main; F27 nästa kandidat. |
+| 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Planned | Ja | 0/3 | E-06 | E06 Done/main54e346d/205final PASS; nästa prioriterade kandidat. |
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Nej | 0/3 | E-06, F-27 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
