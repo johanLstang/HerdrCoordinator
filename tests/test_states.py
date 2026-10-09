@@ -367,8 +367,8 @@ def test_new_changes_requested_review_revokes_previous_approval(runtime):
     store, service = runtime
     approved = store.get_task("task").model_copy(
         update={
-        "internal_status": T.APPROVED,
-        "kanban_status": task_kanban(T.APPROVED),
+            "internal_status": T.APPROVED,
+            "kanban_status": task_kanban(T.APPROVED),
             "approved_source_commit": "b" * 40,
             "approved_target_commit": "c" * 40,
         }
@@ -396,3 +396,41 @@ def test_new_changes_requested_review_revokes_previous_approval(runtime):
             target_commit="c" * 40,
         )
     assert store.get_task("task").internal_status == "APPROVED"
+
+
+@pytest.mark.parametrize(
+    "attack", ["worker", "same-base", "changed-task", "no-reason", "no-source"]
+)
+def test_approval_requeue_requires_integration_unchanged_source_and_new_epic(runtime, attack):
+    store, service = runtime
+    approved = store.get_task("task").model_copy(
+        update={
+            "internal_status": T.APPROVED,
+            "kanban_status": task_kanban(T.APPROVED),
+            "approved_source_commit": "b" * 40,
+            "approved_target_commit": "a" * 40 if attack != "same-base" else "c" * 40,
+        }
+    )
+    store.db.execute(
+        "UPDATE task_runs SET internal_status='APPROVED', payload=? WHERE id='task'",
+        (approved.model_dump_json(),),
+    )
+    actor = integration()
+    if attack == "worker":
+        actor = actor.model_copy(update={"role": Role.WORKER, "task_run_id": "task"})
+    with pytest.raises(StateError):
+        service.transition_task(
+            "task",
+            T.READY_FOR_REVIEW,
+            expected=T.APPROVED,
+            event_id="invalid-requeue",
+            actor=actor,
+            facts=VerifiedFacts(
+                source_commit=None
+                if attack == "no-source"
+                else ("d" if attack == "changed-task" else "b") * 40,
+                target_commit="c" * 40,
+                reason="" if attack == "no-reason" else "Changed actual epic base",
+            ),
+        )
+    assert store.get_task("task") == approved

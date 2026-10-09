@@ -102,9 +102,10 @@ Upprepning och återöppnad SQLite ger samma svar så länge fakta och konfigura
 oförändrade. Ett nytt svar är råd utifrån observerade fakta och ingen reservation.
 
 Start måste återvalidera board, scope, beroendebevis och kapacitet före beständig claim
-eller resume. F15 startar inom samma epic; urvalsresultatet kringgår inga av dess
-grindar. [F28](F-28-slots.md) utökar reservationen till konfigurerade 1–2 Workers;
-F29 kopplar nytt boardurval till scheduling och start. Native parallellitet provas
+eller resume. Fristående F15 kräver beroenden inom samma epic. [F29:s](F-29-scheduler.md)
+interna claimguard verifierar hela F27-grafen och tidigare epicens mainbevis inom
+claimtransaktionen; urvalsresultatet kringgår inga grindar. [F28](F-28-slots.md)
+utökar reservationen till konfigurerade 1–2 Workers. Native parallellitet provas
 i F30. Manuell utvecklingsbootstrap adopteras
 inte som produkt-runtime. F38:s dokumenterade miljö-/autonomigate kvarstår.
 

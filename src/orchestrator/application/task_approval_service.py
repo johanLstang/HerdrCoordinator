@@ -5,11 +5,12 @@ from pydantic import ValidationError
 from orchestrator.adapters.git import GitError
 from orchestrator.application.git_integration_service import IntegrationError
 from orchestrator.application.git_review_service import GitReviewError
+from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_review_service import TaskReviewError, TaskReviewService
 from orchestrator.application.worktree_service import WorktreeError
 from orchestrator.domain.models import Operation, utc_now
-from orchestrator.domain.policy import Actor, Role
+from orchestrator.domain.policy import Actor, Role, VerifiedFacts
 from orchestrator.domain.review_contracts import ApprovalDecision
 from orchestrator.domain.states import TaskState
 from orchestrator.domain.worker_contracts import canonical_json
@@ -95,6 +96,127 @@ class TaskApprovalService:
             ValueError,
         ):
             raise TaskApprovalError("APPROVAL_UNVERIFIED") from None
+
+    def requeue_changed_epic(self, actor, run_id):
+        """Internal F29 operation: invalidate a proven approval only for a new epic base."""
+        try:
+            with self.integration._lock(), self.store.transaction():
+                task, epic = self.contexts._scope(actor, run_id, require_ready=False)
+                if task.internal_status != TaskState.APPROVED:
+                    raise TaskApprovalError("APPROVAL_TASK_NOT_APPROVED")
+                source, target = self.integration._owned_pair(task, epic)
+                if source != task.approved_source_commit:
+                    raise TaskApprovalError("APPROVAL_TASK_CHANGED")
+                if target == task.approved_target_commit:
+                    self.require_current_without_lock(actor, task)
+                    return task
+                approvals = [
+                    o
+                    for o in self.store.get_operations(epic.id, kind=self.KIND)
+                    if o.task_run_id == task.id and o.status == "SUCCEEDED"
+                ]
+                if not approvals or any(
+                    o.task_run_id == task.id and o.status == "PENDING"
+                    for kind in ("task_merge", self.KIND, "task_request_changes")
+                    for o in self.store.get_operations(epic.id, kind=kind)
+                ):
+                    raise TaskApprovalError("APPROVAL_RECONCILIATION_REQUIRED")
+                op = max(approvals, key=lambda o: o.created_at)
+                packages = [
+                    o
+                    for o in self.store.get_operations(epic.id, kind=self.contexts.KIND)
+                    if o.task_run_id == task.id
+                ]
+                package = max(packages, key=lambda o: o.created_at)
+                context = package.result["context"]
+                decision = ApprovalDecision.model_validate(op.result["decision"])
+                review = self.store.get_reviews(task.id)[-1]
+                test = self.store.get_operation(
+                    task.project_id, "verify_task", context["tests"]["key"]
+                )
+                spec, _ = self.contexts._spec(task, epic)
+                reviewer = Actor.model_validate(op.result["reviewer"])
+                StateService.authorize_scope(reviewer, task)
+                if (
+                    reviewer.role != Role.INTEGRATION
+                    or package.status != "SUCCEEDED"
+                    or context["context_id"] != decision.context_id
+                    or digest(
+                        canonical_json({k: v for k, v in context.items() if k != "context_id"})
+                    )
+                    != decision.context_id
+                    or decision.verified_criteria != context["acceptance_criteria"]
+                    or (context["task_commit"], context["epic_commit"])
+                    != (source, task.approved_target_commit)
+                    or (op.result["task_commit"], op.result["epic_commit"])
+                    != (source, task.approved_target_commit)
+                    or review.id != op.result["review_id"]
+                    or review.review_result != "APPROVED"
+                    or (review.review_commit, review.epic_commit)
+                    != (source, task.approved_target_commit)
+                    or review.feedback != canonical_json(decision.model_dump(mode="json"))
+                    or package.result["configuration"]
+                    != self.contexts._configuration(task, epic, spec)
+                    or self.contexts._handoff(task, source).id != context["handoff_operation_id"]
+                    or test is None
+                    or test.id != op.result["verification_id"]
+                    or test.id != context["tests"]["operation_id"]
+                    or test.task_run_id != task.id
+                    or test.epic_run_id != epic.id
+                    or test.status != "SUCCEEDED"
+                    or test.result.get("exit_code") != 0
+                    or test.result.get("source_commit") != source
+                    or test.result.get("target_commit") != task.approved_target_commit
+                    or test.result.get("command_hash") != self.integration.command_hash
+                    or not self.integration.git.contains_commit(
+                        epic.branch, task.approved_target_commit
+                    )
+                ):
+                    raise TaskApprovalError("APPROVAL_INVALIDATION_PROOF_UNVERIFIED")
+                self.store.update_run_metadata(
+                    epic.model_copy(update={"current_commit": target})
+                )
+                return StateService(self.store).transition_task(
+                    task.id,
+                    TaskState.READY_FOR_REVIEW,
+                    expected=TaskState.APPROVED,
+                    event_id="approval-base-changed:"
+                    + digest(canonical_json([op.id, source, target])),
+                    actor=actor,
+                    facts=VerifiedFacts(
+                        source_commit=source,
+                        target_commit=target,
+                        reason="Epic base changed after approved review; full new review required",
+                    ),
+                )
+        except TaskApprovalError:
+            raise
+        except (
+            TaskReviewError,
+            IntegrationError,
+            GitReviewError,
+            GitError,
+            WorktreeError,
+            StateError,
+            StoreError,
+            ValidationError,
+            KeyError,
+            TypeError,
+            ValueError,
+            IndexError,
+        ):
+            raise TaskApprovalError("APPROVAL_INVALIDATION_UNVERIFIED") from None
+
+    def require_current_without_lock(self, actor, task):
+        """Internal use only while the caller already owns the integration lock."""
+        matches = [
+            o
+            for o in self.store.get_operations(task.epic_run_id, kind=self.KIND)
+            if o.task_run_id == task.id and o.status == "SUCCEEDED"
+        ]
+        if not matches:
+            raise TaskApprovalError("APPROVAL_UNVERIFIED")
+        return self._proof(actor, task, max(matches, key=lambda o: o.created_at))
 
     def approve(self, actor, run_id, decision, *, key):
         try:

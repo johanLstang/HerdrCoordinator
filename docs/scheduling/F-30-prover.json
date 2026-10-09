@@ -1,0 +1,1827 @@
+{
+  "schema": 1,
+  "date": "2026-10-09",
+  "status": "F30_NATIVE_PASS",
+  "harness_commit": "7783fb7348dd12266cb72f0b8d592cc9f9eff792",
+  "herdr_version": "0.9.3",
+  "herdr_protocol": 22,
+  "codex_cli_version": "0.162.0",
+  "server": "hc-f30-r2-20261009",
+  "operator_roles": "separate trusted Coordinator and Integration principals; explicit current reviews",
+  "fixture": {
+    "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+    "userId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "epicId": "840d61d5-1840-4041-bb17-0371c9410585",
+    "tasks": {
+      "A": "09c97bc4-f5f8-47c1-989f-5c21b6ff0c3d",
+      "B": "f3459a10-1a4e-4af4-a01c-0928adc03f5f",
+      "C": "bd0bb840-3f4e-4881-b85b-baab96e4f741"
+    }
+  },
+  "native_final": {
+    "A": {
+      "id": "09c97bc4-f5f8-47c1-989f-5c21b6ff0c3d",
+      "status": "Done",
+      "version": 10,
+      "ownerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+    },
+    "B": {
+      "id": "f3459a10-1a4e-4af4-a01c-0928adc03f5f",
+      "status": "Done",
+      "version": 11,
+      "ownerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+    },
+    "C": {
+      "id": "bd0bb840-3f4e-4881-b85b-baab96e4f741",
+      "status": "Done",
+      "version": 8,
+      "ownerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+    },
+    "epic": {
+      "id": "840d61d5-1840-4041-bb17-0371c9410585",
+      "status": "InProgress",
+      "version": 5
+    }
+  },
+  "main_unchanged": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "maximum_reserved": 2,
+  "overlap_samples": 15,
+  "first_native_overlap": {
+    "at": 1791551683.860994,
+    "native_inventory": [
+      {
+        "name": "hc-cdd3bd8ee22f4aeba93c767c",
+        "status": "working"
+      },
+      {
+        "name": "hc-77f4a53c366447569dbdb3b1",
+        "status": "working"
+      }
+    ],
+    "reserved": 2,
+    "tasks": [
+      {
+        "native_session": "01a120cc-df13-7df2-b7f4-7c09b509682f",
+        "native_status": "working",
+        "processes": [
+          {
+            "pid": 1878890,
+            "start_time": "102183544"
+          },
+          {
+            "pid": 1878897,
+            "start_time": "102183548"
+          }
+        ],
+        "session": "01a120cc-df13-7df2-b7f4-7c09b509682f",
+        "slot": 1,
+        "state": "WORKING",
+        "task_id": "A",
+        "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "working_bracket": true,
+        "worktree": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/trees/f30-probe-r2/task-f30-epic-r2-a"
+      },
+      {
+        "native_session": "01a120cd-05a6-7321-b1ec-a6d5f5490d1b",
+        "native_status": "working",
+        "processes": [
+          {
+            "pid": 1880301,
+            "start_time": "102184559"
+          },
+          {
+            "pid": 1880308,
+            "start_time": "102184563"
+          }
+        ],
+        "session": "01a120cd-05a6-7321-b1ec-a6d5f5490d1b",
+        "slot": 2,
+        "state": "WORKING",
+        "task_id": "B",
+        "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "working_bracket": true,
+        "worktree": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/trees/f30-probe-r2/task-f30-epic-r2-b"
+      }
+    ],
+    "unregistered_agents": []
+  },
+  "events": [
+    {
+      "event_id": "f30-epic-start",
+      "at": "2026-10-09T13:14:08.610851Z",
+      "task_id": null,
+      "state": "ACTIVE",
+      "slot": null,
+      "request": {
+        "kind": "epic",
+        "run_id": "f30-epic-run-r2",
+        "target": "ACTIVE",
+        "expected": "PLANNED",
+        "actor": {
+          "actor_id": "f30-coordinator-r2",
+          "role": "Coordinator",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": null,
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "task-claim:1418562b-543d-4e59-a143-1dc2911571f7",
+      "at": "2026-10-09T13:14:15.873083Z",
+      "task_id": "A",
+      "state": "CLAIMED",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "CLAIMED",
+        "expected": "PLANNED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": true,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "runtime-start:cdd3bd8e-e22f-4aeb-a93c-767c312cff6f",
+      "at": "2026-10-09T13:14:18.303539Z",
+      "task_id": "A",
+      "state": "STARTING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "STARTING",
+        "expected": "CLAIMED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "task-claim:04e16c3a-38d7-4c2c-9c85-7569a0d2dc4c",
+      "at": "2026-10-09T13:14:25.884596Z",
+      "task_id": "B",
+      "state": "CLAIMED",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "CLAIMED",
+        "expected": "PLANNED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": true,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "runtime-start:77f4a53c-3664-4756-9dbd-b3b16c0993af",
+      "at": "2026-10-09T13:14:28.459454Z",
+      "task_id": "B",
+      "state": "STARTING",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "STARTING",
+        "expected": "CLAIMED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "assignment-ack:209fdb8b-5199-402b-9369-870d91489891",
+      "at": "2026-10-09T13:14:37.178411Z",
+      "task_id": "A",
+      "state": "WORKING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "WORKING",
+        "expected": "STARTING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": true,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": "Correlated native Codex agent message"
+        }
+      }
+    },
+    {
+      "event_id": "assignment-ack:8af07737-c3cb-4ca4-ba1a-98c817eb62fb",
+      "at": "2026-10-09T13:14:43.792366Z",
+      "task_id": "B",
+      "state": "WORKING",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "WORKING",
+        "expected": "STARTING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": true,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": "Correlated native Codex agent message"
+        }
+      }
+    },
+    {
+      "event_id": "worker-report:d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57:fe38aef278eeffbbf8a1faa9b5ff6371493ea375f36d4a904ad1959f595a5386",
+      "at": "2026-10-09T13:15:47.076479Z",
+      "task_id": "A",
+      "state": "READY_FOR_REVIEW",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "READY_FOR_REVIEW",
+        "expected": "WORKING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-context:e8d2fc03-8161-4aaf-a2c2-a15ec0c16add",
+      "at": "2026-10-09T13:15:49.122278Z",
+      "task_id": "A",
+      "state": "REVIEWING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "REVIEWING",
+        "expected": "READY_FOR_REVIEW",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "worker-report:1260a62a-163e-475d-b81d-2632f500323c:29a42d0afcb41931eee7c0e06785a9b952387079f1c98b90d70b608971e41aa5",
+      "at": "2026-10-09T13:15:54.490998Z",
+      "task_id": "B",
+      "state": "READY_FOR_REVIEW",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "READY_FOR_REVIEW",
+        "expected": "WORKING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": "202722c582f96bab7d979d3315e43541a2a4f8ef",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-context:76fe2385-7a3b-4d39-b24c-1e912f44f753",
+      "at": "2026-10-09T13:15:56.559419Z",
+      "task_id": "B",
+      "state": "REVIEWING",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "REVIEWING",
+        "expected": "READY_FOR_REVIEW",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-decision:7589c795-099f-4193-8258-ae33efca991d",
+      "at": "2026-10-09T13:16:36.640761Z",
+      "task_id": "A",
+      "state": "APPROVED",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "APPROVED",
+        "expected": "REVIEWING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-decision:2ce5a268-8f4c-4503-8002-6be0aef38cc3",
+      "at": "2026-10-09T13:16:41.980926Z",
+      "task_id": "B",
+      "state": "APPROVED",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "APPROVED",
+        "expected": "REVIEWING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "merge-start:882f7c61-dcf2-47d1-9a50-07501c95d63d",
+      "at": "2026-10-09T13:16:50.638888Z",
+      "task_id": "A",
+      "state": "MERGING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "MERGING",
+        "expected": "APPROVED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "target_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "delivery-done:fb5d6d48-393b-4f19-bd4e-a340060b4182",
+      "at": "2026-10-09T13:16:55.597205Z",
+      "task_id": "A",
+      "state": "DONE",
+      "slot": null,
+      "request": {
+        "kind": "task",
+        "run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "target": "DONE",
+        "expected": "MERGING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "target_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+          "merge_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "verification_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "task-claim:a68cb1de-82e5-4f69-99f0-1088df6b3cb6",
+      "at": "2026-10-09T13:16:57.913277Z",
+      "task_id": "C",
+      "state": "CLAIMED",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "CLAIMED",
+        "expected": "PLANNED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": true,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "runtime-start:aa40a5f0-8db3-41d0-bf32-cdd192a34cb8",
+      "at": "2026-10-09T13:17:00.836381Z",
+      "task_id": "C",
+      "state": "STARTING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "STARTING",
+        "expected": "CLAIMED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "approval-base-changed:8e4d5ba2c440d3cc7ba189ea019905274da140afc160c10e513b65667465d75c",
+      "at": "2026-10-09T13:17:10.116463Z",
+      "task_id": "B",
+      "state": "READY_FOR_REVIEW",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "READY_FOR_REVIEW",
+        "expected": "APPROVED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "202722c582f96bab7d979d3315e43541a2a4f8ef",
+          "target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": "Epic base changed after approved review; full new review required"
+        }
+      }
+    },
+    {
+      "event_id": "review-context:2db03435-c6a7-43de-8624-ea32768cdee9",
+      "at": "2026-10-09T13:17:12.785177Z",
+      "task_id": "B",
+      "state": "REVIEWING",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "REVIEWING",
+        "expected": "READY_FOR_REVIEW",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "assignment-ack:9c25ddb5-3e1c-4e0d-ac6b-611c3d41e564",
+      "at": "2026-10-09T13:17:23.911590Z",
+      "task_id": "C",
+      "state": "WORKING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "WORKING",
+        "expected": "STARTING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": true,
+          "start_confirmed": true,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": "Correlated native Codex agent message"
+        }
+      }
+    },
+    {
+      "event_id": "review-decision:ad529266-dcf3-4225-ac2e-37286e844f72",
+      "at": "2026-10-09T13:17:58.107014Z",
+      "task_id": "B",
+      "state": "APPROVED",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "APPROVED",
+        "expected": "REVIEWING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "merge-start:66e22fea-f9bc-45ff-b2c8-842ddc0db456",
+      "at": "2026-10-09T13:18:08.151375Z",
+      "task_id": "B",
+      "state": "MERGING",
+      "slot": 2,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "MERGING",
+        "expected": "APPROVED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+          "target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "delivery-done:f724c25f-44ef-4aa9-993e-62a664dab990",
+      "at": "2026-10-09T13:18:13.576222Z",
+      "task_id": "B",
+      "state": "DONE",
+      "slot": null,
+      "request": {
+        "kind": "task",
+        "run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "target": "DONE",
+        "expected": "MERGING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+          "target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "merge_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "verification_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "worker-report:cd391903-0d04-4051-8699-bf5bd9a02763:252d86bb2b642a3824717f051bf28558c31782d791a9d2c6186ca654ab738fe7",
+      "at": "2026-10-09T13:18:31.861437Z",
+      "task_id": "C",
+      "state": "READY_FOR_REVIEW",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "READY_FOR_REVIEW",
+        "expected": "WORKING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": "7ca72e67c53658111d4f83d2b0a9a6f0ab3def75",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-context:e0cd8b6f-183d-49ca-9244-43ca93468540",
+      "at": "2026-10-09T13:18:33.937535Z",
+      "task_id": "C",
+      "state": "REVIEWING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "REVIEWING",
+        "expected": "READY_FOR_REVIEW",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "review-decision:c3648166-66ee-45fb-b2d7-c4170975e997",
+      "at": "2026-10-09T13:19:02.755494Z",
+      "task_id": "C",
+      "state": "APPROVED",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "APPROVED",
+        "expected": "REVIEWING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": null,
+          "target_commit": null,
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "merge-start:fd3a99f5-9da1-47b0-ac65-62201020f6b8",
+      "at": "2026-10-09T13:19:12.547229Z",
+      "task_id": "C",
+      "state": "MERGING",
+      "slot": 1,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "MERGING",
+        "expected": "APPROVED",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+          "target_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "merge_commit": null,
+          "verification_commit": null,
+          "tests_passed": false,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    },
+    {
+      "event_id": "delivery-done:d75428a3-31c6-4020-bfd9-681a28b5e467",
+      "at": "2026-10-09T13:19:17.599754Z",
+      "task_id": "C",
+      "state": "DONE",
+      "slot": null,
+      "request": {
+        "kind": "task",
+        "run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "target": "DONE",
+        "expected": "MERGING",
+        "actor": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "facts": {
+          "source_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+          "target_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "merge_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+          "verification_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+          "tests_passed": true,
+          "review_approved": false,
+          "dependencies_ready": false,
+          "slot_reserved": false,
+          "start_confirmed": false,
+          "inactivity_confirmed": false,
+          "scope_complete": false,
+          "reason": ""
+        }
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+      "task_id": "A",
+      "branch": "task/f30-epic-r2-a",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/trees/f30-probe-r2/task-f30-epic-r2-a",
+      "internal_status": "DONE",
+      "worker_slot": null,
+      "codex_session_id": "01a120cc-df13-7df2-b7f4-7c09b509682f",
+      "base_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+      "current_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+      "approved_source_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+      "approved_target_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+      "merge_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+      "completed_at": "2026-10-09T13:16:55.597093Z",
+      "delivery": {
+        "event_id": "delivery-done:fb5d6d48-393b-4f19-bd4e-a340060b4182",
+        "event_hash": "fb0ea82d61a982ab3aaad9eb1b3bd3a85732f3279de3b46192f51cd6048dc512",
+        "merge_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+        "test_id": "a7ff09f2-b2ed-44fb-af91-e68b1f41a5de",
+        "stop_id": "73c0622d-442f-45dc-ad9b-1959fe8243b1",
+        "delivery_id": "fb5d6d48-393b-4f19-bd4e-a340060b4182"
+      },
+      "delivery_operation": {
+        "id": "fb5d6d48-393b-4f19-bd4e-a340060b4182",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "kind": "task_merge",
+        "idempotency_key": "schedule-delivery:685cdb88ac58a2f57d0bf37edd85f5ebbd3fbdf5f258a6552ed44a0d5e1ff0b8",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "DONE",
+          "actor": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "approval_id": "7589c795-099f-4193-8258-ae33efca991d",
+          "approval_key": "f30-operator-review:acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+          "approval_digest": "a87fdc4e487302a93edd511b5ed7b352d9dd010efd2b6126b946a3370d44d6dd",
+          "review_id": "7589c795-099f-4193-8258-ae33efca991d",
+          "context_id": "acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+          "context_key": "schedule-review:cff11f40f86dba1735123ec1f78a89eaef3e72c5515a951340c19e6ddee39113",
+          "context_digest": "0e96c25f55b455fb4403543c359caa6b0361a46b284eed0b2d8765b6091d041d",
+          "source_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "target_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+          "spec_hash": "6669dc774cfd7f8dd6fd8c373a5854a9ace28e9d8996a4fdd3711c3a24b21b37",
+          "epic_context_hash": "af99de67a203bcb328c738192b7fa126a5607540fa112aaf01df6b6d885235be",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "test_timeout": 60,
+          "max_diff_bytes": 1048576,
+          "merge_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "merge_operation_id": "882f7c61-dcf2-47d1-9a50-07501c95d63d",
+          "test_id": "a7ff09f2-b2ed-44fb-af91-e68b1f41a5de",
+          "test_key": "fb5d6d48-393b-4f19-bd4e-a340060b4182:initial",
+          "stop_id": "73c0622d-442f-45dc-ad9b-1959fe8243b1"
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:16:49.365853Z",
+        "updated_at": "2026-10-09T13:16:55.597507Z"
+      },
+      "approval": {
+        "id": "7589c795-099f-4193-8258-ae33efca991d",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "kind": "task_approve",
+        "idempotency_key": "f30-operator-review:acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "APPROVED",
+          "decision": {
+            "version": 1,
+            "result": "APPROVED",
+            "context_id": "acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+            "summary": "Operator reviewed complete pinned diff, sources and independent passing tests. A meets Unicode/NFC/type/blank handling; B meets strict integer validation, negative/empty cases and input preservation. Only own module/tests changed. No merge authority for Worker.",
+            "verified_criteria": [
+              "Implement f30_names.clean_name(str): strip whitespace, normalize NFC, preserve Unicode.",
+              "Raise TypeError for every non-str and ValueError for empty/all-whitespace input.",
+              "Own meaningful unittest tests pass; commit only assigned files."
+            ]
+          },
+          "reviewer": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "task_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "epic_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+          "verification_id": "c13d8932-e45c-4f8b-85ff-7f6dc0cc8170",
+          "verification_key": "review-test:e8d2fc03-8161-4aaf-a2c2-a15ec0c16add",
+          "context_id": "acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+          "review_id": "7589c795-099f-4193-8258-ae33efca991d",
+          "review_number": 1
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:16:36.110085Z",
+        "updated_at": "2026-10-09T13:16:36.648684Z"
+      },
+      "post_merge_test": {
+        "id": "a7ff09f2-b2ed-44fb-af91-e68b1f41a5de",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "kind": "task_delivery_test",
+        "idempotency_key": "fb5d6d48-393b-4f19-bd4e-a340060b4182:initial",
+        "status": "SUCCEEDED",
+        "result": {
+          "delivery_id": "fb5d6d48-393b-4f19-bd4e-a340060b4182",
+          "merge_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "source_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+          "target_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "timeout": 60,
+          "command": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.venv/bin/python3",
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/verify.py"
+          ],
+          "exit_code": 0
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:16:52.153481Z",
+        "updated_at": "2026-10-09T13:16:52.626333Z"
+      },
+      "stop": {
+        "id": "73c0622d-442f-45dc-ad9b-1959fe8243b1",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+        "kind": "stop_runtime",
+        "idempotency_key": "delivery-stop:fb5d6d48-393b-4f19-bd4e-a340060b4182",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "cdd3bd8e-e22f-4aeb-a93c-767c312cff6f",
+          "reason": "Verified task delivery",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 1878890,
+                "start_time": "102183544"
+              },
+              {
+                "pid": 1878897,
+                "start_time": "102183548"
+              },
+              {
+                "pid": 1879062,
+                "start_time": "102183693"
+              },
+              {
+                "pid": 1879068,
+                "start_time": "102183694"
+              },
+              {
+                "pid": 1879094,
+                "start_time": "102183710"
+              },
+              {
+                "pid": 1880678,
+                "start_time": "102184968"
+              }
+            ],
+            "groups": [
+              1878890,
+              1879062,
+              1879068,
+              1880678
+            ]
+          },
+          "delivery_key": "schedule-delivery:685cdb88ac58a2f57d0bf37edd85f5ebbd3fbdf5f258a6552ed44a0d5e1ff0b8",
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:16:53.286884Z",
+        "updated_at": "2026-10-09T13:16:55.428009Z"
+      }
+    },
+    {
+      "id": "1260a62a-163e-475d-b81d-2632f500323c",
+      "task_id": "B",
+      "branch": "task/f30-epic-r2-b",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/trees/f30-probe-r2/task-f30-epic-r2-b",
+      "internal_status": "DONE",
+      "worker_slot": null,
+      "codex_session_id": "01a120cd-05a6-7321-b1ec-a6d5f5490d1b",
+      "base_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+      "current_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+      "approved_source_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+      "approved_target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+      "merge_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+      "completed_at": "2026-10-09T13:18:13.576111Z",
+      "delivery": {
+        "event_id": "delivery-done:f724c25f-44ef-4aa9-993e-62a664dab990",
+        "event_hash": "73535022265e964c4561de214b4c788b021f50297d1f85f0365580ac550635ce",
+        "merge_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+        "test_id": "a05d008a-0bc2-4367-b850-b2a484b686f5",
+        "stop_id": "ab45a289-da71-4b99-b2dc-0cb0a4874ed0",
+        "delivery_id": "f724c25f-44ef-4aa9-993e-62a664dab990"
+      },
+      "delivery_operation": {
+        "id": "f724c25f-44ef-4aa9-993e-62a664dab990",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "kind": "task_merge",
+        "idempotency_key": "schedule-delivery:b60b395c1ff0a5c4e665421ab9f308ad5d6f370450d1b3271b659bd36f698db7",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "DONE",
+          "actor": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "approval_id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+          "approval_key": "f30-operator-review:1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+          "approval_digest": "f6be8dedc5e8140a9b13faffaa0eda37d4078ae508084b89a4269a32666eda60",
+          "review_id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+          "context_id": "1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+          "context_key": "schedule-review:fd899ae8f328012b43ded1a4a0f692c0f02c3e05f3adede948e3785780805697",
+          "context_digest": "0a9b1b550cc5708abf3a8e72524f1b351ebd68716bc97fc7592ce4b0cbaf3f43",
+          "source_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+          "target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "spec_hash": "7f912fca21d2f17cd52e682ab89050fcb23c5fb5bc6f9b26579ca85dafd83bb1",
+          "epic_context_hash": "af99de67a203bcb328c738192b7fa126a5607540fa112aaf01df6b6d885235be",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "test_timeout": 60,
+          "max_diff_bytes": 1048576,
+          "merge_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "merge_operation_id": "66e22fea-f9bc-45ff-b2c8-842ddc0db456",
+          "test_id": "a05d008a-0bc2-4367-b850-b2a484b686f5",
+          "test_key": "f724c25f-44ef-4aa9-993e-62a664dab990:initial",
+          "stop_id": "ab45a289-da71-4b99-b2dc-0cb0a4874ed0"
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:18:06.725281Z",
+        "updated_at": "2026-10-09T13:18:13.576516Z"
+      },
+      "approval": {
+        "id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "kind": "task_approve",
+        "idempotency_key": "f30-operator-review:1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "APPROVED",
+          "decision": {
+            "version": 1,
+            "result": "APPROVED",
+            "context_id": "1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+            "summary": "Fresh actual review after A integration: full unchanged B patch, same own source function/tests, actual F07 sync commit and new independent passing test against current A merge. Historical B approval is superseded; no stale approval merge.",
+            "verified_criteria": [
+              "Implement f30_numbers.sum_even(list[int]): sum even integers including negatives; [] gives 0.",
+              "Require a list and strict int elements, reject bool/non-int; never mutate the input.",
+              "Own meaningful unittest tests pass; commit only assigned files."
+            ]
+          },
+          "reviewer": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "task_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+          "epic_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "verification_id": "0cdf4eba-3249-47fc-8952-175cb490904b",
+          "verification_key": "review-test:2db03435-c6a7-43de-8624-ea32768cdee9",
+          "context_id": "1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+          "review_id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+          "review_number": 2
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:17:57.559026Z",
+        "updated_at": "2026-10-09T13:17:58.116959Z"
+      },
+      "post_merge_test": {
+        "id": "a05d008a-0bc2-4367-b850-b2a484b686f5",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "kind": "task_delivery_test",
+        "idempotency_key": "f724c25f-44ef-4aa9-993e-62a664dab990:initial",
+        "status": "SUCCEEDED",
+        "result": {
+          "delivery_id": "f724c25f-44ef-4aa9-993e-62a664dab990",
+          "merge_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "source_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+          "target_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "timeout": 60,
+          "command": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.venv/bin/python3",
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/verify.py"
+          ],
+          "exit_code": 0
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:18:09.825153Z",
+        "updated_at": "2026-10-09T13:18:10.152277Z"
+      },
+      "stop": {
+        "id": "ab45a289-da71-4b99-b2dc-0cb0a4874ed0",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+        "kind": "stop_runtime",
+        "idempotency_key": "delivery-stop:f724c25f-44ef-4aa9-993e-62a664dab990",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "77f4a53c-3664-4756-9dbd-b3b16c0993af",
+          "reason": "Verified task delivery",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 1880301,
+                "start_time": "102184559"
+              },
+              {
+                "pid": 1880308,
+                "start_time": "102184563"
+              },
+              {
+                "pid": 1880490,
+                "start_time": "102184676"
+              },
+              {
+                "pid": 1880495,
+                "start_time": "102184677"
+              },
+              {
+                "pid": 1880519,
+                "start_time": "102184688"
+              },
+              {
+                "pid": 1882302,
+                "start_time": "102185873"
+              }
+            ],
+            "groups": [
+              1880301,
+              1880490,
+              1880495,
+              1882302
+            ]
+          },
+          "delivery_key": "schedule-delivery:b60b395c1ff0a5c4e665421ab9f308ad5d6f370450d1b3271b659bd36f698db7",
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:18:10.735283Z",
+        "updated_at": "2026-10-09T13:18:13.376159Z"
+      }
+    },
+    {
+      "id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+      "task_id": "C",
+      "branch": "task/f30-epic-r2-c",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/trees/f30-probe-r2/task-f30-epic-r2-c",
+      "internal_status": "DONE",
+      "worker_slot": null,
+      "codex_session_id": "01a120cf-5981-71d0-b77f-5713cf6a0659",
+      "base_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+      "current_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+      "approved_source_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+      "approved_target_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+      "merge_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+      "completed_at": "2026-10-09T13:19:17.599644Z",
+      "delivery": {
+        "event_id": "delivery-done:d75428a3-31c6-4020-bfd9-681a28b5e467",
+        "event_hash": "eacbabfc6edf934f30e168bf0727da7b519017d0de74ee71f8a2cf55cf894588",
+        "merge_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+        "test_id": "669fccde-752c-44f5-a396-35741ee22736",
+        "stop_id": "d39f3fa9-1603-469d-bc03-ec585821ac3b",
+        "delivery_id": "d75428a3-31c6-4020-bfd9-681a28b5e467"
+      },
+      "delivery_operation": {
+        "id": "d75428a3-31c6-4020-bfd9-681a28b5e467",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "kind": "task_merge",
+        "idempotency_key": "schedule-delivery:f2e88f11a722eda10becf9898e52dc3edc288b430b50ad08506c6b862278f964",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "DONE",
+          "actor": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "approval_id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+          "approval_key": "f30-operator-review:f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+          "approval_digest": "13439b4cc71dd7ef9782f5aca8fe0877007654166ff5bfc3432b656662337371",
+          "review_id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+          "context_id": "f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+          "context_key": "schedule-review:fe4cc5c48711c47404d9c08c6e5ffb15958b549c4daadb06e2a38a972ae15db1",
+          "context_digest": "3b28dad96a08af964844c16561d243e9f1107b0d9344042d2b799c3bf32adbad",
+          "source_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+          "target_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "spec_hash": "983efa57d64bd1087c9b7f01b6a7227615b74ba00bb158d7dc18e170b54dce1f",
+          "epic_context_hash": "af99de67a203bcb328c738192b7fa126a5607540fa112aaf01df6b6d885235be",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "test_timeout": 60,
+          "max_diff_bytes": 1048576,
+          "merge_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+          "merge_operation_id": "fd3a99f5-9da1-47b0-ac65-62201020f6b8",
+          "test_id": "669fccde-752c-44f5-a396-35741ee22736",
+          "test_key": "d75428a3-31c6-4020-bfd9-681a28b5e467:initial",
+          "stop_id": "d39f3fa9-1603-469d-bc03-ec585821ac3b"
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:19:11.298630Z",
+        "updated_at": "2026-10-09T13:19:17.600024Z"
+      },
+      "approval": {
+        "id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "kind": "task_approve",
+        "idempotency_key": "f30-operator-review:f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+        "status": "SUCCEEDED",
+        "result": {
+          "stage": "APPROVED",
+          "decision": {
+            "version": 1,
+            "result": "APPROVED",
+            "context_id": "f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+            "summary": "Operator read complete current C patch, specifications, source contracts and passing independent tests after actual B integration. make_label imports and uses integrated A, preserves NFC/Unicode and propagates validation exceptions; C changed only its own module/tests. Existing A/B files unchanged.",
+            "verified_criteria": [
+              "Implement f30_labels.make_label(str): import and use f30_names.clean_name and return '[<clean name>]'.",
+              "Propagate A's TypeError/ValueError; preserve NFC/Unicode; never copy or modify A.",
+              "Own meaningful unittest tests pass; commit only assigned files."
+            ]
+          },
+          "reviewer": {
+            "actor_id": "f30-integration-r2",
+            "role": "Integration",
+            "project_id": "f30-probe-r2",
+            "epic_run_id": "f30-epic-run-r2",
+            "task_run_id": null
+          },
+          "task_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+          "epic_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "verification_id": "4d02dfb3-ed26-44b1-b3a2-5639094eaab6",
+          "verification_key": "review-test:e0cd8b6f-183d-49ca-9244-43ca93468540",
+          "context_id": "f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+          "review_id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+          "review_number": 1
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:19:02.232542Z",
+        "updated_at": "2026-10-09T13:19:02.765369Z"
+      },
+      "post_merge_test": {
+        "id": "669fccde-752c-44f5-a396-35741ee22736",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "kind": "task_delivery_test",
+        "idempotency_key": "d75428a3-31c6-4020-bfd9-681a28b5e467:initial",
+        "status": "SUCCEEDED",
+        "result": {
+          "delivery_id": "d75428a3-31c6-4020-bfd9-681a28b5e467",
+          "merge_commit": "6308fb602aec1b6fe2c60a22b1fde2ae81d4408b",
+          "source_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+          "target_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+          "command_hash": "4192c48bd70b23379394d8cd2418f850250fdaf3a1a598750587e799a4a3ba1a",
+          "timeout": 60,
+          "command": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.venv/bin/python3",
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30-r2/verify.py"
+          ],
+          "exit_code": 0
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:19:14.069028Z",
+        "updated_at": "2026-10-09T13:19:14.435878Z"
+      },
+      "stop": {
+        "id": "d39f3fa9-1603-469d-bc03-ec585821ac3b",
+        "project_id": "f30-probe-r2",
+        "epic_run_id": "f30-epic-run-r2",
+        "task_run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+        "kind": "stop_runtime",
+        "idempotency_key": "delivery-stop:d75428a3-31c6-4020-bfd9-681a28b5e467",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "aa40a5f0-8db3-41d0-bf32-cdd192a34cb8",
+          "reason": "Verified task delivery",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 1900305,
+                "start_time": "102199788"
+              },
+              {
+                "pid": 1900312,
+                "start_time": "102199792"
+              },
+              {
+                "pid": 1900558,
+                "start_time": "102199930"
+              },
+              {
+                "pid": 1900560,
+                "start_time": "102199931"
+              },
+              {
+                "pid": 1900586,
+                "start_time": "102199947"
+              },
+              {
+                "pid": 1903283,
+                "start_time": "102201187"
+              }
+            ],
+            "groups": [
+              1900305,
+              1900558,
+              1900560,
+              1903283
+            ]
+          },
+          "delivery_key": "schedule-delivery:f2e88f11a722eda10becf9898e52dc3edc288b430b50ad08506c6b862278f964",
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-09T13:19:15.112399Z",
+        "updated_at": "2026-10-09T13:19:17.415377Z"
+      }
+    }
+  ],
+  "approval_history": [
+    {
+      "id": "7589c795-099f-4193-8258-ae33efca991d",
+      "project_id": "f30-probe-r2",
+      "epic_run_id": "f30-epic-run-r2",
+      "task_run_id": "d2e3572e-a5d3-47b6-abe6-d3db4b0e7d57",
+      "kind": "task_approve",
+      "idempotency_key": "f30-operator-review:acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "APPROVED",
+        "decision": {
+          "version": 1,
+          "result": "APPROVED",
+          "context_id": "acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+          "summary": "Operator reviewed complete pinned diff, sources and independent passing tests. A meets Unicode/NFC/type/blank handling; B meets strict integer validation, negative/empty cases and input preservation. Only own module/tests changed. No merge authority for Worker.",
+          "verified_criteria": [
+            "Implement f30_names.clean_name(str): strip whitespace, normalize NFC, preserve Unicode.",
+            "Raise TypeError for every non-str and ValueError for empty/all-whitespace input.",
+            "Own meaningful unittest tests pass; commit only assigned files."
+          ]
+        },
+        "reviewer": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "task_commit": "c03a7f37b0193bc4de3b107e9ed240b72ab94413",
+        "epic_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+        "verification_id": "c13d8932-e45c-4f8b-85ff-7f6dc0cc8170",
+        "verification_key": "review-test:e8d2fc03-8161-4aaf-a2c2-a15ec0c16add",
+        "context_id": "acddef21c8785c7f4ff24d5516a4d22479236d2a31dc7df070311414425ef619",
+        "review_id": "7589c795-099f-4193-8258-ae33efca991d",
+        "review_number": 1
+      },
+      "error_code": null,
+      "created_at": "2026-10-09T13:16:36.110085Z",
+      "updated_at": "2026-10-09T13:16:36.648684Z"
+    },
+    {
+      "id": "2ce5a268-8f4c-4503-8002-6be0aef38cc3",
+      "project_id": "f30-probe-r2",
+      "epic_run_id": "f30-epic-run-r2",
+      "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+      "kind": "task_approve",
+      "idempotency_key": "f30-operator-review:a362ebdbed8b1f3e597f14443c77f7f8d4890cccacaedc223d1625166bd77e4c",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "APPROVED",
+        "decision": {
+          "version": 1,
+          "result": "APPROVED",
+          "context_id": "a362ebdbed8b1f3e597f14443c77f7f8d4890cccacaedc223d1625166bd77e4c",
+          "summary": "Operator reviewed complete pinned diff, sources and independent passing tests. A meets Unicode/NFC/type/blank handling; B meets strict integer validation, negative/empty cases and input preservation. Only own module/tests changed. No merge authority for Worker.",
+          "verified_criteria": [
+            "Implement f30_numbers.sum_even(list[int]): sum even integers including negatives; [] gives 0.",
+            "Require a list and strict int elements, reject bool/non-int; never mutate the input.",
+            "Own meaningful unittest tests pass; commit only assigned files."
+          ]
+        },
+        "reviewer": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "task_commit": "202722c582f96bab7d979d3315e43541a2a4f8ef",
+        "epic_commit": "a3d0aaff158b79b925e2fe96eb2b515a83e9f520",
+        "verification_id": "f20893b9-3035-43fc-99d3-210b045cdc2a",
+        "verification_key": "review-test:76fe2385-7a3b-4d39-b24c-1e912f44f753",
+        "context_id": "a362ebdbed8b1f3e597f14443c77f7f8d4890cccacaedc223d1625166bd77e4c",
+        "review_id": "2ce5a268-8f4c-4503-8002-6be0aef38cc3",
+        "review_number": 1
+      },
+      "error_code": null,
+      "created_at": "2026-10-09T13:16:41.467725Z",
+      "updated_at": "2026-10-09T13:16:41.991049Z"
+    },
+    {
+      "id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+      "project_id": "f30-probe-r2",
+      "epic_run_id": "f30-epic-run-r2",
+      "task_run_id": "1260a62a-163e-475d-b81d-2632f500323c",
+      "kind": "task_approve",
+      "idempotency_key": "f30-operator-review:1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "APPROVED",
+        "decision": {
+          "version": 1,
+          "result": "APPROVED",
+          "context_id": "1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+          "summary": "Fresh actual review after A integration: full unchanged B patch, same own source function/tests, actual F07 sync commit and new independent passing test against current A merge. Historical B approval is superseded; no stale approval merge.",
+          "verified_criteria": [
+            "Implement f30_numbers.sum_even(list[int]): sum even integers including negatives; [] gives 0.",
+            "Require a list and strict int elements, reject bool/non-int; never mutate the input.",
+            "Own meaningful unittest tests pass; commit only assigned files."
+          ]
+        },
+        "reviewer": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "task_commit": "42528a4c0765bd9d14f561dafc25d2b0b9defad8",
+        "epic_commit": "637bd2edffee9c8697596999b7655d2ca86a1457",
+        "verification_id": "0cdf4eba-3249-47fc-8952-175cb490904b",
+        "verification_key": "review-test:2db03435-c6a7-43de-8624-ea32768cdee9",
+        "context_id": "1f9e4bc70e490521b960bf66e3764d392ece6e55ebea2f7ebe6cc1cefe5f0c23",
+        "review_id": "ad529266-dcf3-4225-ac2e-37286e844f72",
+        "review_number": 2
+      },
+      "error_code": null,
+      "created_at": "2026-10-09T13:17:57.559026Z",
+      "updated_at": "2026-10-09T13:17:58.116959Z"
+    },
+    {
+      "id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+      "project_id": "f30-probe-r2",
+      "epic_run_id": "f30-epic-run-r2",
+      "task_run_id": "cd391903-0d04-4051-8699-bf5bd9a02763",
+      "kind": "task_approve",
+      "idempotency_key": "f30-operator-review:f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "APPROVED",
+        "decision": {
+          "version": 1,
+          "result": "APPROVED",
+          "context_id": "f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+          "summary": "Operator read complete current C patch, specifications, source contracts and passing independent tests after actual B integration. make_label imports and uses integrated A, preserves NFC/Unicode and propagates validation exceptions; C changed only its own module/tests. Existing A/B files unchanged.",
+          "verified_criteria": [
+            "Implement f30_labels.make_label(str): import and use f30_names.clean_name and return '[<clean name>]'.",
+            "Propagate A's TypeError/ValueError; preserve NFC/Unicode; never copy or modify A.",
+            "Own meaningful unittest tests pass; commit only assigned files."
+          ]
+        },
+        "reviewer": {
+          "actor_id": "f30-integration-r2",
+          "role": "Integration",
+          "project_id": "f30-probe-r2",
+          "epic_run_id": "f30-epic-run-r2",
+          "task_run_id": null
+        },
+        "task_commit": "77bd24ef2ed343ac3c489c29b663fbb696aac0d2",
+        "epic_commit": "78e28152649c6bb11d73532537dd8a81bce8d90d",
+        "verification_id": "4d02dfb3-ed26-44b1-b3a2-5639094eaab6",
+        "verification_key": "review-test:e0cd8b6f-183d-49ca-9244-43ca93468540",
+        "context_id": "f59269a38fc092e90f53802ac35159a756c11eb5b92e0bd9e9675103501e42d8",
+        "review_id": "c3648166-66ee-45fb-b2d7-c4170975e997",
+        "review_number": 1
+      },
+      "error_code": null,
+      "created_at": "2026-10-09T13:19:02.232542Z",
+      "updated_at": "2026-10-09T13:19:02.765369Z"
+    }
+  ],
+  "replay": {
+    "status": "PASS",
+    "operations_unchanged": {
+      "start_runtime": [
+        "cdd3bd8e-e22f-4aeb-a93c-767c312cff6f",
+        "77f4a53c-3664-4756-9dbd-b3b16c0993af",
+        "aa40a5f0-8db3-41d0-bf32-cdd192a34cb8"
+      ],
+      "dispatch_assignment": [
+        "209fdb8b-5199-402b-9369-870d91489891",
+        "8af07737-c3cb-4ca4-ba1a-98c817eb62fb",
+        "9c25ddb5-3e1c-4e0d-ac6b-611c3d41e564"
+      ],
+      "task_merge": [
+        "fb5d6d48-393b-4f19-bd4e-a340060b4182",
+        "f724c25f-44ef-4aa9-993e-62a664dab990",
+        "d75428a3-31c6-4020-bfd9-681a28b5e467"
+      ],
+      "task_delivery_test": [
+        "a7ff09f2-b2ed-44fb-af91-e68b1f41a5de",
+        "a05d008a-0bc2-4367-b850-b2a484b686f5",
+        "669fccde-752c-44f5-a396-35741ee22736"
+      ],
+      "stop_runtime": [
+        "73c0622d-442f-45dc-ad9b-1959fe8243b1",
+        "ab45a289-da71-4b99-b2dc-0cb0a4874ed0",
+        "d39f3fa9-1603-469d-bc03-ec585821ac3b"
+      ]
+    },
+    "task_runs_commits_sessions_unchanged": true,
+    "native_agents": []
+  },
+  "unrelated_board_unchanged": true,
+  "unrelated_board_baseline_sha256": "501ddfb2a2415ca8ed7d0f550a3a89d0ed92add7cb5e6651550340766b838249",
+  "original_attempt": {
+    "directory": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e07-f30/.herdr/probes/f30",
+    "project": "f30-probe",
+    "acceptance_pass": false,
+    "original_resources_preserved": true,
+    "original_server_running": false,
+    "old_cwd_processes": [],
+    "A_reservation_preserved": 1,
+    "B_stop_id": "1ce95ee8-0ad8-4eb9-aa55-4468912d1fec"
+  },
+  "test_servers_stopped": true,
+  "fixture_epic_status": "Active; main integration outside F30",
+  "limits": [
+    "Native observations are bracketed samples plus complete durable domain transition sequence, not an OS continuous monitor.",
+    "Original failed attempt remains preserved and is excluded from successful native proof; conservative original A reservation not rewritten.",
+    "Explicit human/operator reviews; no implicit approval or F47 recovery.",
+    "F38 sandbox/autonomy gate remains."
+  ]
+}

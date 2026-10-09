@@ -1182,13 +1182,13 @@ En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manue
 
 ### Epicacceptans
 
-- [ ] **E-07.A1:** Två oberoende tasks kan arbeta samtidigt och tredje task startar när en säker slot är ledig.
-- [ ] **E-07.A2:** Ett taskberoende blir körbart först efter granskad merge och godkända integrationskontroller.
-- [ ] **E-07.A3:** Samtidiga starter och integrationsförsök bryter inte workergräns eller review mot aktuell epic.
+- [x] **E-07.A1:** Två oberoende tasks kan arbeta samtidigt och tredje task startar när en säker slot är ledig.
+- [x] **E-07.A2:** Ett taskberoende blir körbart först efter granskad merge och godkända integrationskontroller.
+- [x] **E-07.A3:** Samtidiga starter och integrationsförsök bryter inte workergräns eller review mot aktuell epic.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
-**Leveransläge (2026-10-09):** F27 Done efter review a815f1b, taskmerge161d3f5 och172tester145.70s PASS. NästaF28. E07Active, egenacceptans0/3; två nativeWorkers/scheduling/samlatprov och mainintegration återstår.
+**Leveransläge (2026-10-09):** F27–F30 är granskade, taskintegrerade och native Done. F30 merge f267306/122 eftertester PASS samt verkligt två-Worker-prov med 15 överlappningar, 28 events, högst två reservationer och C efter A-Done. E07 egen acceptans 3/3 verifierad genom nativeprov och samtidighets-/aktuell-reviewtester. E07 kvar Active; Coordinator kör samlad verifiering och aktuell slutreview, öppnar PR och integrerar till main före sluttest/epic-Done. [F30-review](docs/reviews/F-30.md).
 
 ### Task F-27 Välj endast körbara tasks i rätt beroendeordning
 
@@ -1222,9 +1222,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-28 Reservera högst två aktiva Worker slots
 
-**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
 
-**Körbar:** Ja — F27 Done/granskad E07merge161d3f5/172testerPASS och E06 Done på main; inga ytterligare externa villkor.
+**Körbar:** Nej — granskad, integrerad och verifierad Done på E07.
 
 **Källa:** A §§17, 29–30, 41; W §§8, 10, 18, 26. **Berör:** Scheduler, slotpersistens, taskclaim.
 
@@ -1238,9 +1238,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-28.A1:** Tre samtidiga startförsök ger högst två reserverade aktiva Workers.
-- [ ] **F-28.A2:** Samma task kan inte äga två slots eller startas av två schedulervarv.
-- [ ] **F-28.A3:** Startfel och bekräftat sessionsavslut frigör rätt reservation; osäkert stopp frigör den inte.
+- [x] **F-28.A1:** Tre samtidiga startförsök ger högst två reserverade aktiva Workers.
+- [x] **F-28.A2:** Samma task kan inte äga två slots eller startas av två schedulervarv.
+- [x] **F-28.A3:** Startfel och bekräftat sessionsavslut frigör rätt reservation; osäkert stopp frigör den inte.
 
 **Verifiering:** Samtidiga serviceanrop mot temporär SQLite och kontrollerad runtime med långsam start och okänt stopp.
 
@@ -1248,11 +1248,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker-underlag F28 (2026-10-09):** Gemensam intern WorkerSlots-policy för F15/F11/F13, atomisk reservation i schema 2, max_workers 1–2 och unik run. Säker pre-runtime-release återanvänder samma run/intent/bas; efter startintent krävs F13:s faktiska stoppbevis. Motstridiga claims, felaktiga bindings, otillräckligt stopp och sänkt kapacitetsgräns spärrar ny start. På slutlig källa: `uv run --locked pytest tests/test_worker_slots.py tests/test_task_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_merge_service.py tests/test_task_selection.py tests/test_teamplayer_sync.py tests/test_mcp.py -x` — 227 PASS, 617.63 s, exit 0. De 19 slotproven använder konkurrerande serviceanslutningar, verklig temporär Git/SQLite och kontrollerad runtime/processobserver. Ruff/build/config CLI/diff, 51 exakta wheelmoduler, två rollpolicies och 100 dokumentlänkar PASS. Två felaktiga testantaganden om startordning respektive ändrad retry-timeout rättades utan svagare produktgrindar. Ingen native parallellitet eller full autonom sandbox påstås; F30/F38 återstår. [Kontrakt](docs/scheduling/F-28-slots.md). READY_FOR_REVIEW; Done kräver faktisk Integration-review, merge och eftertest.
 
+**Integration/slutleverans F28 (2026-10-09):** Full 12-filsreview cb4fd0dca7294879b5e0d1db399eb2ada31aeb37 mot f9ec93d4ec9a119dac8d3029aa80d61e8489fddd, 60203 bytes/SHA256 ce45b18b84d348ebb2764fe2225c54c4cd8fdf683f16b85ca303ab34e30cfdfe, APPROVED. Faktisk bootstrap-GitAdapter no-ff Task→Epic ba47a8a4bc465f51a57fb258ff3faef29a6f1340, operation 435f4dae-bea7-4f36-9725-f731a2842717, exakta parents och identiskt reviewtree. På faktisk merge: 98 slot/lifecycle/taskmerge/persistens/state-tester PASS, 183.04 s, exit 0; Ruff/build/config/diff/exakta wheelmoduler/rollpolicies/101 länkar PASS. Source och epic pushade, remote-SHA samt oförändrad main ec28744 återlästa. Native F28 Done v4/User105 verifierat; egen acceptans 3/3. E07 kvar Active, egen acceptans 0/3; F29–F30 och samlat native prov/mainintegration återstår. [Sparad review](docs/reviews/F-28.md). Nästa prioriterade task F29; ingen ändrad leveransordning.
+
 ### Task F-29 Driv scheduling och serialisera taskintegration
 
-**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `56b76e54-d870-452a-a477-4d4d4177260f`.
+**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `56b76e54-d870-452a-a477-4d4d4177260f`.
 
-**Körbar:** Nej — invänta F-28 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Nej — verifierad och integrerad i E07; tasken är Done.
 
 **Källa:** A §§17–18, 21, 29, 41; W §§23–28. **Berör:** Schedulerloop, mergekö, status/events.
 
@@ -1260,23 +1262,31 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Arbetsinstruktion för Codex:** Implementera deterministisk service-loop för start, observation, reviewkö och påfyllnad efter avslut. Serialisera merge per epic och verifiera tasken mot den epicversion som gäller vid integration. Pausa berört arbete vid fel utan att starta samma task på nytt.
 
+**Start/precisering F29 (2026-10-09):** User105/Write och samtliga native beroenden Done verifierade; F28 Done v5 efter granskad E07-merge ba47a8a/98 eftertester, E06 Done på main. Integration plockar F29; separat task/e07-f29 från aktuell E07 c4d789e genom bootstrap-GitAdapter utan adopterade produkt-runs. En begränsad async service-tick observerar egna registrerade runs, driver start/rapport/review/leverans/statussynk och fyller säkra lediga slots från nytt F27-urval. Ingen långlivad agent eller implicit autonom drift införs före E09/F38. Betrodd operatörskomposition registrerar fullständiga specs, native UUID-bindings, tidigare epicbevis, runtime och reviewkonfiguration. Claim återvaliderar full körbarhet inom samma Gitlås/SQLite-transaktion som F15:s beständiga ägarskap/slot; claimbevis sparas före Git/runtime. Ny boardläsning och F25:s autentiserade bindning/CAS-synk kontrollerar tilldelning/kontrakt före fortsatt start. Ingen atomisk transaktion över TeamPlayer/Git/SQLite påstås. Projektets schedulerlås serialiserar ticks och F21:s befintliga lås/deliveryintent serialiserar faktisk integration även mot andra serviceanrop. Stabil journal per task/handoff/context återanvänder kända sidoeffekter efter upprepade events/omstart. Review sker seriellt mot aktuell epic, aldrig automatiskt godkänt av scheduler: befintliga reviewverktyg eller en betrodd operatörsfunktion lämnar versionsbundet beslut. Enbart ändrad epicbas kan ogiltigförklara befintlig approval och återköa samma oförändrade verifierade task genom en intern, faktakontrollerad övergång APPROVED→READY_FOR_REVIEW; historiken och slot/session bevaras, ny full review/test krävs. Ändrad taskkod, konflikt, okänt test/start/stopp och andra fel pausar berört pipeline-steg med beständig orsak; ingen ersättningsrun, blind omstart eller nytt testförsök gissas. TeamPlayer-synkfel återförsöker enbart synk när lokal leverans redan är verifierad. Manuell utvecklingsbootstrap adopteras inte; kontrollerade Worker-scenarier med riktig Git/SQLite/MCP provas här, native tre-taskprov i F30.
+
+**Kontrakt för parallella rapporter F29 (2026-10-09):** Det verkliga två-Worker-serviceprovet visade F16:s tidigare en-Worker-begränsning: B:s native slutcommit saknar A:s senare epicmerge och kan därför inte ge ett aktuellt reviewunderlag före F18:s synk. Worker-rapport/test använder nu en separat läsande källsnapshot mot F05:s verifierade taskbas eller senaste faktiska F07-synks source/epiccommit. Exakta branch/path/source/base, ren Git, original native rapportproveniens och testsresultat krävs fortfarande. Verifieringsjournalen märks purpose=worker_report/source_base_commit och saknar aktuellt review-target; den kan inte användas för approval eller leverans. F18 synkar därefter till aktuell epic och kör nytt test på exakt aktuellt task/epic-par före F20/F21. Ingen native rapportcommit skrivs om eller fabriceras. F25:s dependencybindning läser unika registrerade runs inom samma projekt även för tidigare epics; F27:s faktiska main-/acceptansbevis krävs före sådan claim. Scheduler äger en beständig Integration-principal per produkt-epic, förhöjer ingen roll och kräver tidigare Coordinator-bindning/start. MCP task_schedule aktiveras endast genom explicit betrodd Python-komposition och tar bara project/epicrun, inte specs, beslut, roller, slots eller återförsöksbooleans. Om en synk återstår efter verklig leverans återförsöks enbart F25-synken; Git/runtime/test upprepas inte.
+
+**Worker-underlag F29 (2026-10-09):** Beständig begränsad TaskSchedulerService och operatörsaktiverat MCP task_schedule levererade. Full F27-graf återvalideras i F15-claimtransaktionen före Git/runtime; F25-bindning/CAS och färska boardläsningar före start. Projektlås och F21 serialiserar aktuell review/merge; ingen rollförhöjning, automatisk approval eller bootstrapadoption. Worker-källtest skiljs från aktuellt reviewpar för parallella rapporter. Stabila task/handoff/context/deliveryjournaler, pause med konkret orsak och enbart synk-retry efter lokal Done. Slutlig källa: `uv run --locked pytest tests/test_task_scheduler.py tests/test_states.py tests/test_task_start.py tests/test_git_integration.py tests/test_worker_report_service.py tests/test_task_review_service.py tests/test_task_changes_service.py tests/test_task_approval_service.py tests/test_task_merge_service.py tests/test_task_selection.py tests/test_teamplayer_sync.py tests/test_mcp.py -x` — 323 PASS, 918.98 s, exit 0. Nio schedulerprov visar A/B, C efter A, aktuell B-review, repeat/reopen/lås/identitet, riktig SDK-MCP, ägarrace, äldre approval, ändrad taskkod, testfel, osäkert stopp och förlorat synksvar; verklig Git/SQLite/testprocesser med kontrollerade board/runtime/process-/beslutsadaptrar. Ruff/build/config/diff, 52 exakta wheelmoduler, två rollpolicies och 119 lokala länkar PASS. F27:s befintliga låsta grafkropp har identisk AST efter refaktorering. Native parallellitet och autonom miljögate återstår i F30/F38. [Drift och kontrakt](docs/scheduling/F-29-scheduler.md). READY_FOR_REVIEW; Done kräver faktisk Integration-review/merge och eftertest.
+
 **Resultat och kontrakt:** Loopen är servicebaserad i fas 7; den långlivade Integration Agent tar besluten via verktygen i E-09. Två arbetande tasks kan producera resultat samtidigt men endast en leveransmerge åt gången. Ändrad epic ogiltigförklarar ett äldre godkännande.
 
 **Acceptans**
 
-- [ ] **F-29.A1:** När task A avslutas startar nästa körbara task i frigjord slot utan manuell tilldelning.
-- [ ] **F-29.A2:** Två samtidiga taskresultat integreras seriellt och task B verifieras mot epic efter A.
-- [ ] **F-29.A3:** Ett upprepat eventsvar eller schedulervarv ger ingen dubbel Worker, review eller merge.
+- [x] **F-29.A1:** När task A avslutas startar nästa körbara task i frigjord slot utan manuell tilldelning.
+- [x] **F-29.A2:** Två samtidiga taskresultat integreras seriellt och task B verifieras mot epic efter A.
+- [x] **F-29.A3:** Ett upprepat eventsvar eller schedulervarv ger ingen dubbel Worker, review eller merge.
 
 **Verifiering:** Serviceintegration med två kontrollerade Workers, samtidigt färdigställande och förändrad epiccommit.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
+**Integration/slutleverans F29 (2026-10-09):** Full 19-filsreview 6b59c3a01017a84bf15d1dd01189b89401836675 mot c4d789ee5a0319eb3a3fc79dccd15ad7641e45e0, 129575 bytes/SHA256 4108449f73fae3a3c0bea0b1c4610f7c926aaab2249aabe6415585c1d1340bc0, APPROVED. Faktisk bootstrap-GitAdapter no-ff Task→Epic 66f381e4c4654701e5c755e580c9fe6ddfb367ed, operation 3a8a348f-23cc-4639-a91a-c317767c8f96, exakta parents och identisk granskad tree. På faktisk merge: 103 scheduler/state/approval/taskmerge/slot-tester PASS, 339.71 s, exit 0; Ruff/build/config/diff/52 exakta wheelmoduler/två rollpolicies/120 länkar PASS. Source och epic pushade och remote-SHA återlästa; main ec28744 oförändrad. Native F29 Done v5/User105 återläst; taskacceptans 3/3. E07 kvar Active, egen acceptans 0/3 inför F30:s native prov och samlad slutreview/mainintegration. [Sparad review](docs/reviews/F-29.md). Nästa prioriterade task F30; ingen ändrad ordning.
+
 ### Task F-30 Verifiera tre tasks med två parallella Workers
 
-**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `5618ec4b-f817-4789-b45c-284e29199936`.
+**Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `5618ec4b-f817-4789-b45c-284e29199936`.
 
-**Körbar:** Nej — invänta F-29 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Nej — granskad, integrerad och verifierad Done i E07.
 
 **Källa:** A §§41, 48; W §§8–10, 23–28. **Berör:** Integrationsscenario, driftinstruktion.
 
@@ -1284,17 +1294,29 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Arbetsinstruktion för Codex:** Bygg en liten testepic med A och B oberoende samt C beroende av integrerad A. Kör serviceflödet med två Workers, review och taskmerge. Samla tidslinje, slotreservationer, commits och Kanbanförändringar.
 
+**Start/avgränsning F30 (2026-10-09):** Integration verifierade User105/Write, F29 Done v6 efter granskad E07-merge 66f381e/103 eftertester och samtliga native beroenden Done; E06 finns verifierad på main. task/e07-f30 från aktuell E07 6c711d5 genom bootstrap-GitAdapter, inga produkt-runs adopterade. Separata F30-native test-ID:n, egen databas/provjournal och uttryckligt namngiven Herdr-server. Återanvänd den tidigare faktiskt godkända ofarliga F26-reporoten; bevara dess main, gamla branches/worktrees/provjournaler och skapa nya faktiskt F05-ägda F30-resurser utan adoption. En registrerad test-Coordinator förbereder nya epicens AGENTS/README-regler före taskstart så gamla F26-prefixinstruktioner inte gäller F30. A/B är oberoende små funktioner, C använder granskad/integrerad A. F29:s tick väljer/startar/levererar/synkar tasks; operatören ger aktuella faktiska reviews, ingen manuell scheduling eller implicit approval. Samla SQLite-events, operationer, exakta source/target/review/merge/test/stoppbevis, native session/process/worktree samt överlappande working-observationer och skyddad full boardbaslinje. Kontrollera högst två reservationer vid varje domänövergång och observerad native snapshot, samt A-Done/merge/test före C-claim. Fixture-epicen förblir Active efter task-Done eftersom detta prov inte omfattar dess mainintegration/E10. F38:s autonomi-/miljögate kvarstår. Native fixture-skrivningar sker i separat provoperatörsroll efter granskad harness, aldrig som utvecklingens Worker-roll.
+
+**Avstämning/precisering F30 (2026-10-09):** Första lokala F05-förberedelsen skapade faktiskt ägd PLANNED epic och seed cb1d80f2739d8b8c89391dbdeed91d76d056db48 ovanpå oförändrad tidigare fixturemain d4215a26. Harness använde fel metadata-API för current_commit; strikt StateStore avvisade uppdateringen och ingen native task/Worker eller TeamPlayer-fixture hade ännu skapats. Bevara samma Git/DB och avsluta endast känd saknad checkpoint efter ägar-/branch/path/bas/parent/full-diff-kontroll; kör inte prepare eller commit igen. Samma API-användning i F29:s interna approval-requeue rättas inom F30:s verifieringsscope: verifierade commitfält går via update_run_metadata, runtimefält via update_runtime_metadata. Ett konkret serviceprov med ändrad faktisk epic-HEAD före metadataavstämning ska kräva ny review och behålla samma task/session/slot; detta ändrar inga acceptanskriterier och ger ingen ny runtime- eller mergebehörighet.
+
+**Native första försök/nytt avgränsat prov (2026-10-09):** Första försöket `.herdr/probes/f30` är underkänt och bevaras. A:s native Codex-start tog emot assignmenttransport medan en uppdateringsdialog var aktiv, körde updater och avslutades före verifierad ACK/session; F29 pausade säkert utan omstart. B implementerade men ACK-deadline löpte ut under operatörens felsökning; ingen taskmerge eller Done registrerades. B stoppades och parkerades faktiskt genom F13; A:s gamla reservation behålls konservativt, utan fabricerad stopprecovery. Efter kontroll av egna agents/processer stoppas endast den egna första testservern. Ett nytt sekventiellt F05-prov med egen `.herdr/probes/f30-r2`, nya lokala project/epic/run/branch/worktree-ID:n och ny namngiven server använder samma godkända reporot och samma tre externa fixture-ID:n som fortfarande är Pending. Ingen extern rollback, ersättning av task-ID eller adoption av gamla runs. Native startup-preflight granskar synlig UI och avfärdar bara kända frivilliga banners; erbjudande om update/trust/approval får inte besvaras av assignmenttransport. Scheduler drive fortsätter observera ACK inom ursprunglig deadline även om en annan task pausas. F47-recovery införs inte här. Det nya provet måste fortfarande själv styrka samtliga F30-kriterier; det gamla får aldrig räknas som lyckad parallellitet.
+
 **Resultat och kontrakt:** Minst två Worker-intervall ska överlappa så att provet visar verklig parallellitet. C får starta först efter A:s granskade integration och verifiering. Epic-slutreview och main-merge tillkommer i E-10.
 
 **Acceptans**
 
-- [ ] **F-30.A1:** A och B arbetar samtidigt i olika worktrees och C tar ledig slot efter godkänd A-integration.
-- [ ] **F-30.A2:** Alla tre tasks blir Done med rätt commits och testunderlag utan manuell scheduling.
-- [ ] **F-30.A3:** Ingen tidpunkt visar fler än två aktiva/reserverade Workers eller merge mot stale approval.
+- [x] **F-30.A1:** A och B arbetar samtidigt i olika worktrees och C tar ledig slot efter godkänd A-integration.
+- [x] **F-30.A2:** Alla tre tasks blir Done med rätt commits och testunderlag utan manuell scheduling.
+- [x] **F-30.A3:** Ingen tidpunkt visar fler än två aktiva/reserverade Workers eller merge mot stale approval.
 
 **Verifiering:** Verkligt Herdr/Codex- och TeamPlayer-prov samt maskinellt kontrollerad tidslinje från events.
 
+**Verifierat nativeprov F30 (2026-10-09):** [drift/prov](docs/scheduling/F-30-nativeprov.md)/[publicproof](docs/scheduling/F-30-prover.json). Verklig Herdr0.9.3/protokoll22, Codex0.162.0, Git/SQLite/TeamPlayer: 15 bracketade A/B-working-overlap, olika worktrees/sessioner/processer, 28 domänövergångar med högst två reservationer. F29 väljer/startar alla tre; C:s slot1/claim efter faktisk granskad A-Done/merge637bd2e/test/stop. Fyra explicit faktiskt granskade approvals; gammal B-approval mot seed a3d0aaff återköad efter A-merge, ny full review och samma B-session/slot innan merge78e2815. C efter aktuell review mergad6308fb6. Oberoende tester på source/aktuell target/merge och F13-fysisk stop före varje Done; native tasks Done v10/v11/v8, User105; separat fixtureepic840d61d5 Activev5, dess mainintegration ingår inte. Fixturmain d4215a26 och gamla refs/worktrees oförändrade; full F24-baslinje för övriga boardobjekt exakt oförändrad vid export. Extra scheduler-tick skapade inga runtime/assignment/merge/leveranstest/stopp och behöll runs/sessioner/commits; egna testservrar stoppade efter faktisk inaktivitet, journaler bevarade. Första underkända försöket bevaras och ingår inte i lyckad acceptans. Metadataregression34PASS/86.84s, F29-staleapprovaltest1PASS/24.53s, timeline/startup18PASS/0.85s. F30.A1–A3 faktiskt verifierade; utvecklings-F30 fortsatt Active inför egen full review/Task→Epic/integrationskontroller. F38 och F47 framställs inte som levererade.
+
+**Slutlig källverifiering F30 (2026-10-09):** `uv run --locked pytest tests/test_task_approval_service.py tests/test_task_scheduler.py tests/test_f30_timeline.py -x` — 49 PASS/197.13s/exit0. Ruff, build, config-CLI och diffcheck PASS; 52 Pythonmoduler och två rollpolicies i wheel exakt mot källan, 106 berörda lokala länkar PASS. Publicproof kontrollerad mot faktiska Git-parents, approval-source/target, post-mergetest och stopp. Worker lämnar READY_FOR_REVIEW från task/e07-f30; task-Done kräver fortfarande Integration-review/Task→Epic/eftertester.
+
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Integration/slutleverans F30 (2026-10-09):** Full åttafilsreview source1ad07aa39965ccc61c672348eb956f2c51d699da mot aktuellE07 6c711d5a43cc7c80506cb81593b601ec0ec6b31c,135906bytes/SHA2568e554cea962be09f78024931a94808ab4f37ef50755ae0e0629f9198dc592413 APPROVED. Faktisk bootstrap-GitAdapter no-ff Task→Epic f26730670cd36647e8ed62bcd7754011b474b77c,operation9da3c5db-e0c2-4d21-9790-c74e7e32a7a8; exakta parents och identisk granskad tree. På faktisk merge: `uv run --locked pytest tests/test_task_scheduler.py tests/test_states.py tests/test_task_approval_service.py tests/test_task_merge_service.py tests/test_worker_slots.py tests/test_f30_timeline.py -x` — 122 PASS/348.57s/exit0. Ruff/build/config/diff/exakta52wheelmoduler/tvårollpolicies/106länkar PASS; publicfiler kontrollerade mot aktuella privata header-/bearervärden utan läckage. F30.A1–A3 uppfyllda; native utvecklingstask Donev8/User105 återläst. E07 egen acceptans3/3 från nativeprov och samtidighets-/aktuell-reviewgrindar, fortsattActive inför samlad slutreview/PR/mainintegration. Manuella bootstrapworktrees integreras efter faktisk review/path/branch/bas/SHA-kontroll utan adopterade produkt-runs. [Sparad review](docs/reviews/F-30.md). Nästa steg är samlad E07-leverans; F31 startas först efter verifierad E07-Done på main.
 
 ## Epic E-08 Parkera blockerade tasks och återuppta samma arbete
 
@@ -2006,11 +2028,11 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | F27Done/merge161d3f5/172PASS; F28 nästa. Epicacceptans/mainintegration återstår. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 3/3 | E-06 Done på main | F27–F30 Done; native/122 eftertester PASS. Samlad review/PR/main/sluttest återstår. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
-| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Active | Ja | 0/3 | E-06, F-27 | Pågår i task/e07-f28 frånf9ec93d; atomiska1/2slots, säkerrelease/start-resume-race. |
-| 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
-| 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Review cb4fd0d/merge ba47a8a; 98 eftertester PASS; docs/reviews/F-28.md. |
+| 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
+| 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Nej | 0/3 | E-07, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

@@ -12,7 +12,7 @@ Sessions-/turn-/item-ID, meddelandehash och uppdragsoperation sparas. Kort legac
 
 ## Git och tester före READY
 
-F-05 verifierar worktreeägare och branch. F-06 kräver full stabil diff, aktuell full HEAD som rapportens commit, korrekt epicbas, rent Git-arbetsläge och inga dolda indexflaggor. Angivna filpaths jämförs med faktisk diff; observerade filer sparas separat. Rapportens misslyckade testpåstående avvisas.
+F-05 verifierar worktreeägare och branch. En full stabil källsnapshot kräver aktuell full HEAD som rapportens commit, verifierad taskbas, rent Git-arbetsläge och inga dolda indexflaggor. Angivna filpaths jämförs med faktisk diff; observerade filer sparas separat. Rapportens misslyckade testpåstående avvisas. [F29](../scheduling/F-29-scheduler.md) skiljer denna Worker-källa från aktuell epicreview: basen är F05-taskbas eller senaste faktiska F07-synks inkommande epiccommit. Detta låter B rapportera originalcommiten efter A:s senare epicmerge. F18 synkar och testar sedan det aktuella reviewparet.
 
 Operatören måste ange testkommandot som argv i sin lokala TOML för **målrepositoryt**:
 
@@ -24,7 +24,7 @@ worker_test_timeout = 300
 
 Välj målprojektets dokumenterade kommando; inget shell används och Worker-rapportens kommandon exekveras inte. F-07:s verifiering kör operatörens kommando och kontrollerar SHA/worktrees före och efter. Miljön begränsas till PATH, LANG och PYTHONDONTWRITEBYTECODE: orchestratorns token-/GIT-/PYTHON-miljö ärvs inte. Kommando och denna miljö binds i verifieringshashen. Full filesystem-/processisolering av Worker och körd taskkod krävs fortsatt i F-17; miljöbegränsningen ensam bevisar inte den.
 
-Rapportintent sparas före testerna. Native rapport och Git läses igen efter tester; ändrad rapport/HEAD/epicbas eller icke godkänd testoperation ger ingen READY. Ett atomiskt state-event och lyckad handoff sparar faktisk commit/epicbas, testoperation, argv, exitkod och Git-filer. Tasken blir READY_FOR_REVIEW/Kanban Active, håller slot/session och får varken merge eller Done.
+Rapportintent sparas före testerna. Native rapport och Git läses igen efter tester; ändrad rapport/HEAD/källbas eller icke godkänd testoperation ger ingen READY. Ett atomiskt state-event och lyckad handoff sparar faktisk commit/källbas, observerad epiccommit, testoperation, argv, exitkod och Git-filer. Verifieringen märks purpose=worker_report/source_base_commit och saknar aktuellt review-target; den kan inte användas för approval. Tasken blir READY_FOR_REVIEW/Kanban Active, håller slot/session och får varken merge eller Done.
 
 ## Blockerare och recovery
 

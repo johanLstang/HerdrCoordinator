@@ -326,3 +326,23 @@ CLAIMED/STARTING och review/fix. Osäkert start-/stopputfall behåller reservati
 Verifierat fel före varje runtimeintent kan frigöra en ännu aldrig startad run;
 annars krävs F-13:s verkliga stoppbevis. Testläge med `max_workers = 1` stöds.
 Se [persistens, race och recovery](docs/scheduling/F-28-slots.md).
+
+## Scheduling och seriell integration (F29)
+
+`TaskSchedulerService.tick` driver ett begränsat servicevarv för en uttryckligt
+registrerad Integration/epic: nytt körbarhetsurval, beständig claim, start och
+observation, aktuell review, seriell leverans och påfyllnad av ledig säker slot.
+Approval kräver ett faktiskt beslut; standardläget väntar på review. Upprepning
+återanvänder journalerna och synkfel efter leverans upprepar bara TeamPlayer-synk.
+Operatörens Python-komposition kan exponera MCP `task_schedule`; CLI aktiverar
+ingen implicit loop. Se [kontrakt och drift](docs/scheduling/F-29-scheduler.md).
+
+## Verkligt prov med två Workers (F30)
+
+Det avgränsade nativeprovet visar 15 överlappningar för A/B, C-start efter
+granskad A-leverans, högst två reservationer och tre verifierade Done-tasks.
+Schemaläggaren driver taskflödet; aktuella reviewbeslut ges uttryckligen.
+Äldre B-approval återköades efter A-merge och krävde ny review. Replay skapade
+ingen extra Worker eller merge. Se [prov och driftinstruktion](docs/scheduling/F-30-nativeprov.md)
+och [maskinföljbart underlag](docs/scheduling/F-30-prover.json), inklusive det
+bevarade underkända första försöket och F38:s kvarvarande autonomigate.
