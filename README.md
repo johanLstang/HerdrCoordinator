@@ -365,3 +365,9 @@ och [faktiska nativebevis](docs/attention/F-31-prover.json).
 [faktiskt samma-session-prov](docs/attention/F-32-prover.json).
 Integration sparar explicit input och återupptar samma Worker först med ledig slot;
 Active kräver korrelerad native bekräftelse av svaret.
+
+## Samlat native Attentionprov (F33)
+
+[Scenario och operatörsinstruktion](docs/attention/F-33-nativeprov.md) beskriver
+A:s parkering, B/C:s leveranser, sparat beslut vid fulla slots och begränsad
+samma-session-resume. Aktuella explicita reviews och verkliga services krävs.
