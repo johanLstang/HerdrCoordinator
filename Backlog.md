@@ -1353,8 +1353,8 @@ En blockerad task syns i Attention, frigör kapacitet och fortsätter i samma se
 ### Epicacceptans
 
 - [x] **E-08.A1:** Blockerarrapport med konkret orsak och inputbehov ger Attention och bekräftat parkerad session.
-- [ ] **E-08.A2:** En annan körbar task använder frigjord slot medan den första väntar.
-- [ ] **E-08.A3:** Samma Worker återupptas med sparat beslut utan att workergränsen överskrids.
+- [x] **E-08.A2:** En annan körbar task använder frigjord slot medan den första väntar.
+- [x] **E-08.A3:** Samma Worker återupptas med sparat beslut utan att workergränsen överskrids.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
@@ -1438,9 +1438,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-33 Verifiera att Attention inte stoppar andra tasks
 
-**Epic/fas/prioritet:** E-08 / 8 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `f7a0c038-4f49-48d0-ba09-fbca7bfe0e92`.
+**Epic/fas/prioritet:** E-08 / 8 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `f7a0c038-4f49-48d0-ba09-fbca7bfe0e92`.
 
-**Körbar:** Ja — F32 granskad/integrerad/Done på E08, E07 Done på main; skapa avgränsat fullständigt native-Attentionprov.
+**Körbar:** Levererad — granskad Task → E08, nativeacceptans och eftertester verifierade; TeamPlayer Done återläst.
 
 **Källa:** A §§42, 48; W §§16–18, 22, 27. **Berör:** Integrationsscenario, operatörsinstruktion.
 
@@ -1463,15 +1463,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-33.A1:** B och C kan leverera medan A är parkerad och Attention.
-- [ ] **F-33.A2:** A:s sparade svar leder till samma-session-resume först när en slot är ledig.
-- [ ] **F-33.A3:** Samtliga tasks kan senare bli Done utan förlorade worktrees, dubbla Workers eller fler än två aktiva.
+- [x] **F-33.A1:** B och C kan leverera medan A är parkerad och Attention.
+- [x] **F-33.A2:** A:s sparade svar leder till samma-session-resume först när en slot är ledig.
+- [x] **F-33.A3:** Samtliga tasks kan senare bli Done utan förlorade worktrees, dubbla Workers eller fler än två aktiva.
 
 **Workerunderlag F33 (2026-10-09):** Ny explicit avgränsad operatorharness, negativ tidslinje-/boardvalidator, maskinföljbara faktiska nativebevis och operatörsinstruktion levereras. R2 verkligt PASS: Aparkstop98505af4, fullslots B2/C1 och sparad input921217b8 WAITING_RESUME utan native resume; Bmerge278e2b0a/Done7 och Cmergec300ee7a/Done7 medan A PARKED/NeedsInput; därefter F29 driver faktisk F13resumea6b30a1a i samma SID01a12174-220e-7d90-8b86-fe9362c6167f/branch/worktree, Active först efter korrelerad ACK. Afullreview141785aa mot c300ee7a, merge3f8326b3/eftertestfa6407ab/fysiskstop48d1a431/Done10. 78 tillgängliga native observationer inklusive12 B/C-Working-överlappningar med A parkerad,1 otillgänglig redovisad, max2 reservationer/native Workers. Tre exakta aktuella reviews/mergeparents/eftertester/stopp, original-/gamla resurser och fixture-main bevarade. Activeinputreplay ingen extra effekt; färdig taskresume INPUT_SCOPE_DENIED; scheduler-replay treDone utan ny merge. Separat kontrollerad validator-/startupgrind51 PASS1.16s/exit0. Första exportkontroll flaggade känd behörig utvecklings-F33-textsynk v3→v4; exakt UUID/versionspar/text-hash-manifest tillåter bara den redan utförda textändringen och inga status/owner/scopeändringar. Nativefixtureepic61b8f12d Active, ingen mainintegration. [Scenario och resultat](docs/attention/F-33-nativeprov.md), [faktiska bevis](docs/attention/F-33-prover.json). Utvecklings-F33 kvar Active inför full source-review, Task→E08 och eftertester; E08 fortfarande Active inför samlad slutleverans.
 
 **Verifiering:** Verkligt Herdr/Codex/TeamPlayer-scenario med tidslinje, ID-jämförelse och verifierade merge-SHA.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Slutleverans F33 (2026-10-09):** Bootstrap Integration APPROVED source `73a9f9a4a528906628a7871a1d0d7837e391cc4e` mot epic `afc71c730bedf52fedf2faa2ece4c9172493a0c8`; komplett sju-filsdiff 343665bytes/SHA256 `151ef5d6a4013ac75eeb307e630627c87850c08b2eef6dc1ea2e318db4c77817`. Kod/test/prosa helt lästa; genererade publika fält semantiskt jämförda mot full faktisk export, SQLite-operationer och riktiga Gitparents. Faktisk no-ff-merge `20a692b5a5f9ae31bc816b31eee7688ecafe2973`, operation `3ffe434b-3d2f-434e-aec9-0fe041720d8c`, exakta parents/identisk tree verifierade. Merge lyckades före felaktig assertion av GitAdapters None-returvärde; resultat återläst, ingen dubbelmerge. På faktisk merge: `uv run --locked pytest tests/test_f33_timeline.py tests/test_f30_timeline.py -x` —51 PASS1.23s/exit0; Ruff/build/README-configCLI/diff PASS. Faktiskt native r2/fullslots/input/sammaSID/tre Done/replay/max2 styrker F33.A1–A3 och E08.A2–A3; 78 native observationer/12 B+C Working-överlappningar/1 otillgänglig öppet redovisad. Första underkända försöket bevarat, båda egna F33-servrar stoppade efter fysisk inaktivitet. Utvecklings-F33 Donev6/User105 återläst; E08 fortsatt Active, egenacceptans3/3 inför samlad slutreview/PR/mainmerge/sluttester. Manuella utvecklingsworktrees adopterades inte som produktruns. [Review och integration](docs/reviews/F-33.md).
 
 ## Epic E-09 Låt en långlivad Integration Agent driva en epic
 
@@ -2084,10 +2086,10 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Ursprunglig review/merge+CLI-korrektion7a08f25/merge9ab9252/15PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
-| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 1/3 | E-07 Done på main | F31/F32 Done; egenacceptans1/3, F33 nästa. EpicActive tills samlad mainleverans. |
+| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 3/3 | E-07 Done på main | F31–F33 Done; nativeacceptans3/3. EpicActive inför samlad review/PR/mainmerge/sluttester. |
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Ja | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone5. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Done | Ja | 3/3 | E-07, F-31, X-01, X-02 | APPROVEDb749663→fa400198, merge04fb88ea;37 eftertester/gates/native input/ACK/replay+fixtureDone PASS; TeamPlayerDone6. |
-| 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Active | Ja | 0/3 | E-07, F-32, X-01, X-02 | Plockad InProgressv2 från afc71c7; nytt native A Attention/B+C/fullslots/sparat svar/sammaSID/treDone, explicita aktuella reviews. |
+| 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Done | Ja | 3/3 | E-07, F-32, X-01, X-02 | APPROVED73a9f9a→afc71c7, merge20a692b;51 eftertester/gates/native fullslots+treDone PASS; TeamPlayerDone7. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Planned | Nej | 0/3 | E-08, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Planned | Nej | 0/3 | E-08, F-34, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
