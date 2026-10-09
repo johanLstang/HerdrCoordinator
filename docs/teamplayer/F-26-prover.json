@@ -1,0 +1,67 @@
+{
+  "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "userId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "epicId": "f74e4cbb-e4e6-4644-9704-baba8e79bca3",
+  "taskId": "88460303-7eb4-4811-8f74-d5f5caa4dc12",
+  "localRunId": "195d1ed1-052f-48e3-ac3b-34a2bbee2a54",
+  "sessionId": "01a11ff3-8f54-7b70-893e-8a5a30f2f5e6",
+  "taskSequence": [
+    "Pending",
+    "InProgress",
+    "NeedsInput",
+    "InProgress",
+    "Done"
+  ],
+  "epicSequence": [
+    "Pending",
+    "InProgress",
+    "Done"
+  ],
+  "physicalStopBeforeSlotRelease": true,
+  "sameSessionBranchWorktree": true,
+  "taskCommit": "079b6f25616c81c30b59ba685087d8a821cade40",
+  "taskMergeCommit": "7197a73b183bd3613968a8fac534c20e8bd56413",
+  "epicMergeCommit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "mainCommit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "taskParents": [
+    "423eaf84507719680b15461d07835541e25cd2f9",
+    "079b6f25616c81c30b59ba685087d8a821cade40"
+  ],
+  "epicParents": [
+    "423eaf84507719680b15461d07835541e25cd2f9",
+    "7197a73b183bd3613968a8fac534c20e8bd56413"
+  ],
+  "oneTaskMerge": true,
+  "oneResume": true,
+  "fourUniqueHistoryEvents": true,
+  "closedTransportPending": {
+    "status": "PENDING",
+    "operation_id": "2f125089-7b54-4054-9869-ad4238e100e5",
+    "reason": "TEAMPLAYER_WRITE_OUTCOME_UNKNOWN"
+  },
+  "reconnectSucceeded": true,
+  "unrelatedBoardItemsUnchanged": true,
+  "trackingWorkflowException": {
+    "taskId": "1626d7a9-387d-47cd-b20b-86cb2a9f0613",
+    "fields": [
+      "status",
+      "version",
+      "description"
+    ],
+    "reason": "Parent development task records actual approval blocker and progress",
+    "allOtherFieldsUnchanged": true
+  },
+  "productFixtureWritesOnlyBoundIds": true,
+  "fixtureWriteAttempts": 10,
+  "attempt": 2,
+  "abandonedStartPreserved": true,
+  "otherBoardDigest": "640d07437b6b07d052773d86fd0be335575348ce24eff410aba437fe3b380dc3",
+  "nativeTaskVersion": 9,
+  "nativeEpicVersion": 4,
+  "manualOperatorSteps": [
+    "prefix input notification",
+    "current task/epic review",
+    "actual final-test Done record"
+  ],
+  "limitations": "Bounded fixture; agent loop and F38 OS-autonomy remain future work"
+}
