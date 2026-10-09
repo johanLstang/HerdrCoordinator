@@ -22,10 +22,12 @@ def launch(tmp_path):
     return config, principal
 
 
+@pytest.mark.parametrize("max_workers", [1, 2])
 def test_operator_explicit_cli_session_constructs_scoped_service_without_starting_runtime(
-    launch, monkeypatch
+    launch, monkeypatch, max_workers
 ):
     config, principal = launch
+    config.write_text(config.read_text() + f"max_workers={max_workers}\n")
     constructed = []
 
     # Controlled constructor; this is CLI wiring, not a live HERDR_ENV proof.
@@ -35,7 +37,7 @@ def test_operator_explicit_cli_session_constructs_scoped_service_without_startin
 
     async def serve(service):
         assert service.actor.role == Role.INTEGRATION
-        assert service.task_start.settings.max_workers == 1
+        assert service.task_start.settings.max_workers == max_workers
         assert service.store.get_runs() == []
 
     monkeypatch.setattr("orchestrator.adapters.herdr.HerdrAdapter", adapter)
