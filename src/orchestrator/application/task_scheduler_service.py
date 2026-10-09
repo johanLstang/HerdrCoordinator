@@ -11,12 +11,14 @@ from pydantic import ValidationError
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.task_approval_service import TaskApprovalError, TaskApprovalService
+from orchestrator.application.task_attention_service import AttentionError, TaskAttentionService
 from orchestrator.application.task_changes_service import TaskChangesError, TaskChangesService
 from orchestrator.application.task_merge_service import TaskMergeError, TaskMergeService
 from orchestrator.application.task_review_service import TaskReviewError, TaskReviewService
 from orchestrator.application.task_selection_service import TaskSelectionError
 from orchestrator.application.task_start_service import TaskStartError, TaskStartService
 from orchestrator.application.worker_report_service import ReportError, WorkerReportService
+from orchestrator.domain.attention import ReviewBlockDecision
 from orchestrator.domain.models import Operation, utc_now
 from orchestrator.domain.review_contracts import ApprovalDecision, ChangesDecision
 from orchestrator.domain.states import EpicState, TaskState
@@ -93,6 +95,9 @@ class TaskSchedulerService:
         self.approval = TaskApprovalService(settings, store)
         self.changes = TaskChangesService(settings, store, herdr, codex)
         self.merge = TaskMergeService(settings, store, herdr, codex, processes=processes)
+        self.attention = TaskAttentionService(
+            settings, store, sync, herdr, codex, processes=processes
+        )
 
     def _scope(self, actor, epic_run_id):
         try:
@@ -283,7 +288,7 @@ class TaskSchedulerService:
             TaskState.STARTING: {"Pending"},
             TaskState.DONE: {"InProgress", "Testing", "Done"},
             TaskState.BLOCKED: {"InProgress", "Testing", "NeedsInput", "Blocked"},
-            TaskState.PARKED: {"NeedsInput", "Blocked"},
+            TaskState.PARKED: {"InProgress", "Testing", "NeedsInput", "Blocked"},
         }
         if row.status not in phases.get(task.internal_status, {"InProgress", "Testing"}):
             raise SchedulerError("SCHEDULER_BOARD_STATUS_CONFLICT")
@@ -367,12 +372,22 @@ class TaskSchedulerService:
             if saved is not None:
                 if not isinstance(saved, dict):
                     raise SchedulerError("REVIEW_DECISION_INVALID")
-                model = ApprovalDecision if saved.get("result") == "APPROVED" else ChangesDecision
+                model = {
+                    "APPROVED": ApprovalDecision,
+                    "CHANGES_REQUESTED": ChangesDecision,
+                    "NEEDS_INPUT": ReviewBlockDecision,
+                }.get(saved.get("result"))
+                if model is None:
+                    raise SchedulerError("REVIEW_DECISION_INVALID")
                 saved = model.model_validate(saved).model_dump(mode="json")
                 if saved["context_id"] != context["context_id"]:
                     raise SchedulerError("REVIEW_DECISION_STALE")
                 self._record(actor, task, decision=saved)
         if saved is None:
+            return False
+        if saved["result"] == "NEEDS_INPUT":
+            result = await self.attention.block_review(actor, task.id, saved)
+            self._attention_record(actor, self.store.get_task(task.id), result)
             return False
         decision_key = "schedule-decision:" + context["context_id"]
         if saved["result"] == "APPROVED":
@@ -381,6 +396,14 @@ class TaskSchedulerService:
         self.changes.request(actor, task.id, saved, key=decision_key)
         self._record(actor, self.store.get_task(task.id), "OBSERVING")
         return False
+
+    def _attention_record(self, actor, task, result):
+        phase = {
+            "PARK_PENDING": "PARK_PENDING",
+            "SYNC_PENDING": "ATTENTION_SYNC_PENDING",
+            "PARKED_AND_SYNCED": "WAITING_INPUT",
+        }[result["stage"]]
+        self._record(actor, task, phase, blocker_id=result["blocker_id"], reason=result["reason"])
 
     async def _advance(self, actor, task):
         op = self._record(actor, task)
@@ -441,16 +464,17 @@ class TaskSchedulerService:
                 raise
             task = self.store.get_task(task.id)
         if task.internal_status in {TaskState.BLOCKED, TaskState.PARKED}:
-            if await self._sync(actor, task):
-                self._record(actor, task, "WAITING_INPUT")
-            else:
-                self._record(actor, task, "SYNC_PENDING", resume_phase="WAITING_INPUT")
-            return False
+            result = await self.attention.park_blocked(actor, task.id)
+            current = self.store.get_task(task.id)
+            self._attention_record(actor, current, result)
+            return task.worker_slot is not None and current.worker_slot is None
         if task.internal_status == TaskState.APPROVED:
             task = self.approval.requeue_changed_epic(actor, task.id)
         if task.internal_status in {TaskState.READY_FOR_REVIEW, TaskState.REVIEWING}:
             if not await self._review_task(actor, task):
                 current = self.store.get_task(task.id)
+                if current.internal_status in {TaskState.BLOCKED, TaskState.PARKED}:
+                    return task.worker_slot is not None and current.worker_slot is None
                 if not await self._sync(actor, current):
                     phase = self.store.get_operation(task.project_id, self.KIND, task.id).result[
                         "phase"
@@ -478,6 +502,34 @@ class TaskSchedulerService:
             return True
         return False
 
+    async def _park_owned_blockers(self, actor, epic):
+        # Physical safety of an already owned run does not depend on board uptime.
+        # Only this scheduler's original claim/principal may be handled here;
+        # selection, starts and delivery still require the fresh native board below.
+        for task in self.store.get_tasks(epic.id):
+            try:
+                self._identity(task)
+            except SchedulerError:
+                continue
+            try:
+                if task.internal_status == TaskState.WORKING:
+                    try:
+                        self.reports.collect(actor, task.id, expected_status="BLOCKED")
+                    except ReportError as error:
+                        if str(error) in {
+                            "REPORT_NOT_AVAILABLE",
+                            "REPORT_TURN_NOT_FINISHED",
+                            "REPORT_STATUS_MISMATCH",
+                        }:
+                            continue
+                        raise
+                    task = self.store.get_task(task.id)
+                if task.internal_status in {TaskState.BLOCKED, TaskState.PARKED}:
+                    result = await self.attention.park_blocked(actor, task.id)
+                    self._attention_record(actor, self.store.get_task(task.id), result)
+            except (AttentionError, ReportError) as error:
+                self._pause(actor, self.store.get_task(task.id), str(error))
+
     async def tick(self, actor, epic_run_id):
         epic = self._scope(actor, epic_run_id)
         started = []
@@ -488,6 +540,8 @@ class TaskSchedulerService:
                 or owner.result.get("actor") != actor.model_dump(mode="json")
             ):
                 raise SchedulerError("SCHEDULER_EPIC_OWNER_CHANGED")
+            if owner is not None:
+                await self._park_owned_blockers(actor, epic)
             await self.sync._identity()
             # Coordinator must bind/start the epic beforehand; never promote Integration.
             board = await self.selection.reader.read_project()
@@ -538,6 +592,7 @@ class TaskSchedulerService:
                     TaskChangesError,
                     TaskMergeError,
                     ReportError,
+                    AttentionError,
                 ) as error:
                     self._pause(actor, self.store.get_task(task.id), str(error))
                     continue

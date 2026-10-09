@@ -1328,7 +1328,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-08 Parkera blockerade tasks och återuppta samma arbete
 
-**Fas:** 8. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `dc637987-8dce-49ef-a178-7ed819ce6db7`.
+**Fas:** 8. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `dc637987-8dce-49ef-a178-7ed819ce6db7`.
 
 **Körbar:** Ja — E07 Done/PR #7/main9ff5eb8 och 119 sluttester verifierade; externa villkor kontrolleras per task. **Beroende:** E-07 Done på main.
 
@@ -1360,7 +1360,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-31 Registrera blockerare och parkera Worker säkert
 
-**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
+**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
 
 **Körbar:** Ja — E07 Done på main; X01/X02 och faktisk parkförmåga från F13/F26 finns verifierade och kontrolleras inför nytt avgränsat prov.
 
@@ -1369,6 +1369,21 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** E-07. **Externa förutsättningar:** X-01, X-02 och verifierad parkförmåga från F-10/F-13.
 
 **Arbetsinstruktion för Codex:** Implementera komplett blockerarflöde för Worker och review som kräver extern input. Spara orsak, efterfrågad input och ansvarig roll, skriv Attention och parkera registrerad session. Frigör slot först efter verifierad inaktivitet.
+
+**Start och konkret avgränsning F31 (2026-10-09):** E07 Done v15, PR #7/main9ff5eb8/119 sluttester och alla fyra native taskberoenden Done verifierade. get_me/Write/User105 samt faktisk Herdr0.9.3/Codex0.162.0/HERDR_ENV1 kontrollerade. Coordinator startar E08 Active; Integration plockar F31 Active. Bootstrap GitAdapter skapade feature/epic-e08 och task/e08-f31 i separata rena worktrees från aktuell main4a4ebe114c2289911c446bd783a1c000805973c2. Manuella worktrees adopteras inte som produkt-runs. Worker implementerar endast F31 i task-worktreet.
+
+**Implementationskontrakt F31:**
+
+1. Inför en beständig Integration-tjänst för Attention. Worker rapporterar genom F16:s native provenance; Worker får inte stoppa runtime eller skriva TeamPlayer. Ett reviewbeslut om extern input binds till senaste faktiskt verifierade F18-context och aktuella task/epic-SHA före blockeringen. Routingrollen User/Integration/Coordinator anger nästa ansvar och ger ingen exekveringsbehörighet.
+2. Spara orsak, konkret inputbehov, ansvarig roll och faktisk källreferens i en oföränderlig blockerarjournal före externa sidoeffekter. Bind samma project/epic/task/run, branch/worktree, Codex-session och aktuell startgeneration. Bevara v1-Worker-rapportens befintliga kontrakt och historiska blockerare.
+3. F25 publicerar NeedsInput/Attention med rätt taskbindning, verifierad tilldelning och beständig status-/historiksynk. Nätfel lämnar synkavsikt och hindrar inte säker fysisk parkering. En lyckad parkering följd av synkfel återförsöker bara synken.
+4. Parkera genom F13 och dess faktiska generation-/process-/pane-/sessionkontroller. Slot frigörs enbart av F13 efter bekräftad inaktivitet. Bevara session, branch, worktree, commits och tidigare state för F32. Timeout eller okänt runtimeutfall behåller reservation och konkret fel.
+5. Upprepning, återöppnad SQLite eller förlorat returvärde använder samma blockerar-/stopp-/synkavsikter. Verifiera faktiskt sparat delresultat innan fortsatt steg; skapa ingen ersättningsrun/session och ge ingen implicit input eller resume. F29:s betrodda scheduler driver detta när den tar emot en verklig BLOCKED-rapport. Muterande MCP kräver registrerad Integration-principal; agenten kan inte skicka slot, inaktivitetsbevis eller en ny roll.
+6. Kör negativa serviceprov för främmande roll/task, ändrad kontext/identitet, dubbel rapport, park-timeout och nätfel samt ett nytt avgränsat verkligt Herdr/Codex/TeamPlayer-parkprov i den redan godkända ofarliga reporoten. Bevara gamla fixture-resurser, använd nya faktiska F05-resurser/test-ID:n och en egen namngiven server. Dokumentera park-/synkbevis; F38:s miljögate och F47:s recovery levereras inte här.
+
+[Detaljerat kontrakt och verifieringsplan](docs/attention/F-31-blockerare.md). F32 levererar sparad input/återupptagning och F33 det samlade native scenariot. F31 ändrar inte dessa leveransberoenden.
+
+**Workerunderlag F31 (2026-10-09):** Beständig TaskAttentionService, strikt reviewfråga, F25-spegling med bevarad äldre historik, F13-stopp och samma-intent-recovery, F29-offlineparkering av redan ägd blockerare samt Integration-bundna MCP-anrop levereras. 29 inledande/utökade Attention/schedulerprov PASS/196.75s; efter offlineutökningen 90 scheduler/F25/F13/MCP-regressioner PASS/450.26s/exit0. Aktuell förstärkt servicegrind efter slotidentitets- och bevarad v1-storlekskontroll: 20 PASS/57.38s/exit0. Efter integration körs berörda kontroller igen. Ruff/build/configCLI/diff PASS. Native nytt försök2 faktiskt PARKED_AND_SYNCED: User105-fixturetask78dabe54, rune40c2627, SID01a1212b-1132-7f13-aa40-e3af437b129e, blockerare71d62a8a, F13-stopp246b0d5f, slot1→null efter fysisk bekräftelse; samma branch/worktree/commit och en start/assignment/stop/journal efter replay. Native taskNeedsInputv7, inte Done eftersom separat input/implementation återstår. Första harnessförsöket missade ACK efter felaktig upprepad Gitpreparation och är underkänt; actualTIMED_OUT/SID01a12125/parkstop8d3092d5/slotnull och alla gamla resurser bevaras, egen första server stoppad. Korrigerad harness använder ny separat F05-fixture och originaldeadline, inte fabricerad recovery. Ny server hc-f31-r2-20261009/shellpane bevaras för F32 med inaktiv Worker. [Nativebevis](docs/attention/F-31-prover.json) och [API/underlag](docs/attention/F-31-blockerare.md). Tasken förblir Active inför full review, faktisk Task→Epic-merge och integrationskontroller; kriterier och Done sätts först därefter.
 
 **Resultat och kontrakt:** WORKING/REVIEWING → BLOCKED → PARKED. Parkering behåller session-ID, branch och worktree. TeamPlayer-nätfel hanteras genom synkavsikt. Parkfel eller okänt runtimeutfall behåller reservation och konkret fel, även om Kanban visar Attention.
 
@@ -2041,8 +2056,8 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Ursprunglig review/merge+CLI-korrektion7a08f25/merge9ab9252/15PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
-| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Ja | 0/3 | E-07 Done på main | E07 verifierad/Done på main; F31 nästa kandidat. |
-| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Ja | 0/3 | E-07, X-01, X-02 | Nästa prioriterade kandidat efter E07-Done/main9ff5eb8/119 sluttester; kontrollera aktuella villkor. |
+| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 0/3 | E-07 Done på main | F31 startad på aktuell main4a4ebe1; egen acceptans/slutleverans återstår. |
+| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Active | Ja | 0/3 | E-07, X-01, X-02 | task/e08-f31 från main4a4ebe1; beständig blockerare/Attention/verifierad parkering före slotrelease. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Planned | Nej | 0/3 | E-07, F-32, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

@@ -17,9 +17,11 @@ from orchestrator.mcp.contracts import (
     PolicyRequest,
     Target,
     TaskApprovalRequest,
+    TaskBlockReviewRequest,
     TaskChangesRequest,
     TaskGetNextRequest,
     TaskMergeRequest,
+    TaskParkRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -133,6 +135,21 @@ def create_server(service: RuntimeService) -> Server:
                 annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
             )
         )
+
+    if service.task_attention is not None:
+        for name, model in (
+            ("task_park_blocked", TaskParkRequest),
+            ("task_block_review", TaskBlockReviewRequest),
+        ):
+            tools.append(
+                Tool(
+                    name=name,
+                    description="Persist a verified blocker, mirror Attention and physically park.",
+                    input_schema=model.model_json_schema(),
+                    output_schema=ToolResponse.model_json_schema(),
+                    annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+                )
+            )
 
     if service.teamplayer_sync is not None:
         for name in ("set_task_status", "set_epic_status"):
