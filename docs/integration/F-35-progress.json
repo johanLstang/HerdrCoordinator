@@ -97,10 +97,13 @@
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
     "status": "NeedsApproval",
-    "confirmed_version": 5,
+    "confirmed_version": 6,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
     "epic_version": 8
-  }
+  },
+  "checkpoint_commit": "1ba4c4457cb28b954cab2cfadc4b1ac46a83fc22",
+  "checkpoint_branch": "task/e09-f35",
+  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task\u2192Epic merge remain"
 }
