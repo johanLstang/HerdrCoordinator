@@ -11,6 +11,7 @@ import json
 import logging
 import shlex
 import sqlite3
+import subprocess
 import sys
 import threading
 import time
@@ -41,6 +42,7 @@ from orchestrator.domain.worker_contracts import LocalTaskSpec, canonical_json
 from orchestrator.persistence.store import StateStore
 
 BASE = Path.cwd() / ".herdr/probes/f30"
+ORIGINAL_BASE = BASE
 PROJECT, EPIC, RUN = "f30-probe", "f30-epic", "f30-epic-run"
 EXTERNAL_PROJECT = "d2ee4c75-7b80-465f-83ac-1750854a8e80"
 USER = "105f26a7-0648-438d-94fd-3260ac3af4ee"
@@ -48,6 +50,82 @@ COORDINATOR = Actor(actor_id="f30-coordinator", role=Role.COORDINATOR, project_i
 INTEGRATION = Actor(
     actor_id="f30-integration", role=Role.INTEGRATION, project_id=PROJECT, epic_run_id=RUN
 )
+
+
+def configure_attempt(attempt):
+    global BASE, PROJECT, EPIC, RUN, COORDINATOR, INTEGRATION
+    suffix = "" if attempt == 1 else "-r2"
+    BASE = ORIGINAL_BASE.with_name("f30" + suffix)
+    PROJECT, EPIC, RUN = "f30-probe" + suffix, "f30-epic" + suffix, "f30-epic-run" + suffix
+    COORDINATOR = Actor(
+        actor_id="f30-coordinator" + suffix, role=Role.COORDINATOR, project_id=PROJECT
+    )
+    INTEGRATION = Actor(
+        actor_id="f30-integration" + suffix,
+        role=Role.INTEGRATION,
+        project_id=PROJECT,
+        epic_run_id=RUN,
+    )
+
+
+def startup_ui_action(visible):
+    """Never paste assignment text into an update, trust or account settings dialog."""
+    if "Set up security for Daybreak mode" in visible and "esc to dismiss" in visible:
+        return "dismiss-voluntary-banner"
+    lower = visible.lower()
+    if any(
+        s in lower
+        for s in (
+            "update available",
+            "updating codex",
+            "trust this",
+            "trust and continue",
+            "set up security",
+            "approve this",
+            "would you like",
+        )
+    ):
+        return "operator-required"
+    return "ready" if "Ask Codex to do anything" in visible else "operator-required"
+
+
+class StartupPreflight(HerdrAdapter):
+    """Native fixture transport guard; no permission choice or automatic update."""
+
+    def visible(self, name):
+        result = subprocess.run(
+            [
+                "herdr",
+                "--session",
+                self.server_session,
+                "agent",
+                "read",
+                name,
+                "--source",
+                "visible",
+                "--lines",
+                "80",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
+        )
+        if result.returncode:
+            raise HerdrError("F30_STARTUP_UI_UNVERIFIED")
+        return result.stdout
+
+    def prompt(self, name, text, *, timeout_ms):
+        visible = self.visible(name)
+        action = startup_ui_action(visible)
+        journal("startup-ui", {"agent": name, "action": action, "at": time.time()})
+        if action == "dismiss-voluntary-banner":
+            self.call("agent", "send-keys", name, "esc")
+            time.sleep(1)
+            action = startup_ui_action(self.visible(name))
+        if action != "ready":
+            raise HerdrError("F30_STARTUP_UI_REQUIRES_OPERATOR")
+        super().prompt(name, text, timeout_ms=timeout_ms)
 
 
 def save(name, value):
@@ -69,9 +147,71 @@ def prepare(repository, server):
     repository = repository.resolve(strict=True)
     g = GitAdapter(repository)
     main = g.inspect(repository, "main", clean=True)
+    if PROJECT.endswith("-r2"):
+        old_settings = Settings.model_validate(
+            json.loads((ORIGINAL_BASE / "settings.json").read_text())
+        )
+        sessions = json.loads(
+            subprocess.run(
+                ["herdr", "session", "list", "--json"],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=15,
+            ).stdout
+        )["sessions"]
+        old_operator = json.loads((ORIGINAL_BASE / "operator.json").read_text())
+        old_session = next(s for s in sessions if s["name"] == old_operator["server"])
+        if (
+            repository != old_settings.repository
+            or old_session["running"]
+            or server == old_operator["server"]
+            or main != json.loads((ORIGINAL_BASE / "before-git.json").read_text())["main"]
+        ):
+            raise RuntimeError("Original failed attempt must remain preserved and inactive")
+        with StateStore(old_settings.sqlite_path) as old:
+            old_tasks = old.get_tasks("f30-epic-run")
+            a = next(t for t in old_tasks if t.task_id == "A")
+            b = next(t for t in old_tasks if t.task_id == "B")
+            stop = old.get_operation("f30-probe", "stop_runtime", "f30-first-aborted-B-stop")
+            if (
+                a.internal_status != TaskState.STARTING
+                or a.codex_session_id is not None
+                or b.internal_status != TaskState.PARKED
+                or b.worker_slot is not None
+                or stop is None
+                or stop.status != "SUCCEEDED"
+            ):
+                raise RuntimeError("Actual first attempt differs from recorded failed startup")
+        # Physical old cwd processes must also be absent after the owned server stop.
+        old_paths = {t.worktree_path for t in old_tasks}
+        for proc in Path("/proc").iterdir():
+            if not proc.name.isdigit():
+                continue
+            try:
+                cwd = str((proc / "cwd").resolve(strict=True))
+            except (OSError, RuntimeError):
+                continue
+            if cwd in old_paths:
+                raise RuntimeError("Original attempt still has cwd processes")
     if g.in_progress(repository) or g.unsafe_index_paths(repository):
         raise RuntimeError("Unsafe fixture repository")
     BASE.mkdir(parents=True)
+    if PROJECT.endswith("-r2"):
+        save("fixture", json.loads((ORIGINAL_BASE / "fixture.json").read_text()))
+        save(
+            "abandoned-attempt",
+            {
+                "directory": str(ORIGINAL_BASE),
+                "project": "f30-probe",
+                "acceptance_pass": False,
+                "original_resources_preserved": True,
+                "original_server_running": False,
+                "old_cwd_processes": [],
+                "A_reservation_preserved": a.worker_slot,
+                "B_stop_id": stop.id,
+            },
+        )
     verify = BASE / "verify.py"
     verify.write_text("""import importlib, subprocess, sys
 from pathlib import Path
@@ -164,7 +304,8 @@ print('F30 independent acceptance PASS')
         g.run("add", "--", "AGENTS.md", "README.md", cwd=p)
         g.run("commit", "-m", "seed F30 bounded parallel fixture rules", cwd=p)
         seed = g.inspect(p, epic.branch, clean=True)
-        db.update_run_metadata(epic.model_copy(update={"current_commit": seed}))
+        epic = epic.model_copy(update={"current_commit": seed})
+        db.update_run_metadata(epic)
         save("seed", {"commit": seed, "epic": epic.model_dump(mode="json")})
     save("specs", build_specs())
     print("F30 prepared actual F05 epic/seed; native fixture creation and operator binding next")
@@ -326,7 +467,7 @@ class FixtureWriter:
 
 def composition(settings, db, adapter):
     fixture = load("fixture")
-    h = HerdrAdapter(load("operator")["server"], sandbox="workspace-write")
+    h = StartupPreflight(load("operator")["server"], sandbox="workspace-write")
     c = CodexAdapter()
     writer = FixtureWriter(adapter, fixture)
     specs = {fixture["tasks"][k]: v for k, v in load("specs").items()}
@@ -636,7 +777,12 @@ async def operate(phase, *, seconds=45, task=None, decision_file=None):
                     journal("ticks", {"at": time.time(), "result": result})
                     export_reviews(s, result)
                     print(json.dumps(result), flush=True)
-                    if any(
+                    unconfirmed = any(
+                        t.internal_status == TaskState.STARTING
+                        and db.get_operation(PROJECT, s.start.KIND, t.task_id).error_code is None
+                        for t in db.get_tasks(RUN)
+                    )
+                    if not unconfirmed and any(
                         r["phase"] in {"PAUSED", "AWAITING_REVIEW", "WAITING_INPUT"}
                         for r in result["tasks"]
                     ):
@@ -658,10 +804,12 @@ def main():
     parser.add_argument("--repository", type=Path)
     parser.add_argument("--server")
     parser.add_argument("--expected-seed")
+    parser.add_argument("--attempt", type=int, choices=(1, 2), default=1)
     parser.add_argument("--seconds", type=int, default=45)
     parser.add_argument("--task", choices=tuple("ABC"))
     parser.add_argument("--decision-file", type=Path)
     args = parser.parse_args()
+    configure_attempt(args.attempt)
     if not 1 <= args.seconds <= 55:
         parser.error("seconds must be 1–55")
     logging.disable(logging.CRITICAL)

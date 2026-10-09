@@ -52,6 +52,30 @@ def test_complete_serial_native_timeline_has_two_slots_and_a_b_overlap():
 
 
 @pytest.mark.parametrize(
+    "dialog",
+    [
+        "Update available! Ask Codex to do anything",
+        "Updating Codex via npm install -g @openai/codex",
+        "Trust and continue. Ask Codex to do anything",
+        "Would you like to approve this? Ask Codex to do anything",
+        "Shell prompt only",
+    ],
+)
+def test_assignment_transport_rejects_dialog_even_with_main_prompt(dialog):
+    assert probe.startup_ui_action(dialog) == "operator-required"
+
+
+def test_known_voluntary_banner_may_be_dismissed_but_is_not_ready_for_assignment():
+    assert (
+        probe.startup_ui_action(
+            "Set up security for Daybreak mode. esc to dismiss. Ask Codex to do anything"
+        )
+        == "dismiss-voluntary-banner"
+    )
+    assert probe.startup_ui_action("Ask Codex to do anything") == "ready"
+
+
+@pytest.mark.parametrize(
     "attack",
     [
         "early-c",
