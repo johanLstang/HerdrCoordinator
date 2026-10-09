@@ -1,0 +1,59 @@
+{
+  "role": "Bootstrap Integration",
+  "decision": "APPROVED",
+  "task_id": "f7a0c038-4f49-48d0-ba09-fbca7bfe0e92",
+  "source": "73a9f9a4a528906628a7871a1d0d7837e391cc4e",
+  "target": "afc71c730bedf52fedf2faa2ece4c9172493a0c8",
+  "full_patch_bytes": 343665,
+  "full_patch_sha256": "151ef5d6a4013ac75eeb307e630627c87850c08b2eef6dc1ea2e318db4c77817",
+  "files": 7,
+  "code_tests_prose_all_read": true,
+  "generated_artifact_review": "All committed public fields compared to actual full operator export, exact persisted SQLite operation payloads and real Git merge parents; historical final/replay timestamps explicitly retained.",
+  "public_proof_bytes": 255509,
+  "findings": [],
+  "tests": {
+    "passed": 51,
+    "seconds": 1.19,
+    "exit_code": 0
+  },
+  "native": {
+    "acceptance": "3/3",
+    "working_BC_overlap_samples": 12,
+    "maximum_reserved": 2,
+    "verified_native_samples": 78,
+    "unavailable_samples": 1,
+    "committed_source_replay": "PASS",
+    "all_native_tasks_Done_User105": true,
+    "own_named_servers_stopped": true
+  },
+  "gates": {
+    "ruff": true,
+    "build": true,
+    "config_cli": true,
+    "wheel_modules": 56,
+    "policies": 2,
+    "links": 126,
+    "auth_scan": true,
+    "diff": true
+  },
+  "failed_controls": [
+    "First native harness attempt missed original C ACK deadline; actual parked resources/first server stopped and preserved.",
+    "First export detected known development-F33 description/version update; strict exact UUID/version/text hash comparison then verified; no other board mutation.",
+    "Initial config CLI used nonexistent config.example.toml and failed; README herdr.example.toml command then exited0."
+  ],
+  "bootstrap_exception": "Manual development worktrees are not product runs; actual GitAdapter after independent branch/path/clean/base/current SHA/full review checks. No ownership/run/session/slot adoption.",
+  "next": "Actual Task\u2192E08 no-ff and postmerge gates before task Done",
+  "merge_operation": "3ffe434b-3d2f-434e-aec9-0fe041720d8c",
+  "merge": "20a692b5a5f9ae31bc816b31eee7688ecafe2973",
+  "parents": [
+    "afc71c730bedf52fedf2faa2ece4c9172493a0c8",
+    "73a9f9a4a528906628a7871a1d0d7837e391cc4e"
+  ],
+  "postmerge_tests": {
+    "command": "uv run --locked pytest tests/test_f33_timeline.py tests/test_f30_timeline.py -x",
+    "passed": 51,
+    "seconds": 1.23,
+    "exit_code": 0
+  },
+  "recovery": "GitAdapter.merge_commit returns None; erroneous return-value assertion failed after successful merge. Actual operation marker, current registered heads, exact parents and identical tree reconciled; merge not replayed."
+}

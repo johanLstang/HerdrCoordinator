@@ -1,0 +1,195 @@
+{
+  "acceptance_pass": true,
+  "fixture": {
+    "epicId": "e8d9dbf7-4dd2-426a-87d7-8ec9dd264eaa",
+    "tasks": {
+      "A": "78dabe54-01a7-4234-a696-49774b5c4781"
+    }
+  },
+  "project_id": "f31-probe-r2",
+  "epic_run_id": "f31-epic-run-r2",
+  "task": {
+    "id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_id": "A",
+    "branch": "task/f31-epic-r2-a",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+    "resume_state": "WORKING",
+    "internal_status": "PARKED",
+    "kanban_status": "Attention",
+    "worker_agent_id": "hc-28939a79ad764820b6f26b69",
+    "worker_slot": null,
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f31-r2-20261009",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d699029c2231",
+    "codex_session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+    "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "current_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "approved_source_commit": null,
+    "approved_target_commit": null,
+    "merge_commit": null,
+    "started_at": "2026-10-09T14:57:10.577440Z",
+    "completed_at": null
+  },
+  "replay": {
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "blocker_id": "71d62a8a-0374-40a2-83fb-d8c1fe3c6106",
+    "stage": "PARKED_AND_SYNCED",
+    "reason": null,
+    "stop_id": "246b0d5f-2c81-4b73-bbb5-0f7f30ac6c7a"
+  },
+  "operation_counts": {
+    "start_runtime": 1,
+    "dispatch_assignment": 1,
+    "stop_runtime": 1,
+    "task_attention": 1
+  },
+  "blocker": {
+    "id": "71d62a8a-0374-40a2-83fb-d8c1fe3c6106",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "kind": "task_attention",
+    "idempotency_key": "911b4932d6ae09f38a174c86c5378909e9630ea20c9ec3d7197cb3516293661a",
+    "status": "SUCCEEDED",
+    "result": {
+      "actor": {
+        "actor_id": "f31-integration-r2",
+        "role": "Integration",
+        "project_id": "f31-probe-r2",
+        "epic_run_id": "f31-epic-run-r2",
+        "task_run_id": null
+      },
+      "subject": {
+        "project_id": "f31-probe-r2",
+        "epic_run_id": "f31-epic-run-r2",
+        "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+        "task_id": "A",
+        "branch": "task/f31-epic-r2-a",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+        "session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+        "start_id": "28939a79-ad76-4820-b6f2-6b691b9f1a1e",
+        "generation": "28939a79-ad76-4820-b6f2-6b691b9f1a1e",
+        "server_session": "hc-f31-r2-20261009",
+        "agent_id": "hc-28939a79ad764820b6f26b69",
+        "binding": {
+          "workspace_id": "w1",
+          "tab_id": "w1:t1",
+          "pane_id": "w1:p1",
+          "terminal_id": "term_65d699029c2231"
+        },
+        "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827"
+      },
+      "details": {
+        "version": 1,
+        "reason": "Required RETENTION_DAYS is intentionally absent. Implementation requires the actual operator decision.",
+        "input_required": "Operator must provide RETENTION_DAYS as a strict positive integer.",
+        "responsible_role": "User"
+      },
+      "source_id": "6d142af7-0dc9-4811-b605-0d7590216936",
+      "source_kind": "worker",
+      "stage": "PARKED_AND_SYNCED",
+      "reserved_slot": 1,
+      "source_hash": "1fa8eb187ab077749b8570d8e86b0920b33a7034c5dc8d93584485a3a48ac5cf",
+      "block_event_id": "worker-report:e40c2627-87ad-4431-af28-d017de13bda3:671f8443e3a362de4497542fabb99390d328c76ba11071c15c66163691feb1a8",
+      "block_event_hash": "c21f6838891589c51870b9f5aa5c08e820e483c42fd3f9c7ced277d5a3b8c2c5",
+      "stop_key": "attention-park:71d62a8a-0374-40a2-83fb-d8c1fe3c6106",
+      "intent_hash": "3540045aeb6e0027c129b6ab5b7f2baff4c9c0e933b3da7fbd532b66d42155e1",
+      "sync_before_park": {
+        "status": "SYNCED",
+        "operation_id": "c4ca2d69-040c-4da6-950f-f14b4eb15f30"
+      },
+      "stop_id": "246b0d5f-2c81-4b73-bbb5-0f7f30ac6c7a",
+      "sync_after_park": {
+        "status": "EXISTING",
+        "operation_id": "ebe2a2bf-0b11-4ea7-b8a0-03cd02220c3f"
+      }
+    },
+    "error_code": null,
+    "created_at": "2026-10-09T14:57:33.982163Z",
+    "updated_at": "2026-10-09T14:57:59.234425Z"
+  },
+  "physical_stop": {
+    "id": "246b0d5f-2c81-4b73-bbb5-0f7f30ac6c7a",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "kind": "stop_runtime",
+    "idempotency_key": "attention-park:71d62a8a-0374-40a2-83fb-d8c1fe3c6106",
+    "status": "SUCCEEDED",
+    "result": {
+      "generation": "28939a79-ad76-4820-b6f2-6b691b9f1a1e",
+      "reason": "Reason: Required RETENTION_DAYS is intentionally absent. Implementation requires the actual operator decision.\nInput required: Operator must provide RETENTION_DAYS as a strict positive integer.\nResponsible role: User",
+      "stage": "STOPPED",
+      "process_proof": {
+        "identities": [
+          {
+            "pid": 3041818,
+            "start_time": "102800889"
+          },
+          {
+            "pid": 3041825,
+            "start_time": "102800893"
+          },
+          {
+            "pid": 3041976,
+            "start_time": "102801013"
+          },
+          {
+            "pid": 3041977,
+            "start_time": "102801013"
+          },
+          {
+            "pid": 3042003,
+            "start_time": "102801024"
+          },
+          {
+            "pid": 3042978,
+            "start_time": "102801945"
+          }
+        ],
+        "groups": [
+          3041818,
+          3041976,
+          3041977,
+          3042978
+        ]
+      },
+      "delivery_key": null,
+      "inactive": true
+    },
+    "error_code": null,
+    "created_at": "2026-10-09T14:57:40.630781Z",
+    "updated_at": "2026-10-09T14:57:42.795670Z"
+  },
+  "same_resources": true,
+  "slot_released_after_stop": true,
+  "old_refs_and_worktrees_preserved": true,
+  "actual_native_status": "NeedsInput",
+  "native_version": 7,
+  "next": "F32 same-session input/resume; owned server and pane preserved",
+  "native_environment": {
+    "herdr": "0.9.3",
+    "codex": "0.162.0",
+    "python": "3.13.14",
+    "owned_server": "hc-f31-r2-20261009"
+  },
+  "failed_first_attempt": {
+    "acceptance_pass": false,
+    "native_epic_id": "9129c12d-cc45-4499-b59b-8eb61e047ad7",
+    "native_task_id": "f2204e79-a07d-43c1-9a24-3f425442755c",
+    "task_run_id": "6d862808-02ae-4fa0-9c4b-104ff925d2d6",
+    "session_id": "01a12125-84f9-7923-9af0-b1a2a559fab6",
+    "stop_id": "8d3092d5-7148-453e-8cab-a72bacd91aa9",
+    "cause": "Harness repeated prepare_git during STARTING and missed original ACK deadline.",
+    "actual_dispatch_outcome": "TIMED_OUT",
+    "actual_runtime": "PARKED",
+    "slot": null,
+    "original_server": "hc-f31-20261009",
+    "original_server_running": false,
+    "original_refs_worktrees_database_and_thread_preserved": true
+  }
+}

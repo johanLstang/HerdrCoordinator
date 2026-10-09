@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
+from orchestrator.domain.attention import InputDecision, ReviewBlockDecision
 from orchestrator.domain.models import Identity
 from orchestrator.domain.review_contracts import ApprovalDecision, ChangesDecision
 from orchestrator.domain.worker_contracts import LocalTaskSpec
@@ -59,3 +60,17 @@ class TaskGetNextRequest(BaseModel):
     model_config = Target.model_config
     project_id: Identity
     epic_run_id: Identity
+
+
+class TaskParkRequest(BaseModel):
+    model_config = Target.model_config
+    project_id: Identity
+    task_run_id: Identity
+
+
+class TaskBlockReviewRequest(TaskParkRequest):
+    decision: ReviewBlockDecision
+
+
+class TaskResumeRequest(TaskParkRequest):
+    decision: InputDecision

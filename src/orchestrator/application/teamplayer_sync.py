@@ -203,9 +203,16 @@ class TeamPlayerSyncService:
 
     def _intent(self, actor, run, task, identity, source):
         status, proof, text = source
-        key = digest(
-            canonical_json({"run_id": run.id, "task": task, "event_id": proof["event_id"]})
-        )
+        event_key = {"run_id": run.id, "task": task, "event_id": proof["event_id"]}
+        # F31 adds a real durable routing intent after a legacy block may already
+        # have been mirrored. Preserve old keys/history; route as a new source revision.
+        if "attention_id" in proof:
+            event_key["attention_id"] = proof["attention_id"]
+            event_key["attention_hash"] = proof["attention_hash"]
+        if "input_id" in proof:
+            event_key["input_id"] = proof["input_id"]
+            event_key["input_hash"] = proof["input_hash"]
+        key = digest(canonical_json(event_key))
         request = {
             "target_id": identity,
             "external_project_id": self.external_project_id,

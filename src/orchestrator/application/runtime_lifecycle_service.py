@@ -371,6 +371,24 @@ class RuntimeLifecycleService:
                 raise LifecycleError("CODEX_SESSION_MISSING")
             str(UUID(run.codex_session_id))
             op = self.store.get_operation(run.project_id, "resume_runtime", key)
+            input_op = None
+            if task:
+                # Input-backed resume stays Attention until its separate native ACK.
+                # Read real journal ownership; no caller flag can defer or bypass it.
+                from orchestrator.application.task_resume_intent import verified_input
+
+                inputs = [o for o in self._ops(run, "task_resume") if o.status == "PENDING"]
+                if inputs:
+                    if len(inputs) != 1:
+                        raise LifecycleError("INPUT_MULTIPLE_OWNERS")
+                    input_op = inputs[0]
+                    verified_input(self.store, run, input_op)
+                    if (
+                        input_op.result["resume_key"] != key
+                        or input_op.result["actor"] != actor.model_dump(mode="json")
+                        or input_op.result["stage"] != "RESUME_REQUESTED"
+                    ):
+                        raise LifecycleError("INPUT_RESUME_REQUIRED")
             if op and (
                 op.task_run_id != (run.id if task else None)
                 or op.result["session_id"] != run.codex_session_id
@@ -413,6 +431,7 @@ class RuntimeLifecycleService:
                         "stop_operation_id": stopped[-1].id,
                         "stage": "RESUME_REQUESTED",
                         "worker_slot": run.worker_slot if task else None,
+                        **({"input_operation_id": input_op.id} if input_op else {}),
                     },
                 )
                 self.store.add_operation(op)
@@ -437,6 +456,17 @@ class RuntimeLifecycleService:
         self.codex.read_session(run.codex_session_id, run.worktree_path)
         with self.store.transaction():
             run, current = self._validate(actor, run_id, task)
+            if input_op is not None:
+                saved_input = self.store.get_operation(
+                    run.project_id, "task_resume", input_op.idempotency_key
+                )
+                verified_input(self.store, run, saved_input)
+                if (
+                    saved_input.id != input_op.id
+                    or saved_input.result["stage"] != "RESUME_REQUESTED"
+                    or saved_input.result["actor"] != actor.model_dump(mode="json")
+                ):
+                    raise LifecycleError("INPUT_RESUME_CHANGED")
             prior = self.store.get_operation(run.project_id, op.kind, op.idempotency_key)
             if prior.status == "SUCCEEDED":
                 if current.result.get("generation") != prior.id:
@@ -446,14 +476,15 @@ class RuntimeLifecycleService:
                 self.start._slot(run)
                 if run.internal_status != TaskState.PARKED:
                     raise LifecycleError("RESUME_STATE_CHANGED")
-                run = StateService(self.store).transition_task(
-                    run.id,
-                    run.resume_state,
-                    expected=TaskState.PARKED,
-                    event_id="runtime-resume:" + op.id,
-                    actor=actor,
-                    facts=VerifiedFacts(slot_reserved=True, start_confirmed=True),
-                )
+                if input_op is None:
+                    run = StateService(self.store).transition_task(
+                        run.id,
+                        run.resume_state,
+                        expected=TaskState.PARKED,
+                        event_id="runtime-resume:" + op.id,
+                        actor=actor,
+                        facts=VerifiedFacts(slot_reserved=True, start_confirmed=True),
+                    )
             self.store.update_operation(
                 current.model_copy(
                     update={

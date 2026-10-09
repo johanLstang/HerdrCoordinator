@@ -622,3 +622,213 @@ def test_changed_task_after_approval_is_paused_without_requeue_or_merge(setup):
     assert local(s, "A").internal_status == TaskState.APPROVED and local(s, "A").worker_slot == 1
     assert s.selection.git.head(epic.branch) == head and w.exits == 0
     assert len(s.store.get_reviews(t.id)) == 1
+
+
+def blocked(s, workers, identity):
+    t = local(s, identity)
+    turns = workers.threads[t.codex_session_id]["turns"]
+    turns.append(
+        {
+            "id": "blocked-final",
+            "status": "completed",
+            "items": [
+                {
+                    "id": "blocked-item",
+                    "type": "agentMessage",
+                    "phase": "final_answer",
+                    "text": json.dumps(
+                        dict(
+                            version=1,
+                            status="BLOCKED",
+                            project_id="p",
+                            epic_id="E",
+                            epic_run_id=t.epic_run_id,
+                            task_id=t.task_id,
+                            task_run_id=t.id,
+                            branch=t.branch,
+                            summary="Missing retention input",
+                            reason="Policy not specified",
+                            input_required="How many days?",
+                        )
+                    ),
+                }
+            ],
+        }
+    )
+
+
+def test_worker_block_parks_and_other_tasks_continue_without_extra_runtime(setup):
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    before = local(s, "B")
+    blocked(s, w, "B")
+    result = run(s.tick(a, a.epic_run_id))
+    current = local(s, "B")
+    assert current.internal_status == TaskState.PARKED and current.worker_slot is None
+    assert current.codex_session_id == before.codex_session_id and w.starts == 2 and w.exits == 1
+    row = next(r for r in result["tasks"] if r["task_run_id"] == current.id)
+    assert row["phase"] == "WAITING_INPUT"
+    finish(s, w, "A")
+    refill = run(s.tick(a, a.epic_run_id))
+    assert local(s, "A").internal_status == TaskState.DONE and len(refill["started"]) == 1
+    assert local(s, "C").internal_status == TaskState.WORKING and w.starts == 3
+    assert local(s, "B").internal_status == TaskState.PARKED
+    finish(s, w, "C")
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "C").internal_status == TaskState.DONE and w.exits == 3
+    assert next(t for t in b.tasks if t["taskId"] == T2)["status"] == "NeedsInput"
+    run(s.tick(a, a.epic_run_id))
+    assert w.starts == 3 and w.exits == 3
+
+
+def test_external_review_input_parks_without_approval_changes_or_merge(setup):
+    s, a, _, w = setup
+    run(s.tick(a, a.epic_run_id))
+    finish(s, w, "B")
+    s.review_provider = lambda context: dict(
+        result="NEEDS_INPUT",
+        context_id=context["context_id"],
+        reason="Retention policy unspecified",
+        input_required="How many days?",
+        responsible_role="User",
+    )
+    result = run(s.tick(a, a.epic_run_id))
+    task = local(s, "B")
+    assert task.internal_status == TaskState.PARKED and task.resume_state == TaskState.REVIEWING
+    assert task.worker_slot is None and w.exits == 1
+    assert (
+        next(r for r in result["tasks"] if r["task_run_id"] == task.id)["phase"] == "WAITING_INPUT"
+    )
+    assert not s.store.get_reviews(task.id)
+    assert not s.store.get_operations(task.epic_run_id, kind="task_merge")
+    run(s.tick(a, a.epic_run_id))
+    assert w.exits == 1 and w.starts == 2
+
+
+def test_already_owned_worker_block_parks_even_when_board_is_offline(setup):
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    blocked(s, w, "B")
+    read = b.read
+
+    async def offline(*args):
+        raise TeamPlayerError("TEAMPLAYER_TRANSPORT_UNAVAILABLE")
+
+    b.read = offline
+    with pytest.raises(TeamPlayerError):
+        run(s.tick(a, a.epic_run_id))
+    task = local(s, "B")
+    assert task.internal_status == TaskState.PARKED and task.worker_slot is None
+    assert w.exits == 1 and w.starts == 2
+    assert not s.store.get_operations(a.epic_run_id, kind="task_merge")
+    b.read = read
+    run(s.tick(a, a.epic_run_id))
+    row = s.store.get_operation("p", s.KIND, task.id)
+    assert row.result["phase"] == "WAITING_INPUT" and row.result["reason"] is None
+    assert w.exits == 1 and w.starts == 2
+
+
+def test_saved_input_tick_waits_native_ack_without_blocking_other_delivery(setup):
+    from uuid import uuid4
+
+    from orchestrator.domain.attention import InputDecision
+
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    blocked(s, w, "B")
+    run(s.tick(a, a.epic_run_id))
+    before = local(s, "B")
+    attention = s.store.get_operations(a.epic_run_id, kind="task_attention")[0]
+    decision = InputDecision(
+        input_id=str(uuid4()), blocker_id=attention.id, answer="Fixture days=7"
+    )
+    s.resume._saved(a, before, decision)
+    w.resumes = 0
+
+    def resume(name, pane, cwd, sid):
+        w.resumes += 1
+        w.agents[name] = w.workspaces[pane] | {
+            "name": name,
+            "session": sid,
+            "sid": sid,
+            "pid": 1000 + w.resumes,
+        }
+
+    w.resume_agent = resume
+    original = w.prompt
+    pending = []
+
+    def hold(name, text, *, timeout_ms):
+        if json.loads(text)["type"] == "HERDR_INPUT":
+            pending.append((name, text, timeout_ms))
+        else:
+            original(name, text, timeout_ms=timeout_ms)
+
+    w.prompt = hold
+    result = run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.PARKED and local(s, "B").worker_slot == 2
+    assert w.resumes == 1 and len(pending) == 1
+    assert (
+        next(row for row in result["tasks"] if row["task_run_id"] == before.id)["phase"]
+        == "DISPATCH_REQUESTED"
+    )
+    finish(s, w, "A")
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "A").internal_status == TaskState.DONE
+    assert (
+        local(s, "C").internal_status == TaskState.WORKING
+        and local(s, "B").internal_status == TaskState.PARKED
+    )
+    assert w.resumes == 1 and len(pending) == 1
+    name, text, ms = pending[0]
+    original(name, text, timeout_ms=ms)  # observer now sees original delivery/ACK
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.WORKING
+    assert local(s, "B").codex_session_id == before.codex_session_id
+    assert sorted(
+        t.worker_slot for t in s.store.get_tasks(a.epic_run_id) if t.worker_slot is not None
+    ) == [1, 2]
+    assert w.resumes == 1 and len(pending) == 1
+
+
+def test_offline_tick_never_reparks_input_resumed_generation(setup):
+    from uuid import uuid4
+
+    from orchestrator.domain.attention import InputDecision
+
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    blocked(s, w, "B")
+    run(s.tick(a, a.epic_run_id))
+    task = local(s, "B")
+    attention = s.store.get_operations(a.epic_run_id, kind="task_attention")[0]
+    decision = InputDecision(input_id=str(uuid4()), blocker_id=attention.id, answer="Fixture=7")
+
+    def resume(name, pane, cwd, sid):
+        w.agents[name] = w.workspaces[pane] | {
+            "name": name,
+            "session": sid,
+            "sid": sid,
+            "pid": 9001,
+        }
+
+    w.resume_agent = resume
+    original = w.prompt
+    sent = []
+    w.prompt = lambda name, text, timeout_ms: sent.append(text)
+    assert run(s.resume.resume(a, task.id, decision))["stage"] == "DISPATCH_REQUESTED"
+    read = b.read
+
+    async def offline(*args):
+        raise TeamPlayerError("TEAMPLAYER_TRANSPORT_UNKNOWN")
+
+    b.read = offline
+    with pytest.raises(TeamPlayerError):
+        run(s.tick(a, a.epic_run_id))
+    assert task.worker_agent_id in w.agents and local(s, "B").worker_slot == 2 and w.exits == 1
+    parent = s.store.get_operation("p", s.KIND, task.id)
+    assert parent.result["phase"] != "PAUSED"
+    b.read = read
+    original(task.worker_agent_id, sent[0], timeout_ms=45000)
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.WORKING and w.exits == 1 and len(sent) == 1

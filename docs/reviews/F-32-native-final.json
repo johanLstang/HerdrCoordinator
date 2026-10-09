@@ -1,0 +1,43 @@
+{
+  "task": {
+    "id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_id": "A",
+    "branch": "task/f31-epic-r2-a",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+    "resume_state": null,
+    "internal_status": "DONE",
+    "kanban_status": "Done",
+    "worker_agent_id": "hc-28939a79ad764820b6f26b69",
+    "worker_slot": null,
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f31-r2-20261009",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d699029c2231",
+    "codex_session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+    "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "current_commit": "41acb2058299986184a2eb4852ad5a9a03711ad3",
+    "approved_source_commit": "41acb2058299986184a2eb4852ad5a9a03711ad3",
+    "approved_target_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "merge_commit": "4af49438a37369b0350daa074537737d81a8cbf5",
+    "started_at": "2026-10-09T14:57:10.577440Z",
+    "completed_at": "2026-10-09T15:50:46.161180Z"
+  },
+  "actual_native_status": "Done",
+  "native_version": 11,
+  "physical_inactive": true,
+  "delivery": {
+    "status": "DONE",
+    "operation_id": "be683a2f-cda2-4660-b0ec-e2a2cba18e3e",
+    "merge_commit": "4af49438a37369b0350daa074537737d81a8cbf5",
+    "test_id": "d04abc5e-4e92-4777-80dd-f73649d4a502",
+    "stop_id": "f11ebc24-4ca7-4a4b-ab55-b8d24c6579d5"
+  },
+  "fixture_epic": "Active; no main delivery",
+  "old_resources": "preserved",
+  "owned_server_stopped": "hc-f31-r2-20261009",
+  "reviewed_diff_bytes": 1065,
+  "reviewed_diff_sha256": "5d5c61ffaa2bc3235afd51adb8f6e73ce64c1b20298f28553daf40e2922b5ab4"
+}

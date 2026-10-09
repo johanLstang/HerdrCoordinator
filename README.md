@@ -346,3 +346,28 @@ Schemaläggaren driver taskflödet; aktuella reviewbeslut ges uttryckligen.
 ingen extra Worker eller merge. Se [prov och driftinstruktion](docs/scheduling/F-30-nativeprov.md)
 och [maskinföljbart underlag](docs/scheduling/F-30-prover.json), inklusive det
 bevarade underkända första försöket och F38:s kvarvarande autonomigate.
+
+
+## Blockerare och fysisk parkering (F31)
+
+`TaskAttentionService` binder en verklig Worker-blockerare eller aktuell reviewfråga
+till en beständig journal med orsak, inputbehov och nästa ansvariga roll. Integration
+speglar NeedsInput och parkerar genom F13; slot frigörs först efter faktisk inaktivitet.
+Nätfel hindrar inte parkering av redan ägt arbete. Upprepning efter lyckat stopp
+återförsöker bara synken. Scheduler och explicit injicerat MCP driver samma service;
+Worker får inte parkera eller synka direkt. Det verkliga avgränsade provet bevarar
+sessionen för F32. Se [API, verifiering och nästa åtgärd](docs/attention/F-31-blockerare.md)
+och [faktiska nativebevis](docs/attention/F-31-prover.json).
+
+### F32: input och återupptagning
+
+[F32-kontrakt och operatörskedja](docs/attention/F-32-aterupptagning.md) samt
+[faktiskt samma-session-prov](docs/attention/F-32-prover.json).
+Integration sparar explicit input och återupptar samma Worker först med ledig slot;
+Active kräver korrelerad native bekräftelse av svaret.
+
+## Samlat native Attentionprov (F33)
+
+[Scenario och operatörsinstruktion](docs/attention/F-33-nativeprov.md) beskriver
+A:s parkering, B/C:s leveranser, sparat beslut vid fulla slots och begränsad
+samma-session-resume. Aktuella explicita reviews och verkliga services krävs.

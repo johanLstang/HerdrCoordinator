@@ -3,8 +3,10 @@ from pydantic import ValidationError
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_approval_service import TaskApprovalError
+from orchestrator.application.task_attention_service import AttentionError
 from orchestrator.application.task_changes_service import TaskChangesError
 from orchestrator.application.task_merge_service import TaskMergeError
+from orchestrator.application.task_resume_service import ResumeError
 from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_scheduler_service import SchedulerError
 from orchestrator.application.task_selection_service import TaskSelectionError
@@ -16,9 +18,12 @@ from orchestrator.mcp.contracts import (
     PolicyRequest,
     Target,
     TaskApprovalRequest,
+    TaskBlockReviewRequest,
     TaskChangesRequest,
     TaskGetNextRequest,
     TaskMergeRequest,
+    TaskParkRequest,
+    TaskResumeRequest,
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
@@ -37,6 +42,10 @@ _ROLES = {
     "task_request_changes": {Role.INTEGRATION},
     "task_approve": {Role.INTEGRATION},
     "task_merge": {Role.INTEGRATION},
+    "task_park_blocked": {Role.INTEGRATION},
+    "task_block_review": {Role.INTEGRATION},
+    "resume_task": {Role.INTEGRATION},
+    "worker_resume": {Role.INTEGRATION},
     "epic_start": {Role.COORDINATOR},
     "epic_merge": {Role.COORDINATOR},
     "set_task_status": {Role.INTEGRATION},
@@ -88,6 +97,8 @@ class RuntimeService:
         teamplayer_sync=None,
         task_selection=None,
         task_scheduler=None,
+        task_attention=None,
+        task_resume=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -99,6 +110,8 @@ class RuntimeService:
         self.teamplayer_sync = teamplayer_sync
         self.task_selection = task_selection
         self.task_scheduler = task_scheduler
+        self.task_attention = task_attention
+        self.task_resume = task_resume
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -126,6 +139,29 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if operation in {"resume_task", "worker_resume"} and self.task_resume is not None:
+            response = await self._resume_input(arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
+        if (
+            operation in {"task_park_blocked", "task_block_review"}
+            and self.task_attention is not None
+        ):
+            response = await self._attention(operation, arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if operation == "task_schedule" and self.task_scheduler is not None:
             response = await self._schedule(arguments)
             self.log.emit(
@@ -257,6 +293,16 @@ class RuntimeService:
                 return ToolResponse(
                     ok=True, code="OK", message="read-only task selection is available"
                 )
+            if (
+                request.operation in {"resume_task", "worker_resume"}
+                and self.task_resume is not None
+            ):
+                return ToolResponse(ok=True, code="OK", message="saved-input resume available")
+            if (
+                request.operation in {"task_park_blocked", "task_block_review"}
+                and self.task_attention is not None
+            ):
+                return ToolResponse(ok=True, code="OK", message="task Attention service available")
             if request.operation == "task_schedule" and self.task_scheduler is not None:
                 return ToolResponse(
                     ok=True, code="OK", message="bounded task scheduler is available"
@@ -548,4 +594,75 @@ class RuntimeService:
         except Exception:
             return ToolResponse(
                 ok=False, code="TASK_SELECTION_UNAVAILABLE", message="selection unavailable"
+            )
+
+    async def _attention(self, operation, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot park tasks")
+        try:
+            model = TaskBlockReviewRequest if operation == "task_block_review" else TaskParkRequest
+            request = model.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid blocker request"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="task scope denied")
+        try:
+            if operation == "task_block_review":
+                result = await self.task_attention.block_review(
+                    self.actor, request.task_run_id, request.decision
+                )
+            else:
+                result = await self.task_attention.park_blocked(self.actor, request.task_run_id)
+            ready = result["stage"] == "PARKED_AND_SYNCED"
+            return ToolResponse(
+                ok=ready,
+                code="OK" if ready else result["reason"] or "ATTENTION_PENDING",
+                message="Attention parked and mirrored"
+                if ready
+                else "reconcile recorded Attention",
+                data=result,
+            )
+        except AttentionError as error:
+            return ToolResponse(ok=False, code=str(error), message="reconcile recorded blocker")
+        except Exception:
+            return ToolResponse(
+                ok=False, code="ATTENTION_UNVERIFIED", message="reconcile recorded blocker"
+            )
+
+    async def _resume_input(self, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot resume tasks")
+        try:
+            request = TaskResumeRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid input request")
+        try:
+            self._target(Target(project_id=request.project_id, task_run_id=request.task_run_id))
+        except StateError:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="task scope denied")
+        try:
+            result = await self.task_resume.resume(
+                self.actor, request.task_run_id, request.decision
+            )
+            return ToolResponse(
+                ok=result["stage"] == "ACTIVE_AND_SYNCED",
+                code="OK"
+                if result["stage"] == "ACTIVE_AND_SYNCED"
+                else result["reason"] or "INPUT_PENDING",
+                message="saved-input outcome recorded",
+                data=result,
+            )
+        except ResumeError as error:
+            return ToolResponse(ok=False, code=str(error), message="reconcile recorded input")
+        except Exception:
+            return ToolResponse(
+                ok=False, code="INPUT_UNVERIFIED", message="reconcile recorded input"
             )
