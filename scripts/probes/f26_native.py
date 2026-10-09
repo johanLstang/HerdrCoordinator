@@ -46,6 +46,7 @@ from orchestrator.domain.worker_contracts import LocalTaskSpec, canonical_json
 from orchestrator.persistence.store import StateStore
 
 BASE = Path.cwd() / ".herdr/probes/f26"
+ORIGINAL_BASE, ATTEMPT = BASE, 1
 PROJECT, EPIC, RUN, TASK = "f26-probe", "f26-epic", "f26-epic-run", "f26-input"
 EXTERNAL_PROJECT = "d2ee4c75-7b80-465f-83ac-1750854a8e80"
 USER = "105f26a7-0648-438d-94fd-3260ac3af4ee"
@@ -111,6 +112,8 @@ class StartupPreflight(HerdrAdapter):
 
 
 def prepare(server):
+    if ATTEMPT == 2:
+        return prepare_retry(server)
     if BASE.exists() or not server.startswith("hc-f26-"):
         raise RuntimeError("Fresh F26 history and explicitly owned named test server required")
     BASE.mkdir(parents=True)
@@ -236,6 +239,84 @@ print('F26 independent Unicode/type/empty acceptance PASS')
     )
 
 
+def prepare_retry(server):
+    """New actual F05 fixture; never rewrite the lost terminal's ownership journal."""
+    if BASE.exists() or server != "hc-f26-20261008":
+        raise RuntimeError("Fresh retry history and exact owned test server required")
+    original = json.loads((ORIGINAL_BASE / "settings.json").read_text())
+    settings = Settings.model_validate(original)
+    git = GitAdapter(settings.repository)
+    git.inspect(settings.repository, "main", clean=True)
+    assert git.head("main") == json.loads((ORIGINAL_BASE / "before-git.json").read_text())["main"]
+    with StateStore(settings.sqlite_path) as old:
+        tasks = old.get_tasks("f26-epic-run")
+        assert len(tasks) == 1
+        abandoned = tasks[0]
+        assert (
+            abandoned.internal_status == TaskState.STARTING and abandoned.codex_session_id is None
+        )
+        assert not old.get_operations("f26-epic-run", kind="dispatch_assignment")
+        start = old.get_operation("f26-probe", "start_runtime", abandoned.id)
+        assert start.status == "PENDING" and start.error_code == "RUNTIME_PANE_CHANGED"
+    herdr = HerdrAdapter(server, sandbox="workspace-write")
+    assert not herdr.call("agent", "list")["agents"]
+    pane = herdr.pane(abandoned.herdr_pane_id)
+    info = herdr.process_info(abandoned.herdr_pane_id)
+    assert pane["terminal_id"] != abandoned.herdr_terminal_id
+    assert pane["cwd"] == abandoned.worktree_path
+    assert len(info["foreground_processes"]) == 1
+    assert info["foreground_processes"][0]["pid"] == info["shell_pid"]
+    old_cwd_processes = []
+    for process in Path("/proc").iterdir():
+        if not process.name.isdigit():
+            continue
+        try:
+            if str((process / "cwd").resolve(strict=True)) == abandoned.worktree_path:
+                old_cwd_processes.append(int(process.name))
+        except (OSError, RuntimeError):
+            continue
+    assert old_cwd_processes == [info["shell_pid"]], "Original cwd has unaccounted processes"
+    BASE.mkdir(parents=True)
+    for name in ("fixture", "before-board"):
+        save(name, json.loads((ORIGINAL_BASE / (name + ".json")).read_text()))
+    save(
+        "abandoned-start",
+        {
+            "run": abandoned.model_dump(mode="json"),
+            "operation": start.model_dump(mode="json"),
+            "observedPane": pane,
+            "shellOnly": True,
+            "oldCwdProcesses": old_cwd_processes,
+            "reason": "Server stopped before assignment; recreated terminal rejected by F11",
+        },
+    )
+    (BASE / "verify.py").write_text((ORIGINAL_BASE / "verify.py").read_text())
+    settings = Settings.model_validate(
+        settings.model_dump()
+        | {
+            "sqlite_path": BASE / "state.sqlite",
+            "worktree_root": BASE / "trees",
+            "worker_test_command": (sys.executable, str(BASE / "verify.py")),
+            "review_context": settings.review_context.model_copy(
+                update={"project_id": PROJECT, "epic_id": EPIC}
+            ),
+        }
+    )
+    save("settings", settings.model_dump(mode="json"))
+    save("operator", {"server": server})
+    spec = LocalTaskSpec.model_validate(json.loads((ORIGINAL_BASE / "spec.json").read_text()))
+    spec = spec.model_copy(update={"project_id": PROJECT, "epic_id": EPIC})
+    save("spec", spec.model_dump(mode="json"))
+    with StateStore(settings.sqlite_path) as db:
+        epic = WorktreeService(settings, db).create_epic_worktree(
+            COORDINATOR, epic_id=EPIC, run_id=RUN
+        )
+        save("before-git", {"main": git.head("main"), "epic": epic.base_commit})
+    print(
+        "Fresh actual F05 retry fixture; original lost-start evidence and approved repo preserved"
+    )
+
+
 def connection():
     config = tomllib.loads((Path.home() / ".codex/config.toml").read_text())["mcp_servers"][
         "teamplayer"
@@ -304,6 +385,9 @@ async def mirror(phase, settings, db):
         sync = service(settings, db, adapter)
         if phase == "bind-planned":
             await sync.bind_epic(COORDINATOR, RUN, fixture["epicId"])
+            if ATTEMPT == 2:
+                print("Retry fixture bound; original Planned baseline retained; no epic rollback")
+                return
             assert (await sync.sync_epic(COORDINATOR, RUN))["status"] == "SYNCED"
             save("before-board", await snapshot(adapter))
             print("Planned epic mirrored; full board baseline saved")
@@ -464,6 +548,8 @@ async def export(settings, db, herdr):
             },
             "productFixtureWritesOnlyBoundIds": True,
             "fixtureWriteAttempts": len(writes),
+            "attempt": ATTEMPT,
+            "abandonedStartPreserved": ATTEMPT == 2,
             "otherBoardDigest": hashlib.sha256(canonical_json(other).encode()).hexdigest(),
             "nativeTaskVersion": native_task["version"],
             "nativeEpicVersion": native_epic["version"],
@@ -718,7 +804,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("phase")
     parser.add_argument("--server")
+    parser.add_argument("--attempt", type=int, choices=(1, 2), default=1)
     args = parser.parse_args()
+    ATTEMPT = args.attempt
+    if ATTEMPT == 2:
+        BASE = ORIGINAL_BASE.with_name("f26-r2")
+        PROJECT, EPIC, RUN = "f26-probe-r2", "f26-epic-r2", "f26-epic-run-r2"
+        COORDINATOR = Actor(
+            actor_id="f26-coordinator", role=Role.COORDINATOR, project_id=PROJECT, epic_run_id=RUN
+        )
+        INTEGRATION = COORDINATOR.model_copy(
+            update={"actor_id": "f26-integration", "role": Role.INTEGRATION}
+        )
     try:
         if args.phase == "prepare":
             prepare(args.server or "")

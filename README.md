@@ -301,3 +301,10 @@ MCP-anropen `set_task_status`/`set_epic_status`; anroparen väljer bara run-ID.
 Status och sanerad historik härleds från faktiska start-, review-, Git-, test-
 och stoppbevis. Återläsning efter nätfel återförsöker bara TeamPlayer-steget.
 Se [API, statusgrindar och recovery](docs/teamplayer/F-25-synk.md).
+
+## Verkligt TeamPlayer-livscykelprov (F26)
+
+En avgränsad native Worker provar Active → Attention → samma session med input →
+verifierad task-Done samt testepicens mainintegration och Done. Ett faktiskt
+stängt MCP-transport bevarar synkavsikten; återanslutning slutför den utan ny
+Worker eller merge. Se [liveprov, bevis och begränsningar](docs/teamplayer/F-26-liveprov.md).
