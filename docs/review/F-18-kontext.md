@@ -23,6 +23,11 @@ MCP `task_review_request(project_id, task_run_id, request_key)` kräver en opera
 
 Tjänsten kräver F-15:s oförändrade sparade taskspecifikation och F-16:s oberoende verifierade READY_FOR_REVIEW-handoff. Senare Worker-commits kräver ny handoff; enbart Git-ancestry räcker inte. Endast verkliga, journalförda Epic → Task-synkcommits får förlänga den verifierade leveransen.
 
+Sedan [F29](../scheduling/F-29-scheduler.md) verifieras parallella Worker-rapporter
+mot sin egen registrerade källbas, även när epicen ändrats. Dessa tester märks
+purpose=worker_report och saknar review-target. F18:s efterföljande synk och nya
+test på exakt aktuellt task/epic-par krävs alltid före beslut och leverans.
+
 F-07 synkroniserar mot aktuell epic och kör operatörens argv utan shell i task-worktreet. Testprocessens minimala miljö är samma som i F-16; detta är inte en ny filsystemssandbox. Källor läses som Git-blobbar vid respektive granskad commit. Absoluta, skyddade och icke kanoniska paths, symlinks, binärtext och saknade filer avvisas; inga externa dokument hämtas.
 
 Det beständiga paketet innehåller taskspecifikation, acceptans, epicregler, källtext/blob-ID, ändrade filer, komplett diff, testoperation och exakta task/epic-SHA. `patch_base64` bevarar patchens bytes; `display_text` kan innehålla ersättningstecken och är en visning. Paketets `context_id` är SHA256 över kanoniskt JSON utan själva ID-fältet. Varje källa begränsas till 256 KiB, varje sida till 32 källor och hela paketet till 4 MiB. Diffen följer GitAdapters separata storleksgräns; trunkering är inte godkännbar.

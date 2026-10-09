@@ -28,6 +28,14 @@ Parentintent innehåller autentiserad granskare, beslut, context-ID, task/epic-S
 
 APPROVED förblir Active och behåller slot/session/worktree. Godkännandet utför ingen merge, Done, stopp eller cleanup. Ändrad HEAD, bas, konfiguration, rapport eller ersatt paket avvisar användning av historisk approval. Review och sparade beslut raderas inte; intern status och äldre pins är historik tills ansvarig integration avstämt nästa steg. F-07:s faktiska synkoperation ogiltigförklarar äldre approval enligt dess kontrakt.
 
+[F29:s scheduler](../scheduling/F-29-scheduler.md) får genom den interna
+`requeue_changed_epic` återköa APPROVED → READY_FOR_REVIEW när enbart den faktiska
+epicbasen ändrats. Full historisk approval/context/test/handoff och oförändrad
+taskkälla kontrolleras först under gemensamt Gitlås/SQLite-transaktion. Pins rensas,
+historik och slot/session bevaras; ny F18-synk/test/review krävs. Ändrad taskkod,
+konfiguration eller oavstämd operation ger fel och får inte återköas så.
+Det finns inget MCP-argument för att själv intyga dessa fakta.
+
 ## Avbrott och beslut som konkurrerar
 
 - INTENT före Review kan återupptas med samma nyckel efter aktuell kontroll.

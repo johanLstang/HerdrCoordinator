@@ -31,7 +31,15 @@ class TaskStartService:
     KIND = "task_start"
 
     def __init__(
-        self, settings, store, herdr, codex=None, *, prerequisite_probe=None, processes=None
+        self,
+        settings,
+        store,
+        herdr,
+        codex=None,
+        *,
+        prerequisite_probe=None,
+        processes=None,
+        claim_guard=None,
     ):
         self.settings = settings
         self.slots = WorkerSlots(settings, store, processes=processes)
@@ -42,6 +50,8 @@ class TaskStartService:
         self.assignment = RuntimeAssignmentService(self.settings, store, herdr, codex)
         # Trusted operator callback, never a client/Worker boolean or tool argument.
         self.prerequisite_probe = prerequisite_probe
+        # Internal F29 composition. Never accepted in task_start/MCP arguments.
+        self.claim_guard = claim_guard
 
     def _epic(self, actor, epic_run_id):
         epic = self.store.get_epic(epic_run_id)
@@ -81,6 +91,19 @@ class TaskStartService:
             if len(packet.encode()) > 65536:
                 raise TaskStartError("TASK_SPEC_TOO_LARGE")
             op = self.store.get_operation(actor.project_id, self.KIND, spec.task_id)
+            claim = None
+            if self.claim_guard is not None:
+                claim = self.claim_guard(actor, epic, spec, op)
+                if (
+                    not isinstance(claim, dict)
+                    or claim.get("spec_hash") != digest(packet)
+                    or claim.get("epic_commit") != self.worktrees.git.head(epic.branch)
+                    or claim.get("main_commit") != self.worktrees.git.head("main")
+                    or not isinstance(claim.get("scheduler_id"), str)
+                    or len(claim["scheduler_id"]) != 64
+                    or not set(spec.dependencies).issubset(claim.get("dependency_local_ids", []))
+                ):
+                    raise TaskStartError("TASK_START_CLAIM_EVIDENCE_UNVERIFIED")
             if op:
                 task = self.store.get_task(op.task_run_id)
                 if (
@@ -99,6 +122,12 @@ class TaskStartService:
                     or digest(op.result.get("instruction", "")) != op.result.get("instruction_hash")
                 ):
                     raise TaskStartError("TASK_START_INTENT_MISMATCH")
+                if (
+                    claim is not None
+                    and op.result.get("claim_evidence", {}).get("scheduler_id")
+                    != claim["scheduler_id"]
+                ):
+                    raise TaskStartError("TASK_START_SCHEDULER_OWNER_MISMATCH")
                 if task.internal_status == TaskState.CLAIMED and task.worker_slot is None:
                     task = self.slots.reserve_new(task)
                     op = op.model_copy(
@@ -116,7 +145,8 @@ class TaskStartService:
                 for r in self.store.get_runs()
             ):
                 raise TaskStartError("TASK_ALREADY_OWNED")
-            self._dependencies(spec, epic)
+            if claim is None:
+                self._dependencies(spec, epic)
             task = self.worktrees.create_task_worktree(
                 actor,
                 epic_run_id=epic.id,
@@ -148,6 +178,7 @@ class TaskStartService:
                     "branch": task.branch,
                     "cwd": task.worktree_path,
                     "base_commit": task.base_commit,
+                    **({"claim_evidence": claim} if claim is not None else {}),
                 },
             )
             self.store.add_operation(op)
@@ -160,6 +191,31 @@ class TaskStartService:
                 facts=VerifiedFacts(dependencies_ready=True, slot_reserved=True),
             )
             return task, op
+
+    def claim(self, actor, epic_run_id, spec, *, timeout_seconds=45):
+        """Internal durable claim only; no Git/workspace/runtime side effects."""
+        if type(timeout_seconds) is not int or not 1 <= timeout_seconds <= 45:
+            raise TaskStartError("TASK_START_INVALID_TIMEOUT")
+        try:
+            spec = LocalTaskSpec.model_validate(
+                spec.model_dump() if isinstance(spec, LocalTaskSpec) else spec
+            )
+            with self.integration._lock():
+                return self._prepare(actor, epic_run_id, spec, timeout_seconds)
+        except TaskStartError:
+            raise
+        except SlotError as error:
+            raise TaskStartError(str(error)) from None
+        except (
+            ValidationError,
+            ContractError,
+            WorktreeError,
+            GitError,
+            StoreError,
+            StateError,
+            IntegrationError,
+        ):
+            raise TaskStartError("TASK_CLAIM_UNVERIFIED") from None
 
     def _checkpoint(self, op, stage, *, error=None):
         with self.store.transaction():
@@ -188,6 +244,41 @@ class TaskStartService:
             )
             self.store.update_operation(current)
             return current
+
+    def prepare_git(self, actor, epic_run_id, spec, *, timeout_seconds=45):
+        """Internal F29 stage: validated durable claim and Git, no native startup."""
+        task, op = self.claim(actor, epic_run_id, spec, timeout_seconds=timeout_seconds)
+        try:
+            with self.integration._lock():
+                # Revalidate under the same lock as the Git effect, not a prior boolean.
+                task, op = self._prepare(
+                    actor,
+                    epic_run_id,
+                    LocalTaskSpec.model_validate(
+                        spec.model_dump() if isinstance(spec, LocalTaskSpec) else spec
+                    ),
+                    timeout_seconds,
+                )
+                if task.internal_status != TaskState.CLAIMED:
+                    raise TaskStartError("TASK_GIT_PREPARATION_PHASE_CHANGED")
+                self.slots.verify(task)
+                self.worktrees.create_task_worktree(
+                    actor, epic_run_id=epic_run_id, task_id=task.task_id, run_id=task.id
+                )
+                self._checkpoint(op, "GIT_READY")
+                return self.store.get_task(task.id)
+        except (
+            TaskStartError,
+            WorktreeError,
+            GitError,
+            StoreError,
+            StateError,
+            IntegrationError,
+            SlotError,
+        ):
+            self._checkpoint(op, op.result["stage"], error="TASK_GIT_PREPARATION_UNVERIFIED")
+            self.slots.release_unstarted(self.store.get_task(task.id), op.id)
+            raise TaskStartError("TASK_GIT_PREPARATION_UNVERIFIED") from None
 
     def start(self, actor, epic_run_id, spec, *, timeout_seconds=45):
         if type(timeout_seconds) is not int or not 1 <= timeout_seconds <= 45:
