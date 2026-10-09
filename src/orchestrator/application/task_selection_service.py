@@ -205,149 +205,154 @@ class TaskSelectionService:
         ):
             raise TaskSelectionError("TASK_SELECTION_BOARD_SCOPE_MISMATCH")
         with self.integration._lock(), self.store.transaction():
-            epic = self._scope(actor, epic_run_id)
-            native = [e for e in board.epics if e.binding and e.binding.local_id == epic.epic_id]
-            if len(native) != 1:
-                raise TaskSelectionError("TASK_SELECTION_EPIC_BINDING_MISSING")
-            native = native[0]
-            before = self.integration.worktrees.verify_owned_worktree(epic)
-            main = self.git.inspect(self.settings.repository, "main", clean=False)
-            issues = tuple(board.issues) + tuple(self.reader._issues(board.epics, board.tasks))
-            shared = []
-            if (
-                epic.status != EpicState.ACTIVE
-                or epic.completed_at
-                or native.status != "InProgress"
-            ):
-                shared.append({"code": "EPIC_NOT_ACTIVE", "related_id": native.id})
-            if any(
-                self.git.working_changes(path)
-                or self.git.unsafe_index_paths(path)
-                or self.git.in_progress(path)
-                for path in (self.settings.repository, Path(epic.worktree_path))
-            ):
-                shared.append({"code": "EPIC_OR_MAIN_WORKTREE_UNSAFE", "related_id": native.id})
-            prerequisites = self.epic_prerequisites.get(epic.epic_id)
-            epic_proofs = {}
-            if prerequisites is None:
-                shared.append({"code": "EPIC_PREREQUISITES_UNSPECIFIED", "related_id": native.id})
-            else:
-                for identity in prerequisites:
-                    try:
-                        epic_proofs[identity] = self._epic_proof(identity, board, epic, actor)
-                    except TaskSelectionError as error:
-                        shared.append({"code": str(error), "related_id": identity})
-            results = []
-            for row in board.epic_tasks(native.id):
-                blockers = list(shared)
+            return self._evaluate_locked(actor, epic_run_id, board)
 
-                def block(code, related=None, blockers=blockers):
-                    entry = {"code": code, "related_id": related}
-                    if entry not in blockers:
-                        blockers.append(entry)
-
-                if row.status != BoardStatus.PENDING:
-                    block("TASK_NOT_PLANNED")
-                if (
-                    row.execution_owner_kind != "User"
-                    or row.responsible_user_id != self.reader.user_id
-                ):
-                    block("TASK_EXECUTION_OWNER_MISMATCH")
-                for issue in issues:
-                    if issue.task_id == row.id:
-                        block(issue.code, issue.related_id)
-                spec = None
+    def _evaluate_locked(self, actor, epic_run_id, board):
+        """Internal F29 preflight under the shared Git lock and claim transaction."""
+        if not self.store.db.in_transaction:
+            raise TaskSelectionError("TASK_SELECTION_CLAIM_TRANSACTION_REQUIRED")
+        self._scope(actor, epic_run_id)
+        if (
+            board.project_id != self.reader.project_id
+            or board.authenticated_user_id != self.reader.user_id
+        ):
+            raise TaskSelectionError("TASK_SELECTION_BOARD_SCOPE_MISMATCH")
+        epic = self._scope(actor, epic_run_id)
+        native = [e for e in board.epics if e.binding and e.binding.local_id == epic.epic_id]
+        if len(native) != 1:
+            raise TaskSelectionError("TASK_SELECTION_EPIC_BINDING_MISSING")
+        native = native[0]
+        before = self.integration.worktrees.verify_owned_worktree(epic)
+        main = self.git.inspect(self.settings.repository, "main", clean=False)
+        issues = tuple(board.issues) + tuple(self.reader._issues(board.epics, board.tasks))
+        shared = []
+        if epic.status != EpicState.ACTIVE or epic.completed_at or native.status != "InProgress":
+            shared.append({"code": "EPIC_NOT_ACTIVE", "related_id": native.id})
+        if any(
+            self.git.working_changes(path)
+            or self.git.unsafe_index_paths(path)
+            or self.git.in_progress(path)
+            for path in (self.settings.repository, Path(epic.worktree_path))
+        ):
+            shared.append({"code": "EPIC_OR_MAIN_WORKTREE_UNSAFE", "related_id": native.id})
+        prerequisites = self.epic_prerequisites.get(epic.epic_id)
+        epic_proofs = {}
+        if prerequisites is None:
+            shared.append({"code": "EPIC_PREREQUISITES_UNSPECIFIED", "related_id": native.id})
+        else:
+            for identity in prerequisites:
                 try:
-                    spec = self._spec(row, epic, board)
+                    epic_proofs[identity] = self._epic_proof(identity, board, epic, actor)
                 except TaskSelectionError as error:
-                    block(str(error))
-                if row.binding and any(
-                    isinstance(r, TaskRun)
-                    and r.project_id == epic.project_id
-                    and r.task_id == row.binding.local_id
-                    for r in self.store.get_runs()
-                ):
-                    block("TASK_ALREADY_OWNED")
-                if spec:
-                    branch = f"task/{slug(epic.epic_id)}-{slug(spec.task_id)}"
-                    path = self.integration.worktrees._path(
-                        epic.project_id, f"task-{slug(epic.epic_id)}-{slug(spec.task_id)}", None
-                    )
-                    if (
-                        self.git.head(branch) is not None
-                        or self.git.owner(branch) is not None
-                        or path.exists()
-                        or path.is_symlink()
-                        or any(
-                            t.get("branch") == f"refs/heads/{branch}"
-                            for t in self.git.worktrees().values()
-                        )
-                    ):
-                        block("TASK_GIT_RESOURCES_OCCUPIED")
-                dependencies = {}
-                pending, visited = list(row.dependencies), set()
-                while pending:
-                    identity = pending.pop()
-                    if identity in visited:
-                        continue
-                    visited.add(identity)
-                    dependency = board.task(identity)
-                    if dependency is None:
-                        block("DEPENDENCY_MISSING", identity)
-                        continue
-                    pending.extend(dependency.dependencies)
-                    if dependency.status != BoardStatus.DONE:
-                        block("DEPENDENCY_NOT_DONE", identity)
-                        continue
-                    try:
-                        delivered_epic, proof = self._task_run(dependency, board, epic.project_id)
-                        if delivered_epic.id != epic.id:
-                            if dependency.epic_id not in epic_proofs:
-                                epic_proofs[dependency.epic_id] = self._epic_proof(
-                                    dependency.epic_id, board, epic, actor
-                                )
-                        dependencies[identity] = proof
-                    except TaskSelectionError as error:
-                        block(str(error), identity)
-                if spec and spec.external_prerequisites:
-                    try:
-                        ready = (
-                            self.prerequisite_probe is not None
-                            and self.prerequisite_probe(spec) is True
-                        )
-                    except Exception:
-                        ready = False
-                    if not ready:
-                        block("TASK_PREREQUISITE_UNVERIFIED")
-                results.append(
-                    {
-                        "task_id": row.id,
-                        "local_id": row.binding.local_id if row.binding else None,
-                        "priority": int(row.priority),
-                        "version": row.version,
-                        "runnable": not blockers,
-                        "blockers": blockers,
-                        "dependencies": dependencies,
-                        "external_prerequisites": list(spec.external_prerequisites) if spec else [],
-                    }
-                )
-            if (
-                self.integration.worktrees.verify_owned_worktree(epic) != before
-                or self.git.head("main") != main
+                    shared.append({"code": str(error), "related_id": identity})
+        results = []
+        for row in board.epic_tasks(native.id):
+            blockers = list(shared)
+
+            def block(code, related=None, blockers=blockers):
+                entry = {"code": code, "related_id": related}
+                if entry not in blockers:
+                    blockers.append(entry)
+
+            if row.status != BoardStatus.PENDING:
+                block("TASK_NOT_PLANNED")
+            if row.execution_owner_kind != "User" or row.responsible_user_id != self.reader.user_id:
+                block("TASK_EXECUTION_OWNER_MISMATCH")
+            for issue in issues:
+                if issue.task_id == row.id:
+                    block(issue.code, issue.related_id)
+            spec = None
+            try:
+                spec = self._spec(row, epic, board)
+            except TaskSelectionError as error:
+                block(str(error))
+            if row.binding and any(
+                isinstance(r, TaskRun)
+                and r.project_id == epic.project_id
+                and r.task_id == row.binding.local_id
+                for r in self.store.get_runs()
             ):
-                raise TaskSelectionError("TASK_SELECTION_GIT_CHANGED")
-            rank = {identity: index for index, identity in enumerate(self.order)}
-            results.sort(
-                key=lambda r: (-r["priority"], rank.get(r["task_id"], len(rank)), r["task_id"])
+                block("TASK_ALREADY_OWNED")
+            if spec:
+                branch = f"task/{slug(epic.epic_id)}-{slug(spec.task_id)}"
+                path = self.integration.worktrees._path(
+                    epic.project_id, f"task-{slug(epic.epic_id)}-{slug(spec.task_id)}", None
+                )
+                if (
+                    self.git.head(branch) is not None
+                    or self.git.owner(branch) is not None
+                    or path.exists()
+                    or path.is_symlink()
+                    or any(
+                        t.get("branch") == f"refs/heads/{branch}"
+                        for t in self.git.worktrees().values()
+                    )
+                ):
+                    block("TASK_GIT_RESOURCES_OCCUPIED")
+            dependencies = {}
+            pending, visited = list(row.dependencies), set()
+            while pending:
+                identity = pending.pop()
+                if identity in visited:
+                    continue
+                visited.add(identity)
+                dependency = board.task(identity)
+                if dependency is None:
+                    block("DEPENDENCY_MISSING", identity)
+                    continue
+                pending.extend(dependency.dependencies)
+                if dependency.status != BoardStatus.DONE:
+                    block("DEPENDENCY_NOT_DONE", identity)
+                    continue
+                try:
+                    delivered_epic, proof = self._task_run(dependency, board, epic.project_id)
+                    if delivered_epic.id != epic.id:
+                        if dependency.epic_id not in epic_proofs:
+                            epic_proofs[dependency.epic_id] = self._epic_proof(
+                                dependency.epic_id, board, epic, actor
+                            )
+                    dependencies[identity] = proof
+                except TaskSelectionError as error:
+                    block(str(error), identity)
+            if spec and spec.external_prerequisites:
+                try:
+                    ready = (
+                        self.prerequisite_probe is not None
+                        and self.prerequisite_probe(spec) is True
+                    )
+                except Exception:
+                    ready = False
+                if not ready:
+                    block("TASK_PREREQUISITE_UNVERIFIED")
+            results.append(
+                {
+                    "task_id": row.id,
+                    "local_id": row.binding.local_id if row.binding else None,
+                    "priority": int(row.priority),
+                    "version": row.version,
+                    "runnable": not blockers,
+                    "blockers": blockers,
+                    "dependencies": dependencies,
+                    "external_prerequisites": list(spec.external_prerequisites) if spec else [],
+                }
             )
-            candidates = [r["task_id"] for r in results if r["runnable"]]
-            return {
-                "epic_run_id": epic.id,
-                "epic_commit": before,
-                "main_commit": main,
-                "next_task_id": candidates[0] if candidates else None,
-                "candidates": candidates,
-                "tasks": results,
-                "epic_dependencies": epic_proofs,
-                "reservation": False,
-            }
+        if (
+            self.integration.worktrees.verify_owned_worktree(epic) != before
+            or self.git.head("main") != main
+        ):
+            raise TaskSelectionError("TASK_SELECTION_GIT_CHANGED")
+        rank = {identity: index for index, identity in enumerate(self.order)}
+        results.sort(
+            key=lambda r: (-r["priority"], rank.get(r["task_id"], len(rank)), r["task_id"])
+        )
+        candidates = [r["task_id"] for r in results if r["runnable"]]
+        return {
+            "epic_run_id": epic.id,
+            "epic_commit": before,
+            "main_commit": main,
+            "next_task_id": candidates[0] if candidates else None,
+            "candidates": candidates,
+            "tasks": results,
+            "epic_dependencies": epic_proofs,
+            "reservation": False,
+        }

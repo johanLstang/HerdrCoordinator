@@ -13,7 +13,7 @@ _TASK_EDGES = {
     T.READY_FOR_REVIEW: {T.REVIEWING, T.BLOCKED},
     T.REVIEWING: {T.CHANGES_REQUESTED, T.APPROVED, T.READY_FOR_REVIEW, T.BLOCKED},
     T.CHANGES_REQUESTED: {T.WORKING, T.BLOCKED},
-    T.APPROVED: {T.MERGING, T.CHANGES_REQUESTED, T.BLOCKED},
+    T.APPROVED: {T.MERGING, T.CHANGES_REQUESTED, T.BLOCKED, T.READY_FOR_REVIEW},
     T.MERGING: {T.DONE, T.APPROVED, T.MERGING, T.BLOCKED},
     T.BLOCKED: {T.PARKED},
     T.PARKED: {
@@ -141,6 +141,21 @@ class StateService:
                     and facts.verification_commit == task.current_commit,
                     "task commit and test evidence are required",
                 )
+            if target == T.READY_FOR_REVIEW and expected == T.APPROVED:
+                epic = self.store.get_epic(task.epic_run_id)
+                require(
+                    actor.role == Role.INTEGRATION
+                    and epic is not None
+                    and bool(facts.reason.strip())
+                    and task.current_commit == task.approved_source_commit == facts.source_commit
+                    and task.approved_source_commit is not None
+                    and task.approved_target_commit is not None
+                    and facts.target_commit == epic.current_commit
+                    and facts.target_commit is not None
+                    and facts.target_commit != task.approved_target_commit,
+                    "requeue requires unchanged verified task and changed actual epic base",
+                )
+                updates.update(approved_source_commit=None, approved_target_commit=None)
             if target == T.APPROVED and expected == T.REVIEWING:
                 epic = self.store.get_epic(task.epic_run_id)
                 reviews = self.store.get_reviews(task.id)

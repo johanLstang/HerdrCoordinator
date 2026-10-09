@@ -6,6 +6,7 @@ from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_changes_service import TaskChangesError
 from orchestrator.application.task_merge_service import TaskMergeError
 from orchestrator.application.task_review_service import TaskReviewError
+from orchestrator.application.task_scheduler_service import SchedulerError
 from orchestrator.application.task_selection_service import TaskSelectionError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
@@ -31,6 +32,7 @@ _ROLES = {
     "task_report_blocked": {Role.WORKER},
     "task_start": {Role.INTEGRATION},
     "task_get_next": {Role.INTEGRATION},
+    "task_schedule": {Role.INTEGRATION},
     "task_review_request": {Role.INTEGRATION},
     "task_request_changes": {Role.INTEGRATION},
     "task_approve": {Role.INTEGRATION},
@@ -85,6 +87,7 @@ class RuntimeService:
         task_merge=None,
         teamplayer_sync=None,
         task_selection=None,
+        task_scheduler=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -95,6 +98,7 @@ class RuntimeService:
         self.task_merge = task_merge
         self.teamplayer_sync = teamplayer_sync
         self.task_selection = task_selection
+        self.task_scheduler = task_scheduler
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -122,6 +126,16 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if operation == "task_schedule" and self.task_scheduler is not None:
+            response = await self._schedule(arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if operation == "task_get_next" and self.task_selection is not None:
             response = await self._get_next(arguments)
             self.log.emit(
@@ -243,6 +257,10 @@ class RuntimeService:
                 return ToolResponse(
                     ok=True, code="OK", message="read-only task selection is available"
                 )
+            if request.operation == "task_schedule" and self.task_scheduler is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="bounded task scheduler is available"
+                )
             if request.operation == "task_start" and self.task_start is not None:
                 return ToolResponse(ok=True, code="OK", message="task start service is available")
             if request.operation == "task_review_request" and self.task_review is not None:
@@ -281,6 +299,36 @@ class RuntimeService:
             if key in _PUBLIC_FIELDS
         }
         return ToolResponse(ok=True, code="OK", message="runtime status", data=data)
+
+    async def _schedule(self, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot schedule tasks")
+        try:
+            request = TaskGetNextRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid scheduling target"
+            )
+        if (
+            request.project_id != self.actor.project_id
+            or request.epic_run_id != self.actor.epic_run_id
+        ):
+            return ToolResponse(ok=False, code="FORBIDDEN", message="scheduling scope denied")
+        try:
+            result = await self.task_scheduler.tick(self.actor, request.epic_run_id)
+            return ToolResponse(
+                ok=True, code="OK", message="bounded scheduling observed", data=result
+            )
+        except SchedulerError as error:
+            return ToolResponse(
+                ok=False, code=str(error), message="reconcile scheduling and recorded steps"
+            )
+        except Exception:
+            return ToolResponse(
+                ok=False, code="SCHEDULER_UNAVAILABLE", message="reconcile recorded scheduling"
+            )
 
     def _start_task(self, arguments):
         if self.actor.role != Role.INTEGRATION:
