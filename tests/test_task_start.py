@@ -41,7 +41,10 @@ def setup(tmp_path):
         ["git", "-C", str(repo), "commit", "-m", "base"], check=True, capture_output=True
     )
     settings = Settings(
-        repository=repo, worktree_root=tmp_path / "trees", sqlite_path=tmp_path / "state.db"
+        repository=repo,
+        worktree_root=tmp_path / "trees",
+        sqlite_path=tmp_path / "state.db",
+        max_workers=1,
     )
     with StateStore(settings.sqlite_path) as store:
         coordinator = Actor(actor_id="c", role=Role.COORDINATOR, project_id="p")
@@ -230,11 +233,14 @@ def test_interruption_retains_claim_and_known_steps_without_duplicate_effects(
         with pytest.raises(TaskStartError):
             s.start(actor, actor.epic_run_id, spec)
     task = s.store.get_tasks(actor.epic_run_id)[0]
-    assert task.worker_slot == 1
+    assert task.worker_slot == (None if when in {"before_git", "after_git"} else 1)
     if when != "after_prompt":
         assert task.internal_status != TaskState.WORKING
-    with pytest.raises(TaskStartError, match="CAPACITY"):
-        s.start(actor, actor.epic_run_id, spec | {"task_id": "T2"})
+    if when not in {"before_git", "after_git"}:
+        with pytest.raises(TaskStartError, match="CAPACITY"):
+            s.start(actor, actor.epic_run_id, spec | {"task_id": "T2"})
+    else:
+        assert s.store.get_operation("p", s.KIND, "T").result["reservation_released"] is True
     if when in {"before_git", "after_git"}:
         monkeypatch.setattr(s.worktrees.git, "add_worktree", original)
     if when == "after_agent":
@@ -384,4 +390,4 @@ def test_immutable_base_change_after_claim_requires_reconciliation(setup, monkey
     with pytest.raises(TaskStartError):
         s.start(actor, actor.epic_run_id, spec)
     assert not h.workspaces and s.worktrees.git.head("task/e-t") is None
-    assert s.store.get_tasks(actor.epic_run_id)[0].worker_slot == 1
+    assert s.store.get_tasks(actor.epic_run_id)[0].worker_slot is None

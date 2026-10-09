@@ -11,6 +11,7 @@ from orchestrator.application.git_integration_service import IntegrationError
 from orchestrator.application.runtime_start_service import RuntimeStartError, RuntimeStartService
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_delivery_evidence import known_merge, passed_test
+from orchestrator.application.worker_slots import SlotError, WorkerSlots
 from orchestrator.application.worktree_service import WorktreeError
 from orchestrator.domain.models import Operation, TaskRun, utc_now
 from orchestrator.domain.policy import Role, VerifiedFacts
@@ -26,7 +27,10 @@ class RuntimeLifecycleService:
         self.settings, self.store, self.herdr = settings, store, herdr
         self.codex = codex or CodexAdapter()
         self.processes = processes or ProcessObserver()
-        self.start = RuntimeStartService(settings, store, herdr)
+        self.start = RuntimeStartService(settings, store, herdr, processes=self.processes)
+        self.slots = WorkerSlots(
+            settings, store, processes=self.processes, inactive_probe=self._inactive
+        )
 
     def _load(self, run_id, task):
         return self.store.get_task(run_id) if task else self.store.get_epic(run_id)
@@ -341,7 +345,7 @@ class RuntimeLifecycleService:
                         actor=actor,
                         facts=VerifiedFacts(inactivity_confirmed=True),
                     )
-                self.store.update_runtime_metadata(run.model_copy(update={"worker_slot": None}))
+                self.slots.release_stopped(run, op)
             return self._finish(
                 op,
                 status="SUCCEEDED",
@@ -394,22 +398,10 @@ class RuntimeLifecycleService:
                     raise LifecycleError("RESUME_REQUIRES_VERIFIED_STOP")
                 self.codex.read_session(run.codex_session_id, run.worktree_path)
                 if task:
-                    occupied = {
-                        t.worker_slot
-                        for t in self.store.get_runs()
-                        if isinstance(t, TaskRun)
-                        and t.project_id == run.project_id
-                        and t.id != run.id
-                        and t.worker_slot is not None
-                    }
-                    slot = next(
-                        (n for n in range(1, self.settings.max_workers + 1) if n not in occupied),
-                        None,
-                    )
-                    if slot is None:
-                        raise LifecycleError("WORKER_CAPACITY_UNAVAILABLE")
-                    run = run.model_copy(update={"worker_slot": slot})
-                    self.store.update_runtime_metadata(run)
+                    try:
+                        run = self.slots.reserve_resume(run, stopped[-1].id)
+                    except SlotError as error:
+                        raise LifecycleError(str(error)) from None
                 op = Operation(
                     project_id=run.project_id,
                     epic_run_id=run.epic_run_id if task else run.id,
@@ -420,6 +412,7 @@ class RuntimeLifecycleService:
                         "session_id": run.codex_session_id,
                         "stop_operation_id": stopped[-1].id,
                         "stage": "RESUME_REQUESTED",
+                        "worker_slot": run.worker_slot if task else None,
                     },
                 )
                 self.store.add_operation(op)
@@ -511,6 +504,7 @@ class RuntimeLifecycleService:
             raise
         except (
             RuntimeStartError,
+            SlotError,
             HerdrError,
             CodexError,
             GitError,
@@ -527,7 +521,7 @@ class RuntimeLifecycleService:
                 else "CODEX_SESSION_UNAVAILABLE"
                 if isinstance(e, CodexError)
                 else str(e)
-                if isinstance(e, (ProcessError, RuntimeStartError))
+                if isinstance(e, (ProcessError, RuntimeStartError, SlotError))
                 else "LIFECYCLE_UNVERIFIED"
             )
             self._record_error(method, args, code)

@@ -6,6 +6,7 @@ from uuid import uuid4
 from orchestrator.adapters.git import GitError
 from orchestrator.adapters.herdr import HerdrAdapter, HerdrError
 from orchestrator.application.state_service import StateError, StateService
+from orchestrator.application.worker_slots import SlotError, WorkerSlots
 from orchestrator.application.worktree_service import WorktreeError, WorktreeService
 from orchestrator.config import Settings
 from orchestrator.domain.models import EpicRun, ExternalReference, Operation, TaskRun, utc_now
@@ -21,9 +22,12 @@ class RuntimeStartError(RuntimeError):
 class RuntimeStartService:
     KIND = "start_runtime"
 
-    def __init__(self, settings: Settings, store: StateStore, herdr: HerdrAdapter):
+    def __init__(
+        self, settings: Settings, store: StateStore, herdr: HerdrAdapter, *, processes=None
+    ):
         self.settings, self.store, self.herdr = settings, store, herdr
         self.worktrees = WorktreeService(settings, store)
+        self.slots = WorkerSlots(settings, store, processes=processes)
 
     def start_task(self, actor: Actor, task_run_id: str) -> TaskRun:
         return self._start(actor, task_run_id, True)
@@ -121,20 +125,14 @@ class RuntimeStartService:
                 "worker_agent_id" if task else "integration_agent_id": name,
             }
             if task:
-                occupied = {
-                    r.worker_slot
-                    for r in self.store.get_runs()
-                    if isinstance(r, TaskRun)
-                    and r.project_id == run.project_id
-                    and r.id != run.id
-                    and r.worker_slot is not None
-                }
-                slot = run.worker_slot or next(
-                    (n for n in range(1, self.settings.max_workers + 1) if n not in occupied), None
+                try:
+                    reserved = self.slots.reserve_new(run)
+                except SlotError as error:
+                    raise RuntimeStartError(str(error)) from None
+                updates["worker_slot"] = reserved.worker_slot
+                op = op.model_copy(
+                    update={"result": op.result | {"worker_slot": reserved.worker_slot}}
                 )
-                if slot is None or slot in occupied or slot > self.settings.max_workers:
-                    raise RuntimeStartError("WORKER_CAPACITY_UNAVAILABLE")
-                updates["worker_slot"] = slot
             run = type(run).model_validate(run.model_dump() | updates)
             self.store.add_operation(op)
             self.store.update_runtime_metadata(run)
@@ -150,18 +148,10 @@ class RuntimeStartService:
             return run, op
 
     def _slot(self, run):
-        if (
-            run.worker_slot is None
-            or run.worker_slot > self.settings.max_workers
-            or any(
-                isinstance(r, TaskRun)
-                and r.id != run.id
-                and r.project_id == run.project_id
-                and r.worker_slot == run.worker_slot
-                for r in self.store.get_runs()
-            )
-        ):
-            raise RuntimeStartError("WORKER_SLOT_UNVERIFIED")
+        try:
+            self.slots.verify(run)
+        except SlotError as error:
+            raise RuntimeStartError(str(error)) from None
 
     def _save(self, run, op, expected_stage, changes, runtime_updates=None):
         with self.store.transaction():

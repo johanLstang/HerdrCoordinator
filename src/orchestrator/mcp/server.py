@@ -18,6 +18,7 @@ from orchestrator.mcp.contracts import (
     Target,
     TaskApprovalRequest,
     TaskChangesRequest,
+    TaskGetNextRequest,
     TaskMergeRequest,
     TaskReviewRequest,
     TaskStartRequest,
@@ -43,6 +44,28 @@ def create_server(service: RuntimeService) -> Server:
             ),
         ]
     ]
+
+    if service.task_scheduler is not None:
+        tools.append(
+            Tool(
+                name="task_schedule",
+                description="Run one bounded scheduling tick in registered Integration scope.",
+                input_schema=TaskGetNextRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
+
+    if service.task_selection is not None:
+        tools.append(
+            Tool(
+                name="task_get_next",
+                description="Read ordered candidates and blockers without reserving or starting.",
+                input_schema=TaskGetNextRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False),
+            )
+        )
 
     if service.task_start is not None:
         tools.append(

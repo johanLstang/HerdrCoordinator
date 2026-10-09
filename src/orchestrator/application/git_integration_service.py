@@ -42,7 +42,8 @@ class GitIntegrationService:
         self.test_command, self.test_timeout = test_command, test_timeout
         self.test_environment = dict(test_environment) if test_environment is not None else None
         test_context = (
-            test_command if self.test_environment is None
+            test_command
+            if self.test_environment is None
             else {"command": test_command, "environment": self.test_environment}
         )
         self.command_hash = hashlib.sha256(
@@ -198,20 +199,73 @@ class GitIntegrationService:
             "operation_id": op.id,
         }
 
-    def verify_task(self, actor: Actor, task_run_id: str, *, key: str) -> Operation:
+    def worker_source(self, actor, task_run_id, *, expected_commit=None):
+        """Internal independent Worker evidence; not current-epic review/approval."""
+        task, epic = self._task(actor, task_run_id)
+        source, _ = self._owned_pair(task, epic)
+        base = task.base_commit
+        syncs = [
+            o
+            for o in self.store.get_operations(epic.id, kind="sync_task_with_epic")
+            if o.task_run_id == task.id and o.status == "SUCCEEDED"
+        ]
+        if syncs:
+            op = max(syncs, key=lambda o: o.created_at)
+            merged = op.result["merge_commit"]
+            target, incoming = op.result["target_commit"], op.result["source_commit"]
+            if (
+                op.result.get("requires_reconciliation") is not False
+                or not self.git.contains_commit(task.branch, merged)
+                or not self.git.contains_commit(epic.branch, incoming)
+                or (
+                    merged != target
+                    and (
+                        self.git.parents(merged) != (target, incoming)
+                        or self.git.find_operation_merge(task.branch, op.id, target, incoming)
+                        != merged
+                    )
+                )
+                or (merged == target and not self.git.contains_commit(task.branch, incoming))
+            ):
+                raise IntegrationError("registered Worker source base is unverified")
+            base = incoming
+        evidence = self.git.snapshot(
+            Path(task.worktree_path), task.branch, base, expected_commit=expected_commit or source
+        )
+        if not evidence.reviewable:
+            raise IntegrationError("Worker source requires clean complete registered Git evidence")
+        return evidence
+
+    def verify_task(
+        self, actor: Actor, task_run_id: str, *, key: str, worker_source_only=False
+    ) -> Operation:
+        if type(worker_source_only) is not bool:
+            raise IntegrationError("invalid internal verification purpose")
         if not self.test_command:
             raise IntegrationError("operator test command is not configured")
         with self._lock():
             task, epic = self._task(actor, task_run_id)
-            evidence = self.reviews.task_review(actor, task.id)
+            evidence = (
+                self.worker_source(actor, task.id)
+                if worker_source_only
+                else self.reviews.task_review(actor, task.id)
+            )
             if not evidence.reviewable:
                 raise IntegrationError("test evidence requires a complete current task review")
-            source, target = evidence.source.current_commit, evidence.target_commit
+            source, target = (
+                (evidence.current_commit, evidence.base_commit)
+                if worker_source_only
+                else (evidence.source.current_commit, evidence.target_commit)
+            )
             old = self._prior(task, "verify_task", key)
             request = {
                 "source_commit": source,
-                "target_commit": target,
                 "command_hash": self.command_hash,
+                **(
+                    {"purpose": "worker_report", "source_base_commit": target}
+                    if worker_source_only
+                    else {"target_commit": target}
+                ),
             }
             if old:
                 if any(old.result.get(k) != v for k, v in request.items()):
@@ -221,7 +275,8 @@ class GitIntegrationService:
                 return old
             with self.store.transaction():
                 self._patch(task, current_commit=source)
-                self._patch(epic, current_commit=target)
+                if not worker_source_only:
+                    self._patch(epic, current_commit=target)
                 op = Operation(
                     project_id=task.project_id,
                     epic_run_id=epic.id,
@@ -238,7 +293,8 @@ class GitIntegrationService:
                     cwd=task.worktree_path,
                     env=(
                         self.test_environment
-                        if self.test_environment is not None else self.git._environment()
+                        if self.test_environment is not None
+                        else self.git._environment()
                     ),
                     stdout=subprocess.DEVNULL,
                     stderr=subprocess.DEVNULL,
@@ -247,8 +303,15 @@ class GitIntegrationService:
                 ).returncode
                 if exit_code != 0:
                     error = "TEST_FAILED"
-                fresh = self.reviews.task_review(actor, task.id, expected_commit=source)
-                if not fresh.reviewable or fresh.target_commit != target:
+                fresh = (
+                    self.worker_source(actor, task.id, expected_commit=source)
+                    if worker_source_only
+                    else self.reviews.task_review(actor, task.id, expected_commit=source)
+                )
+                if (
+                    not fresh.reviewable
+                    or (fresh.base_commit if worker_source_only else fresh.target_commit) != target
+                ):
                     error = "STALE_TEST_EVIDENCE"
             except (OSError, subprocess.TimeoutExpired):
                 error = "TEST_PROCESS_FAILED"
@@ -300,6 +363,7 @@ class GitIntegrationService:
                 or verification.result.get("source_commit") != source
                 or verification.result.get("target_commit") != target
                 or verification.result.get("command_hash") != self.command_hash
+                or verification.result.get("purpose") == "worker_report"
             ):
                 raise IntegrationError("review lacks actual current test evidence")
             if task.internal_status == TaskState.READY_FOR_REVIEW:

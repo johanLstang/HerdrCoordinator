@@ -5,12 +5,12 @@
 ## Start och persistens
 
 1. Validera taskspec, epic, scope och beroenden. Lokala taskberoenden kräver F-07:s registrerade Done-/review-/Git-/testleverans. Externa villkor kräver ett betrott operatörsinstallerat preflight-anrop som returnerar exakt True; annars startas inget.
-2. Håll samma repo-lås som integration och en SQLite-transaktion. F-05:s `prepare_only` sparar skapandeintent och aktuell epicbas utan Git-mutation. Spara unik run, slot 1, immutable spec/prompt med SHA256/version och task_start-operation; övergå PLANNED → CLAIMED. För stor prompt avvisas före commit av transaktionen. Inget worktree eller runtime skapas före claim.
+2. Håll samma repo-lås som integration och en SQLite-transaktion. F-05:s `prepare_only` sparar skapandeintent och aktuell epicbas utan Git-mutation. Spara unik run, reserverad slot, immutable spec/prompt med SHA256/version och task_start-operation; övergå PLANNED → CLAIMED. För stor prompt avvisas före commit av transaktionen. Inget worktree eller runtime skapas före claim.
 3. Skapa/verifiera Git via F-05 och spara GIT_READY. Ändrad sparad epicbas eller främmande resurser kräver avstämning, inte adoption eller ny run.
 4. Släpp Gitlåset. F-11 sparar varje Herdr-startsteg och övergår CLAIMED → STARTING. Known/unknown outcomes hanteras av samma underoperation.
 5. F-12 levererar den sparade F-14-prompten en gång. WORKING kräver den korrelerade native ACK:n från rätt session/turn, aldrig en skärmtext, lyckad startprocess eller transportretur ensam. Parentoperationen blir SUCCEEDED/WORKING när ACK bekräftats.
 
-Fas 4 begränsar denna pipeline till **en Worker**, oavsett grundkonfigurationens högre max. Kör även andra runtime-/lifecycle-services med `max_workers = 1` under denna fas. En kvarvarande claim i någon slot, även från Done eller avbrutet arbete, blockerar ny task tills F-13 oberoende bekräftat inaktivitet och frigjort sloten. F-15 gör ingen parkering, release, merge eller Done.
+F-15 levererades ursprungligen med en Worker i fas 4. Från [F-28](../scheduling/F-28-slots.md) respekterar alla tre flöden samma `max_workers = 1` eller `2` och atomiska reservationer. En befintlig claim räknas även under start, review/fix eller okänt runtimeutfall. F-13:s oberoende stoppbevis krävs för att frigöra startad eller möjligen startad runtime. Ett verifierat F-15-fel före varje runtime-startintent och bindning kan däremot frigöra sin claim; samma run, operation och bas återanvänds med en ny ledig slot vid retry. F-15 utför ingen parkering, merge eller Done.
 
 Schema 2 är oförändrat. Operationsnyckeln `(project, task_start, task_id)` och det befintliga unika taskägarskapet hindrar nya runs. Spec/prompt/epic/run/branch/cwd/base/runtime-konfiguration kan inte bytas genom retry. Parentsteg går framåt; varje känd extern resurs finns i F-05/F-11/F-12-journalen. SQLite-anslutningar är per servicetråd, repo-låset koordinerar processer; externa manuella skrivare omfattas inte.
 
@@ -19,7 +19,7 @@ Schema 2 är oförändrat. Operationsnyckeln `(project, task_start, task_id)` oc
 | Avbrott | Nästa anrop |
 | --- | --- |
 | Före claim-commit | Ingen claim/resurs finns; vanlig start kan ske. |
-| Efter claim/före eller efter Git | Återanvänd run, slot, bas och skapandeintent. Verifiera resurserna. |
+| Efter claim/före eller efter Git | Återanvänd run, bas och skapandeintent. Efter verifierat fel utan runtimeintent/bindning reserveras en ledig slot på nytt. Annars bevaras reservationen. Verifiera resurserna. |
 | Workspace-anrop utan känt svar | Bevara STARTING och slot; manuell avstämning. Skapa inget nytt workspace. |
 | Agentstart med okänt svar | Observera exakt känt namn/pane/process; skicka inte ny start. |
 | Prompt utan bekräftad ACK | Observera sparad operation även när Worker är busy. Skicka inte om. Timeout/dialog kräver åtgärd. |

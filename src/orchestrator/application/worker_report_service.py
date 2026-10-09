@@ -191,13 +191,11 @@ class WorkerReportService:
         }
 
     def _git(self, verifier, task, report):
-        evidence = self.integration.reviews.task_review(
-            verifier, task.id, expected_commit=report.commit
-        )
-        if not evidence.reviewable or evidence.source.current_commit != report.commit:
+        evidence = self.integration.worker_source(verifier, task.id, expected_commit=report.commit)
+        if not evidence.reviewable or evidence.current_commit != report.commit:
             raise ReportError("REPORT_GIT_UNVERIFIED")
         # Record observed paths separately; claims cannot substitute for actual Git facts.
-        actual_files = sorted(f.path for f in evidence.source.changed_files)
+        actual_files = sorted(f.path for f in evidence.changed_files)
         if report.files_changed and sorted(report.files_changed) != actual_files:
             raise ReportError("REPORT_CHANGED_FILES_MISMATCH")
         if any(t.exit_code != 0 for t in report.tests):
@@ -288,7 +286,7 @@ class WorkerReportService:
                     }
             # Persist report intent before starting independent operator-selected tests.
             verification = self.integration.verify_task(
-                verifier, task.id, key="report-test:" + op.id
+                verifier, task.id, key="report-test:" + op.id, worker_source_only=True
             )
             if verification.status != "SUCCEEDED" or verification.result.get("exit_code") != 0:
                 with self.store.transaction():
@@ -303,8 +301,12 @@ class WorkerReportService:
                 if (
                     current_source != provenance
                     or current_report != report
-                    or (current.source.current_commit, current.target_commit)
-                    != (verification.result["source_commit"], verification.result["target_commit"])
+                    or verification.result.get("purpose") != "worker_report"
+                    or (current.current_commit, current.base_commit)
+                    != (
+                        verification.result["source_commit"],
+                        verification.result["source_base_commit"],
+                    )
                 ):
                     raise ReportError("REPORT_VERIFICATION_STALE")
                 done = self.store.get_operation(op.project_id, self.KIND, op.idempotency_key)
@@ -321,7 +323,7 @@ class WorkerReportService:
                     event_id=op.result["event_id"],
                     actor=actor,
                     facts=VerifiedFacts(
-                        tests_passed=True, verification_commit=current.source.current_commit
+                        tests_passed=True, verification_commit=current.current_commit
                     ),
                 )
                 self._finish(
@@ -329,8 +331,9 @@ class WorkerReportService:
                     "SUCCEEDED",
                     stage="READY_FOR_REVIEW",
                     verification_id=verification.id,
-                    verified_commit=current.source.current_commit,
-                    epic_commit=current.target_commit,
+                    verified_commit=current.current_commit,
+                    source_base_commit=current.base_commit,
+                    observed_epic_commit=self.integration.git.head(epic.branch),
                     actual_files=files,
                     test_command=list(self.integration.test_command),
                     exit_code=0,

@@ -9,7 +9,7 @@ from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.state_service import StateService
 from orchestrator.application.teamplayer_evidence import TeamPlayerEvidence
 from orchestrator.application.teamplayer_reader import TeamPlayerReader
-from orchestrator.domain.models import ExternalReference, Operation, utc_now
+from orchestrator.domain.models import ExternalReference, Operation, TaskRun, utc_now
 from orchestrator.domain.policy import Role
 from orchestrator.domain.teamplayer import BoardEpic, BoardTask, external_id
 from orchestrator.domain.worker_contracts import canonical_json
@@ -122,7 +122,13 @@ class TeamPlayerSyncService:
                 raise TeamPlayerError("TEAMPLAYER_EXTERNAL_TASK_SCOPE_CHANGED")
             dependencies = []
             for dependency in spec.dependencies:
-                matches = [t for t in self.store.get_tasks(epic.id) if t.task_id == dependency]
+                matches = [
+                    t
+                    for t in self.store.get_runs()
+                    if isinstance(t, TaskRun)
+                    and t.project_id == run.project_id
+                    and t.task_id == dependency
+                ]
                 if len(matches) != 1:
                     raise TeamPlayerError("TEAMPLAYER_EXTERNAL_DEPENDENCY_UNBOUND")
                 dependencies.append(self._reference(matches[0], True))

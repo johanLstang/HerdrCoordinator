@@ -53,3 +53,9 @@ class TaskApprovalRequest(TaskReviewRequest):
 
 class TaskMergeRequest(TaskReviewRequest):
     verification_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
+class TaskGetNextRequest(BaseModel):
+    model_config = Target.model_config
+    project_id: Identity
+    epic_run_id: Identity

@@ -66,6 +66,38 @@ def test_current_authorized_complete_review_approves_without_merge_done_or_relea
     assert s.integration.git.head("main") == main and s.integration.git.head(e.branch) == epic
 
 
+def test_changed_epic_head_before_metadata_checkpoint_requeues_with_actual_new_base(setup):
+    s, a, w, d, _, _, _, _ = setup
+    s.approve(a, w.task_run_id, d, key="before-epic-commit")
+    before = s.store.get_task(w.task_run_id)
+    epic = s.store.get_epic(a.epic_run_id)
+    reviews = s.store.get_reviews(before.id)
+    path = Path(epic.worktree_path)
+    (path / "independent-epic-result.txt").write_text("another integrated result\n")
+    s.integration.git.run("add", "--", "independent-epic-result.txt", cwd=path)
+    s.integration.git.run(
+        "commit", "-m", "advance actual epic before metadata checkpoint", cwd=path
+    )
+    target = s.integration.git.inspect(path, epic.branch, clean=True)
+    assert target != epic.current_commit
+    assert s.store.get_epic(epic.id).current_commit == epic.current_commit
+    result = s.requeue_changed_epic(a, before.id)
+    assert result.internal_status == TaskState.READY_FOR_REVIEW
+    assert result.approved_source_commit is None and result.approved_target_commit is None
+    assert result.current_commit == before.current_commit and result.merge_commit is None
+    assert result.worker_slot == before.worker_slot
+    assert result.codex_session_id == before.codex_session_id
+    assert s.store.get_epic(epic.id).current_commit == target
+    assert s.store.get_reviews(before.id) == reviews
+    with pytest.raises(TaskApprovalError):
+        s.require_current(a, before.id)
+    with pytest.raises(TaskApprovalError):
+        s.approve(a, before.id, d, key="cannot-reuse-old-decision")
+    fresh = s.contexts.request(a, before.id, key="review-actual-new-base")["context"]
+    assert fresh["context_id"] != d["context_id"]
+    assert fresh["epic_commit"] == target
+
+
 def test_repeat_and_reopen_return_current_exact_approval_without_new_review(setup):
     s, a, w, d, _, _, _, _ = setup
     first = s.approve(a, w.task_run_id, d, key="once")
