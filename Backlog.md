@@ -1188,11 +1188,13 @@ En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manue
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
+**Leveransläge (2026-10-09):** F27 Done efter review a815f1b, taskmerge161d3f5 och172tester145.70s PASS. NästaF28. E07Active, egenacceptans0/3; två nativeWorkers/scheduling/samlatprov och mainintegration återstår.
+
 ### Task F-27 Välj endast körbara tasks i rätt beroendeordning
 
-**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `8c9e5322-28c7-4310-b444-4c3a843fb671`.
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `8c9e5322-28c7-4310-b444-4c3a843fb671`.
 
-**Körbar:** Ja — E06 Done/main54e346d med samlad588grind och205sluttester; inga ytterligare externa villkor.
+**Körbar:** Nej — granskad, integrerad och verifierad Done på E07.
 
 **Källa:** A §§17–18, 41; W §§9, 27–28. **Berör:** Scheduler, beroendegraf, Git/runtimeunderlag.
 
@@ -1206,9 +1208,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-27.A1:** Två oberoende Planned-tasks kan väljas medan en beroende task väntar.
-- [ ] **F-27.A2:** READY_FOR_REVIEW eller APPROVED hos beroendet öppnar inte nästa task; verifierad Done gör det.
-- [ ] **F-27.A3:** Cykel, okänt beroende och saknat mergeunderlag ger konkreta blockerare och ingen start.
+- [x] **F-27.A1:** Två oberoende Planned-tasks kan väljas medan en beroende task väntar.
+- [x] **F-27.A2:** READY_FOR_REVIEW eller APPROVED hos beroendet öppnar inte nästa task; verifierad Done gör det.
+- [x] **F-27.A3:** Cykel, okänt beroende och saknat mergeunderlag ger konkreta blockerare och ingen start.
 
 **Verifiering:** Kända beroendegrafer med oberoende tasks, cykler och avvikande Kanban/Gitdata.
 
@@ -1216,11 +1218,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker-underlag F27 (2026-10-09):** TaskSelectionService och läsande MCP task_get_next levererade i task/e07-f27. Fullständiga operatorregistrerade specs/bindings/ordning; grafens hela beroendekedja, native User/Pending, unika taskägare och upptagna Gitresurser kontrolleras. F21/F20/F18/Git/test/stopp/Done-event och tidigare epicers F08/egen acceptans/main/sluttest återläses utan mutation. 51 specifika tester PASS137.50s;44 MCP/startup/CLI-regressioner PASS14.21s. Ruff/build/config/diff/exakta wheelmoduler/rollprompter/länkar PASS. Verkliga temporära Git/SQLite/F21/F08 och SDK-MCP; board/runtime/processobserver simulerade, ingen native parallellitet eller säkrad autonomi påstås. Två felaktigt konstruerade negativa testfixtures rättades (scopebunden Coordinator och tidigare registrerad epicbas), utan svagare produktgrindar. [Kontrakt och verifiering](docs/scheduling/F-27-korbarhet.md). READY_FOR_REVIEW; kriterier/status Done kräver faktisk Integration-review/merge och tester på epic.
 
+**Integration/slutleverans F27 (2026-10-09):** Full8filsreview a815f1b929fc5fbd378c8cf75ec37ce6fe8ed7a2 mot ec28744f358a818913746560f83e9429caa2517c;58834bytes/SHA256d8ab9bc17817287ecce9f9128b637c91a161860fa9067d2474aff2163d1f7ed2 APPROVED. Faktisk bootstrapGitAdapter no-ffTask→Epic161d3f5ba98b1ae12717f549a98f69f6d6e51dfd/operation9bfa6777-b3ec-44bd-8fdb-a7f2ecf27753/exakta parents/identisktreviewtree. På faktiskmerge172relevanta tester145.70s/exit0 och Ruff/build/config/diff/exaktawheelmoduler/rollprompter/länkar PASS. Source/epic ordinariepush och remoteSHA återlästa. NativeF27Donev5 återläst, User105; acceptans3/3. E07Active/egen0av3, kvar F28–F30 och samlad/native epicverifiering/mainintegration. [Sparad review](docs/reviews/F-27.md). Nästa prioriterade task F28; inget ändrat leveransberoende.
+
 ### Task F-28 Reservera högst två aktiva Worker slots
 
 **Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
 
-**Körbar:** Nej — invänta F-27 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F27 Done/granskad E07merge161d3f5/172testerPASS och E06 Done på main; inga ytterligare externa villkor.
 
 **Källa:** A §§17, 29–30, 41; W §§8, 10, 18, 26. **Berör:** Scheduler, slotpersistens, taskclaim.
 
@@ -1998,9 +2002,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | E06 Done på main; F27 nästa kandidat. |
-| 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Active | Ja | 0/3 | E-06 | E06 Done/main54e346d/205final PASS; nästa prioriterade kandidat. |
-| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Nej | 0/3 | E-06, F-27 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | F27Done/merge161d3f5/172PASS; F28 nästa. Epicacceptans/mainintegration återstår. |
+| 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Ja | 0/3 | E-06, F-27 | F27Done på aktuellE07; nästa prioriterade task, två beständiga slots. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
