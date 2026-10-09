@@ -101,10 +101,11 @@ Integrationslåsets fil kan skapas i Git common-dir; ingen Worker startas eller 
 Upprepning och återöppnad SQLite ger samma svar så länge fakta och konfiguration är
 oförändrade. Ett nytt svar är råd utifrån observerade fakta och ingen reservation.
 
-F28/F29 ska återvalidera board, scope, beroendebevis och kapacitet före beständig claim
-eller resume. F15:s befintliga fas-4-start är fortsatt en Worker och same-epic-start;
-urvalsresultatet kringgår inga av dess grindar. Två Worker-slots och scheduling byggs
-sekventiellt i F28/F29 och provas native i F30. Manuell utvecklingsbootstrap adopteras
+Start måste återvalidera board, scope, beroendebevis och kapacitet före beständig claim
+eller resume. F15 startar inom samma epic; urvalsresultatet kringgår inga av dess
+grindar. [F28](F-28-slots.md) utökar reservationen till konfigurerade 1–2 Workers;
+F29 kopplar nytt boardurval till scheduling och start. Native parallellitet provas
+i F30. Manuell utvecklingsbootstrap adopteras
 inte som produkt-runtime. F38:s dokumenterade miljö-/autonomigate kvarstår.
 
 ## Verifiering
