@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
-from orchestrator.domain.attention import ReviewBlockDecision
+from orchestrator.domain.attention import InputDecision, ReviewBlockDecision
 from orchestrator.domain.models import Identity
 from orchestrator.domain.review_contracts import ApprovalDecision, ChangesDecision
 from orchestrator.domain.worker_contracts import LocalTaskSpec
@@ -70,3 +70,7 @@ class TaskParkRequest(BaseModel):
 
 class TaskBlockReviewRequest(TaskParkRequest):
     decision: ReviewBlockDecision
+
+
+class TaskResumeRequest(TaskParkRequest):
+    decision: InputDecision

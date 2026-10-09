@@ -358,3 +358,10 @@ Nätfel hindrar inte parkering av redan ägt arbete. Upprepning efter lyckat sto
 Worker får inte parkera eller synka direkt. Det verkliga avgränsade provet bevarar
 sessionen för F32. Se [API, verifiering och nästa åtgärd](docs/attention/F-31-blockerare.md)
 och [faktiska nativebevis](docs/attention/F-31-prover.json).
+
+### F32: input och återupptagning
+
+[F32-kontrakt och operatörskedja](docs/attention/F-32-aterupptagning.md) samt
+[faktiskt samma-session-prov](docs/attention/F-32-prover.json).
+Integration sparar explicit input och återupptar samma Worker först med ledig slot;
+Active kräver korrelerad native bekräftelse av svaret.

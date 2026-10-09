@@ -726,3 +726,109 @@ def test_already_owned_worker_block_parks_even_when_board_is_offline(setup):
     row = s.store.get_operation("p", s.KIND, task.id)
     assert row.result["phase"] == "WAITING_INPUT" and row.result["reason"] is None
     assert w.exits == 1 and w.starts == 2
+
+
+def test_saved_input_tick_waits_native_ack_without_blocking_other_delivery(setup):
+    from uuid import uuid4
+
+    from orchestrator.domain.attention import InputDecision
+
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    blocked(s, w, "B")
+    run(s.tick(a, a.epic_run_id))
+    before = local(s, "B")
+    attention = s.store.get_operations(a.epic_run_id, kind="task_attention")[0]
+    decision = InputDecision(
+        input_id=str(uuid4()), blocker_id=attention.id, answer="Fixture days=7"
+    )
+    s.resume._saved(a, before, decision)
+    w.resumes = 0
+
+    def resume(name, pane, cwd, sid):
+        w.resumes += 1
+        w.agents[name] = w.workspaces[pane] | {
+            "name": name,
+            "session": sid,
+            "sid": sid,
+            "pid": 1000 + w.resumes,
+        }
+
+    w.resume_agent = resume
+    original = w.prompt
+    pending = []
+
+    def hold(name, text, *, timeout_ms):
+        if json.loads(text)["type"] == "HERDR_INPUT":
+            pending.append((name, text, timeout_ms))
+        else:
+            original(name, text, timeout_ms=timeout_ms)
+
+    w.prompt = hold
+    result = run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.PARKED and local(s, "B").worker_slot == 2
+    assert w.resumes == 1 and len(pending) == 1
+    assert (
+        next(row for row in result["tasks"] if row["task_run_id"] == before.id)["phase"]
+        == "DISPATCH_REQUESTED"
+    )
+    finish(s, w, "A")
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "A").internal_status == TaskState.DONE
+    assert (
+        local(s, "C").internal_status == TaskState.WORKING
+        and local(s, "B").internal_status == TaskState.PARKED
+    )
+    assert w.resumes == 1 and len(pending) == 1
+    name, text, ms = pending[0]
+    original(name, text, timeout_ms=ms)  # observer now sees original delivery/ACK
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.WORKING
+    assert local(s, "B").codex_session_id == before.codex_session_id
+    assert sorted(
+        t.worker_slot for t in s.store.get_tasks(a.epic_run_id) if t.worker_slot is not None
+    ) == [1, 2]
+    assert w.resumes == 1 and len(pending) == 1
+
+
+def test_offline_tick_never_reparks_input_resumed_generation(setup):
+    from uuid import uuid4
+
+    from orchestrator.domain.attention import InputDecision
+
+    s, a, b, w = setup
+    run(s.tick(a, a.epic_run_id))
+    blocked(s, w, "B")
+    run(s.tick(a, a.epic_run_id))
+    task = local(s, "B")
+    attention = s.store.get_operations(a.epic_run_id, kind="task_attention")[0]
+    decision = InputDecision(input_id=str(uuid4()), blocker_id=attention.id, answer="Fixture=7")
+
+    def resume(name, pane, cwd, sid):
+        w.agents[name] = w.workspaces[pane] | {
+            "name": name,
+            "session": sid,
+            "sid": sid,
+            "pid": 9001,
+        }
+
+    w.resume_agent = resume
+    original = w.prompt
+    sent = []
+    w.prompt = lambda name, text, timeout_ms: sent.append(text)
+    assert run(s.resume.resume(a, task.id, decision))["stage"] == "DISPATCH_REQUESTED"
+    read = b.read
+
+    async def offline(*args):
+        raise TeamPlayerError("TEAMPLAYER_TRANSPORT_UNKNOWN")
+
+    b.read = offline
+    with pytest.raises(TeamPlayerError):
+        run(s.tick(a, a.epic_run_id))
+    assert task.worker_agent_id in w.agents and local(s, "B").worker_slot == 2 and w.exits == 1
+    parent = s.store.get_operation("p", s.KIND, task.id)
+    assert parent.result["phase"] != "PAUSED"
+    b.read = read
+    original(task.worker_agent_id, sent[0], timeout_ms=45000)
+    run(s.tick(a, a.epic_run_id))
+    assert local(s, "B").internal_status == TaskState.WORKING and w.exits == 1 and len(sent) == 1

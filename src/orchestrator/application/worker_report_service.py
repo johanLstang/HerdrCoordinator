@@ -117,17 +117,34 @@ class WorkerReportService:
             if op.task_run_id == task.id and op.result.get("review_id") is not None
         ]
         correction = max(corrections, key=lambda op: op.created_at) if corrections else None
+        inputs = [
+            op
+            for op in self.store.get_operations(task.epic_run_id, kind="task_resume")
+            if op.task_run_id == task.id
+        ]
+        latest_input = max(inputs, key=lambda op: op.created_at) if inputs else None
+        if latest_input and (correction is None or latest_input.created_at > correction.created_at):
+            from orchestrator.application.task_resume_intent import verified_input
+
+            try:
+                verified_input(self.store, task, latest_input)
+            except Exception:
+                raise ReportError("REPORT_INPUT_BINDING_CHANGED") from None
+            if latest_input.result["stage"] not in {"CONFIRMED", "ACTIVE_AND_SYNCED"}:
+                raise ReportError("REPORT_INPUT_UNCONFIRMED")
+            correction = latest_input
         if correction is not None:
-            if correction.status != "SUCCEEDED":
+            if correction.kind != "task_resume" and correction.status != "SUCCEEDED":
                 raise ReportError("REPORT_CORRECTION_UNCONFIRMED")
             ack = correction.result["ack"]
+            binding = correction.result.get("subject", correction.result)
             if (
                 ack["session_id"] != task.codex_session_id
-                or correction.result["session_id"] != task.codex_session_id
-                or correction.result["branch"] != task.branch
-                or correction.result["worktree_path"] != task.worktree_path
-                or correction.result["worker_agent_id"] != task.worker_agent_id
-                or correction.result["start_operation_id"] != start.id
+                or binding["session_id"] != task.codex_session_id
+                or binding["branch"] != task.branch
+                or binding["worktree_path"] != task.worktree_path
+                or binding.get("agent_id", binding.get("worker_agent_id")) != task.worker_agent_id
+                or binding.get("start_id", binding.get("start_operation_id")) != start.id
             ):
                 raise ReportError("REPORT_CORRECTION_BINDING_CHANGED")
             positions = [i for i, turn in enumerate(turns) if turn["id"] == ack["turn_id"]]

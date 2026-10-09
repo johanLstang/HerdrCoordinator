@@ -14,6 +14,8 @@ from orchestrator.application.task_approval_service import TaskApprovalError, Ta
 from orchestrator.application.task_attention_service import AttentionError, TaskAttentionService
 from orchestrator.application.task_changes_service import TaskChangesError, TaskChangesService
 from orchestrator.application.task_merge_service import TaskMergeError, TaskMergeService
+from orchestrator.application.task_resume_intent import verified_input
+from orchestrator.application.task_resume_service import ResumeError, TaskResumeService
 from orchestrator.application.task_review_service import TaskReviewError, TaskReviewService
 from orchestrator.application.task_selection_service import TaskSelectionError
 from orchestrator.application.task_start_service import TaskStartError, TaskStartService
@@ -98,6 +100,7 @@ class TaskSchedulerService:
         self.attention = TaskAttentionService(
             settings, store, sync, herdr, codex, processes=processes
         )
+        self.resume = TaskResumeService(self.attention)
 
     def _scope(self, actor, epic_run_id):
         try:
@@ -291,7 +294,9 @@ class TaskSchedulerService:
             TaskState.PARKED: {"InProgress", "Testing", "NeedsInput", "Blocked"},
         }
         if row.status not in phases.get(task.internal_status, {"InProgress", "Testing"}):
-            raise SchedulerError("SCHEDULER_BOARD_STATUS_CONFLICT")
+            pending = self._pending_input(actor, task)
+            if pending is None or row.status not in {"NeedsInput", "Blocked"}:
+                raise SchedulerError("SCHEDULER_BOARD_STATUS_CONFLICT")
         self._board = board
         return board
 
@@ -424,6 +429,16 @@ class TaskSchedulerService:
             self._record(actor, task, "DONE", merge_commit=task.merge_commit)
             return False
         await self._fresh_owned(actor, task)
+        pending = self._pending_input(actor, task)
+        if pending is not None:
+            result = await self.resume.resume(actor, task.id, pending.result["decision"])
+            task = self.store.get_task(task.id)
+            if result["stage"] != "ACTIVE_AND_SYNCED":
+                self._record(
+                    actor, task, result["stage"], input_id=pending.id, reason=result["reason"]
+                )
+                return False
+            self._record(actor, task, "OBSERVING", input_id=pending.id, reason=None)
         if task.internal_status in {TaskState.CLAIMED, TaskState.STARTING}:
             parent = self.store.get_operation(task.project_id, self.start.KIND, task.task_id)
             if parent.error_code:
@@ -502,6 +517,22 @@ class TaskSchedulerService:
             return True
         return False
 
+    def _pending_input(self, actor, task):
+        pending = [
+            o
+            for o in self.store.get_operations(task.epic_run_id, kind="task_resume")
+            if o.task_run_id == task.id and o.status == "PENDING"
+        ]
+        if not pending:
+            return None
+        if len(pending) != 1 or pending[0].result["actor"] != actor.model_dump(mode="json"):
+            raise SchedulerError("SCHEDULER_INPUT_OWNER_CHANGED")
+        try:
+            verified_input(self.store, task, pending[0])
+        except Exception:
+            raise SchedulerError("SCHEDULER_INPUT_UNVERIFIED") from None
+        return pending[0]
+
     async def _park_owned_blockers(self, actor, epic):
         # Physical safety of an already owned run does not depend on board uptime.
         # Only this scheduler's original claim/principal may be handled here;
@@ -512,6 +543,10 @@ class TaskSchedulerService:
             except SchedulerError:
                 continue
             try:
+                if task.internal_status == TaskState.PARKED and self._pending_input(actor, task):
+                    # F32 owns this already parked/resuming generation. Offline tick
+                    # neither resumes it nor replays F31 against the new generation.
+                    continue
                 if task.internal_status == TaskState.WORKING:
                     try:
                         self.reports.collect(actor, task.id, expected_status="BLOCKED")
@@ -527,7 +562,7 @@ class TaskSchedulerService:
                 if task.internal_status in {TaskState.BLOCKED, TaskState.PARKED}:
                     result = await self.attention.park_blocked(actor, task.id)
                     self._attention_record(actor, self.store.get_task(task.id), result)
-            except (AttentionError, ReportError) as error:
+            except (AttentionError, ReportError, SchedulerError) as error:
                 self._pause(actor, self.store.get_task(task.id), str(error))
 
     async def tick(self, actor, epic_run_id):
@@ -593,6 +628,7 @@ class TaskSchedulerService:
                     TaskMergeError,
                     ReportError,
                     AttentionError,
+                    ResumeError,
                 ) as error:
                     self._pause(actor, self.store.get_task(task.id), str(error))
                     continue
