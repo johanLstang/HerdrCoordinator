@@ -1157,9 +1157,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-07 Genomför beroendestyrda tasks med två Workers
 
-**Fas:** 7. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `75285fe5-e9bb-46ea-b5fd-19135c40166d`.
+**Fas:** 7. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `75285fe5-e9bb-46ea-b5fd-19135c40166d`.
 
-**Körbar:** Ja — E06 Done/PR#6/main54e346d och205sluttester verifierade; externa villkor anges per task. **Beroende:** E-06 Done på main.
+**Körbar:** Nej — slutgranskad, mergad till main via PR #7 och slutverifierad Done. **Beroende:** E-06 Done på main.
 
 **Källa:** A §§17–18, 29–30, 41, 48; W §§8–10, 23, 27–28.
 
@@ -1188,7 +1188,7 @@ En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manue
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
-**Leveransläge (2026-10-09):** F27–F30 är nu åter Done efter granskad F28-CLI-korrigering7a08f25/merge9ab9252/15 eftertester PASS. Den samlade grinden bevarar fyndet356PASS/ett gammalt en-Worker-antagande; båda konfigurationsvärdena verifieras explicit och resterande210tester körs. F30 merge f267306/122 eftertester PASS samt verkligt två-Worker-prov med 15 överlappningar, 28 events, högst två reservationer och C efter A-Done. E07 egen acceptans 3/3 verifierad genom nativeprov och samtidighets-/aktuell-reviewtester. E07 kvar Active; Coordinator kör samlad verifiering och aktuell slutreview, öppnar PR och integrerar till main före sluttest/epic-Done. [F30-review](docs/reviews/F-30.md).
+**Leveransläge (2026-10-09):** E07 Done efter PR #7, mainmerge `9ff5eb8698f2a0750d5eea3309a6ccb2d3c7aadd` och 119 sluttester PASS. Alla fyra tasks är Done med aktuella reviews och faktiska taskmerges. Egen acceptans 3/3; samlad verifiering täcker samtliga 692 aktuella testfall. [Epicens slutreview](docs/reviews/E-07.md).
 
 ### Task F-27 Välj endast körbara tasks i rätt beroendeordning
 
@@ -1324,11 +1324,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Integration/slutleverans F30 (2026-10-09):** Full åttafilsreview source1ad07aa39965ccc61c672348eb956f2c51d699da mot aktuellE07 6c711d5a43cc7c80506cb81593b601ec0ec6b31c,135906bytes/SHA2568e554cea962be09f78024931a94808ab4f37ef50755ae0e0629f9198dc592413 APPROVED. Faktisk bootstrap-GitAdapter no-ff Task→Epic f26730670cd36647e8ed62bcd7754011b474b77c,operation9da3c5db-e0c2-4d21-9790-c74e7e32a7a8; exakta parents och identisk granskad tree. På faktisk merge: `uv run --locked pytest tests/test_task_scheduler.py tests/test_states.py tests/test_task_approval_service.py tests/test_task_merge_service.py tests/test_worker_slots.py tests/test_f30_timeline.py -x` — 122 PASS/348.57s/exit0. Ruff/build/config/diff/exakta52wheelmoduler/tvårollpolicies/106länkar PASS; publicfiler kontrollerade mot aktuella privata header-/bearervärden utan läckage. F30.A1–A3 uppfyllda; native utvecklingstask Donev8/User105 återläst. E07 egen acceptans3/3 från nativeprov och samtidighets-/aktuell-reviewgrindar, fortsattActive inför samlad slutreview/PR/mainintegration. Manuella bootstrapworktrees integreras efter faktisk review/path/branch/bas/SHA-kontroll utan adopterade produkt-runs. [Sparad review](docs/reviews/F-30.md). Nästa steg är samlad E07-leverans; F31 startas först efter verifierad E07-Done på main.
 
+**Coordinator/slutleverans E07 (2026-10-09):** Slutreview APPROVED för epic `9a4e8b15e2261339fa47c2512b4b78e1f15419ed` mot main `ec28744f358a818913746560f83e9429caa2517c`: komplett 39-filsdiff, 382454 bytes, SHA256 `eabf913d82f6ba30e893a9851cb6d08590547de7759f96187a9bfe46cd417dea`. Samlad verifiering: 692/692 unika aktuella testfall PASS i disjunkta delmängder 122+356+4+210; tidigare passerade produkt-/testfiler har identiska Gitblobbar. Ett äldre CLI-test stoppade först grinden och rättades genom dokumenterad F28-återöppning, ny full review och faktisk integration; det underkända kommandot framställs inte som PASS. PR https://github.com/johanLstang/HerdrCoordinator/pull/7 är återläst MERGED med exakt mainmerge `9ff5eb8698f2a0750d5eea3309a6ccb2d3c7aadd`, operation `379552d3-fcd2-489e-b94d-cf2f3f847993`, exakta parents och identisk godkänd tree. På faktisk mainmerge: 119 tester PASS/141.54s/exit0 samt Ruff/build/configCLI/diff, 52 exakta wheelmoduler, två rollpolicies och 120 berörda länkar PASS. Remote-main återläst. F27–F30 native Done/User105; E07 egen acceptans 3/3, native Donev14 återläst efter alla grindar. Bootstrap GitAdapter-undantaget användes efter faktiska path/branch/bas/clean/SHA/reviewkontroller, utan fabricerade produktruns eller ägarskap. Native prov visar två Workers, C efter A:s verifierade leverans, aktuell B-review och replay utan dubblering. Schema2/uv.lock oförändrade; långlivade loopar, F38-autonomigate och F47-recovery återstår. Gamla och nya provresurser bevaras. [Sparad slutreview](docs/reviews/E-07.md). Nästa genomförbara feature är F31 i E08 från verifierad aktuell main.
+
 ## Epic E-08 Parkera blockerade tasks och återuppta samma arbete
 
 **Fas:** 8. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `dc637987-8dce-49ef-a178-7ed819ce6db7`.
 
-**Körbar:** Nej — E-07 Done på main; externa villkor anges per task. **Beroende:** E-07 Done på main.
+**Körbar:** Ja — E07 Done/PR #7/main9ff5eb8 och 119 sluttester verifierade; externa villkor kontrolleras per task. **Beroende:** E-07 Done på main.
 
 **Källa:** A §§23, 42; W §§16–18, 22, 38–39.
 
@@ -1360,7 +1362,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
 
-**Körbar:** Nej — invänta E-07 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — E07 Done på main; X01/X02 och faktisk parkförmåga från F13/F26 finns verifierade och kontrolleras inför nytt avgränsat prov.
 
 **Källa:** A §§23, 42; W §§16, 18, 22, 39. **Berör:** task_report_blocked, Herdr, persistens, TeamPlayer.
 
@@ -2034,13 +2036,13 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 3/3 | E-06 Done på main | F27–F30 Done; F28CLI-korrigering verifierad. Resterande regression/PR7/main/sluttest väntar. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Done | Nej | 3/3 | E-06 Done på main | PR7/main9ff5eb8;692 samlade/119 sluttester PASS; docs/reviews/E-07.md. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Ursprunglig review/merge+CLI-korrektion7a08f25/merge9ab9252/15PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
-| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Nej | 0/3 | E-07, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Ja | 0/3 | E-07 Done på main | E07 verifierad/Done på main; F31 nästa kandidat. |
+| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Ja | 0/3 | E-07, X-01, X-02 | Nästa prioriterade kandidat efter E07-Done/main9ff5eb8/119 sluttester; kontrollera aktuella villkor. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Planned | Nej | 0/3 | E-07, F-32, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
