@@ -126,8 +126,9 @@ git diff --check
 Slutlig källkörning: 49 PASS, 197.13 s, exit 0. Bygg/config/diff/Ruff PASS,
 52 wheelmoduler och två rollpolicies exakt mot källan, 106 lokala länkar PASS.
 Serviceproven använder verklig Git/SQLite med kontrollerad runtime/board;
-nativeprovet ovan redovisas separat. Leveransreview
-tillkommer vid faktisk integration.
+nativeprovet ovan redovisas separat. [Faktisk leveransreview](../reviews/F-30.md)
+registrerar Task→Epic f267306 och 122 eftertester PASS; utvecklings-F30 är Done.
+E07 väntar på egen samlad slutreview och mainintegration.
 
 ## Begränsningar
 
