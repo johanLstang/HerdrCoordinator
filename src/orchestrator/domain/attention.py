@@ -38,3 +38,16 @@ class ReviewBlockDecision(BlockerDetails):
         if len(canonical_json(self.model_dump(mode="json")).encode()) > 16384:
             raise ValueError("review input decision exceeds bound")
         return self
+
+
+class InputDecision(Contract):
+    version: Literal[1] = 1
+    input_id: Annotated[str, Field(pattern=r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")]
+    blocker_id: Annotated[str, Field(pattern=r"^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$")]
+    answer: Annotated[str, Field(min_length=1, max_length=8192)]
+
+    @model_validator(mode="after")
+    def meaningful_answer(self):
+        if not self.answer.strip() or "\x00" in self.answer:
+            raise ValueError("explicit bounded input required")
+        return self

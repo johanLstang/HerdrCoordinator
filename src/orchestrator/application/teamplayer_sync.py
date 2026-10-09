@@ -209,6 +209,9 @@ class TeamPlayerSyncService:
         if "attention_id" in proof:
             event_key["attention_id"] = proof["attention_id"]
             event_key["attention_hash"] = proof["attention_hash"]
+        if "input_id" in proof:
+            event_key["input_id"] = proof["input_id"]
+            event_key["input_hash"] = proof["input_hash"]
         key = digest(canonical_json(event_key))
         request = {
             "target_id": identity,

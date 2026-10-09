@@ -1401,7 +1401,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-32 Återuppta Attention med sparat beslut och ledig slot
 
-**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `41cb49c7-c172-4182-8d17-8ba2e255f07a`.
+**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `41cb49c7-c172-4182-8d17-8ba2e255f07a`.
 
 **Körbar:** Ja — F31 granskad/integrerad/Done på E08, E07 Done på main och faktisk parkerad native session bevarad; kontrollera externa villkor inför start.
 
@@ -1410,6 +1410,15 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** F-31. **Externa förutsättningar:** X-01 och X-02; samma-session-resume verifierad i E-03.
 
 **Arbetsinstruktion för Codex:** Implementera resume_task/worker_resume för behörig Integration-roll. Spara beslutet, kontrollera session/worktree/branch och boka slot atomiskt innan Worker återupptas. Skicka beslutet till samma session och sätt WORKING/Active efter bekräftelse.
+
+**Start och implementationskontrakt F32 (2026-10-09):** User105/Write, F31Done6 och samtliga native beroenden Done verifierade; E07Done15/main4a4ebe1, E08Active8. Egen ren task/e08-f32 från epicfa4001986667d3e3dcc4c468a8b749e97901f9e6. Integration plockade InProgressv2 före kod. Bootstrap-worktreet adopteras inte som produktrun.
+
+1. Behörig Integration tar emot explicit strikt input-ID, blockerar-ID och svar. Spara oföränderligt svar/ansvarig anslutning och F31-källbindning före kontroll av externa resurser, kapacitetsreservation och runtimeeffekter; saknade resurser lämnar sparat beslut med konkret fel. Ett annat svar på samma ID eller en andra leverans till samma blockerare avvisas; nytt beslut kräver ny blockerare.
+2. Kontrollera faktisk F31-journal/parkstop, oförändrad run/branch/worktree/SID, faktisk Git-HEAD före sändning och F05/F13-ägarskap. F13 reserverar atomiskt slot och återupptar exakt samma session. Full kapacitet ger WAITING_RESUME/Attention; ingen tredje Worker eller ersättningsrun.
+3. F13 läser den verkliga väntande inputjournalen och lämnar PARKED/Attention efter fysisk resume. Ingen agentflagga kan styra detta. Spara korrelerad dispatchavsikt före enda sändning; aktuell runtime/generation/session och native ACK med exakt input-/blocker-/korrelations-ID krävs innan sparad fas återställs till Active. Reviewinput ger ingen approval eller föråldrad mergebehörighet.
+4. Kända resume-/prompt-/ACK-/synkdelresultat återanvänds efter omstart. Okänd sändning observeras utan blind omsändning. ACK-timeout behåller beslut och reservation samt konkret åtgärd; bara faktiskt F13-stopp får frigöra slot. F25 kan inte publicera Active enbart för fysisk resume av en F32-input.
+5. F29:s begränsade scheduler-tick driver befintlig verifierad inputjournal före vanlig rapporthantering, med färsk board och ursprunglig Integration-principal. Väntan på kapacitet/ACK blockerar inte andra tasks; offlineparkering behandlar inte en input-resumad PARKED-session som en ny blockerare. Ingen autonom inputleverantör eller dold loop införs. Integration-bundet MCP exponerar resume_task och worker_resume med strikt mål och beslut; Worker kan inte lämna slot/process-/rollbevis. Tjänsten kopplas in uttryckligen, ingen implicit extern loop.
+6. Verifiera servicekedjan med kapacitetsrace, reopen, dubbelinput/resume, saknade resurser, okända externa resultat, stale identitet/HEAD/generation och rollkontroll. Nativeprovet återanvänder F31r2:s faktiska parkerade session och journal med explicit ofarlig operatörstestinput RETENTION_DAYS=7; detta är avgränsad fixturedata, ingen gissad produktpolicy. Gamla resurser bevaras; F33 levererar samlat två-Worker-Attentionprov och F38/F47 framtida gate/recovery.
 
 **Resultat och kontrakt:** Input utan slot ligger kvar som väntande återupptagning i Attention. Varje svar har identitet och historik; dubbelt anrop skickar inte beslut eller start två gånger. Saknat worktree eller ej återupptagbar session kräver konkret åtgärd, inte en tyst ny Worker.
 
@@ -1422,6 +1431,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Samtidiga resume/start-prov, återöppnad databas med väntande svar och verkligt resumeprov.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Workerunderlag F32 (2026-10-09):** Beständig InputDecision/task_resume, oföränderlig F31-källbindning, F13 inputmedveten fysisk resume utan tidig Active, korrelerad native prompt/ACK och F25-synk samt Integration-bundna resume_task/worker_resume levereras. F16 använder senaste input-ACK som rapportgräns. F29 driver sparad input med färsk board; väntande ACK blockerar inte andra tasks och offline tick återparkerar inte resumad generation. Aktuell scheduler14 PASS238.14s/exit0; runtime/Attention/F16/F25/MCP-regression130 PASS455.13s/exit0. 22 utökade resumeprov PASS77.89s/exit0; slutlig 23-provsgrind med explicit tvåfulla reservationer PASS78.89s/exit0. Ruff/build/configCLI/diff/56 exakta wheelmoduler/två promptpolicies/117 lokala länkar PASS. Första wheelpolicypathkontrollen använde fel katalog; korrekt force-include-mappning verifierades därefter, ingen produktändring behövdes. Native faktisk input77435f5b och F13-resume21115792, exakt SID01a1212b-1132-7f13-aa40-e3af437b129e/branch/worktree, User105-fixturetaskInProgressv9 först efter korrelerad ACK; replay ingen extra start/assignment/resume/input/blockerare. Native Worker levererade därefter faktisk source41acb205 och F18-reviewcontext ef4ef5b3, men fixture-Done/mainintegration hävdas inte här. [Kontrakt och operatörskedja](docs/attention/F-32-aterupptagning.md), [nativeunderlag](docs/attention/F-32-prover.json). F32 förblir Active inför full review, faktisk Task→Epic och eftertester. E08 är Active med egenacceptans1/3; fulla två-Worker-Attention-scenariot kommer i F33.
 
 ### Task F-33 Verifiera att Attention inte stoppar andra tasks
 
@@ -2060,7 +2071,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 1/3 | E-07 Done på main | F31 Done/merge83b8495/32 eftertester; egen acceptans1/3. F32 nästa; epicActive tills samlad mainleverans. |
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Ja | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone5. |
-| 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Ja | 0/3 | E-07, F-31, X-01, X-02 | Nästa: F31Done/integrerad; samma nativeSID och parkerade resurser bevarade. |
+| 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Active | Ja | 0/3 | E-07, F-31, X-01, X-02 | InProgress2/User105; task/e08-f32 från epicfa400198. Sparad input, atomisk slot, native samma-session-ACK före Active. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Planned | Nej | 0/3 | E-07, F-32, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Planned | Nej | 0/3 | E-08, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

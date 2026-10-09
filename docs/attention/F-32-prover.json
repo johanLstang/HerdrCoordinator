@@ -1,0 +1,182 @@
+{
+  "acceptance_pass": true,
+  "source": {
+    "epicId": "e8d9dbf7-4dd2-426a-87d7-8ec9dd264eaa",
+    "tasks": {
+      "A": "78dabe54-01a7-4234-a696-49774b5c4781"
+    }
+  },
+  "before": {
+    "id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_id": "A",
+    "branch": "task/f31-epic-r2-a",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+    "resume_state": "WORKING",
+    "internal_status": "PARKED",
+    "kanban_status": "Attention",
+    "worker_agent_id": "hc-28939a79ad764820b6f26b69",
+    "worker_slot": null,
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f31-r2-20261009",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d699029c2231",
+    "codex_session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+    "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "current_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "approved_source_commit": null,
+    "approved_target_commit": null,
+    "merge_commit": null,
+    "started_at": "2026-10-09T14:57:10.577440Z",
+    "completed_at": null
+  },
+  "active": {
+    "id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_id": "A",
+    "branch": "task/f31-epic-r2-a",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+    "resume_state": null,
+    "internal_status": "WORKING",
+    "kanban_status": "Active",
+    "worker_agent_id": "hc-28939a79ad764820b6f26b69",
+    "worker_slot": 1,
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f31-r2-20261009",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d699029c2231",
+    "codex_session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+    "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "current_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+    "approved_source_commit": null,
+    "approved_target_commit": null,
+    "merge_commit": null,
+    "started_at": "2026-10-09T14:57:10.577440Z",
+    "completed_at": null
+  },
+  "input_operation": {
+    "id": "77435f5b-e523-452c-a218-863f3c200d1b",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "kind": "task_resume",
+    "idempotency_key": "4491cc92-076a-42f7-b050-aed6e4717c71",
+    "status": "SUCCEEDED",
+    "result": {
+      "actor": {
+        "actor_id": "f31-integration-r2",
+        "role": "Integration",
+        "project_id": "f31-probe-r2",
+        "epic_run_id": "f31-epic-run-r2",
+        "task_run_id": null
+      },
+      "decision": {
+        "version": 1,
+        "input_id": "4491cc92-076a-42f7-b050-aed6e4717c71",
+        "blocker_id": "71d62a8a-0374-40a2-83fb-d8c1fe3c6106",
+        "answer": "Explicit operator fixture decision: RETENTION_DAYS=7. Use strict positive integer 7 for f31_retention.retention_days() and own tests/test_f31_retention.py. This is harmless test input within the original scope. Historical greeting modules/tests and all other files remain unchanged."
+      },
+      "subject": {
+        "project_id": "f31-probe-r2",
+        "epic_run_id": "f31-epic-run-r2",
+        "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+        "task_id": "A",
+        "branch": "task/f31-epic-r2-a",
+        "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a",
+        "session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+        "start_id": "28939a79-ad76-4820-b6f2-6b691b9f1a1e",
+        "generation": "28939a79-ad76-4820-b6f2-6b691b9f1a1e",
+        "server_session": "hc-f31-r2-20261009",
+        "agent_id": "hc-28939a79ad764820b6f26b69",
+        "binding": {
+          "workspace_id": "w1",
+          "tab_id": "w1:t1",
+          "pane_id": "w1:p1",
+          "terminal_id": "term_65d699029c2231"
+        },
+        "base_commit": "6598161a9eccba2164d624e5e351a829ea06e827"
+      },
+      "attention_hash": "3540045aeb6e0027c129b6ab5b7f2baff4c9c0e933b3da7fbd532b66d42155e1",
+      "stop_id": "246b0d5f-2c81-4b73-bbb5-0f7f30ac6c7a",
+      "resume_key": "input-resume:77435f5b-e523-452c-a218-863f3c200d1b",
+      "correlation_id": "7284bfc3-ec55-4c49-9c55-d82f166b0354",
+      "resume_state": "WORKING",
+      "intent_hash": "c97ddec2e366d60fd1ec2a0a99acefe17bd5609ced4cdb7f70c0f1736a0a176d",
+      "stage": "ACTIVE_AND_SYNCED",
+      "resource_commit": "6598161a9eccba2164d624e5e351a829ea06e827",
+      "resume_id": "21115792-60b6-4146-975d-9cb382a5bc61",
+      "prompt": "{\"answer\":\"Explicit operator fixture decision: RETENTION_DAYS=7. Use strict positive integer 7 for f31_retention.retention_days() and own tests/test_f31_retention.py. This is harmless test input within the original scope. Historical greeting modules/tests and all other files remain unchanged.\",\"assignment\":{\"blocker_id\":\"71d62a8a-0374-40a2-83fb-d8c1fe3c6106\",\"correlation_id\":\"7284bfc3-ec55-4c49-9c55-d82f166b0354\",\"epic_run_id\":\"f31-epic-run-r2\",\"input_id\":\"4491cc92-076a-42f7-b050-aed6e4717c71\",\"project_id\":\"f31-probe-r2\",\"status\":\"WORKING\",\"task_id\":\"A\",\"task_run_id\":\"e40c2627-87ad-4431-af28-d017de13bda3\"},\"branch\":\"task/f31-epic-r2-a\",\"instruction\":\"First reply with exactly the assignment JSON as your WORKING acknowledgement. Use the saved operator answer to continue the original task in this same session, branch and worktree. Stay within the original scope; run meaningful tests and commit. Then report a new version-1 READY_FOR_REVIEW final JSON with original IDs, current full commit, tests, changed files and limitations. Report BLOCKED if more external input is required. This answer grants no merge or review approval. Do not switch branch, merge, write other worktrees, release slots or update TeamPlayer.\",\"type\":\"HERDR_INPUT\",\"version\":1,\"worktree_path\":\"/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e08-f31/.herdr/probes/f31-r2/trees/f31-probe-r2/task-f31-epic-r2-a\"}",
+      "prompt_hash": "36a53cce9e715905d98fc9e619ac1f1c051cc1fec34a2dea7b97bd518e2bc437",
+      "baseline_turns": [
+        "01a1212b-2247-7170-9591-f4243f72d81e"
+      ],
+      "deadline": "2026-10-09T15:36:25.220425+00:00",
+      "transport": "RETURNED",
+      "ack": {
+        "turn_id": "01a1214e-4e66-7103-9cfc-0c13835b5b6f",
+        "item_id": "msg_0d75e2fd35fabe9f016ac909d17eb08191b20b3d72333e845e",
+        "message_hash": "f551d6a1c2e4e3923569e835e0e001106aa849e45aa1fff5a29024107402ddb6",
+        "session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+        "correlation_id": "7284bfc3-ec55-4c49-9c55-d82f166b0354"
+      }
+    },
+    "error_code": null,
+    "created_at": "2026-10-09T15:35:32.794316Z",
+    "updated_at": "2026-10-09T15:35:55.636079Z"
+  },
+  "native_resume": {
+    "id": "21115792-60b6-4146-975d-9cb382a5bc61",
+    "project_id": "f31-probe-r2",
+    "epic_run_id": "f31-epic-run-r2",
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "kind": "resume_runtime",
+    "idempotency_key": "input-resume:77435f5b-e523-452c-a218-863f3c200d1b",
+    "status": "SUCCEEDED",
+    "result": {
+      "session_id": "01a1212b-1132-7f13-aa40-e3af437b129e",
+      "stop_operation_id": "246b0d5f-2c81-4b73-bbb5-0f7f30ac6c7a",
+      "stage": "RESUMED",
+      "worker_slot": 1,
+      "input_operation_id": "77435f5b-e523-452c-a218-863f3c200d1b",
+      "processes": [
+        {
+          "pid": 3245525,
+          "start_time": "103031120"
+        },
+        {
+          "pid": 3245553,
+          "start_time": "103031124"
+        }
+      ]
+    },
+    "error_code": null,
+    "created_at": "2026-10-09T15:35:34.198510Z",
+    "updated_at": "2026-10-09T15:35:38.872502Z"
+  },
+  "actual_native_status": "InProgress",
+  "native_version": 9,
+  "replay": {
+    "operation_id": "77435f5b-e523-452c-a218-863f3c200d1b",
+    "input_id": "4491cc92-076a-42f7-b050-aed6e4717c71",
+    "task_run_id": "e40c2627-87ad-4431-af28-d017de13bda3",
+    "stage": "ACTIVE_AND_SYNCED",
+    "reason": null,
+    "resume_id": "21115792-60b6-4146-975d-9cb382a5bc61",
+    "session_id": "01a1212b-1132-7f13-aa40-e3af437b129e"
+  },
+  "operation_counts": {
+    "start_runtime": 1,
+    "dispatch_assignment": 1,
+    "resume_runtime": 1,
+    "task_resume": 1,
+    "task_attention": 1,
+    "stop_runtime": 1
+  },
+  "same_resources": true,
+  "old_refs_and_worktrees_preserved": true,
+  "limitation": "One actual same-session resume; two-worker Attention is F33. No main merge or fixture Done claimed."
+}

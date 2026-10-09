@@ -6,6 +6,7 @@ from orchestrator.application.epic_integration_service import EpicIntegrationSer
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.task_attention_service import attention_hash, attention_subject
 from orchestrator.application.task_delivery_evidence import known_merge, passed_test
+from orchestrator.application.task_resume_intent import verified_input
 from orchestrator.application.task_review_service import TaskReviewService
 from orchestrator.application.worktree_service import WorktreeService
 from orchestrator.domain.attention import BlockerDetails, ReviewBlockDecision
@@ -251,6 +252,55 @@ class TeamPlayerEvidence:
         }
         phase = task.internal_status
         reason = ""
+        inputs = self.operations(task, "task_resume")
+        waiting = [
+            o
+            for o in inputs
+            if o.status == "PENDING"
+            and o.result.get("stage") not in {"CONFIRMED", "ACTIVE_AND_SYNCED"}
+        ]
+        if phase == TaskState.PARKED and waiting:
+            require(len(waiting) == 1)
+            input_op = waiting[0]
+            start, attention, stop = verified_input(self.store, task, input_op)
+            require(event.id == "runtime-park:" + stop.id)
+            self.worktrees.verify_owned_worktree(task)
+            resume = self.store.get_operation(
+                task.project_id, "resume_runtime", input_op.result["resume_key"]
+            )
+            if resume is None:
+                self._stop(task, stop_id=stop.id)
+            else:
+                require(
+                    resume.task_run_id == task.id
+                    and resume.epic_run_id == task.epic_run_id
+                    and resume.result["input_operation_id"] == input_op.id
+                    and resume.result["session_id"] == task.codex_session_id
+                    and resume.result["worker_slot"] == task.worker_slot
+                    and start.result.get("generation", start.id)
+                    == (
+                        resume.id
+                        if resume.status == "SUCCEEDED"
+                        else input_op.result["subject"]["generation"]
+                    )
+                )
+                from orchestrator.application.worker_slots import WorkerSlots
+
+                WorkerSlots(self.settings, self.store, processes=self.processes).verify(task)
+            proof.update(
+                input_id=input_op.id,
+                input_hash=input_op.result["intent_hash"],
+                attention_id=attention.id,
+                attention_hash=attention.result["intent_hash"],
+                prior_stop_id=stop.id,
+            )
+            reason = BlockerDetails.model_validate(attention.result["details"]).message()
+            return (
+                "NeedsInput",
+                proof,
+                reason
+                + "\nExplicit input saved; awaiting capacity or native input acknowledgement.",
+            )
         if phase == TaskState.DONE:
             parents = [
                 o
@@ -361,6 +411,28 @@ class TeamPlayerEvidence:
                     require(len(corrections) == 1 and corrections[0].status == "SUCCEEDED")
                     self._native_ack(task, corrections[0])
                     proof["correction_id"] = corrections[0].id
+                if event.id.startswith("input-ack:"):
+                    matches = [o for o in inputs if event.id == "input-ack:" + o.id]
+                    require(len(matches) == 1)
+                    input_op = matches[0]
+                    start, _, _ = verified_input(self.store, task, input_op)
+                    resume = self.store.get_operation(
+                        task.project_id, "resume_runtime", input_op.result["resume_key"]
+                    )
+                    require(
+                        input_op.result["stage"] in {"CONFIRMED", "ACTIVE_AND_SYNCED"}
+                        and resume
+                        and resume.status == "SUCCEEDED"
+                        and resume.result["input_operation_id"] == input_op.id
+                        and start.result.get("generation") == resume.id
+                        and event.request["actor"] == input_op.result["actor"]
+                    )
+                    self._native_ack(task, input_op)
+                    proof.update(
+                        input_id=input_op.id,
+                        input_hash=input_op.result["intent_hash"],
+                        resume_id=resume.id,
+                    )
                 status = "InProgress"
         return status, proof, reason
 
