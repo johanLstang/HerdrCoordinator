@@ -1188,7 +1188,7 @@ En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manue
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
-**Leveransläge (2026-10-09):** F27 Done efter review a815f1b, taskmerge161d3f5 och172tester145.70s PASS. NästaF28. E07Active, egenacceptans0/3; två nativeWorkers/scheduling/samlatprov och mainintegration återstår.
+**Leveransläge (2026-10-09):** F27 Done efter review a815f1b/merge161d3f5/172 tester PASS. F28 Done efter review cb4fd0d/merge ba47a8a/98 eftertester PASS. Nästa F29. E07 Active, egen acceptans 0/3; scheduling, två native Workers, samlat prov och mainintegration återstår.
 
 ### Task F-27 Välj endast körbara tasks i rätt beroendeordning
 
@@ -1222,9 +1222,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-28 Reservera högst två aktiva Worker slots
 
-**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
 
-**Körbar:** Ja — F27 Done/granskad E07merge161d3f5/172testerPASS och E06 Done på main; inga ytterligare externa villkor.
+**Körbar:** Nej — granskad, integrerad och verifierad Done på E07.
 
 **Källa:** A §§17, 29–30, 41; W §§8, 10, 18, 26. **Berör:** Scheduler, slotpersistens, taskclaim.
 
@@ -1238,9 +1238,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-28.A1:** Tre samtidiga startförsök ger högst två reserverade aktiva Workers.
-- [ ] **F-28.A2:** Samma task kan inte äga två slots eller startas av två schedulervarv.
-- [ ] **F-28.A3:** Startfel och bekräftat sessionsavslut frigör rätt reservation; osäkert stopp frigör den inte.
+- [x] **F-28.A1:** Tre samtidiga startförsök ger högst två reserverade aktiva Workers.
+- [x] **F-28.A2:** Samma task kan inte äga två slots eller startas av två schedulervarv.
+- [x] **F-28.A3:** Startfel och bekräftat sessionsavslut frigör rätt reservation; osäkert stopp frigör den inte.
 
 **Verifiering:** Samtidiga serviceanrop mot temporär SQLite och kontrollerad runtime med långsam start och okänt stopp.
 
@@ -1248,11 +1248,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker-underlag F28 (2026-10-09):** Gemensam intern WorkerSlots-policy för F15/F11/F13, atomisk reservation i schema 2, max_workers 1–2 och unik run. Säker pre-runtime-release återanvänder samma run/intent/bas; efter startintent krävs F13:s faktiska stoppbevis. Motstridiga claims, felaktiga bindings, otillräckligt stopp och sänkt kapacitetsgräns spärrar ny start. På slutlig källa: `uv run --locked pytest tests/test_worker_slots.py tests/test_task_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_merge_service.py tests/test_task_selection.py tests/test_teamplayer_sync.py tests/test_mcp.py -x` — 227 PASS, 617.63 s, exit 0. De 19 slotproven använder konkurrerande serviceanslutningar, verklig temporär Git/SQLite och kontrollerad runtime/processobserver. Ruff/build/config CLI/diff, 51 exakta wheelmoduler, två rollpolicies och 100 dokumentlänkar PASS. Två felaktiga testantaganden om startordning respektive ändrad retry-timeout rättades utan svagare produktgrindar. Ingen native parallellitet eller full autonom sandbox påstås; F30/F38 återstår. [Kontrakt](docs/scheduling/F-28-slots.md). READY_FOR_REVIEW; Done kräver faktisk Integration-review, merge och eftertest.
 
+**Integration/slutleverans F28 (2026-10-09):** Full 12-filsreview cb4fd0dca7294879b5e0d1db399eb2ada31aeb37 mot f9ec93d4ec9a119dac8d3029aa80d61e8489fddd, 60203 bytes/SHA256 ce45b18b84d348ebb2764fe2225c54c4cd8fdf683f16b85ca303ab34e30cfdfe, APPROVED. Faktisk bootstrap-GitAdapter no-ff Task→Epic ba47a8a4bc465f51a57fb258ff3faef29a6f1340, operation 435f4dae-bea7-4f36-9725-f731a2842717, exakta parents och identiskt reviewtree. På faktisk merge: 98 slot/lifecycle/taskmerge/persistens/state-tester PASS, 183.04 s, exit 0; Ruff/build/config/diff/exakta wheelmoduler/rollpolicies/101 länkar PASS. Source och epic pushade, remote-SHA samt oförändrad main ec28744 återlästa. Native F28 Done v4/User105 verifierat; egen acceptans 3/3. E07 kvar Active, egen acceptans 0/3; F29–F30 och samlat native prov/mainintegration återstår. [Sparad review](docs/reviews/F-28.md). Nästa prioriterade task F29; ingen ändrad leveransordning.
+
 ### Task F-29 Driv scheduling och serialisera taskintegration
 
 **Epic/fas/prioritet:** E-07 / 7 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `56b76e54-d870-452a-a477-4d4d4177260f`.
 
-**Körbar:** Nej — invänta F-28 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F28 Done efter granskad E07-merge ba47a8a och 98 eftertester; E06 Done på main. Inga ytterligare externa villkor.
 
 **Källa:** A §§17–18, 21, 29, 41; W §§23–28. **Berör:** Schedulerloop, mergekö, status/events.
 
@@ -2006,10 +2008,10 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | F27Done/merge161d3f5/172PASS; F28 nästa. Epicacceptans/mainintegration återstår. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | F27/F28 Done; merge ba47a8a/98 PASS. F29 nästa; epicacceptans/mainintegration återstår. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
-| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Active | Ja | 0/3 | E-06, F-27 | Pågår i task/e07-f28 frånf9ec93d; atomiska1/2slots, säkerrelease/start-resume-race. |
-| 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Review cb4fd0d/merge ba47a8a; 98 eftertester PASS; docs/reviews/F-28.md. |
+| 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Ja | 0/3 | E-06, F-28 | F28 Done på aktuell E07; nästa prioriterade task, scheduling och seriell integration. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Planned | Nej | 0/3 | E-07, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
