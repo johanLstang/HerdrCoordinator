@@ -14,6 +14,7 @@ from mcp.types import (
 
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
+    EpicStartRequest,
     PolicyRequest,
     Target,
     TaskApprovalRequest,
@@ -47,6 +48,17 @@ def create_server(service: RuntimeService) -> Server:
             ),
         ]
     ]
+
+    if service.epic_start is not None:
+        tools.append(
+            Tool(
+                name="epic_start",
+                description="Start the operator-configured epic from a Coordinator connection.",
+                input_schema=EpicStartRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
 
     if service.task_scheduler is not None:
         tools.append(

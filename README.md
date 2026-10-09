@@ -371,3 +371,12 @@ Active kräver korrelerad native bekräftelse av svaret.
 [Scenario och operatörsinstruktion](docs/attention/F-33-nativeprov.md) beskriver
 A:s parkering, B/C:s leveranser, sparat beslut vid fulla slots och begränsad
 samma-session-resume. Aktuella explicita reviews och verkliga services krävs.
+
+## Registrerad Integration-start (F34)
+
+`EpicStartService` och explicit injicerat MCP `epic_start` startar en operatörsbunden
+Integration för en epic, med fullständigt uppdrag och strikt native bekräftelse.
+Samma ägare/startavsikt återanvänds vid retry och SQLite-omstart utan nya Workers
+eller dubbla sessioner. Se [startkedja och recovery](docs/integration/F-34-start.md)
+och [faktiskt native prov](docs/integration/F-34-native.json). F35 levererar
+agentstyrda taskverktyg; CLI aktiverar ingen implicit epicloop.

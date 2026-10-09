@@ -45,7 +45,8 @@ class WorktreeService:
         return path
 
     def create_epic_worktree(
-        self, actor: Actor, *, epic_id: str, run_id: str, path: Path | None = None
+        self, actor: Actor, *, epic_id: str, run_id: str, path: Path | None = None,
+        prepare_only: bool = False,
     ) -> EpicRun:
         if actor.role != Role.COORDINATOR:
             raise WorktreeError("only Coordinator may create an epic worktree")
@@ -60,7 +61,10 @@ class WorktreeService:
         )
         if actor.epic_run_id is not None and actor.epic_run_id != run_id:
             raise WorktreeError("principal is bound to another epic")
-        return self._create(record, "create_epic_worktree", "main", self.settings.repository)
+        return self._create(
+            record, "create_epic_worktree", "main", self.settings.repository,
+            prepare_only=prepare_only,
+        )
 
     def create_task_worktree(
         self,

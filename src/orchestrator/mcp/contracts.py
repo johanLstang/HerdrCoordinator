@@ -37,6 +37,13 @@ class TaskStartRequest(BaseModel):
     task: LocalTaskSpec
 
 
+class EpicStartRequest(BaseModel):
+    model_config = Target.model_config
+    project_id: Identity
+    epic_id: Identity
+    epic_run_id: Identity
+
+
 class TaskReviewRequest(BaseModel):
     model_config = Target.model_config
     project_id: Identity
