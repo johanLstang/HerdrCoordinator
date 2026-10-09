@@ -1352,7 +1352,7 @@ En blockerad task syns i Attention, frigör kapacitet och fortsätter i samma se
 
 ### Epicacceptans
 
-- [ ] **E-08.A1:** Blockerarrapport med konkret orsak och inputbehov ger Attention och bekräftat parkerad session.
+- [x] **E-08.A1:** Blockerarrapport med konkret orsak och inputbehov ger Attention och bekräftat parkerad session.
 - [ ] **E-08.A2:** En annan körbar task använder frigjord slot medan den första väntar.
 - [ ] **E-08.A3:** Samma Worker återupptas med sparat beslut utan att workergränsen överskrids.
 
@@ -1360,7 +1360,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-31 Registrera blockerare och parkera Worker säkert
 
-**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
+**Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `26abd83e-7e41-4a41-9524-c827011cbe1e`.
 
 **Körbar:** Ja — E07 Done på main; X01/X02 och faktisk parkförmåga från F13/F26 finns verifierade och kontrolleras inför nytt avgränsat prov.
 
@@ -1389,19 +1389,21 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-31.A1:** Komplett blockerarrapport sparas och publiceras på rätt task med inputbehov.
-- [ ] **F-31.A2:** Bekräftad parkering bevarar resurser och frigör precis taskens slot.
-- [ ] **F-31.A3:** Dubbel blockerarrapport, främmande task eller misslyckad parkering ger ingen osäker slotrelease.
+- [x] **F-31.A1:** Komplett blockerarrapport sparas och publiceras på rätt task med inputbehov.
+- [x] **F-31.A2:** Bekräftad parkering bevarar resurser och frigör precis taskens slot.
+- [x] **F-31.A3:** Dubbel blockerarrapport, främmande task eller misslyckad parkering ger ingen osäker slotrelease.
 
 **Verifiering:** Serviceprov med parkbekräftelse, timeout och TeamPlayer-fel samt verklig parkering.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
+**Verifierad leverans F31 (2026-10-09):** Fullständig 15-filsreview APPROVED för task7711a6f99fc3c12956787007fb685abdf7468185 mot epic4a4ebe114c2289911c446bd783a1c000805973c2; 114525 bytes/SHA256 b67a9a44e3506f1d08edd4c5b7086d2e91970ae7a1fa267c22afbb00f55f997e. Faktisk GitAdapter no-ff-merge83b84959dde48f1d5042284609b596c0be1aebda, operation0a481240-381c-45b5-b8dd-12af66344d01; exakta parents och granskad tree verifierade. Eftertester Attention/scheduler32 PASS213.02s/exit0; Ruff/build/configCLI/54 exakta wheelmoduler/två policies/118 länkar/diff PASS. Native replay med exakt taskcommit PASS utan extra start/assignment/stop/journal. TeamPlayer återläst Donev5/User105. F31.A1–A3 verifierade, E08 egen acceptans1/3 och fortfarande Active. [Review och integration](docs/reviews/F-31.md). Bootstrapundantaget används endast för manuella utvecklingsworktrees. Native fixturetask kvar NeedsInput och egen r2-server/pane bevaras för F32; ingen produkt-Done fabriceras.
+
 ### Task F-32 Återuppta Attention med sparat beslut och ledig slot
 
 **Epic/fas/prioritet:** E-08 / 8 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `41cb49c7-c172-4182-8d17-8ba2e255f07a`.
 
-**Körbar:** Nej — invänta F-31 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F31 granskad/integrerad/Done på E08, E07 Done på main och faktisk parkerad native session bevarad; kontrollera externa villkor inför start.
 
 **Källa:** A §§23, 42; W §§17–18, 22. **Berör:** worker_resume, slotkö, inputhistorik, status.
 
@@ -2056,9 +2058,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Ursprunglig review/merge+CLI-korrektion7a08f25/merge9ab9252/15PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
-| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 0/3 | E-07 Done på main | F31 startad på aktuell main4a4ebe1; egen acceptans/slutleverans återstår. |
-| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Active | Ja | 0/3 | E-07, X-01, X-02 | task/e08-f31 från main4a4ebe1; beständig blockerare/Attention/verifierad parkering före slotrelease. |
-| 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Nej | 0/3 | E-07, F-31, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Active | Ja | 1/3 | E-07 Done på main | F31 Done/merge83b8495/32 eftertester; egen acceptans1/3. F32 nästa; epicActive tills samlad mainleverans. |
+| 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Ja | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone5. |
+| 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Planned | Ja | 0/3 | E-07, F-31, X-01, X-02 | Nästa: F31Done/integrerad; samma nativeSID och parkerade resurser bevarade. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Planned | Nej | 0/3 | E-07, F-32, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Planned | Nej | 0/3 | E-08 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Planned | Nej | 0/3 | E-08, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
