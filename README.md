@@ -308,3 +308,12 @@ En avgränsad native Worker provar Active → Attention → samma session med in
 verifierad task-Done samt testepicens mainintegration och Done. Ett faktiskt
 stängt MCP-transport bevarar synkavsikten; återanslutning slutför den utan ny
 Worker eller merge. Se [liveprov, bevis och begränsningar](docs/teamplayer/F-26-liveprov.md).
+
+## Beroendestyrt urval (F27)
+
+`TaskSelectionService` och operatörsaktiverat MCP `task_get_next` returnerar nästa
+körbara task, stabilt prioriterade kandidater och konkreta blockerare. Komplett
+explicit specifikation, korrekt tilldelning och faktiska review-/merge-/testbevis
+krävs; Kanban Done ensam öppnar inget beroende. Tidigare epics kräver verifierad
+mainleverans. Urval reserverar eller startar ingen Worker.
+Se [konfiguration, bevis och svar](docs/scheduling/F-27-korbarhet.md).

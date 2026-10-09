@@ -6,6 +6,7 @@ from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_changes_service import TaskChangesError
 from orchestrator.application.task_merge_service import TaskMergeError
 from orchestrator.application.task_review_service import TaskReviewError
+from orchestrator.application.task_selection_service import TaskSelectionError
 from orchestrator.application.task_start_service import TaskStartError
 from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
@@ -15,6 +16,7 @@ from orchestrator.mcp.contracts import (
     Target,
     TaskApprovalRequest,
     TaskChangesRequest,
+    TaskGetNextRequest,
     TaskMergeRequest,
     TaskReviewRequest,
     TaskStartRequest,
@@ -28,6 +30,7 @@ _ROLES = {
     "task_report_ready": {Role.WORKER},
     "task_report_blocked": {Role.WORKER},
     "task_start": {Role.INTEGRATION},
+    "task_get_next": {Role.INTEGRATION},
     "task_review_request": {Role.INTEGRATION},
     "task_request_changes": {Role.INTEGRATION},
     "task_approve": {Role.INTEGRATION},
@@ -81,6 +84,7 @@ class RuntimeService:
         task_approval=None,
         task_merge=None,
         teamplayer_sync=None,
+        task_selection=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -90,6 +94,7 @@ class RuntimeService:
         self.task_approval = task_approval
         self.task_merge = task_merge
         self.teamplayer_sync = teamplayer_sync
+        self.task_selection = task_selection
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -117,6 +122,16 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if operation == "task_get_next" and self.task_selection is not None:
+            response = await self._get_next(arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if operation not in {"set_task_status", "set_epic_status"} or self.teamplayer_sync is None:
             return self.call(operation, arguments)
         response = await self._sync_teamplayer(operation, arguments)
@@ -223,6 +238,10 @@ class RuntimeService:
             ):
                 return ToolResponse(
                     ok=True, code="OK", message="native report service is available"
+                )
+            if request.operation == "task_get_next" and self.task_selection is not None:
+                return ToolResponse(
+                    ok=True, code="OK", message="read-only task selection is available"
                 )
             if request.operation == "task_start" and self.task_start is not None:
                 return ToolResponse(ok=True, code="OK", message="task start service is available")
@@ -453,4 +472,32 @@ class RuntimeService:
                 ok=False,
                 code=str(error),
                 message="reconcile saved merge, test and physical stop evidence",
+            )
+
+    async def _get_next(self, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role != Role.INTEGRATION:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="role cannot select tasks")
+        try:
+            request = TaskGetNextRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(
+                ok=False, code="INVALID_ARGUMENT", message="invalid selection target"
+            )
+        try:
+            self._target(Target(project_id=request.project_id, epic_run_id=request.epic_run_id))
+            result = await self.task_selection.get_next(self.actor, request.epic_run_id)
+            return ToolResponse(
+                ok=True, code="OK", message="read-only candidates and blockers", data=result
+            )
+        except StateError:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="selection scope denied")
+        except TaskSelectionError as error:
+            return ToolResponse(ok=False, code=str(error), message="selection evidence unavailable")
+        except TeamPlayerError as error:
+            return ToolResponse(ok=False, code=str(error), message="fresh board unavailable")
+        except Exception:
+            return ToolResponse(
+                ok=False, code="TASK_SELECTION_UNAVAILABLE", message="selection unavailable"
             )
