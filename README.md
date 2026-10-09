@@ -275,3 +275,36 @@ separat faktiskt blockerande testfall. Operatören driver Integration-rollen enl
 paketerad policy; fixture-main hålls oförändrad. Se
 [prov, återkörning och begränsningar](docs/review/F-22-native.md). Använd alltid
 ett separat godkänt repository och en namngiven testserver.
+
+## TeamPlayer-kontrakt (F23)
+
+Verklig MCP-anslutning, schemas och avgränsade fixtureprov beskrivs i
+[TeamPlayer-kontraktet](docs/teamplayer/F-23-kontrakt.md). Konto, externa ID:n,
+versionskonflikter, numerisk prioritet och beskrivningshistorik är verifierade;
+produktreader och beständig statussynk följer i F24/F25. Credentials hålls i lokal
+operatörskonfiguration. Testepicen och dess tasks är separata från implementationen.
+
+## TeamPlayer-läsare (F24)
+
+Internt `TeamPlayerReader` validerar kontot, hela boardgrafen och explicita lokala
+ID-/källbindningar. Ofullständiga listor, cykler, saknade tasks, fel tilldelning eller
+ändrade snapshots ger fel/ej körbara kandidater. Läsningen startar ingen Worker och
+ändrar inga externa statusar eller runtime-records. Se [API och verifiering](docs/teamplayer/F-24-lasning.md);
+operatörens avgränsade native läsprov är `uv run --locked python scripts/probes/f24_read.py`.
+
+## TeamPlayer-synk (F25)
+
+`TeamPlayerSyncService` speglar verifierade domänhändelser med beständig outbox och
+explicit UUID-bindning. Integration synkar tasks och Coordinator epics; Worker
+nekas före nätanrop. En operatör kan injicera servicen i `RuntimeService` för
+MCP-anropen `set_task_status`/`set_epic_status`; anroparen väljer bara run-ID.
+Status och sanerad historik härleds från faktiska start-, review-, Git-, test-
+och stoppbevis. Återläsning efter nätfel återförsöker bara TeamPlayer-steget.
+Se [API, statusgrindar och recovery](docs/teamplayer/F-25-synk.md).
+
+## Verkligt TeamPlayer-livscykelprov (F26)
+
+En avgränsad native Worker provar Active → Attention → samma session med input →
+verifierad task-Done samt testepicens mainintegration och Done. Ett faktiskt
+stängt MCP-transport bevarar synkavsikten; återanslutning slutför den utan ny
+Worker eller merge. Se [liveprov, bevis och begränsningar](docs/teamplayer/F-26-liveprov.md).

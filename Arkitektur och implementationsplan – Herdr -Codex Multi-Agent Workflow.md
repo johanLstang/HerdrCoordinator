@@ -314,6 +314,14 @@ Epicens boardstatus använder endast Planned, Active och Done. Coordinator skriv
 
 Verifierat TeamPlayer-kontrakt: `list_epics(projectId)` returnerar epicens `id`, `status`, `version`; `update_epic_status(projectId, epicId, version, status)` skriver med optimistic concurrency. API-status Pending motsvarar Planned, InProgress motsvarar Active och Done motsvarar Done. Återläs efter skrivning, versionskonflikt eller okänt nätutfall. Saknat verktyg i en äldre klientlista kräver kontroll av serverns aktuella MCP-katalog. En statussträng ersätter inte Git-/testbevis.
 
+F23:s fulla verifierade externa katalog saknar fristående kommentarverktyg.
+Logiska add_task_comment använder därför markerad beskrivningshistorik med stabilt
+event-ID/innehållsdigest, optimistic concurrency och återläsning; bevara manuell
+text och avstäm okänt utfall före omsändning. Native comments-kapabilitet är false.
+Detta följer utvecklingsprocessens befintliga fallback och ska implementeras som
+beständig produktservice i F25, inte som obevakad textappend från en Worker.
+Se [verifierat kontrakt och begränsningar](docs/teamplayer/F-23-kontrakt.md).
+
 Resten av systemet ska därför inte behöva känna till TeamPlayer MCP:s interna API.
 
 ---

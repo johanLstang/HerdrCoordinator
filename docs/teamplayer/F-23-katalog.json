@@ -1,0 +1,651 @@
+{
+  "protocol": "2025-11-25",
+  "sdk": "2.3.0",
+  "tools": [
+    {
+      "name": "list_tasks",
+      "description": "Lists TeamPlayer task items, including legacy Epic task items. Use list_epics for board epics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "responsibleAgentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "default": null
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "assign_agent",
+      "description": "Assigns a project agent to a task using the current version from get_task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "agentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "assignmentReason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "projectId",
+          "taskId",
+          "agentId",
+          "version"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_epic_status",
+      "description": "Updates a board epic status using its current version from list_epics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "epicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "epicId",
+          "version",
+          "status"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_epic_details",
+      "description": "Updates a board epic name or description using its current version from list_epics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "epicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "projectId",
+          "epicId",
+          "version"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "search_tasks",
+      "description": "Searches TeamPlayer task items in a project. Use list_epics for board epics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "query": {
+            "type": "string"
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "taskType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          },
+          "limit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "projectId",
+          "query"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "set_task_epic",
+      "description": "Moves a task to an active board epic or to the unassigned lane using its current version.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "epicId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "default": null
+          }
+        },
+        "required": [
+          "projectId",
+          "taskId",
+          "version"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_me",
+      "description": "Returns the TeamPlayer user id of the authenticated MCP caller.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_task",
+      "description": "Creates a TeamPlayer executable task item. Use create_epic for a board epic. Use a unique idempotencyKey for each intended creation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "object",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "taskType": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string"
+              },
+              "acceptanceCriteria": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "executionOwnerKind": {
+                "type": "string"
+              },
+              "validationOwnerKind": {
+                "type": "string"
+              },
+              "responsibleAgentId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid",
+                "default": null
+              },
+              "responsibleUserId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid",
+                "default": null
+              },
+              "validationAgentId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid",
+                "default": null
+              },
+              "validationUserId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid",
+                "default": null
+              },
+              "dependsOnTaskIds": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "default": null
+              },
+              "traceabilityArtifactIds": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "default": null
+              },
+              "epicId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uuid",
+                "default": null
+              }
+            },
+            "required": [
+              "projectId",
+              "name",
+              "description",
+              "taskType",
+              "priority",
+              "acceptanceCriteria",
+              "executionOwnerKind",
+              "validationOwnerKind"
+            ]
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "request",
+          "idempotencyKey"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_task_status",
+      "description": "Updates task status using the current version from get_task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "object",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "taskId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "version": {
+                "type": "integer"
+              },
+              "status": {
+                "type": "string"
+              },
+              "statusReason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "projectId",
+              "taskId",
+              "version",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "request"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "update_task_details",
+      "description": "Updates task name, description, priority, or acceptance criteria using the current version from get_task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "object",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "taskId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "version": {
+                "type": "integer"
+              },
+              "changeReason": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              },
+              "priority": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "default": null
+              },
+              "acceptanceCriteria": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "default": null
+              }
+            },
+            "required": [
+              "projectId",
+              "taskId",
+              "version",
+              "changeReason"
+            ]
+          }
+        },
+        "required": [
+          "request"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_epics",
+      "description": "Lists non-executable board epics in a TeamPlayer project.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_projects",
+      "description": "Lists TeamPlayer projects granted to the current MCP user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_task",
+      "description": "Returns a TeamPlayer task item, including its current version and owner.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "projectId",
+          "taskId"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "create_epic",
+      "description": "Creates a non-executable board epic in a TeamPlayer project. Use a unique idempotencyKey for each intended creation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "projectId",
+          "name",
+          "description",
+          "idempotencyKey"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "assign_task_to_me",
+      "description": "Assigns a task to the authenticated TeamPlayer MCP user using the current version from get_task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "projectId",
+          "taskId",
+          "version"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_project_agents",
+      "description": "Lists agents available to the specified TeamPlayer project.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

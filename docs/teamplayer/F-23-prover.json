@@ -1,0 +1,151 @@
+{
+  "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "projectName": "HerdrCoordinator",
+  "access": "Write",
+  "authenticatedUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "email": "blitterbot@gmail.com",
+  "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+  "protocol": "2025-11-25",
+  "sdk": "2.3.0",
+  "tools": [
+    "assign_agent",
+    "assign_task_to_me",
+    "create_epic",
+    "create_task",
+    "get_me",
+    "get_task",
+    "list_epics",
+    "list_project_agents",
+    "list_projects",
+    "list_tasks",
+    "search_tasks",
+    "set_task_epic",
+    "update_epic_details",
+    "update_epic_status",
+    "update_task_details",
+    "update_task_status"
+  ],
+  "catalogPagination": "walked to null next_cursor",
+  "dataPagination": {
+    "list_tasks": [
+      "projectId",
+      "responsibleAgentId",
+      "status"
+    ],
+    "list_epics": [
+      "projectId"
+    ]
+  },
+  "listTaskEnvelopeKeys": [
+    "projectId",
+    "responsibleAgentId",
+    "status",
+    "tasks"
+  ],
+  "repeatReadIdentical": true,
+  "tasks": [
+    {
+      "taskId": "f29251bf-a8c0-4c42-b3a4-1d5a426193db",
+      "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+      "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+      "name": "[TEST] F23 kontrakt 1",
+      "status": "Pending",
+      "version": 6,
+      "taskType": "Task",
+      "priority": 2,
+      "acceptanceCriteria": [
+        "Återge Unicode: åäö, é och 東京.",
+        "Bevara kriteriernas ordning.\nAndra raden."
+      ],
+      "dependencyTaskIds": [],
+      "executionOwnerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "traceabilityArtifactIds": []
+    },
+    {
+      "taskId": "c650f6d0-ffff-4ca0-a772-16c59af8baf2",
+      "epicId": "8051e9de-f4dc-4277-8f80-62b1c36c4690",
+      "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+      "name": "[TEST] F23 kontrakt 2",
+      "status": "Pending",
+      "version": 1,
+      "taskType": "Task",
+      "priority": 2,
+      "acceptanceCriteria": [
+        "Återge Unicode: åäö, é och 東京.",
+        "Bevara kriteriernas ordning.\nAndra raden."
+      ],
+      "dependencyTaskIds": [
+        "f29251bf-a8c0-4c42-b3a4-1d5a426193db"
+      ],
+      "executionOwnerKind": "User",
+      "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "traceabilityArtifactIds": []
+    }
+  ],
+  "descriptionEventCount": 1,
+  "limitations": [
+    "No standalone comment/delete/reopen/dependency-edit tool in this catalog",
+    "API account Write grant is not a product Worker/Integration role boundary",
+    "No product runtime, merge or Done established by these fixture status trials"
+  ],
+  "statusTrials": [
+    {
+      "status": "InProgress",
+      "beforeVersion": 2,
+      "version": 3,
+      "staleRejected": true
+    },
+    {
+      "status": "NeedsInput",
+      "beforeVersion": 3,
+      "version": 4,
+      "staleRejected": true
+    },
+    {
+      "status": "InProgress",
+      "beforeVersion": 4,
+      "version": 5,
+      "staleRejected": true
+    },
+    {
+      "status": "Pending",
+      "beforeVersion": 5,
+      "version": 6,
+      "staleRejected": true
+    }
+  ],
+  "negativeCases": {
+    "taskStaleVersion": {
+      "code": "version_conflict",
+      "unchanged": true
+    },
+    "epicStaleVersion": {
+      "code": "version_conflict",
+      "unchanged": true
+    },
+    "missingTask": {
+      "errorType": "not_found",
+      "errorCode": "task_not_found"
+    },
+    "wrongProject": {
+      "code": "permission_denied"
+    }
+  },
+  "epicStatusTrial": {
+    "status": "InProgress",
+    "versionAfterDescription": 5,
+    "retained": true,
+    "descriptionEventCount": 1
+  },
+  "repeatedFixturePhase": {
+    "sameTaskIds": true,
+    "sameTaskVersions": [
+      6,
+      1
+    ],
+    "sameDescriptionEventCount": 1,
+    "newTasks": 0,
+    "newStatusWrites": 0
+  }
+}
