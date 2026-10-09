@@ -1188,7 +1188,7 @@ En epic kan genomföra minst tre tasks med högst två aktiva Workers utan manue
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
 
-**Leveransläge (2026-10-09):** F27–F30 har granskats och taskintegrerats; F28 är nu återöppnad för avgränsad CLI-testkorrigering efter samlad regression (356 PASS/ett gammalt en-Worker-antagande). F30 merge f267306/122 eftertester PASS samt verkligt två-Worker-prov med 15 överlappningar, 28 events, högst två reservationer och C efter A-Done. E07 egen acceptans 3/3 verifierad genom nativeprov och samtidighets-/aktuell-reviewtester. E07 kvar Active; Coordinator kör samlad verifiering och aktuell slutreview, öppnar PR och integrerar till main före sluttest/epic-Done. [F30-review](docs/reviews/F-30.md).
+**Leveransläge (2026-10-09):** F27–F30 är nu åter Done efter granskad F28-CLI-korrigering7a08f25/merge9ab9252/15 eftertester PASS. Den samlade grinden bevarar fyndet356PASS/ett gammalt en-Worker-antagande; båda konfigurationsvärdena verifieras explicit och resterande210tester körs. F30 merge f267306/122 eftertester PASS samt verkligt två-Worker-prov med 15 överlappningar, 28 events, högst två reservationer och C efter A-Done. E07 egen acceptans 3/3 verifierad genom nativeprov och samtidighets-/aktuell-reviewtester. E07 kvar Active; Coordinator kör samlad verifiering och aktuell slutreview, öppnar PR och integrerar till main före sluttest/epic-Done. [F30-review](docs/reviews/F-30.md).
 
 ### Task F-27 Välj endast körbara tasks i rätt beroendeordning
 
@@ -1222,9 +1222,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-28 Reservera högst två aktiva Worker slots
 
-**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
 
-**Körbar:** Ja — återöppnad avgränsad CLI-testkorrigering efter samlad E07-grind; F27 Done och aktuell epicbas verifierade.
+**Körbar:** Nej — återöppnad CLI-korrigering är granskad, integrerad och verifierad Done i E07.
 
 **Källa:** A §§17, 29–30, 41; W §§8, 10, 18, 26. **Berör:** Scheduler, slotpersistens, taskclaim.
 
@@ -1253,6 +1253,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Coordinator-korrigeringsbeslut F28 (2026-10-09):** Samlad E07-grind på produktkod f267306/metadata17b2cfd gav 356 PASS och ett fel i äldre F15 CLI-test: hårdkodad förväntan max_workers=1 medan faktisk grundkonfiguration är2. Detta strider mot redan beslutat F28-kontrakt1–2, inte mot taskens krav. F28 återöppnas Active nativev6, User105, för enbart testkorrigering med explicit max_workers1 respektive2 och bibehållen kontroll av scope/ingen implicit runtime. Ingen produktkod, schema eller policy ska ändras. Integration synkade aktuell17b2cfd till ursprunglig task/e07-f28 med bootstrapGitAdapter no-ff3b4d6ba6448deb87922e0ddb01223f5b2e8e8c6c,operation586b853b-e056-4291-b3da-8c369498fb02; exakta parents/branches/paths/clean och treeidentitet verifierade. Tidigare F28/F30-reviews, merge-SHA och nativeprov bevaras. Worker implementerar/testar/committar här; ny faktisk review/Task→Epic/eftertest krävs före F28 Done igen. E07 förblir Active; PR7draft och mainintegration väntar. Slutför detta före nästa feature, utan ändrad backloggordning.
 
 **Worker-korrigering F28 (2026-10-09):** CLI-kontraktsprovet använder nu explicit operatörskonfiguration max_workers=1 respektive2 och verifierar båda, samma Integration-principal och inga implicit startade runs. `uv run --locked pytest tests/test_task_start_cli.py tests/test_worker_slots.py -x` — 23 PASS/20.04s/exit0; Ruff/diffcheck PASS. Endast detta test och leveransmetadata ändrades. Worker lämnar READY_FOR_REVIEW på task/e07-f28 från faktiskt synkad aktuell E07; ny Integration-review/merge/eftertest återstår före Done.
+
+**Integration/korrigering F28 (2026-10-09):** Ny full tvåfilsreview source7a08f250c81a291f363ad9cff330c24dcd655174 mot17b2cfda30f7110fbc30ae3b0c46b10338f4f908,9301bytes/SHA256e09e88b448146d53b16c400ce8ace8d7b3618c6f70364ad829a48db4db9665cc APPROVED. Faktisk bootstrapGitAdapter no-ffTask→Epic9ab9252a507b4015091f5b4db955cf4b87470af0,operationa648c0a7-9834-45e0-9d57-a288edcb32d6; exakta parents/identisk reviewtree. På faktisk merge: `uv run --locked pytest tests/test_task_start_cli.py tests/test_mcp.py -x` — 15 PASS/5.37s/exit0; source CLI/slots23PASS20.04s; Ruff/diff PASS. NativeF28Donev9/User105 återläst; tidigare acceptans/nativebevis oförändrade. [Kompletterad review](docs/reviews/F-28.md). E07 Active och samlad regression fortsätter med resterande210tester; tidigare356PASS/122PASS återanvänds bara för exakt oförändrade produkt-/testfiler. Ingen mainmerge förrän komplett grind och aktuell slutreview.
 
 ### Task F-29 Driv scheduling och serialisera taskintegration
 
@@ -2032,9 +2034,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 30 | F-24 | Task/feature | Läs epics tasks och beroenden till domänmodellen | E-06 | 6 | 7a9a311f-5f20-4247-9ef7-a5e5c57e39bc | P1 | Done | Nej | 3/3 | E-05, F-23, X-02 | Review4692b8e/mergeeef679e;113tests14.01s +nativeReaderPASS; docs/reviews/F-24.md. |
 | 31 | F-25 | Task/feature | Synkronisera status och kommentarer utan nya sidoeffekter | E-06 | 6 | 7ab4a0ac-405d-4905-bc46-a2d5f0431c86 | P0 | Done | Nej | 3/3 | E-05, F-24, X-02 | Review589631e/slutmergede46d0f;204tests+12alias83.58s/nativePASS; docs/reviews/F-25.md. |
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
-| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 3/3 | E-06 Done på main | Native/122 PASS; F28 CLI-testkorrektion och kvarvarande regression före PR7/main/sluttest. |
+| 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 3/3 | E-06 Done på main | F27–F30 Done; F28CLI-korrigering verifierad. Resterande regression/PR7/main/sluttest väntar. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
-| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Active | Ja | 3/3 | E-06, F-27 | Återöppnad CLI-kontraktskorrektion1–2 efter E07-regression; ny review/integration krävs. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Done | Nej | 3/3 | E-06, F-27 | Ursprunglig review/merge+CLI-korrektion7a08f25/merge9ab9252/15PASS; docs/reviews/F-28.md. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Done | Nej | 3/3 | E-06, F-28 | Review6b59c3a/merge66f381e;103 PASS; docs/reviews/F-29.md. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Done | Nej | 3/3 | E-06, F-29, X-01, X-02 | Review1ad07aa/mergef267306;122PASS; native15overlap/max2/treDone; docs/reviews/F-30.md. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
