@@ -1512,9 +1512,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-34 Starta en enda långlivad Integration Agent per epic
 
-**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `678fb877-d9c7-4d07-a182-9ee79cc0cbdc`.
+**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `678fb877-d9c7-4d07-a182-9ee79cc0cbdc`.
 
-**Körbar:** Ja — E08 verifierad/Done på main; kontrollera aktuell User-tilldelning, externa villkor och registrerad Integration-principal före start.
+**Körbar:** Nej — verifierad och integrerad till E09; ingen ny start.
 
 **Källa:** A §§4.2, 19, 29, 31, 43; W §§6–7, 38, 40. **Berör:** epic_start, EpicRun, Integration-prompt, Herdr.
 
@@ -1535,11 +1535,11 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-34.A1:** Giltig epic får en registrerad Integration-session och komplett uppdrag med aktuell branch.
-- [ ] **F-34.A2:** Två startanrop ger en enda ägande session och EpicRun.
-- [ ] **F-34.A3:** Fel projekt/epic och Integration-anrop för annan epic avvisas utan sidoeffekter.
+- [x] **F-34.A1:** Giltig epic får en registrerad Integration-session och komplett uppdrag med aktuell branch.
+- [x] **F-34.A2:** Två startanrop ger en enda ägande session och EpicRun.
+- [x] **F-34.A3:** Fel projekt/epic och Integration-anrop för annan epic avvisas utan sidoeffekter.
 
-**Verifiering:** Worker: 134 service-/regressionsprov PASS64.20s/exit0 (43 F34, MCP, F05, F11, F13 och persistens), inklusive två konkurrerande startanrop med separata SQLite-anslutningar. Riktig F04-/F05-/Herdr0.9.3/Codex0.162.0-/SDK-kedja gav en session och en native turn; återstart/reopen återanvände samma ägare. Främmande scope och Integration-start/mainmerge nekades. F13 bekräftade fysisk stop innan egen server stoppades; resurser bevarade. [Start/recovery](docs/integration/F-34-start.md), [verkligt native underlag](docs/integration/F-34-native.json). Integration-review, Task → E09-merge och eftertester återstår innan Done. E09 Active/egenacceptans0/3; F35–F37 ej startade.
+**Verifiering:** Worker: 134 service-/regressionsprov PASS64.20s/exit0 (43 F34, MCP, F05, F11, F13 och persistens), inklusive två konkurrerande startanrop med separata SQLite-anslutningar. Riktig F04-/F05-/Herdr0.9.3/Codex0.162.0-/SDK-kedja gav en session och en native turn; återstart/reopen återanvände samma ägare. Främmande scope och Integration-start/mainmerge nekades. F13 bekräftade fysisk stop innan egen server stoppades; resurser bevarade. [Start/recovery](docs/integration/F-34-start.md), [verkligt native underlag](docs/integration/F-34-native.json). Bootstrap Integration APPROVED source e8b2dc2a23fbf514cbfda61c41342261af3adfe5 mot 73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7; full 13-filsdiff73807bytes/1445rader/SHA256bb2cf89eff008f07c56bd241668b35a64fa1e977b2b83c68040628d9b6704349. Faktisk no-ff Task → E09 `969de88d91bee32231d81e980a97b643c2ad40fa`/op `f3d9e533-dde3-4910-b8e2-9085dbb2bd7a`, exakta parents och identisk sourcetree. 134 eftertester PASS65.46s/exit0; Ruff/build/READMECLI/diff/58 exakta wheelmoduler/tre policies/130 länkar/authscan PASS. TeamPlayerDone5/User105 återläst. [Review/integration](docs/reviews/F-34.md). E09 Active8/egenacceptans0/3; F35 nästa.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -1547,7 +1547,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
 
-**Körbar:** Nej — invänta F-34 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F34 granskad/integrerad/Done5 i E09 och E08 Done/main verifierad; kontrollera aktuell tilldelning och externa villkor före plock.
 
 **Källa:** A §§4.2, 5, 17–23, 43; W §§7–10, 20–28, 39. **Berör:** MCP, scheduler, Review, Integration-policy.
 
@@ -2101,9 +2101,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Nej | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone6. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Done | Nej | 3/3 | E-07, F-31, X-01, X-02 | APPROVEDb749663→fa400198, merge04fb88ea;37 eftertester/gates/native input/ACK/replay+fixtureDone PASS; TeamPlayerDone7. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Done | Nej | 3/3 | E-07, F-32, X-01, X-02 | APPROVED73a9f9a→afc71c7, merge20a692b;51 eftertester/gates/native fullslots+treDone PASS; TeamPlayerDone7. |
-| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Startad Active7; F34 plockad, separat epic/task-worktree från verifierad main73f6476. |
-| 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Active | Ja | 0/3 | E-08, X-01, X-02 | Plockad InProgress2/User105; task/e09-f34 från main/epic73f6476, en beständig Integration-session/epic. |
-| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Planned | Nej | 0/3 | E-08, F-34, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Active8; F34 Done6 efter review/no-ff969de88d/134 eftertester; egenacceptans0/3, F35 nästa. |
+| 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
+| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Planned | Ja | 0/3 | E-08, F-34, X-01, X-02 | Nästa efter F34Done5/review/no-ff969de88d/134 eftertester; plocka med färsk version. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Planned | Nej | 0/3 | E-08, F-35 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Planned | Nej | 0/3 | E-08, F-36, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
