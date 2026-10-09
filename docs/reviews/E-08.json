@@ -1,0 +1,461 @@
+{
+  "role": "Bootstrap Coordinator",
+  "source": "4a6ad3f2e1539b21a51764c78a43eacd39699c64",
+  "target": "4a4ebe114c2289911c446bd783a1c000805973c2",
+  "patch_bytes": 570774,
+  "patch_sha256": "12cf61a8f507703fb66c365b7c12f88a1d27cca32e766fced7cff8256c0720a6",
+  "files": [
+    "Backlog.md",
+    "README.md",
+    "docs/attention/F-31-blockerare.md",
+    "docs/attention/F-31-prover.json",
+    "docs/attention/F-32-aterupptagning.md",
+    "docs/attention/F-32-prover.json",
+    "docs/attention/F-33-nativeprov.md",
+    "docs/attention/F-33-prover.json",
+    "docs/reviews/F-31.md",
+    "docs/reviews/F-32-native-final.json",
+    "docs/reviews/F-32.md",
+    "docs/reviews/F-33.json",
+    "docs/reviews/F-33.md",
+    "scripts/probes/f31_native.py",
+    "scripts/probes/f32_native.py",
+    "scripts/probes/f33_native.py",
+    "scripts/probes/f33_timeline.py",
+    "src/orchestrator/application/runtime_lifecycle_service.py",
+    "src/orchestrator/application/runtime_service.py",
+    "src/orchestrator/application/task_attention_service.py",
+    "src/orchestrator/application/task_resume_intent.py",
+    "src/orchestrator/application/task_resume_service.py",
+    "src/orchestrator/application/task_scheduler_service.py",
+    "src/orchestrator/application/teamplayer_evidence.py",
+    "src/orchestrator/application/teamplayer_sync.py",
+    "src/orchestrator/application/worker_report_service.py",
+    "src/orchestrator/domain/attention.py",
+    "src/orchestrator/mcp/contracts.py",
+    "src/orchestrator/mcp/server.py",
+    "tests/test_f33_timeline.py",
+    "tests/test_task_attention_service.py",
+    "tests/test_task_resume_service.py",
+    "tests/test_task_scheduler.py"
+  ],
+  "bootstrap_exception": "Manual development WTs not productruns, no adopted ownership/session/slot; actual GitAdapter with branch/path/base/clean/SHA/current review under common lock.",
+  "review_completed": true,
+  "full_suite_pending": false,
+  "final_review_decision_pending_tests": false,
+  "pr": "https://github.com/johanLstang/HerdrCoordinator/pull/8",
+  "gates": "Ruff/build/README configCLI/diff/56 exact wheelmodules/2 promptpolicies/140 local links/changed-file authscan PASS",
+  "actual_native_review": "F33 fullslots/12 native Working overlaps/max2/three nativeDone and F31→F32 sameSID→nativeDone with retained Git/SQLite checked; known unavailable sample and failed attempts reported",
+  "decision": "APPROVED",
+  "findings": [],
+  "full_suite": {
+    "command": "uv run --locked pytest --junitxml=/tmp/herdr-e08-suite.xml",
+    "passed": 773,
+    "seconds": 1351.434,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "test_start_commit": "20a692b5a5f9ae31bc816b31eee7688ecafe2973",
+    "reviewed_final_source": "4a6ad3f2e1539b21a51764c78a43eacd39699c64",
+    "only_documentation_changed_during_run": [
+      "Backlog.md",
+      "docs/reviews/F-33.json",
+      "docs/reviews/F-33.md"
+    ],
+    "pytest_report_seconds": 1351.52
+  },
+  "structure": {
+    "source": "4a6ad3f2e1539b21a51764c78a43eacd39699c64",
+    "target": "4a4ebe114c2289911c446bd783a1c000805973c2",
+    "exact_review_bindings": {
+      "Backlog.md": {
+        "blob": "c7fd92a2f1ad6700df4a79b9d3660ce8e4bd341c",
+        "latest_full_task_review": null
+      },
+      "README.md": {
+        "blob": "6ab408fea5666119069458b453ff303bc8898f62",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-31-blockerare.md": {
+        "blob": "4d0c81b13d5b763566503e63797c44563ba65f75",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-31-prover.json": {
+        "blob": "d9b7df1bfab2005c18080ffe770d2330ecae7daf",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-32-aterupptagning.md": {
+        "blob": "35dc5459e2b6f655f1180a2ac2757fb3ea67852b",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-32-prover.json": {
+        "blob": "3467ecbe4a479446dff23ccef7f26759e8b206b2",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-33-nativeprov.md": {
+        "blob": "812b5377430ca8a3cf15d157ced105e509962657",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-33-prover.json": {
+        "blob": "8db32fc7b4a0d16bcfa8522a202de1d915234709",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-31.md": {
+        "blob": "337113029dce2526159f3e335068b2803404bca0",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-32-native-final.json": {
+        "blob": "650641a8cb85542648153ca9869f46a0243a7ab0",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-32.md": {
+        "blob": "a85e28ee2f2fb7541bb878fe2a305f5ecba72cfb",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-33.json": {
+        "blob": "b79b6911050fdcf7710ac8ab363832dfecceae57",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/F-33.md": {
+        "blob": "8ef82903667ad80d3b499b424a3332600d4e200c",
+        "latest_full_task_review": null
+      },
+      "scripts/probes/f31_native.py": {
+        "blob": "a2d414f0bc519585c31de568ee2557f7c5c1d7d6",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f32_native.py": {
+        "blob": "5893c1fd8a2fbb1d450b8d5bf7a910d517c21d5e",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f33_native.py": {
+        "blob": "3be2f70421612214840680c7124e0efe1cf0fdb6",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f33_timeline.py": {
+        "blob": "38bc312b0cd94c7dfa5bd486a503f17903a4ff53",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/runtime_lifecycle_service.py": {
+        "blob": "6aa86143502ae6f79664e2079469970de7430667",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/runtime_service.py": {
+        "blob": "51e28aa82196d8699673d4d0f7ff51fd15461de9",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_attention_service.py": {
+        "blob": "c7415478f90c60f1a83e61b97208fb965a78758c",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_resume_intent.py": {
+        "blob": "2a9839cebb575316e51d1922cadc0dda370b6eed",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_resume_service.py": {
+        "blob": "187ba5c9f19c5c36844c2c0ede75b1f095b73d56",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_scheduler_service.py": {
+        "blob": "8ddfcdae00e1b92e79c6f07b7b6d43f3ec7a095b",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/teamplayer_evidence.py": {
+        "blob": "f15487c099938ac3d8039aa311ea7524f42d2193",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/teamplayer_sync.py": {
+        "blob": "e6e5c61a9568a4a0bd333b2ac9a7de24e68ade7d",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/worker_report_service.py": {
+        "blob": "5a79747d8640b743dfe9d69b0038b21ccf6bb5e4",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/domain/attention.py": {
+        "blob": "b777213be3602b492d17bcddaa551eb68aa3f47a",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/mcp/contracts.py": {
+        "blob": "5d197c021b658221e1ad02bc21b1fa1bcd12ab5b",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/mcp/server.py": {
+        "blob": "c30fb3d0170679e95ab461a393412598c2da42da",
+        "latest_full_task_review": 33
+      },
+      "tests/test_f33_timeline.py": {
+        "blob": "f3ff00547bff51fc2976d67651b2328ff3621da5",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_attention_service.py": {
+        "blob": "82a37461c378d9132d767a0b7cedcb588dd5bc16",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_resume_service.py": {
+        "blob": "28ca7fddd7942b59ba4c376fef65357bf2995f24",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_scheduler.py": {
+        "blob": "bd205530df060edea4b0c5dfea85ea0fbb266d1b",
+        "latest_full_task_review": 33
+      }
+    },
+    "full_reviews": [
+      {
+        "task": 31,
+        "source": "7711a6f99fc3c12956787007fb685abdf7468185",
+        "target": "4a4ebe114c2289911c446bd783a1c000805973c2",
+        "verified_full_digest": "b67a9a44e3506f1d08edd4c5b7086d2e91970ae7a1fa267c22afbb00f55f997e"
+      },
+      {
+        "task": 32,
+        "source": "b749663494c96521272b0961f9da6e266f6456f3",
+        "target": "fa4001986667d3e3dcc4c468a8b749e97901f9e6",
+        "verified_full_digest": "e2287d51c1def1d1020bb6156c868924c72b4f8d878e4270caf862fa78333c16"
+      },
+      {
+        "task": 33,
+        "source": "73a9f9a4a528906628a7871a1d0d7837e391cc4e",
+        "target": "afc71c730bedf52fedf2faa2ece4c9172493a0c8",
+        "verified_full_digest": "151ef5d6a4013ac75eeb307e630627c87850c08b2eef6dc1ea2e318db4c77817"
+      }
+    ],
+    "wheel_modules": 56,
+    "policies": 2,
+    "checked_local_links": 140,
+    "all_changed_files_auth_scan": true,
+    "unchanged_schema_lock_build_policy": true,
+    "control_recovery": "Initial reviewer used different git diff flags and failed its digest assertion; exact GitAdapter full-index diff then verified all actual original review digests."
+  },
+  "native": {
+    "f33": {
+      "status": "F33_NATIVE_PASS",
+      "acceptance": [
+        "F-33.A1",
+        "F-33.A2",
+        "F-33.A3"
+      ],
+      "maximum_reserved": 2,
+      "BC_working_overlap_samples": 12,
+      "native_samples": 78,
+      "unavailable_samples": 1,
+      "replay_no_effects": true
+    },
+    "retained_actual_native_Git_SQLite_checked": true,
+    "f31_f32_same_session_chain_to_Done": true,
+    "all_four_fixture_worktrees_retained": true,
+    "fixture_main_unchanged": true,
+    "fixture_epics_not_main_delivered": true
+  },
+  "own_acceptance": [
+    "E-08.A1",
+    "E-08.A2",
+    "E-08.A3"
+  ],
+  "review_checks": [
+    "Current product changes and task interaction read fully; exact file Gitblob/fullpatch bindings to prior actual complete F31/F32/F33 reviews; generated native artifacts semantically validated against actual operators SQLite/Git/native records",
+    "Immutable actual F16/F18 blocker source, exact Integration scope, task lock and generation/slot checks before physical F13 park, no release on uncertain inactivity",
+    "Saved explicit input/F31 historical stop binding before effects, same SID/path, atomic reserve, pending journal and unknown transport no repeat; native correlated ACK before Active",
+    "F16 latest input/correction report boundary, F25 actual evidence and retained historical keys, F29 original scheduler principal/fresh board; offline park limited to owned run and pending input not reparked",
+    "Current source/target manual approval/mergeparents/test/physical stop/Done service gates; two Workers native scenario with known unavailable sample reported",
+    "No schema/lock/build/promptpolicy change; no adopted bootstrap resources or synthetic runtime proof; current main unchanged, PR scope and documentation verified"
+  ],
+  "limitations": [
+    "Native operator input/review decisions are explicit, no longlived autonomous loop",
+    "F38 environment/autonomy gate and F47 full recovery remain later scope",
+    "Native sampling is bracketed, not continuous process monitoring",
+    "Historical first failed probes preserved; successful fixture epics Active because no fixture main merge"
+  ],
+  "merge_operation": "72e37b5e-b4f0-403a-b474-2e31590d74ea",
+  "merge_stage": "DONE",
+  "merge_commit": "9f9b9c633a0d04ace2cdbbb7d146d0a506529bc8",
+  "merge_parents": [
+    "4a4ebe114c2289911c446bd783a1c000805973c2",
+    "4a6ad3f2e1539b21a51764c78a43eacd39699c64"
+  ],
+  "reviewed_tree_equal": true,
+  "merge_replayed": false,
+  "pr_edit_recovery": "gh pr edit failed on deprecated GraphQL projectCards field; REST readback/PATCH/body equality confirmed, explicit ready mutation returned isDraft false. Current exact head/base and mergeable clean read before local GitAdapter merge.",
+  "postmerge_structural": {
+    "source": "9f9b9c633a0d04ace2cdbbb7d146d0a506529bc8",
+    "target": "4a4ebe114c2289911c446bd783a1c000805973c2",
+    "exact_review_bindings": {
+      "Backlog.md": {
+        "blob": "c7fd92a2f1ad6700df4a79b9d3660ce8e4bd341c",
+        "latest_full_task_review": null
+      },
+      "README.md": {
+        "blob": "6ab408fea5666119069458b453ff303bc8898f62",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-31-blockerare.md": {
+        "blob": "4d0c81b13d5b763566503e63797c44563ba65f75",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-31-prover.json": {
+        "blob": "d9b7df1bfab2005c18080ffe770d2330ecae7daf",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-32-aterupptagning.md": {
+        "blob": "35dc5459e2b6f655f1180a2ac2757fb3ea67852b",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-32-prover.json": {
+        "blob": "3467ecbe4a479446dff23ccef7f26759e8b206b2",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-33-nativeprov.md": {
+        "blob": "812b5377430ca8a3cf15d157ced105e509962657",
+        "latest_full_task_review": 33
+      },
+      "docs/attention/F-33-prover.json": {
+        "blob": "8db32fc7b4a0d16bcfa8522a202de1d915234709",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-31.md": {
+        "blob": "337113029dce2526159f3e335068b2803404bca0",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-32-native-final.json": {
+        "blob": "650641a8cb85542648153ca9869f46a0243a7ab0",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-32.md": {
+        "blob": "a85e28ee2f2fb7541bb878fe2a305f5ecba72cfb",
+        "latest_full_task_review": 33
+      },
+      "docs/reviews/F-33.json": {
+        "blob": "b79b6911050fdcf7710ac8ab363832dfecceae57",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/F-33.md": {
+        "blob": "8ef82903667ad80d3b499b424a3332600d4e200c",
+        "latest_full_task_review": null
+      },
+      "scripts/probes/f31_native.py": {
+        "blob": "a2d414f0bc519585c31de568ee2557f7c5c1d7d6",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f32_native.py": {
+        "blob": "5893c1fd8a2fbb1d450b8d5bf7a910d517c21d5e",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f33_native.py": {
+        "blob": "3be2f70421612214840680c7124e0efe1cf0fdb6",
+        "latest_full_task_review": 33
+      },
+      "scripts/probes/f33_timeline.py": {
+        "blob": "38bc312b0cd94c7dfa5bd486a503f17903a4ff53",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/runtime_lifecycle_service.py": {
+        "blob": "6aa86143502ae6f79664e2079469970de7430667",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/runtime_service.py": {
+        "blob": "51e28aa82196d8699673d4d0f7ff51fd15461de9",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_attention_service.py": {
+        "blob": "c7415478f90c60f1a83e61b97208fb965a78758c",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_resume_intent.py": {
+        "blob": "2a9839cebb575316e51d1922cadc0dda370b6eed",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_resume_service.py": {
+        "blob": "187ba5c9f19c5c36844c2c0ede75b1f095b73d56",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/task_scheduler_service.py": {
+        "blob": "8ddfcdae00e1b92e79c6f07b7b6d43f3ec7a095b",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/teamplayer_evidence.py": {
+        "blob": "f15487c099938ac3d8039aa311ea7524f42d2193",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/teamplayer_sync.py": {
+        "blob": "e6e5c61a9568a4a0bd333b2ac9a7de24e68ade7d",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/application/worker_report_service.py": {
+        "blob": "5a79747d8640b743dfe9d69b0038b21ccf6bb5e4",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/domain/attention.py": {
+        "blob": "b777213be3602b492d17bcddaa551eb68aa3f47a",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/mcp/contracts.py": {
+        "blob": "5d197c021b658221e1ad02bc21b1fa1bcd12ab5b",
+        "latest_full_task_review": 33
+      },
+      "src/orchestrator/mcp/server.py": {
+        "blob": "c30fb3d0170679e95ab461a393412598c2da42da",
+        "latest_full_task_review": 33
+      },
+      "tests/test_f33_timeline.py": {
+        "blob": "f3ff00547bff51fc2976d67651b2328ff3621da5",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_attention_service.py": {
+        "blob": "82a37461c378d9132d767a0b7cedcb588dd5bc16",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_resume_service.py": {
+        "blob": "28ca7fddd7942b59ba4c376fef65357bf2995f24",
+        "latest_full_task_review": 33
+      },
+      "tests/test_task_scheduler.py": {
+        "blob": "bd205530df060edea4b0c5dfea85ea0fbb266d1b",
+        "latest_full_task_review": 33
+      }
+    },
+    "full_reviews": [
+      {
+        "task": 31,
+        "source": "7711a6f99fc3c12956787007fb685abdf7468185",
+        "target": "4a4ebe114c2289911c446bd783a1c000805973c2",
+        "verified_full_digest": "b67a9a44e3506f1d08edd4c5b7086d2e91970ae7a1fa267c22afbb00f55f997e"
+      },
+      {
+        "task": 32,
+        "source": "b749663494c96521272b0961f9da6e266f6456f3",
+        "target": "fa4001986667d3e3dcc4c468a8b749e97901f9e6",
+        "verified_full_digest": "e2287d51c1def1d1020bb6156c868924c72b4f8d878e4270caf862fa78333c16"
+      },
+      {
+        "task": 33,
+        "source": "73a9f9a4a528906628a7871a1d0d7837e391cc4e",
+        "target": "afc71c730bedf52fedf2faa2ece4c9172493a0c8",
+        "verified_full_digest": "151ef5d6a4013ac75eeb307e630627c87850c08b2eef6dc1ea2e318db4c77817"
+      }
+    ],
+    "wheel_modules": 56,
+    "policies": 2,
+    "checked_local_links": 140,
+    "all_changed_files_auth_scan": true,
+    "unchanged_schema_lock_build_policy": true,
+    "control_recovery": "Initial reviewer used different git diff flags and failed its digest assertion; exact GitAdapter full-index diff then verified all actual original review digests."
+  },
+  "postmerge_tests": {
+    "command": "uv run --locked pytest tests/test_task_attention_service.py tests/test_task_resume_service.py tests/test_task_scheduler.py tests/test_worker_slots.py tests/test_f33_timeline.py tests/test_mcp.py tests/test_persistence.py -x --junitxml=/tmp/herdr-e08-main.xml",
+    "passed": 128,
+    "seconds": 322.52,
+    "xml_seconds": 322.435,
+    "exit_code": 0,
+    "commit": "9f9b9c633a0d04ace2cdbbb7d146d0a506529bc8"
+  },
+  "remote_main": "9f9b9c633a0d04ace2cdbbb7d146d0a506529bc8",
+  "github_pr_state": "MERGED",
+  "github_merge_sha": "9f9b9c633a0d04ace2cdbbb7d146d0a506529bc8",
+  "teamplayer_status": "Done",
+  "teamplayer_status_version": 11,
+  "teamplayer_final_version": 12,
+  "teamplayer_description_equal_after_server_trim": true,
+  "description_readback_recovery": "Initial strict equality failed because server trimmed two final newline characters. Actual Done12 and all description content rechecked; trim equality confirmed. No repeated write or merge."
+}
