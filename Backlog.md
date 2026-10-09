@@ -1222,7 +1222,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-28 Reservera högst två aktiva Worker slots
 
-**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
+**Epic/fas/prioritet:** E-07 / 7 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `3f47197b-324f-4b02-87a7-759fc22620ce`.
 
 **Körbar:** Ja — F27 Done/granskad E07merge161d3f5/172testerPASS och E06 Done på main; inga ytterligare externa villkor.
 
@@ -1231,6 +1231,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** F-27. **Externa förutsättningar:** Inga utöver projektets grundförutsättningar.
 
 **Arbetsinstruktion för Codex:** Utöka Worker-start från en till två slots med atomisk reservation och unikt ägarskap per run. Implementera claim/release enligt D-03 och verifiera race mellan ny start och återupptagning. Behåll stöd för workergräns ett i testläge.
+
+**Start/precisering F28 (2026-10-09):** User105/Write, F27Donev6/E07merge161d3f5/172tester och E06Done på main verifierade. Integration plockar F28; task/e07-f28 från aktuellE07f9ec93d, utan adopterade produkt-runs. En gemensam intern slotpolicy används av ny taskclaim, runtime-start och samma-session-resume i SQLite-transaktioner. Settings.max_workers=1 eller2 respekteras; befintliga slotreservationer är beständiga i TaskRun och taskägaren unik enligt befintligt schema2. CLAIMED/STARTING/review/fix och okända sidoeffekter behåller kapacitet. Ett misslyckat försök före någon runtime-startavsikt/bindning kan frigöra reservation när tjänsten verifierat att ingen Worker ens kunde startas; samma task/run/operation återanvänds vid säkert retry. Efter runtime-startavsikt krävs F13:s faktiska stopp/inaktivitetsbevis före release. Parked/Done utan sådant bevis eller motstridiga reservationer spärrar ny kapacitet. Ingen agent får välja slot eller skicka ett inaktivitetsboolean. Native parallellitet provas i F30; F28 använder kontrollerad runtime och riktiga samtidiga Git/SQLite-serviceanrop.
 
 **Resultat och kontrakt:** CLAIMED och STARTING reserverar kapacitet. Reservationen hålls genom arbete och review/fix till bekräftad parkering eller avslut; parkerad session räknas inte. Ledig kapacitet beräknas från egna reservationer och bekräftad runtime, inte bara WORKING eller Kanban Active.
 
@@ -1243,6 +1245,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Samtidiga serviceanrop mot temporär SQLite och kontrollerad runtime med långsam start och okänt stopp.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Worker-underlag F28 (2026-10-09):** Gemensam intern WorkerSlots-policy för F15/F11/F13, atomisk reservation i schema 2, max_workers 1–2 och unik run. Säker pre-runtime-release återanvänder samma run/intent/bas; efter startintent krävs F13:s faktiska stoppbevis. Motstridiga claims, felaktiga bindings, otillräckligt stopp och sänkt kapacitetsgräns spärrar ny start. På slutlig källa: `uv run --locked pytest tests/test_worker_slots.py tests/test_task_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_merge_service.py tests/test_task_selection.py tests/test_teamplayer_sync.py tests/test_mcp.py -x` — 227 PASS, 617.63 s, exit 0. De 19 slotproven använder konkurrerande serviceanslutningar, verklig temporär Git/SQLite och kontrollerad runtime/processobserver. Ruff/build/config CLI/diff, 51 exakta wheelmoduler, två rollpolicies och 100 dokumentlänkar PASS. Två felaktiga testantaganden om startordning respektive ändrad retry-timeout rättades utan svagare produktgrindar. Ingen native parallellitet eller full autonom sandbox påstås; F30/F38 återstår. [Kontrakt](docs/scheduling/F-28-slots.md). READY_FOR_REVIEW; Done kräver faktisk Integration-review, merge och eftertest.
 
 ### Task F-29 Driv scheduling och serialisera taskintegration
 
@@ -2004,7 +2008,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 32 | F-26 | Task/feature | Verifiera TeamPlayer kopplingen på en testepic | E-06 | 6 | 1626d7a9-387d-47cd-b20b-86cb2a9f0613 | P1 | Done | Nej | 3/3 | E-05, F-25, X-01, X-02 | Review918bb1d/merge6d6ebd9;nativeflöde/stängtMCP/20CLI6.98s PASS; docs/reviews/F-26.md. |
 | 33 | E-07 | Epic | Genomför beroendestyrda tasks med två Workers | — | 7 | 75285fe5-e9bb-46ea-b5fd-19135c40166d | P1 | Active | Ja | 0/3 | E-06 Done på main | F27Done/merge161d3f5/172PASS; F28 nästa. Epicacceptans/mainintegration återstår. |
 | 34 | F-27 | Task/feature | Välj endast körbara tasks i rätt beroendeordning | E-07 | 7 | 8c9e5322-28c7-4310-b444-4c3a843fb671 | P0 | Done | Nej | 3/3 | E-06 | Reviewa815f1b/merge161d3f5;172tests145.70s PASS; docs/reviews/F-27.md. |
-| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Planned | Ja | 0/3 | E-06, F-27 | F27Done på aktuellE07; nästa prioriterade task, två beständiga slots. |
+| 35 | F-28 | Task/feature | Reservera högst två aktiva Worker slots | E-07 | 7 | 3f47197b-324f-4b02-87a7-759fc22620ce | P0 | Active | Ja | 0/3 | E-06, F-27 | Pågår i task/e07-f28 frånf9ec93d; atomiska1/2slots, säkerrelease/start-resume-race. |
 | 36 | F-29 | Task/feature | Driv scheduling och serialisera taskintegration | E-07 | 7 | 56b76e54-d870-452a-a477-4d4d4177260f | P1 | Planned | Nej | 0/3 | E-06, F-28 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 37 | F-30 | Task/feature | Verifiera tre tasks med två parallella Workers | E-07 | 7 | 5618ec4b-f817-4789-b45c-284e29199936 | P1 | Planned | Nej | 0/3 | E-06, F-29, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 38 | E-08 | Epic | Parkera blockerade tasks och återuppta samma arbete | — | 8 | dc637987-8dce-49ef-a178-7ed819ce6db7 | P1 | Planned | Nej | 0/3 | E-07 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

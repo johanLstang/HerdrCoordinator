@@ -14,6 +14,7 @@ from orchestrator.application.runtime_assignment_service import (
 from orchestrator.application.runtime_start_service import RuntimeStartError, RuntimeStartService
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.worker_prompt import build_assignment, render_worker_prompt
+from orchestrator.application.worker_slots import SlotError, WorkerSlots
 from orchestrator.application.worktree_service import WorktreeError, WorktreeService
 from orchestrator.domain.models import Operation, TaskRun, utc_now
 from orchestrator.domain.policy import Role, VerifiedFacts
@@ -29,13 +30,15 @@ class TaskStartError(RuntimeError):
 class TaskStartService:
     KIND = "task_start"
 
-    def __init__(self, settings, store, herdr, codex=None, *, prerequisite_probe=None):
-        # Phase 4 permits one claim. Existing claims in either slot still block new work.
-        self.settings = settings.model_copy(update={"max_workers": 1})
+    def __init__(
+        self, settings, store, herdr, codex=None, *, prerequisite_probe=None, processes=None
+    ):
+        self.settings = settings
+        self.slots = WorkerSlots(settings, store, processes=processes)
         self.store, self.herdr = store, herdr
         self.worktrees = WorktreeService(self.settings, store)
         self.integration = GitIntegrationService(self.settings, store)
-        self.runtime = RuntimeStartService(self.settings, store, herdr)
+        self.runtime = RuntimeStartService(self.settings, store, herdr, processes=processes)
         self.assignment = RuntimeAssignmentService(self.settings, store, herdr, codex)
         # Trusted operator callback, never a client/Worker boolean or tool argument.
         self.prerequisite_probe = prerequisite_probe
@@ -96,6 +99,15 @@ class TaskStartService:
                     or digest(op.result.get("instruction", "")) != op.result.get("instruction_hash")
                 ):
                     raise TaskStartError("TASK_START_INTENT_MISMATCH")
+                if task.internal_status == TaskState.CLAIMED and task.worker_slot is None:
+                    task = self.slots.reserve_new(task)
+                    op = op.model_copy(
+                        update={
+                            "result": op.result | {"reservation_released": False},
+                            "updated_at": utc_now(),
+                        }
+                    )
+                    self.store.update_operation(op)
                 return task, op
             if any(
                 isinstance(r, TaskRun)
@@ -105,13 +117,6 @@ class TaskStartService:
             ):
                 raise TaskStartError("TASK_ALREADY_OWNED")
             self._dependencies(spec, epic)
-            if any(
-                isinstance(r, TaskRun)
-                and r.project_id == actor.project_id
-                and r.worker_slot is not None
-                for r in self.store.get_runs()
-            ):
-                raise TaskStartError("WORKER_CAPACITY_UNAVAILABLE")
             task = self.worktrees.create_task_worktree(
                 actor,
                 epic_run_id=epic.id,
@@ -122,8 +127,7 @@ class TaskStartService:
             instruction = render_worker_prompt(build_assignment(spec, task, epic))
             if len(instruction.encode()) > 32768:
                 raise TaskStartError("WORKER_PROMPT_TOO_LARGE")
-            task = task.model_copy(update={"worker_slot": 1})
-            self.store.update_runtime_metadata(task)
+            task = self.slots.reserve_new(task)
             op = Operation(
                 project_id=actor.project_id,
                 epic_run_id=epic.id,
@@ -204,8 +208,7 @@ class TaskStartService:
                     TaskState.WORKING,
                 }:
                     raise TaskStartError("TASK_START_PHASE_CHANGED")
-                if task.worker_slot != 1:
-                    raise TaskStartError("WORKER_SLOT_UNVERIFIED")
+                self.slots.verify(task)
                 if task.internal_status == TaskState.CLAIMED:
                     self.worktrees.create_task_worktree(
                         actor,
@@ -241,15 +244,19 @@ class TaskStartService:
             RuntimeStartError,
             AssignmentError,
             TaskStartError,
+            SlotError,
         ) as e:
             if op is not None:
                 self._checkpoint(
                     op,
                     op.result["stage"],
                     error=str(e)
-                    if isinstance(e, (RuntimeStartError, AssignmentError, TaskStartError))
+                    if isinstance(
+                        e, (RuntimeStartError, AssignmentError, TaskStartError, SlotError)
+                    )
                     else type(e).__name__,
                 )
+                self.slots.release_unstarted(self.store.get_task(op.task_run_id), op.id)
             raise TaskStartError(
-                str(e) if isinstance(e, TaskStartError) else "TASK_START_UNVERIFIED"
+                str(e) if isinstance(e, (TaskStartError, SlotError)) else "TASK_START_UNVERIFIED"
             ) from None

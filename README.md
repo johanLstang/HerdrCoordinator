@@ -245,7 +245,7 @@ Version 1 validerar lokal taskspec, binder den till registrerad task/epic och by
 
 ## Explicit Worker-start (F-15)
 
-`TaskStartService` binder en lokal version-1-task till en unik run och reserverar slot före Git/Herdr. F-11/F-12 utför start och korrelerad native ACK. Återförsök behåller samma resurser och prompt. MCP `task_start` aktiveras endast med operatörens explicita `--herdr-session` och skyddade Integration-principal; utan det är servern read-only. Fas 4 använder en Worker. Se [start, MCP och recovery](docs/worker/F-15-start.md).
+`TaskStartService` binder en lokal version-1-task till en unik run och reserverar slot före Git/Herdr. F-11/F-12 utför start och korrelerad native ACK. Återförsök behåller samma resurser och prompt. MCP `task_start` aktiveras endast med operatörens explicita `--herdr-session` och skyddade Integration-principal; utan det är servern read-only. Fas 4 levererades med en Worker; F-28 respekterar konfigurationens gräns 1–2. Se [start, MCP och recovery](docs/worker/F-15-start.md).
 
 ## Verifierad Worker-rapport (F-16)
 
@@ -317,3 +317,12 @@ explicit specifikation, korrekt tilldelning och faktiska review-/merge-/testbevi
 krävs; Kanban Done ensam öppnar inget beroende. Tidigare epics kräver verifierad
 mainleverans. Urval reserverar eller startar ingen Worker.
 Se [konfiguration, bevis och svar](docs/scheduling/F-27-korbarhet.md).
+
+## Atomiska Worker-platser (F-28)
+
+Taskclaim, runtime-start och resume använder gemensam `WorkerSlots`-policy i
+SQLite-transaktioner. Högst två platser reserveras per projekt, även under
+CLAIMED/STARTING och review/fix. Osäkert start-/stopputfall behåller reservationen.
+Verifierat fel före varje runtimeintent kan frigöra en ännu aldrig startad run;
+annars krävs F-13:s verkliga stoppbevis. Testläge med `max_workers = 1` stöds.
+Se [persistens, race och recovery](docs/scheduling/F-28-slots.md).

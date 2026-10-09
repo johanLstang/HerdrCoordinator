@@ -29,6 +29,8 @@ Först därefter skrivs STOPPED/SUCCEEDED och inactivity=true. BLOCKED Task blir
 
 Ny resume-operation kräver bekräftat stopp för aktuell generation, kvarvarande sessionmetadata, rätt scope/Gitägare och aktiv Epic. Tasken ska vara PARKED. Slot räknas/reserveras inom SQLite-transaktion före extern start; högst två claims i projektet. Intent sparar stop-operation och exakt sessions-ID. En annan pending stopp-/resume-operation för samma run blockerar ny operation.
 
+Från [F-28](../scheduling/F-28-slots.md) används samma interna slotpolicy som taskclaim och runtime-start. Konkurrerande ny start och resume kan därför inte båda få sista sloten. Policyvalideringen kontrollerar dessutom stopjournalens generation, fullständiga binding och aktuella processbevis; en parkerad rad ensam är inget ledighetsbevis.
+
 Herdr startar samma namn i samma pane med `codex resume UUID --no-daemon --sandbox <valt läge> --ask-for-approval on-request --cd <samma worktree>`. Readiness, faktiskt argv/cwd/PID/startTime och samma beständiga konversation verifieras. Tasken återgår genom StateService till bevarad resumefas; aktuella processer/generation uppdateras och resume-operationen behåller underlaget. Inga branch/worktree-/sessionsersättningar skapas.
 
 Okänt resumeutfall eller processavbrott efter intent observeras endast; saknad agent leder till RESUME_OUTCOME_UNKNOWN och reserverad slot behålls. Samma operationsnyckel återanvänder verifierad runtime. Nyckel från äldre generation får inte styra nya processer. Besluts-/fixprompt, full Attention-policy och automatisk scheduling tillhör F-31/F-32 och senare features.
