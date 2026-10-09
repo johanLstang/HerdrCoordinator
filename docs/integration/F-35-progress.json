@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "status": "NATIVE_MCP_PERMISSION_CANCELLED",
+  "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
+  "run_id": "a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76",
+  "session_id": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
+  "confirmed_read_tools": [
+    "integration_overview",
+    "policy_check",
+    "runtime_status",
+    "task_get_next"
+  ],
+  "first_attempt": {
+    "run_id": "f67f8d04-beaa-4f6c-9fdd-e09603745ae0",
+    "failure": "SCOPED_MCP_TOOLS_UNAVAILABLE because HERDR_ENV was not passed to MCP host",
+    "workers": 0,
+    "stop_operation_id": "3ce530e8-89a3-462a-a383-1d89b9e1e648",
+    "stop_status": "SUCCEEDED"
+  },
+  "pending_permission": {
+    "source": "~/.codex/hooks.json PermissionRequest",
+    "hook": "GitKrakenCLI gk ai hook run --host codex --blocking",
+    "operation": "herdr_coordinator.task_start",
+    "worker_starts_confirmed": 0,
+    "state": "Cancelled by client before tool execution; no request remains pending",
+    "actual_error": "user cancelled MCP tool call"
+  },
+  "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
+  "next_action": "Operator authorizes a new fixture attempt and resolves the concrete GitKraken PermissionRequest. Then validate F13 same-session resume and fresh registration before one new control request. No replay of an unknown native effect.",
+  "stop": {
+    "operation_id": "d3dc8f8d-97eb-4bce-a72d-05cb8ecfb4d4",
+    "status": "SUCCEEDED",
+    "tasks": 0,
+    "preserved_session": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
+    "actual_runtime_status": "STOPPED"
+  },
+  "local_verification": {
+    "regression": {
+      "command": "uv run --locked pytest tests/test_epic_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_scheduler.py tests/test_mcp.py tests/test_codex_mcp_launch.py tests/test_integration_control.py -x",
+      "tests": 134,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0,
+      "seconds": 435.415,
+      "xml_sha256": "655f883fb1ad757998f2897d9ea130936dcd8b668c8f4c444c24b905dd72c4bf",
+      "scope": "134 tests passed before the final controller preservation change; final F35 control package is verified separately"
+    },
+    "gates": {
+      "files": [
+        "Backlog.md",
+        "docs/integration/F-35-control.md",
+        "docs/integration/F-35-progress.json",
+        "src/orchestrator/adapters/herdr.py",
+        "src/orchestrator/application/epic_start_service.py",
+        "src/orchestrator/application/integration_control_service.py",
+        "src/orchestrator/application/runtime_lifecycle_service.py",
+        "src/orchestrator/application/runtime_service.py",
+        "src/orchestrator/application/runtime_start_service.py",
+        "src/orchestrator/application/task_scheduler_service.py",
+        "src/orchestrator/domain/codex_mcp_launch.py",
+        "src/orchestrator/mcp/server.py",
+        "tests/test_codex_mcp_launch.py",
+        "tests/test_integration_control.py"
+      ],
+      "wheel_modules": 60,
+      "policies": 3,
+      "local_links": 97,
+      "auth_scan": true,
+      "historical_f34_code_binding": true,
+      "schema_lock_existing_policies_unchanged": true
+    },
+    "native_workflow_complete": false,
+    "integration_review_complete": false,
+    "development_merge": null,
+    "final_control": {
+      "command": "uv run --locked pytest tests/test_integration_control.py tests/test_codex_mcp_launch.py -x",
+      "tests": 19,
+      "exit_code": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 336.474,
+      "xml_sha256": "98ee902f3acc9cc275fb3545efdddddfdc5c1de159d75ecdddaae49b5baacc74"
+    }
+  },
+  "current_product_files": {
+    "src/orchestrator/application/integration_control_service.py": "9563411aede95bbf43e0e4b4e7306f281726037d314dcb67cfe266006fb35a5f",
+    "src/orchestrator/domain/codex_mcp_launch.py": "0a350df6a74d4ab3b1f38bae8137016f134d190831f0561945e27d5ed5a424b8",
+    "src/orchestrator/application/task_scheduler_service.py": "466d62cc1a0f518c19f42b38dd015ba1761d8494700e028248c102d526584647",
+    "src/orchestrator/application/runtime_service.py": "3d92a1cb3f4c83ab724e804038b70b5a2026fa8e8fde1077e8db95618639ade7",
+    "src/orchestrator/mcp/server.py": "259612479f54ab6928418228974bebded36c5bbf3458ef56b982ce2ff804b9d0",
+    "src/orchestrator/adapters/herdr.py": "b3b0b941180b309c66dcb5f65991a4389a8ca51efd31342e5ee0e9ca1f39b072",
+    "src/orchestrator/application/runtime_start_service.py": "e63126e6f11105078ff9be3c66547cc95d84217e3e02a0ab2dc8227766c0c4fd",
+    "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
+    "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066"
+  },
+  "current_product_files_note": "Checkpoint source hashes; not a claim that the incomplete native flow loaded every final change.",
+  "teamplayer": {
+    "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
+    "status": "NeedsApproval",
+    "confirmed_version": 5,
+    "execution_owner": "User",
+    "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "epic_status": "Active",
+    "epic_version": 8
+  }
+}

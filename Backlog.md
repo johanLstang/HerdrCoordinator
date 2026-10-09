@@ -1545,7 +1545,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-35 Låt Integration Agent styra tasks genom verktyg
 
-**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
+**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Attention. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
 
 **Körbar:** Ja — F34 granskad/integrerad/Done5 i E09 och E08 Done/main verifierad; kontrollera aktuell tilldelning och externa villkor före plock.
 
@@ -1554,6 +1554,16 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Beroenden:** F-34. **Externa förutsättningar:** X-01 och X-02 för det verkliga flödet.
 
 **Arbetsinstruktion för Codex:** Koppla Integration Agent till task_get_next, task_start, review, ändringsbegäran, taskmerge och resume. Ge aktuell task/slot/runtimeöversikt efter varje operation. Låt agenten välja bland verifierat körbara kandidater medan servicekontrollerna verkställer besluten.
+
+
+**Start och implementationskontrakt F35 (2026-10-09):** User105/Write, E09Active8, F34Done6/no-ff969de88d/134 eftertester/native och E08Done12/PR8/main verifierade. Ren separat task/e09-f35 från aktuell E09metadata5d7f968; plockad InProgress2 före kod. Bootstrapundantaget gäller bara manuella utvecklingsworktrees, inga adopterade produktruns.
+
+1. En betrodd operatörsfactory kopplar F34:s registrerade Integration till befintliga F27/F29/F15/F16/F18–F21/F25/F31/F32-services och MCP. Scope/ägare/spec/config och faktisk sessionkontroll gäller före varje agentbegärd mutation; ingen agentroll eller tasktext ersätter principalen. F35 bygger ingen dold CLI-loop eller generell recovery.
+2. Agenten kan själv välja en av verifierat körbara tasks och begära start med konfigurerad specifikation. Färsk TeamPlayer User-tilldelning/epicstatus, kompletta beroenden, aktuella Gitbevis och reserverad unik Worker-slot kontrolleras genom befintliga services innan native start. Max två Workers; Integration räknas inte som Worker. Samma F29-lås serialiserar kritiska styrbeslut.
+3. Review/changes/approval/Task→Epic-merge, blockerare/parkering och explicit samma-session-input/resume går genom respektive service med färska board-/context-/SHA-fakta. Stale approval, främmande epic, för tidigt beroende och oregistrerad/stoppad Integration nekas. Ingen shellmerge, direkt Worker-TeamPlayer-skrivning eller mainmerge. Godkännande är ett explicit granskningsbeslut bundet till faktiskt komplett aktuellt underlag.
+4. Efter varje operation lämnas säkert faktiskt resultat plus färsk epic/task/slot/runtimeöversikt, tillgängliga nästa operationer och konkreta blockerarkoder. Misslyckad översikts-/boardsynk får inte dölja redan känd Git/runtimeeffekt eller orsaka omkörning. Okända externa resultat observeras genom befintliga journaler; inga nya generella state-/schemaflaggor eller fabricerade framgångar.
+5. Operatören kan explicit ge den inbyggda Codex-sessionen ett lokalt scoped stdio-MCP-startkommando. Kommando/profil/DB/nätkonfiguration ligger utanför agentens argument och får inte innehålla credentials i prompt/argv/logg. Host får ansluta före startup-ACK men taskverktyg är spärrade tills F34:s faktiska registrering är verifierad. Worker-runtime behåller separat profil/sandbox och får ingen Integration-anslutning.
+6. Serviceprov med riktig Git/SQLite, inspelade/kontrollerade agentförslag och faktiskt MCP-SDK täcker start/ledig slot, beroenden, stale review, Attention/resume, främmande principal och återförsök/okända utfall. Separat nativeprov får ny avgränsad TeamPlayer-testepic/User105-tasks, ny F05/F34-run, namngiven testserver och godkänt ofarligt repo; agenten anropar verkliga scoped verktyg och resultat jämförs med faktisk journal/Git/runtime/board. F36/F37:s samlade epicacceptans/överlämning och F38/F47:s fulla gate/recovery återstår.
 
 **Resultat och kontrakt:** Agenten bygger inte egen shelllogik för kritiska operationer och implementerar normalt inte tasks. Alla svar visar aktuell state, nästa tillåtna operation och konkret blockerare. Repetition av beslut är säker; systemet kräver inte att agenten själv minns senaste commit.
 
@@ -1564,6 +1574,12 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 - [ ] **F-35.A3:** Attention/resume och taskstatus hanteras genom rätt services och utan direkt TeamPlayer-skrivning från Worker.
 
 **Verifiering:** Scenario med inspelade agentsvar plus verkligt prov av verktygsstyrt taskflöde.
+
+**Aktuellt hinder 2026-10-09:** GitKraken `PermissionRequest` i operatorns `~/.codex/hooks.json` väntade på `herdr_coordinator.task_start` i native F35 r2-provet. Codex-tråden registrerar därefter `user cancelled MCP tool call`; hosten fick ingen startbegäran. Färsk SQLite/native/board-avstämning visar noll taskruns/Workerstarter/merger. Read-only `integration_overview`, `task_get_next`, `policy_check` och `runtime_status` anropades faktiskt av Integration. Fixturemetadata rättades före start till exakt registrerad LocalTaskSpec; A/B är körbara och C har DEPENDENCY_NOT_DONE.
+
+**Prov och nästa åtgärd:** Lokal implementation/MCP-SDK/riktig Git/SQLite finns i task/e09-f35; 134 samlade tester/exit0, Ruff/build/README CLI-check/exakt wheel60moduler/tre policies/97 länkar/authscan passerade. Slutligt kontrollpaket mot senaste controllerkoden passerade dessutom 19 tester/exit0 på 336,54 s. Första nativeprovets saknade HERDR_ENV rättades, inga Workers startade där och F13-stopp3ce530e8 lyckades. R2 använder ny run `a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76`, session `01a121e7-491d-7c53-aab1-a68e1c60b8db`, fixtureepic `690c899f-b1c9-4a26-adae-8db68cd7ff22` och separat server `hc-f35-r2-20261009`. F13-stopp `d3dc8f8d-97eb-4bce-a72d-05cb8ecfb4d4`/SUCCEEDED och fysisk STOPPED återlästes innan egen server stoppades. Alla refs/worktrees/SQLite/sessioner/fixtures bevaras.
+
+Operatören behöver godkänna ett nytt konkret nativeprov och dess GitKraken-behörighetsbegäran. Därefter kontrollerar Integration F13 same-session-resume/F34-registrering och genomför verklig två-Worker-start, beroenden, review/fix, Task→Epic/eftertester/fysiskt stopp och boardmirror. En avbruten klientbegäran upprepas inte automatiskt. Nästa roll: operatören för externt beslut, sedan Integration för provet. [Arbetsgång och provgräns](docs/integration/F-35-control.md), [faktisk provstatus](docs/integration/F-35-progress.json). Ingen READY_FOR_REVIEW, utvecklingstaskmerge eller Done ännu; F36/F37 startas inte förbi beroendet. E09 förblir Active/0 av 3 egna kriterier. Ingen ändrad arbetsordning.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -2101,9 +2117,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Nej | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone6. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Done | Nej | 3/3 | E-07, F-31, X-01, X-02 | APPROVEDb749663→fa400198, merge04fb88ea;37 eftertester/gates/native input/ACK/replay+fixtureDone PASS; TeamPlayerDone7. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Done | Nej | 3/3 | E-07, F-32, X-01, X-02 | APPROVED73a9f9a→afc71c7, merge20a692b;51 eftertester/gates/native fullslots+treDone PASS; TeamPlayerDone7. |
-| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Active8; F34 Done6 efter review/no-ff969de88d/134 eftertester; egenacceptans0/3, F35 nästa. |
+| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Active8; F34 Done6 efter review/no-ff969de88d/134 eftertester; egenacceptans0/3, F35 plockad InProgress2. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
-| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Planned | Ja | 0/3 | E-08, F-34, X-01, X-02 | Nästa efter F34Done5/review/no-ff969de88d/134 eftertester; plocka med färsk version. |
+| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Attention | Nej | 0/3 | E-08, F-34, X-01, X-02 | NeedsApproval5/User105: native MCP-start avbruten i GitKraken-hook. 134 + 19 lokala tester passerar; noll native tasks/merger, fysisk STOPPED. F36 väntar; E09 Active. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Planned | Nej | 0/3 | E-08, F-35 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Planned | Nej | 0/3 | E-08, F-36, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
