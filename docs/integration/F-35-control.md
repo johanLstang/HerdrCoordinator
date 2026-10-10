@@ -31,7 +31,10 @@ interpolation eller ändring av global Codex-konfiguration. Konfigurationen ange
 hostens executable/argv, 120 sekunders start-/tool-timeout och den fasta ofarliga
 markören HERDR_ENV=1 för MCP-processen. Inga credentialvärden överförs där.
 Start/livscykeljournalens fingerprint binds till hela faktiska konfigurationsargv;
-ändrad host/config kräver avstämning och nekas som samma startavsikt. Worker-
+ändrad launch-argv/spec kräver avstämning och nekas som samma startavsikt.
+Fingerprint avser argv och registrerad konfiguration, inte bytes i operatorns
+host-/configfiler. Explicita operatorändringar av factory/kod och faktisk F13-
+reload redovisas per processgeneration med sourcehashar i nativeunderlaget. Worker-
 adaptern får ingen Integration-konfiguration. MCP-schema har inga launch-, roll-,
 profil-, databas- eller transportargument.
 
@@ -261,3 +264,7 @@ fix och integration återstår för båda; ingen utvecklingstaskmerge eller Done
 ## Aktuell avstämning av originalinput och verifieringsmiljö
 
 **Aktuell native granskning och verifiering 2026-10-10:** båda originalens sparade input har faktiskt återlästs av Integration via resume_task och returnerat ACTIVE_AND_SYNCED/board_sync CONFIRMED, med oförändrade SID. Per-anrop-factory med färsk verklig TeamPlayer-anslutning fungerar; tidigare förlorad retur bevaras och orsaken är inte fastställd. A:s ursprungliga pytest-miljöfel rättades genom explicit PATH till redan installerad projekt-venv; Worker körde faktiskt om samma pytestkontroll (fem tester/sex subtester PASS) och unittest14 PASS på oförändrad ren ed25a41c. Det tidigare felet redovisas i ny rapport, README saknas fortfarande för verklig review/fix. B:s fullständiga aktuella context932e15eb har hämtats och fått native task_approve APPROVED; taskmerge/eftertester/stopp/boardsynk återstår. B granskas oberoende medan A verifieringsmiljö förtydligas; C kräver fortfarande A Done. Sex slutliga input-/correction-tidsfall/exit0 (31,83 s) verifierar aktuell kod separat. F35 InProgress21/Active, E09 Active8/0 av 3; inga acceptanskriterier eller utvecklingsmerger är ännu klara.
+
+## Verifierat r5-resultat inför utvecklingsintegration
+
+**Nativeprov komplett, utvecklingsreview återstår 2026-10-10:** samma Integration-SID styrde faktiskt tre tasks genom scoped MCP. A/B startades med max2 reserverade Workers; tidig C nekades. Native Attention/parkering, originalinput/samma-SID-resume, komplett review/numrerad README-fix i samma A-SID och nya aktuella godkännanden verifierade. B/A/C har faktiska no-ff-merger e4a6f3b7/d2e9fcf1/cba439a1, oberoende eftertest exit0, fysisk Worker STOPPED och färsk TeamPlayer Done15/18/15. C återfyllde frigjord slot efter verifierad A Done. Fixture-main d4215a26 är oförändrad och fixtureepic Active. Full [nativehistorik och Git/SQLite/board-avstämning](F-35-native.json) bevarar operatorns separata original-ACK-avstämning, transportproblem, två F13-hostreloads, extern prefix-/testmiljöinput och rapportförtydliganden. Operatorns felaktiga originalbas-instruktion korrigerades mot worker_source: fillistan avser registrerad inkommande epicbas, inte enbart senaste README-commit eller ärvda B-filer. Inga felaktiga rapporter godkändes. Slutlig aktuell sourcegrind39 PASS159,39s/exit0. Integration stoppades genom F13 e4b7e451/SUCCEEDED och faktisk STOPPED före bara egen namngiven serverstop; alla refs/worktrees/SQLite/sessioner bevaras. F35 Testing23/Active och E09 Active8/0 av 3; utvecklingens fullreview, Task→E09 och eftertester återstår. F36 är nästa efter verifierad Done.

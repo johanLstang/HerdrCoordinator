@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "NATIVE_R5_REVIEW_AND_ENVIRONMENT_VERIFICATION",
+  "status": "READY_FOR_REVIEW_NATIVE_VERIFIED",
   "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
   "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
   "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
@@ -15,9 +15,14 @@
     "stop_operation_id": "3ce530e8-89a3-462a-a383-1d89b9e1e648",
     "stop_status": "SUCCEEDED"
   },
-  "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
-  "next_action": "Native Integration completes B current full-context approval/merge; collect A actual corrected successful report through explicit same-original-start retry, then actual README review/fix in same session and dependent C refill. No development Done/merge yet.",
-  "stop": null,
+  "acceptance": "Native fixture and current source gates verified; development Integration review/merge/posttests remain before task Done",
+  "next_action": "Bootstrap Integration performs current full source review, Task→E09 no-ff merge, relevant postintegration tests, then fresh CAS Done and backlog sync. F36 follows immediately.",
+  "stop": {
+    "operation_id": "e4b7e451-6480-4505-83b6-ea0e4c902f28",
+    "status": "SUCCEEDED",
+    "actual_runtime": "STOPPED",
+    "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87"
+  },
   "local_verification": {
     "regression": {
       "command": "uv run --locked pytest tests/test_epic_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_scheduler.py tests/test_mcp.py tests/test_codex_mcp_launch.py tests/test_integration_control.py -x",
@@ -55,7 +60,7 @@
       "historical_f34_code_binding": true,
       "schema_lock_existing_policies_unchanged": true
     },
-    "native_workflow_complete": false,
+    "native_workflow_complete": true,
     "integration_review_complete": false,
     "development_merge": null,
     "final_control": {
@@ -119,6 +124,13 @@
       "exit_code": 0,
       "seconds": 31.83,
       "xml_sha256": "33a4d6cccedacf207ec6029813c54c528e0c119a2d901834f9991bb26701b4b8"
+    },
+    "current_source_final": {
+      "command": "uv run --locked pytest tests/test_integration_control.py tests/test_codex_mcp_launch.py tests/test_codex_message_timing.py tests/test_task_resume_service.py::test_delayed_input_ack_observation_requires_proven_original_deadline tests/test_task_changes_service.py::test_delayed_correction_observation_requires_proven_original_deadline -x --junitxml=/tmp/herdr-f35-source-reviewed.xml",
+      "passed": 39,
+      "exit_code": 0,
+      "seconds": 159.388,
+      "xml_sha256": "b8628c6c845b4f4cea1edd7ba63f9c14fb38201a5fd63e458a3ed54901226233"
     }
   },
   "current_product_files": {
@@ -144,17 +156,17 @@
   "current_product_files_note": "Current source hashes; actual r5 second F13 host reload records the loaded control/timing files separately. Native full task workflow remains incomplete.",
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
-    "status": "InProgress",
-    "confirmed_version": 22,
+    "status": "Testing",
+    "confirmed_version": 24,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
     "epic_version": 8,
     "status_and_description_reread": true
   },
-  "checkpoint_commit": "1ba4c4457cb28b954cab2cfadc4b1ac46a83fc22",
+  "checkpoint_commit": "871c9ddf3f146dbcb55b144fd63a2f179bd2d9bb",
   "checkpoint_branch": "task/e09-f35",
-  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task→Epic merge remain",
+  "checkpoint_kind": "Code/native verification checkpoint; final development review/merge still pending",
   "previous_r2": {
     "run_id": "a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76",
     "session_id": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
@@ -187,7 +199,7 @@
     "resume_operations": 0,
     "reason": "Server restart replaced terminal identity. Original verified stop and journal preserved; no adoption."
   },
-  "native_session_kept_running": true,
+  "native_session_kept_running": false,
   "gitkraken_diagnosis": {
     "desktop_package_version": "12.6.0",
     "package_check": "dpkg-query",
@@ -270,20 +282,23 @@
       "resume_task",
       "task_approve",
       "task_merge",
+      "task_park_blocked",
+      "task_request_changes",
       "task_review_request",
-      "task_schedule"
+      "task_schedule",
+      "task_start"
     ],
     "integration_session": "01a1263d-e132-7a43-9aba-2c94bb228b87"
   },
   "native_progress": {
     "early_c_start": "DEPENDENCY_NOT_DONE; no Worker created",
-    "workers_started": 2,
+    "workers_started": 3,
     "worker_sessions": {
       "f35-a": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
       "f35-b": "01a1264e-7619-7c92-ab65-995e5b1837a0"
     },
     "task_schedule_result": "OK",
-    "workflow_complete": false,
+    "workflow_complete": true,
     "worker_first_reports": "Both original BLOCKED reports parked and resumed; code deliveries now available. Historical attempts preserved.",
     "ack_reconciliation": {
       "operator_role": "Integration",
@@ -623,10 +638,50 @@
     },
     "b_review": {
       "context_id": "932e15eba7b10092314c7db155fdca49dc4cd2f684594a2fa83e76272afedb84",
-      "native_result": "current full context retrieved, task_approve APPROVED; actual task_merge pending",
+      "native_result": "Actually integrated/Done15/physical STOPPED",
       "ordering": "B independent review proceeds while A verification is clarified; C still depends A actual Done"
-    }
+    },
+    "peak_workers": 2,
+    "a_review_correction": {
+      "source": "af8d62c88218963e64783069f681b15f971a2659",
+      "context_id": "cef50c780a7a501edea152d74c9c672531b9ff7023972452c4d6f89813c7624a",
+      "same_worker_sid": true,
+      "report_format_history": "README-only files list rejected; operator then incorrectly requested original-base list including beta. Actual worker_source uses registered incoming epic as current base. Explicit corrected report with README/alpha/test-alpha accepted without new code. All earlier records preserved."
+    },
+    "final_tasks": [
+      {
+        "task": "f35-a",
+        "state": "Done",
+        "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+        "merge_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+        "board_version": 18,
+        "runtime": "STOPPED"
+      },
+      {
+        "task": "f35-b",
+        "state": "Done",
+        "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+        "merge_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+        "board_version": 15,
+        "runtime": "STOPPED"
+      },
+      {
+        "task": "f35-c",
+        "state": "Done",
+        "session_id": "01a1268c-b177-7340-a856-5a48a42d54f0",
+        "merge_commit": "cba439a1f71182cd4b31cca9509bc3b032cb7c1b",
+        "board_version": 15,
+        "runtime": "STOPPED"
+      }
+    ],
+    "proof": "F-35-native.json"
   },
-  "teamplayer_status": "InProgress",
-  "teamplayer_version": 22
+  "teamplayer_status": "Testing",
+  "teamplayer_version": 24,
+  "server_stop": {
+    "only_named_server": "hc-f35-r4-20261010",
+    "command_exit_code": 0,
+    "actual_server_pid_absent": true,
+    "agents_before_server_stop": 0
+  }
 }
