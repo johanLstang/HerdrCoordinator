@@ -1,6 +1,6 @@
 # F37: verkligt Integration-styrt epicprov
 
-## Förberett prov 2026-10-10
+## Förberett prov 2026-10-10 (historiskt före start)
 
 F37 är InProgress3/User105, lokal Active, acceptans 0/3. E09 är Active8,
 egenacceptans 0/3. Detta dokument intygar ännu ingen nativeframgång.
@@ -56,9 +56,39 @@ TeamPlayer-Done. Därefter kör F36 separata build-, unittest- och
 Den sparade EPIC_READY-rapporten måste stämma med verklig Git, SQLite,
 sessionhistorik och board. Båda main-branches ska vara oförändrade.
 
+## Faktisk start och nuvarande hinder
+
+Kodcheckpoint `5397745e8e8024640b9308ecf91b4e48281bcbca` har ruff- och
+py_compile-resultat exit0. Ny egen server startades med sparad intention,
+PID2926419 och faktisk process-startidentitet; Herdr0.9.3/protokoll22
+bekräftar running/compatible. F34 registrerade den nya runen med faktisk
+original-ACK och SID `01a126e7-6860-7e13-b3c8-0aeaa451f30e`, Integration
+`hc-ba6d43f8214f4b389db4d9c5`, pane `w1:p1`, terminal
+`term_65d7ff7da9ecd1`. Startoperation
+`6b6bb065-47a0-4843-88cb-cde15897aa92` är REGISTERED.
+
+En kontrollintention sparades före en enda faktisk prompt. Integration
+begärde själv `task_start` för C. Verklig GitKraken PermissionRequest
+återlästes för rätt SID/cwd och exakt projekt/epicrun/f37-c; därefter visar
+native dialogen Allow, Allow for this session, Always allow och Cancel.
+GitKraken CLI är3.1.76. Herdr kan visa working under den väntande hooken;
+GitKrakens faktiska turn-state är blocked/PermissionRequest. En hook är
+ingen utförd taskstart. SQLite har ännu0 tasks/Workers/merger och både
+fixture-main och projekt-main har återkontrollerats oförändrade.
+
+F37 är NeedsApproval5/User105, lokal Attention, acceptans0/3.
+Användaren har tillfrågats om enbart nya F37-r1-sessionens scoped
+verktyg. R5:s tidigare godkännande återanvänds inte. Herdr-skillen kräver
+ett mänskligt beslut innan operatören besvarar dialogen. Även frågan om
+mänskligt prefix väntar på faktiskt svar. Nästa ansvariga är användaren
+för dessa beslut, därefter operatören för den verifierade dialogen och
+Integration för alla taskbeslut i originalsessionen. Server/session,
+SQLite, worktree, refs och intentioner bevaras. Ingen blind replay.
+[Maskinstatus](F-37-progress.json) redovisar nuvarande läge.
+
 ## Kvarvarande verifiering
 
-Native start, faktisk ACK/SID, MCP-beslut, park/resume, samma-SID-fix, tre
+MCP-beslut, park/resume, samma-SID-fix, tre
 reviewade leveranser och komplett handoff återstår. Prefixfrågan till
 användaren väntar på svar. R5:s verktygsgodkännande gäller endast r5;
 eventuell faktisk begäran i den nya sessionen behöver ett beslut för den.

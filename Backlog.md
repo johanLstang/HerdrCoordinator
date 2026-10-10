@@ -1655,9 +1655,9 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 
 ### Task F-37 Verifiera en epic styrd av Integration Agent
 
-**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `b8e3bd6d-2287-447a-9f48-bb7863101cd6`.
+**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Attention. **TeamPlayer Task-ID:** `b8e3bd6d-2287-447a-9f48-bb7863101cd6`.
 
-**Körbar:** Ja — plockad InProgress2/User105 efter F36 Done8/93a6e6d och verifierad E08 på main. Externa provvillkor avstäms konkret före start.
+**Körbar:** Nej — påbörjad, NeedsApproval5/User105: faktisk verktygsdialog i nya F37-r1-sessionen väntar på sessionsbundet mänskligt beslut. Ingen ändrad ordning; F36/E08-beroenden verifierade.
 
 **Källa:** A §§43, 48; W §§7–10, 20–30. **Berör:** Verkligt integrationsscenario, driftinstruktion.
 
@@ -1682,6 +1682,8 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 **Startunderlag:** Bootstrap Integration förberedde task/e09-f37 från ren/pushad E09 `517530ab9057a5a1e87179b37b3e2e3c51a1460a`, aktuell main73f64767 och verifierad F36-merge93a6e6d. Manuellt utvecklingsworktree utan fabricerad produktregistrering; Worker förbereder prov/driftunderlag i detta worktree. TeamPlayer InProgress2, E09 Active8/0 av 3. Herdr_ENV1 och installerad Herdr0.9.3 verifierade; återstående X01/X02/start/input avstäms innan någon provframgång intygas. Ingen ändrad arbetsordning.
 
 **Förberett nativeprov:** [Identiteter, operatörsgränser och kvarvarande verifiering](docs/integration/F-37-native.md). Tre verkliga User105-testtasks Pending1 återlästa; C beror på A. Provvärd, start/observe/handoff/stop och semantisk epicacceptans syntax-/ruffkontrollerade. Ny run har ännu ingen verifierad session, Worker eller merge. Prefixfrågan väntar på faktiskt mänskligt svar; r5:s verktygsgodkännande utökas inte till den nya sessionen.
+
+**Aktuellt hinder 2026-10-10:** Kodcheckpoint `5397745e8e8024640b9308ecf91b4e48281bcbca`. Ny egen server hc-f37-r1-20261010/PID2926419 startad; verklig F34-run `54311f5a-9556-4d6f-ba13-6ac6a1a5f973` REGISTERED med verifierad original-ACK, Integration hc-ba6d43f8214f4b389db4d9c5/SID `01a126e7-6860-7e13-b3c8-0aeaa451f30e`, pane w1:p1/term65d7ff7da9ecd1. Agentens första task_start/C ligger i verklig GitKraken PermissionRequest och native dialog med Allow/Allow for this session/Always allow/Cancel. Scope återläst från faktisk hookInput: f37-probe-r1/exakt epicrun/f37-c. Inga Workers eller taskmerger; båda main-SHA oförändrade. Operatören har startat/registrerat/observerat och säkrat kontrollintention före en enda sändning, inte gjort taskbesluten. Herdr-skillen kräver mänskligt beslut innan dialog besvaras; r5-godkännandet gäller den avslutade r5-sessionen. Ny fråga om sessionsbundna F37-r1-verktyg väntar, liksom prefixfrågan. Nästa ansvarig: användaren ger beslut/input; operatören besvarar bara verifierad scoped dialog och lämnar faktisk input; Integration fortsätter originalsessionens uppdrag. [Maskinstatus](docs/integration/F-37-progress.json). TeamPlayer NeedsApproval5/lokal Attention, acceptans0/3; E09 Active8/egenacceptans0/3. Originalsession, server, SQLite, worktree, refs och intention bevarade; ingen replay, fabricerad framgång eller main-merge.
 
 ## Epic E-10 Slutgranska integrera och välj nästa epic med Coordinator
 
@@ -2173,7 +2175,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Done | Nej | 3/3 | E-08, F-35 | Done8/User105; APPROVED0f67b82/full14-file diff5ec8e62b; no-ff93a6e6d/source104/post14/gates PASS. E09 Active0/3; F37 nästa. |
-| 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Active | Ja | 0/3 | E-08, F-36, X-01, X-02 | InProgress2/User105; task/e09-f37 från517530ab. Nytt native3-task/full EPIC_READY-prov förbereds. Extern sessionspermission/human prefix avstäms; ingen framgång intygad. |
+| 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Attention | Nej | 0/3 | E-08, F-36, X-01, X-02 | NeedsApproval5/User105; native REGISTERED/SID01a126e7, faktisk scoped verktygsdialog väntar på F37-r1-beslut.0 Workers/merger; main oförändrad. Prefixinput väntar; originalresurser bevarade, E09 Active0/3. |
 | 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Planned | Nej | 0/3 | E-09, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Planned | Nej | 0/3 | E-09, F-38, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

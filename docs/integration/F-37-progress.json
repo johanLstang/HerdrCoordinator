@@ -1,0 +1,58 @@
+{
+  "feature": "F37",
+  "stage": "WAITING_SCOPED_SESSION_APPROVAL",
+  "local_status": "Attention",
+  "teamplayer_status": "NeedsApproval",
+  "teamplayer_version": 6,
+  "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "acceptance_verified": 0,
+  "source_checkpoint": "5397745e8e8024640b9308ecf91b4e48281bcbca",
+  "epic_status": "Active",
+  "epic_acceptance_verified": 0,
+  "native_server": "hc-f37-r1-20261010",
+  "server_pid": 2926419,
+  "server_process_start": "112422377",
+  "epic_run_id": "54311f5a-9556-4d6f-ba13-6ac6a1a5f973",
+  "start_operation_id": "6b6bb065-47a0-4843-88cb-cde15897aa92",
+  "start_stage": "REGISTERED",
+  "confirmed_start_sha256": "f8cd7ef9abd625c44f325b30df6280427ca5eac0da548d1ff162b8c00b11b4d6",
+  "integration_session_id": "01a126e7-6860-7e13-b3c8-0aeaa451f30e",
+  "integration_agent_id": "hc-ba6d43f8214f4b389db4d9c5",
+  "pane_id": "w1:p1",
+  "terminal_id": "term_65d7ff7da9ecd1",
+  "native_tasks": 0,
+  "native_task_merges": 0,
+  "native_epic": "c3309a13-5350-4d19-b668-592cac9eadc3",
+  "external_tasks": {
+    "a": "b224e9c0-de87-4739-91ee-e65a9b792f66",
+    "b": "535e110e-b2cc-41c9-a7f9-46d348443f18",
+    "c": "455fb603-5099-42ef-b8ee-f587f9c802ea"
+  },
+  "pending_permission_tool": "mcp__herdr_coordinator__task_start",
+  "pending_permission_task": "f37-c",
+  "approval_source": "USER_DECISION_PENDING_FOR_F37_R1",
+  "human_prefix": "USER_ANSWER_PENDING",
+  "fixture_main": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "project_main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+  "mains_unchanged": true,
+  "checks": {
+    "ruff": 0,
+    "py_compile": 0,
+    "document_links": "PASS"
+  },
+  "limits": [
+    "No native task delivery or EPIC_READY acceptance claimed yet.",
+    "No full OS credential isolation claim; F38 remains separate.",
+    "Original live session and saved intents preserved; no prompt replay or adoption."
+  ],
+  "status_update_version": 5,
+  "status_description_readback": "CONFIRMED",
+  "native_ui_permission_sha256": "35359edfeb5364fef6603b1b92908b79af35f8834d679fa8fd474815afca41e4",
+  "control_intent": {
+    "request_id": "59a24356-ded6-43cf-8957-174dd9974c4d",
+    "stage": "PROMPT_RETURNED",
+    "text_sha256": "5dc382e170a3d9781a66b1e00e9de6fc85c19cd79a0a9c250e7ab98946894085",
+    "session_id": "01a126e7-6860-7e13-b3c8-0aeaa451f30e",
+    "created_at": "2026-10-10T17:41:41.679138+00:00"
+  }
+}
