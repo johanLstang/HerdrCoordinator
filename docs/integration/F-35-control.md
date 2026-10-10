@@ -190,3 +190,35 @@ PermissionRequest för task_start väntar sedan14:37:29Z i session01a1263d;
 användaren väljer Allow på feature/epic-f35-epic-r5. Read-only overview/get_next
 har körts, noll tasks/Workers/merger före gate. F35 NeedsApproval/Attention14,
 E09 Active. Egen headlessserver/session bevaras igång för samma begäran.
+
+## Godkänd r5-session och fortsatt verifiering
+
+Användaren har uttryckligen godkänt verktygen i den registrerade r5-provsessionen.
+Operatören bekräftar aktuella scoped verktygsdialoger med Allow for this session;
+valet Always allow används inte. C:s första start nekades med DEPENDENCY_NOT_DONE
+utan Worker. A och B har faktiskt startat i två separata native-sessioner och
+lämnat sina första rapporter. task_schedule har returnerat OK. F35 är Active/
+InProgress16; full review/fix, taskintegration, eftertester och boardavstämning
+återstår. E09 förblir Active. Tidigare väntan ovan är bevarad historik.
+
+## Verifierat tidigt ACK efter fördröjd observation
+
+GitKraken-gate fördröjde schedulerobservationen efter originalens ACK-deadlines.
+Båda Workers hade faktiskt skickat exakt korrelerat ACK i fullständiga native-turns
+före deadline; F12 avvisade dessa på grund av senare observationstid. F35 tillåter
+nu avstämning av just sådant leveransbevis: exakt prompt/ny turn/ACK/session och
+färska runtime-, process-, Git- och slotfakta måste stämma. Betrodd heltals-
+stämpel completedAt, inklusive hela den sista sekunden, måste ligga inom
+ursprungligt dispatchfönster. Sent, odaterat eller otillräckligt bevis nekas
+fortfarande. Ett verkligt timeoututfall får inte omskickas eller ges ny deadline.
+
+Operatören i Integration-rollen stämde av båda originalen genom
+scheduler.start_selected; samma dispatch-ID:n, sessioner och slots bevarades
+och faktiskt ACK sparades utan ny prompt/Worker. Native-agentens fortsatta
+kontrolluppdrag skall samla originalens BLOCKED-rapporter. Det är den ärvda
+F26-fixturens prefixgate, inte en kodleverans. Operatören ger explicit Hej-input
+för ordinarie park/resume i samma sessioner, med oförändrade F35-uppdrag.
+38 assignmenttester och ytterligare sju slutliga tidsgränsfall passerade.
+Native-MCP-hosten i den pågående sessionen behåller tidigare inläst F12-kod;
+just ACK-avstämningen utfördes av operatörsprocessen med den rättade koden.
+Fortsatta agentsvar använder de faktiskt bekräftade originaljournalerna.

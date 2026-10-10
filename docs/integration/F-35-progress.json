@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "NATIVE_R5_PERMISSION_REQUEST_PENDING",
+  "status": "NATIVE_R5_CONTROL_IN_PROGRESS",
   "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
   "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
   "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
@@ -15,17 +15,8 @@
     "stop_operation_id": "3ce530e8-89a3-462a-a383-1d89b9e1e648",
     "stop_status": "SUCCEEDED"
   },
-  "pending_permission": {
-    "operation": "mcp__herdr_coordinator__task_start",
-    "state": "blocked",
-    "since": "2026-10-10T14:37:29Z",
-    "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
-    "matched_workspace": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/epic-f35-epic-r5",
-    "source": "GitKraken PermissionRequest hook",
-    "worker_starts_confirmed": 0
-  },
   "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
-  "next_action": "User selects Allow on feature/epic-f35-epic-r5 task_start card in GitKraken12.6.0. Integration then observes the same pending request. Keep headlessserver and session alive, no replay or restart.",
+  "next_action": "Integration uses actual scoped scheduler/park/resume on existing sessions, then review/fix and verified task merges. No new assignment dispatch or native Integration start.",
   "stop": null,
   "local_verification": {
     "regression": {
@@ -46,6 +37,7 @@
         "src/orchestrator/adapters/herdr.py",
         "src/orchestrator/application/epic_start_service.py",
         "src/orchestrator/application/integration_control_service.py",
+        "src/orchestrator/application/runtime_assignment_service.py",
         "src/orchestrator/application/runtime_lifecycle_service.py",
         "src/orchestrator/application/runtime_service.py",
         "src/orchestrator/application/runtime_start_service.py",
@@ -53,7 +45,8 @@
         "src/orchestrator/domain/codex_mcp_launch.py",
         "src/orchestrator/mcp/server.py",
         "tests/test_codex_mcp_launch.py",
-        "tests/test_integration_control.py"
+        "tests/test_integration_control.py",
+        "tests/test_runtime_assignment.py"
       ],
       "wheel_modules": 60,
       "policies": 3,
@@ -73,6 +66,23 @@
       "errors": 0,
       "seconds": 336.474,
       "xml_sha256": "98ee902f3acc9cc275fb3545efdddddfdc5c1de159d75ecdddaae49b5baacc74"
+    },
+    "ack_reconciliation": {
+      "command": "uv run --locked pytest tests/test_runtime_assignment.py -x",
+      "tests": 38,
+      "exit_code": 0,
+      "seconds": 61.27,
+      "final_boundary_change": "subsequent targeted seven timing cases pass against final lower-bound check",
+      "final_command": "uv run --locked pytest tests/test_runtime_assignment.py -k 'delayed_observer or unproven_or_late' -x",
+      "final_tests": 7,
+      "final_exit_code": 0
+    },
+    "start_reconciliation": {
+      "command": "uv run --locked pytest tests/test_integration_control.py -k original_start_retry -x",
+      "tests": 1,
+      "exit_code": 0,
+      "seconds": 26.98,
+      "initial_fixture_failure": "The first assertion counted the legitimate scheduler start of B; corrected to compare native effects across only A explicit retry."
     }
   },
   "current_product_files": {
@@ -84,7 +94,10 @@
     "src/orchestrator/adapters/herdr.py": "b3b0b941180b309c66dcb5f65991a4389a8ca51efd31342e5ee0e9ca1f39b072",
     "src/orchestrator/application/runtime_start_service.py": "e63126e6f11105078ff9be3c66547cc95d84217e3e02a0ab2dc8227766c0c4fd",
     "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
-    "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066"
+    "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066",
+    "src/orchestrator/application/runtime_assignment_service.py": "e7661396d0038960d4d80a2bc4bdce8ca3017a9cd5df668705b3c73eec3afadc",
+    "tests/test_runtime_assignment.py": "f4969580ab6e55070d40bc6cce0d0c4d8d49e0b7dc085077dc39d1f9fc5a6d52",
+    "tests/test_integration_control.py": "537855cbec837d03c9d2271358c83ffbb9a9aab74f867ca3567f422f2d1b0754"
   },
   "current_product_files_note": "Source hashes match newly started r3 native host. Completion of actual native task flow remains unverified.",
   "teamplayer": {
@@ -99,7 +112,7 @@
   },
   "checkpoint_commit": "1ba4c4457cb28b954cab2cfadc4b1ac46a83fc22",
   "checkpoint_branch": "task/e09-f35",
-  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task\u2192Epic merge remain",
+  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task→Epic merge remain",
   "previous_r2": {
     "run_id": "a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76",
     "session_id": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
@@ -197,5 +210,113 @@
   },
   "native_server": "hc-f35-r4-20261010",
   "native_branch": "feature/epic-f35-epic-r5",
-  "codex_cli_version": "0.162.1"
+  "codex_cli_version": "0.162.1",
+  "previous_permission": {
+    "operation": "mcp__herdr_coordinator__task_start",
+    "state": "blocked",
+    "since": "2026-10-10T14:37:29Z",
+    "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+    "matched_workspace": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/epic-f35-epic-r5",
+    "source": "GitKraken PermissionRequest hook",
+    "worker_starts_confirmed": 0
+  },
+  "session_authorization": {
+    "source": "explicit user approval for r5 probe session",
+    "choice": "Allow for this session",
+    "global_always_allow": false,
+    "tools_confirmed": [
+      "task_start",
+      "task_schedule"
+    ],
+    "integration_session": "01a1263d-e132-7a43-9aba-2c94bb228b87"
+  },
+  "native_progress": {
+    "early_c_start": "DEPENDENCY_NOT_DONE; no Worker created",
+    "workers_started": 2,
+    "worker_sessions": {
+      "f35-a": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+      "f35-b": "01a1264e-7619-7c92-ab65-995e5b1837a0"
+    },
+    "task_schedule_result": "OK",
+    "workflow_complete": false,
+    "worker_first_reports": "BLOCKED by inherited fixture prefix gate; no implementation deliveries yet",
+    "ack_reconciliation": {
+      "operator_role": "Integration",
+      "operation": "reconcile original task_start intent through scheduler.start_selected; no redispatch",
+      "before": [
+        {
+          "task_id": "f35-a",
+          "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+          "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+          "dispatch_id": "ebfe46cd-6f07-4adf-be9c-69e3c2c4b409",
+          "dispatch_status": "TIMED_OUT",
+          "correlation_id": "f738bd76-bdf6-4fed-83b5-6430bb3aea93",
+          "deadline": "2026-10-10T14:54:26.708318+00:00"
+        },
+        {
+          "task_id": "f35-b",
+          "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+          "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+          "dispatch_id": "9dbdfb52-6a55-46bf-b440-8d650b11882b",
+          "dispatch_status": "TIMED_OUT",
+          "correlation_id": "32e3c9b0-c088-4f52-9b86-c2ca864963f9",
+          "deadline": "2026-10-10T14:54:46.530065+00:00"
+        }
+      ],
+      "after": [
+        {
+          "task_id": "f35-a",
+          "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+          "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+          "dispatch_id": "ebfe46cd-6f07-4adf-be9c-69e3c2c4b409",
+          "dispatch_status": "SUCCEEDED",
+          "result_status": "CONFIRMED",
+          "ack": {
+            "turn_id": "01a1264e-3560-7c60-b30f-96246c3bbfdc",
+            "item_id": "msg_02f383e589da09b9016aca517936bc87d2b8b18e5c4f9fb865",
+            "message_hash": "283739f90de09fd77f8e95234e1bf7fd474b7b2327a12e02819467bea3885b6c",
+            "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+            "correlation_id": "f738bd76-bdf6-4fed-83b5-6430bb3aea93",
+            "timely_completion_verified": true
+          },
+          "state": "WORKING"
+        },
+        {
+          "task_id": "f35-b",
+          "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+          "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+          "dispatch_id": "9dbdfb52-6a55-46bf-b440-8d650b11882b",
+          "dispatch_status": "SUCCEEDED",
+          "result_status": "CONFIRMED",
+          "ack": {
+            "turn_id": "01a1264e-82f5-7ee1-9186-9284a2c8b0f6",
+            "item_id": "msg_0309c26ebcbef939016aca518cb2b88191be58f47498c54910",
+            "message_hash": "eb85337b4efccb3c6f1230ba05e514a5e70ee8d765bc1e5d557e64bcce637a2e",
+            "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+            "correlation_id": "32e3c9b0-c088-4f52-9b86-c2ca864963f9",
+            "timely_completion_verified": true
+          },
+          "state": "WORKING"
+        }
+      ],
+      "source_sha256": "e7661396d0038960d4d80a2bc4bdce8ca3017a9cd5df668705b3c73eec3afadc"
+    },
+    "operator_input": "Explicit Hej input supplied for ordinary parked same-session resume; F35 task scopes unchanged",
+    "park_board_observation": {
+      "f35-a": {
+        "status": "NeedsInput",
+        "version": 9
+      },
+      "f35-b": {
+        "status": "NeedsInput",
+        "version": 9
+      },
+      "f35-c": {
+        "status": "Pending",
+        "version": 2
+      }
+    }
+  },
+  "teamplayer_status": "InProgress",
+  "teamplayer_version": 19
 }

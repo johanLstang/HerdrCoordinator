@@ -285,6 +285,57 @@ def test_sync_api_cannot_bypass_control_guard(setup):
     assert r.code == "ASYNC_CONTROL_REQUIRED" and sessions.starts == 1
 
 
+def test_original_start_retry_reconciles_on_time_ack_and_unpauses_scheduler(setup, monkeypatch):
+    from datetime import timedelta
+
+    from orchestrator.domain.models import utc_now
+
+    control, runtime, _, _, sessions = setup
+    original = sessions.prompt
+    delayed = []
+
+    def no_ack(name, text, **kwargs):
+        original(name, text, **kwargs)
+        turn = sessions.threads[sessions.agents[name]["sid"]]["turns"][-1]
+        delayed.append((turn, turn["items"].pop(), int(utc_now().timestamp())))
+
+    sessions.prompt = no_ack
+    target = dict(project_id="p", epic_run_id="e")
+    args = target | {"task": control.scheduler.selection.specs[T1]}
+
+    async def exercise():
+        first = await runtime.call_async("task_start", args)
+        assert first.data["status"] == "WAITING"
+        current = task(control, "F-01")
+        sid = current.codex_session_id
+        monkeypatch.setattr(
+            "orchestrator.application.runtime_assignment_service.utc_now",
+            lambda: utc_now() + timedelta(seconds=60),
+        )
+        await runtime.call_async("task_schedule", target)
+        assert control.store.get_operation("p", "task_schedule", current.id).result[
+            "phase"
+        ] == "PAUSED"
+        # The bounded scheduler may legitimately fill B while observing A.
+        # Only the explicit retry of A must produce no new native effects.
+        before = (sessions.starts, len(sessions.sent))
+        turn, ack, completed = delayed[0]
+        turn["items"].append(ack)
+        turn["completedAt"] = completed
+        confirmed = await runtime.call_async("task_start", args)
+        assert confirmed.ok and confirmed.data["status"] == "CONFIRMED"
+        assert task(control, "F-01").codex_session_id == sid
+        assert (sessions.starts, len(sessions.sent)) == before
+        assert control.store.get_operation("p", "task_schedule", current.id).result[
+            "phase"
+        ] == "OBSERVING"
+        finish(control, sessions, "F-01")
+        await runtime.call_async("task_schedule", target)
+        assert task(control, "F-01").internal_status == TaskState.REVIEWING
+
+    asyncio.run(exercise())
+
+
 def test_correction_returns_to_same_worker_and_new_current_review(setup):
     control, runtime, _, _, sessions = setup
     target = dict(project_id="p", epic_run_id="e")

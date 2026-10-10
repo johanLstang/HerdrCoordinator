@@ -231,8 +231,6 @@ class RuntimeAssignmentService:
                 raise AssignmentError("ASSIGNMENT_NOT_FOUND")
             if op.status == "SUCCEEDED":
                 return self._confirmed(run, op, start)
-            if op.status == "TIMED_OUT":
-                raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT")
             if run.internal_status != TaskState.STARTING:
                 raise AssignmentError("TASK_NOT_STARTING")
             facts = self._runtime(run, start)
@@ -241,6 +239,12 @@ class RuntimeAssignmentService:
                 raise AssignmentError("CODEX_SESSION_CHANGED")
             thread = self.codex.read_thread(sid, run.worktree_path) if sid else None
             proof = self._match(run, op, thread, runtime_status=facts["status"]) if thread else None
+            # A permission gate may delay observation after an ACK was already delivered.
+            # Only trusted completed-turn timing proves that delivery was before the
+            # original deadline. Never accept an undated or genuinely late ACK.
+            timely = self._completed_before_deadline(op, thread, proof)
+            if op.status == "TIMED_OUT" and not timely:
+                raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT")
             with self.store.transaction():
                 run, current_start = self._validate(actor, run_id)
                 current = self.store.get_operation(run.project_id, self.KIND, run.id)
@@ -251,9 +255,10 @@ class RuntimeAssignmentService:
                 if sid and run.codex_session_id is None:
                     run = run.model_copy(update={"codex_session_id": sid})
                     self.store.update_runtime_metadata(run)
-                if current.status == "TIMED_OUT" or utc_now() > datetime.fromisoformat(
+                expired = current.status == "TIMED_OUT" or utc_now() > datetime.fromisoformat(
                     current.result["deadline"]
-                ):
+                )
+                if expired and not timely:
                     self.store.update_operation(
                         current.model_copy(
                             update={
@@ -279,6 +284,8 @@ class RuntimeAssignmentService:
                         ),
                     )
                     ack = proof | {"session_id": sid, "correlation_id": op.result["correlation_id"]}
+                    if expired:
+                        ack |= {"timely_completion_verified": True}
                     self.store.update_operation(
                         current.model_copy(
                             update={
@@ -365,3 +372,20 @@ class RuntimeAssignmentService:
                         "message_hash": digest(item["text"]),
                     }
         return None
+
+    @staticmethod
+    def _completed_before_deadline(op, thread, proof):
+        if not proof or not thread:
+            return False
+        turns = [t for t in thread["turns"] if t["id"] == proof["turn_id"]]
+        if len(turns) != 1 or turns[0]["status"] != "completed":
+            return False
+        completed = turns[0].get("completedAt")
+        # Codex timestamps are integer epoch seconds. Include the whole last
+        # second, so truncation cannot admit a delivery beyond the deadline.
+        return (
+            type(completed) is int
+            and completed > 0
+            and completed + 1 >= op.created_at.timestamp()
+            and completed + 1 <= datetime.fromisoformat(op.result["deadline"]).timestamp()
+        )
