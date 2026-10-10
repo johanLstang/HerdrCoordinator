@@ -96,15 +96,27 @@ registrerar sedan `user cancelled MCP tool call`; anropet kom inte till hosten.
 Färsk journal visar noll tasks/Workerstarter/merger. Det finns ingen startmutation
 att återköra för avstämning. Upprepa inte en avbruten klientbegäran automatiskt.
 
-Operatören behöver godkänna ett nytt konkret prov och hantera dess GitKraken-
-begäran. Därefter kontrolleras F13 same-session-resume med den sparade profilen,
-ursprungligt F34-ACK och aktuella resurser före ett nytt explicit kontrolluppdrag.
-Run/session/branch/SQLite och fixtureboard bevaras. F13-stopp registrerades för
-Integration efter avbrottet; bara den egna namngivna servern stoppas efter fysisk
-STOPPED-återläsning. Den här dokumentationen intygar inte full F35-acceptans,
-review, taskintegration eller Done. Nästa ansvariga roll är operatören för det
-externa hookbeslutet, sedan Integration för provet. Ingen extra tillits-, update-
-eller säkerhetsdialog besvarades.
+## Återupptaget nativeprov 2026-10-10
+
+Användaren begär fortsatt prov och bekräftar att GitKraken kör på Pi:n. F13
+avvisade r2-resume före effekt med RUNTIME_PANE_CHANGED: serveromstarten
+skapade en ny terminalidentitet. Den ursprungliga stoppade sessionens journal,
+refs, worktrees och SQLite bevaras; bindningen ändras inte och ingen runtime
+adopteras. Ingen resume-operation eller Worker skapades i det nekade försöket.
+
+Ett nytt separat r3-prov använder samma godkända repo och samma fortfarande
+Pending-fixturetasks under samma externa epic. F05/F34 har registrerat run
+eaac9f71-c484-42e2-8af6-2324a9ea9198/session
+01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7 i ny SQLite, branch och worktree.
+Den egna servern hc-f35-r2-20261009 används efter verifiering av tom agentlista.
+Ny skyddad operatorprofil/host ligger utanför agentens worktree och innehåller
+inga credentialvärden. Exakt ett nytt explicit kontrolluppdrag har skickats;
+Integration har faktiskt anropat integration_overview och task_get_next.
+
+GitKraken-hookens verkliga behörighetsbeslut hanteras av användaren. Hosten
+kringgår inte hooken. Full nativeacceptans, review, utvecklingstaskmerge och
+Done återstår. F35 NeedsApproval/Attention9; E09 Active8. Nästa ansvariga roll är
+Integration-operatören för observation och verifiering av faktiskt taskflöde.
 
 ## Lokala kontroller
 
@@ -128,3 +140,7 @@ Ruff, README:s CLI-check, build, exakt wheelinnehåll (60 moduler/tre policies),
 97 lokala dokumentlänkar, diff-whitespace och faktisk credentialvärdesskanning
 passerade. uv.lock och SQLite-schema är oförändrade. F34:s historiska native-
 filhashar jämförs med dess sourcecommit e8b2dc2, inte F35:s ändrade filer.
+
+Aktuell GitKraken PermissionRequest för task_start väntar i registrerad r3-session.
+Session/server behålls igång för användarens beslut på Pi:n; inga Workers
+eller merger finns ännu. Begäran upprepas inte och hooken kringgås inte.

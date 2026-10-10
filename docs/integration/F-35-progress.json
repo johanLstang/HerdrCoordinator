@@ -1,13 +1,11 @@
 {
   "version": 1,
-  "status": "NATIVE_MCP_PERMISSION_CANCELLED",
+  "status": "NATIVE_R3_PERMISSION_REQUEST_PENDING",
   "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
-  "run_id": "a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76",
-  "session_id": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
+  "run_id": "eaac9f71-c484-42e2-8af6-2324a9ea9198",
+  "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
   "confirmed_read_tools": [
     "integration_overview",
-    "policy_check",
-    "runtime_status",
     "task_get_next"
   ],
   "first_attempt": {
@@ -21,19 +19,14 @@
     "source": "~/.codex/hooks.json PermissionRequest",
     "hook": "GitKrakenCLI gk ai hook run --host codex --blocking",
     "operation": "herdr_coordinator.task_start",
-    "worker_starts_confirmed": 0,
-    "state": "Cancelled by client before tool execution; no request remains pending",
-    "actual_error": "user cancelled MCP tool call"
+    "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+    "state": "blocked",
+    "observed_at": "2026-10-10T13:09:23.973Z",
+    "worker_starts_confirmed": 0
   },
   "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
-  "next_action": "Operator authorizes a new fixture attempt and resolves the concrete GitKraken PermissionRequest. Then validate F13 same-session resume and fresh registration before one new control request. No replay of an unknown native effect.",
-  "stop": {
-    "operation_id": "d3dc8f8d-97eb-4bce-a72d-05cb8ecfb4d4",
-    "status": "SUCCEEDED",
-    "tasks": 0,
-    "preserved_session": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
-    "actual_runtime_status": "STOPPED"
-  },
+  "next_action": "User approves the actual pending GitKraken task_start request on Pi; Integration verifies same existing request. Keep native session/server running; no replay, restart, stop or hook bypass.",
+  "stop": null,
   "local_verification": {
     "regression": {
       "command": "uv run --locked pytest tests/test_epic_start.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_task_scheduler.py tests/test_mcp.py tests/test_codex_mcp_launch.py tests/test_integration_control.py -x",
@@ -93,17 +86,51 @@
     "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
     "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066"
   },
-  "current_product_files_note": "Checkpoint source hashes; not a claim that the incomplete native flow loaded every final change.",
+  "current_product_files_note": "Source hashes match newly started r3 native host. Completion of actual native task flow remains unverified.",
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
     "status": "NeedsApproval",
-    "confirmed_version": 6,
+    "confirmed_version": 10,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
-    "epic_version": 8
+    "epic_version": 8,
+    "status_and_description_reread": true
   },
   "checkpoint_commit": "1ba4c4457cb28b954cab2cfadc4b1ac46a83fc22",
   "checkpoint_branch": "task/e09-f35",
-  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task\u2192Epic merge remain"
+  "checkpoint_kind": "WORK_IN_PROGRESS; native acceptance, Integration review and Task\u2192Epic merge remain",
+  "previous_r2": {
+    "run_id": "a5ed4f2a-1297-4d5b-9ec9-f4c500e05a76",
+    "session_id": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
+    "pending_permission": {
+      "source": "~/.codex/hooks.json PermissionRequest",
+      "hook": "GitKrakenCLI gk ai hook run --host codex --blocking",
+      "operation": "herdr_coordinator.task_start",
+      "worker_starts_confirmed": 0,
+      "state": "Cancelled by client before tool execution; no request remains pending",
+      "actual_error": "user cancelled MCP tool call"
+    },
+    "stop": {
+      "operation_id": "d3dc8f8d-97eb-4bce-a72d-05cb8ecfb4d4",
+      "status": "SUCCEEDED",
+      "tasks": 0,
+      "preserved_session": "01a121e7-491d-7c53-aab1-a68e1c60b8db",
+      "actual_runtime_status": "STOPPED"
+    },
+    "confirmed_read_tools": [
+      "integration_overview",
+      "policy_check",
+      "runtime_status",
+      "task_get_next"
+    ]
+  },
+  "resume_attempt": {
+    "date": "2026-10-10",
+    "code": "RUNTIME_PANE_CHANGED",
+    "before_native_effect": true,
+    "resume_operations": 0,
+    "reason": "Server restart replaced terminal identity. Original verified stop and journal preserved; no adoption."
+  },
+  "native_session_kept_running": true
 }
