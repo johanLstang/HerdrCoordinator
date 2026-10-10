@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-11. E01–E08 Done på main och F01–F37 Done/User105. E09 Active, egenacceptans3/3 från verkligt nativeprov; samlad892-source-suite PASS, slutreview/PR#9/main/slutverifiering återstår. E10–E12 och F38–F50 Planned. Den ursprungliga leveransen omfattar12 epics/50tasks; boarden innehåller dessutom separat märkta produktprov.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-11. E01–E09 Done på main och F01–F37 Done/User105. E09 PR#9/main3566f263, source892/mainpost3 och samtliga övriga grindar PASS; egenacceptans3/3. E10–E12 och F38–F50 Planned. F38 är nästa prioriterade kandidat; dess D02/F17-runtimegate måste avstämmas före autonom drift. Ursprunglig implementationsleverans12 epics/50tasks, separat märkta produktprov finns också i boarden.
 
 ## Styrande underlag
 
@@ -1479,9 +1479,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-09 Låt en långlivad Integration Agent driva en epic
 
-**Fas:** 9. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `fd79802a-93dd-4b77-b4b4-71ba93060ad6`.
+**Fas:** 9. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `fd79802a-93dd-4b77-b4b4-71ba93060ad6`.
 
-**Körbar:** Ja — E08 Done/PR #8/main9f9b9c6 och slutgrindar verifierade; externa villkor kontrolleras per task. **Beroende:** E-08 Done på main.
+**Körbar:** Nej — slutreview, faktisk main-merge/slutverifiering och TeamPlayer Done är genomförda; ingen ny start. **Beroende:** E-08 Done på main.
 
 **Källa:** A §§4.2, 19–24, 29, 31, 43; W §§7, 9, 20–30, 38–40.
 
@@ -1515,6 +1515,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Samlad utvecklingsverifiering:**892 sourceprov PASS2337.02s/exit0 på committad6d6526b;106 kod-/test-/konfig-/lockfiler oförändrade i aktuell epic. [JUnit](docs/reviews/E-09-source.xml), [slutreview](docs/reviews/E-09.md), [maskinunderlag](docs/reviews/E-09.json) och [PR#9](https://github.com/johanLstang/HerdrCoordinator/pull/9). Ruff/build/READMECLI/62 exakta moduler/tre policies/länkar/authscan/taskreviewbindningar/schema-lock PASS. Coordinator granskar aktuell epic/main; faktisk main-merge/slutverifiering och Done-synk återstår.
 
 **Coordinator godkänd slutreview och faktisk mainintegration 2026-10-11:** APPROVED source `52b5536d8d99d90c7b4be8bf27a649454ec02e50` mot main73f64767; full57-filsdiff874807bytes/hashf5ee9b08, sparad faktisk fullreview utan blockerande fynd. GitAdapter/common-lock no-ff `3566f263592b9fe3c618ba06b193b3c382d57103`/op `5b95e42f-bcfc-4f51-8f5a-87f9c506ec90` med exakta parents/marker/identisk reviewed tree.892 sourceprov PASS2337,05s och3 relevanta main-efterprov PASS38,58s/exit0; Ruff/build/READMECLI/rättimportkälla/wheel62/tre policies/183 länkar/authscan/taskreviewbindningar/106 oförändrade källfilshashar/schema-lock PASS. [PR9](https://github.com/johanLstang/HerdrCoordinator/pull/9), [slutreview](docs/reviews/E-09.md), [efter-JUnit](docs/reviews/E-09-post.xml). Remote-push/PR-merged/färsk TeamPlayer Done/textsynk återstår; E09 Active medan synken färdigställs, känd merge görs inte om.
+
+**Verifierad slutleverans:** E09 Done11 efter färsk statusCAS/återläsning; [PR#9](https://github.com/johanLstang/HerdrCoordinator/pull/9) closed/merged med exakt mergecommit `3566f263592b9fe3c618ba06b193b3c382d57103` och granskad source52b5536d. Remote-main/verifierad ancestry/clean och source892/mainpost3/övriga grindar PASS; egenacceptans3/3. Tidigare Active-/PR-/synkväntan ovan är leveranshistorik. Aktuell epictext synkas separat med färsk version; inga Git-operationer upprepas. F38 är nästa kandidat från aktuell verifierad main, D02/F17-runtimegate består före autonom drift.
 
 ### Task F-34 Starta en enda långlivad Integration Agent per epic
 
@@ -2185,7 +2187,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 39 | F-31 | Task/feature | Registrera blockerare och parkera Worker säkert | E-08 | 8 | 26abd83e-7e41-4a41-9524-c827011cbe1e | P0 | Done | Nej | 3/3 | E-07, X-01, X-02 | APPROVED7711a6f→4a4ebe1, merge83b8495;32 eftertester/gates/native park/replay PASS; TeamPlayerDone6. |
 | 40 | F-32 | Task/feature | Återuppta Attention med sparat beslut och ledig slot | E-08 | 8 | 41cb49c7-c172-4182-8d17-8ba2e255f07a | P0 | Done | Nej | 3/3 | E-07, F-31, X-01, X-02 | APPROVEDb749663→fa400198, merge04fb88ea;37 eftertester/gates/native input/ACK/replay+fixtureDone PASS; TeamPlayerDone7. |
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Done | Nej | 3/3 | E-07, F-32, X-01, X-02 | APPROVED73a9f9a→afc71c7, merge20a692b;51 eftertester/gates/native fullslots+treDone PASS; TeamPlayerDone7. |
-| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 3/3 | E-08 Done på main | Active; F34–37 Done. Nativeacceptans3/3 receipt10e64ff5/3leveranser, samlad892-source-suite PASS. PR9/slutreview/main/slutverifiering återstår. |
+| 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Done | Nej | 3/3 | E-08 Done på main | Done11; PR9 merged/main3566f263, APPROVED52b5536d/full57diff f5ee9b08; source892/postmain3/alla grindar PASS. F34–37 Done/User105. F38 nästa kandidat. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Done | Nej | 3/3 | E-08, F-35 | Done8/User105; APPROVED0f67b82/full14-file diff5ec8e62b; no-ff93a6e6d/source104/post14/gates PASS. E09 Active0/3; F37 nästa. |

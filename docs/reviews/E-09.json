@@ -1,5 +1,5 @@
 {
-  "stage": "MERGED_POSTVERIFIED_STATUS_SYNC_PENDING",
+  "stage": "DONE_VERIFIED_AND_SYNCHRONIZED",
   "source_suite": {
     "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
     "argv": [
@@ -425,7 +425,7 @@
     "all_own_runtimes_server_stopped": true
   },
   "pr": "https://github.com/johanLstang/HerdrCoordinator/pull/9",
-  "epic_status": "Active",
+  "epic_status": "Done",
   "epic_acceptance_verified": 3,
   "decision": "APPROVED",
   "limitations": [
@@ -880,7 +880,7 @@
   },
   "integration": {
     "operation_id": "5b95e42f-bcfc-4f51-8f5a-87f9c506ec90",
-    "stage": "MERGED_POSTVERIFIED_STATUS_SYNC_PENDING",
+    "stage": "DONE_VERIFIED_AND_SYNCHRONIZED",
     "source": "52b5536d8d99d90c7b4be8bf27a649454ec02e50",
     "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
     "review_sha256": "19dba2a503fc4714c3f096b79fa752c353c7f12eb7b97c2402e89d10e7461e59",
@@ -1197,5 +1197,19 @@
       "native_receipt": "F37 actual all3done/stop/max2/sameSID/currentaggregate independently verified, no fixture main merge; explicit operator actions/transcript clipping remain documented",
       "suite": "PASS892 at code6d; actual main all106 source bindings identical, posttests separately recorded"
     }
-  }
+  },
+  "teamplayer": {
+    "status": "Done",
+    "status_version": 11,
+    "details_version": 12,
+    "status_readback": "CONFIRMED",
+    "description_readback": "CONFIRMED_EXACT"
+  },
+  "github": {
+    "pr": 9,
+    "state": "MERGED",
+    "merge_commit": "3566f263592b9fe3c618ba06b193b3c382d57103",
+    "head": "52b5536d8d99d90c7b4be8bf27a649454ec02e50"
+  },
+  "remote_verified_main": "adef5de713339309686bd0c2c81e3028ada59165"
 }

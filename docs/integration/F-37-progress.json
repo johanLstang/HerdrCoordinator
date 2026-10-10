@@ -7,7 +7,7 @@
   "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
   "acceptance_verified": 3,
   "source_checkpoint": "5397745e8e8024640b9308ecf91b4e48281bcbca",
-  "epic_status": "Active",
+  "epic_status": "Done",
   "epic_acceptance_verified": 3,
   "native_server": "hc-f37-r1-20261010",
   "server_pid": 2926419,
@@ -143,5 +143,7 @@
     "exit_code": 0,
     "approved_forms_in_final_helper": 9,
     "all_scoped_ui_choices_in_native_proof": 11
-  }
+  },
+  "epic_main_merge": "3566f263592b9fe3c618ba06b193b3c382d57103",
+  "epic_pr": 9
 }
