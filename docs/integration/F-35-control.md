@@ -222,3 +222,42 @@ för ordinarie park/resume i samma sessioner, med oförändrade F35-uppdrag.
 Native-MCP-hosten i den pågående sessionen behåller tidigare inläst F12-kod;
 just ACK-avstämningen utfördes av operatörsprocessen med den rättade koden.
 Fortsatta agentsvar använder de faktiskt bekräftade originaljournalerna.
+
+## Exakt native ACK-tid och aktuell host
+
+En lång implementationsturn kan avslutas efter ACK-deadline trots att exakt ACK
+kom i tid. CodexAdapter kompletterar därför verifierad thread/read-metadata med
+tiden för exakt assistant response_item i dess privata lokala journal. Bounded
+read-only-läsning kräver sessionsrot, reguljär icke-symlink fil, rätt session/cwd/
+turn/item och exakt text. Saknad, partiell, främmande eller tvetydig metadata
+ger inget tidsbevis; inga råa journalmeddelanden returneras av tidsläsaren.
+Detta metadatafält tas bort från inkommande threadobjekt innan verifierade
+tider kopplas på. Bara exakt ACK inom originalets dispatchfönster kan avstämma
+start, input eller korrigering; ingen ny deadline/dispatch skapas.
+
+Verifierat ACTIVE_AND_SYNCED för exakt sparad input kan återställa bara dess
+PAUSED schedulersteg till OBSERVING. 54 input-/correctiontester passerade,
+liksom separat controllerprov av resume/unpause, 14 native-tidsfall och
+13 slutliga adapterfall. 94 regressionstester passerade i en process som
+importerade koden före de senaste metadata-/inpututökningarna; de ersätter
+inte slutproven för dessa utökningar.
+
+Operatören stoppade och återupptog registrerad r5-Integration genom faktisk F13,
+med samma SID, ny verifierad processgeneration och oförändrade Worker-bindningar.
+Den första uppdaterade hosten fick TEAMPLAYER_RESPONSE_UNAVAILABLE före input-
+avstämning. En ny riktig SDK-anslutning till samma verifierade konto lyckades.
+Orsaken till den förlorade returen är inte fastställd. Operatorfactory öppnar nu
+färsk TeamPlayer-anslutning per faktiskt verktygsanrop, genom samma explicita
+komposition och guardade runtime. Catalogmetadata skapas i en separat kort
+anslutning; mutationer använder endast den nya fullt verifierade kontrollen.
+Ytterligare verklig F13 stop/resume laddade denna factory i samma SID. Båda
+stopp-/resumegenerationerna och originaljournalerna bevaras i provstatus.
+
+A:s första kodleverans har unittest PASS men ett uttryckligen rapporterat
+pytest-miljöfel och avsiktligt saknat README-exempel. Det är inte en godkänd
+leverans. B:s rapport har passerande unittestkontroller. Verklig full review,
+fix och integration återstår för båda; ingen utvecklingstaskmerge eller Done.
+
+## Aktuell avstämning av originalinput och verifieringsmiljö
+
+**Aktuell native granskning och verifiering 2026-10-10:** båda originalens sparade input har faktiskt återlästs av Integration via resume_task och returnerat ACTIVE_AND_SYNCED/board_sync CONFIRMED, med oförändrade SID. Per-anrop-factory med färsk verklig TeamPlayer-anslutning fungerar; tidigare förlorad retur bevaras och orsaken är inte fastställd. A:s ursprungliga pytest-miljöfel rättades genom explicit PATH till redan installerad projekt-venv; Worker körde faktiskt om samma pytestkontroll (fem tester/sex subtester PASS) och unittest14 PASS på oförändrad ren ed25a41c. Det tidigare felet redovisas i ny rapport, README saknas fortfarande för verklig review/fix. B:s fullständiga aktuella context932e15eb har hämtats och fått native task_approve APPROVED; taskmerge/eftertester/stopp/boardsynk återstår. B granskas oberoende medan A verifieringsmiljö förtydligas; C kräver fortfarande A Done. Sex slutliga input-/correction-tidsfall/exit0 (31,83 s) verifierar aktuell kod separat. F35 InProgress21/Active, E09 Active8/0 av 3; inga acceptanskriterier eller utvecklingsmerger är ännu klara.

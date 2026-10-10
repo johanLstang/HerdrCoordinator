@@ -199,6 +199,36 @@ def test_ack_timeout_keeps_input_and_reservation_and_never_resends(setup):
     assert s.store.get_task(w.task_run_id).worker_slot == 1 and h.resumes == 1 and len(h.sent) == 2
 
 
+@pytest.mark.parametrize("completion", ["early", "late", "missing"])
+def test_delayed_input_ack_observation_requires_proven_original_deadline(
+    setup, monkeypatch, completion
+):
+    s, a, w, _, h, history, _, d = setup
+    h.prompt = lambda name, text, timeout_ms: h.sent.append(text)
+    call(s, a, w, d)
+    delivered = int(utc_now().timestamp())
+    sid = s.store.get_task(w.task_run_id).codex_session_id
+    monkeypatch.setattr(
+        "orchestrator.application.task_resume_service.utc_now",
+        lambda: utc_now() + timedelta(seconds=60),
+    )
+    with pytest.raises(ResumeError, match="INPUT_ACK_TIMEOUT"):
+        call(s, a, w, d)
+    history.reply(h.sent[-1], turn_id="delayed-input-observation")
+    if completion != "missing":
+        history.turns[-1]["completedAt"] = delivered + (60 if completion == "late" else 0)
+    if completion == "early":
+        assert call(s, a, w, d)["stage"] == "ACTIVE_AND_SYNCED"
+        op = s.store.get_operation("p", s.KIND, d["input_id"])
+        assert op.result["ack"]["timely_completion_verified"] is True
+        assert call(s, a, w, d)["stage"] == "ACTIVE_AND_SYNCED"
+    else:
+        with pytest.raises(ResumeError, match="INPUT_ACK_TIMEOUT"):
+            call(s, a, w, d)
+    assert s.store.get_task(w.task_run_id).codex_session_id == sid
+    assert len(h.sent) == 2 and h.resumes == 1
+
+
 def test_reopen_after_unknown_native_dispatch_only_observes_then_sync(setup):
     s, a, w, b, h, history, p, d = setup
     delivered = []

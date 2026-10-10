@@ -473,10 +473,14 @@ def test_review_block_park_and_explicit_same_session_resume(setup):
             answer="Fixture explanation confirmed",
         )
         args = dict(project_id="p", task_run_id=first.id, decision=decision)
+        control.scheduler._record(control.actor, current, "PAUSED", reason="INPUT_ACK_TIMEOUT")
         resumed = await runtime.call_async("resume_task", args)
         assert resumed.ok, resumed
         after = task(control, "F-01")
         assert after.internal_status == TaskState.REVIEWING and after.worker_slot is not None
+        assert control.store.get_operation("p", "task_schedule", first.id).result[
+            "phase"
+        ] == "OBSERVING"
         assert (after.codex_session_id, after.branch, after.worktree_path) == (
             first.codex_session_id,
             first.branch,

@@ -172,6 +172,29 @@ class IntegrationControlService:
                             )
                     # A successful effect is never replayed to repair a failed board mirror.
                     current = self.store.get_task(task.id)
+                    if operation in {"resume_task", "worker_resume"}:
+                        saved_input = self.store.get_operation(
+                            actor.project_id, "task_resume", request.decision.input_id
+                        )
+                        journal = self.store.get_operation(
+                            actor.project_id, self.scheduler.KIND, task.id
+                        )
+                        if (
+                            result.ok
+                            and saved_input is not None
+                            and saved_input.task_run_id == task.id
+                            and saved_input.status == "SUCCEEDED"
+                            and saved_input.result.get("stage") == "ACTIVE_AND_SYNCED"
+                            and saved_input.result.get("decision")
+                            == request.decision.model_dump(mode="json")
+                            and current.internal_status.value
+                            == saved_input.result.get("resume_state")
+                            and journal is not None
+                            and journal.result.get("phase") == "PAUSED"
+                        ):
+                            self.scheduler._record(
+                                actor, current, "OBSERVING", input_id=saved_input.id, reason=None
+                            )
                     if current.internal_status != task.internal_status:
                         try:
                             synced = await self.scheduler._sync(actor, current)

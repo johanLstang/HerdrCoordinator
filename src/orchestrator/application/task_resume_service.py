@@ -230,8 +230,6 @@ class TaskResumeService:
         self._validate(actor, task, op)
         if op.status == "SUCCEEDED":
             return self.outcome(op)
-        if op.result["stage"] == "ACK_TIMEOUT":
-            raise ResumeError("INPUT_ACK_TIMEOUT")
         if op.result["stage"] == "CONFIRMED":
             return await self._mirror(actor, task, op)
         if op.result["stage"] in {"WAITING_RESUME", "RESUME_REQUESTED"}:
@@ -294,10 +292,14 @@ class TaskResumeService:
         live = self.lifecycle._live(task, start)
         if live is None:
             raise ResumeError("INPUT_RUNTIME_MISSING")
+        thread = self._thread(task)
         proof = self.assignment.match_native_ack(
-            op, self._thread(task), self.ack(task, op), runtime_status=live["status"]
+            op, thread, self.ack(task, op), runtime_status=live["status"]
         )
-        if utc_now() > datetime.fromisoformat(op.result["deadline"]):
+        expired = op.result["stage"] == "ACK_TIMEOUT" or utc_now() > datetime.fromisoformat(
+            op.result["deadline"]
+        )
+        if expired and not self.assignment._completed_before_deadline(op, thread, proof):
             self._save(op, stage="ACK_TIMEOUT", error="INPUT_ACK_TIMEOUT")
             raise ResumeError("INPUT_ACK_TIMEOUT")
         if proof is None:
@@ -325,7 +327,8 @@ class TaskResumeService:
                 | {
                     "session_id": task.codex_session_id,
                     "correlation_id": op.result["correlation_id"],
-                },
+                }
+                | ({"timely_completion_verified": True} if expired else {}),
             )
         return await self._mirror(actor, self._scope(actor, run_id), op)
 

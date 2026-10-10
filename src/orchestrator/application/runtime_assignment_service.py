@@ -366,17 +366,29 @@ class RuntimeAssignmentService:
                 except (ValueError, TypeError):
                     continue
                 if ack == expected:
-                    return {
+                    proof = {
                         "turn_id": turn["id"],
                         "item_id": item["id"],
                         "message_hash": digest(item["text"]),
                     }
+                    if item.get("nativeObservedAt") is not None:
+                        proof["native_observed_at"] = item["nativeObservedAt"]
+                    return proof
         return None
 
     @staticmethod
     def _completed_before_deadline(op, thread, proof):
         if not proof or not thread:
             return False
+        if proof.get("native_observed_at") is not None:
+            try:
+                stamp = datetime.fromisoformat(proof["native_observed_at"])
+                return (
+                    stamp.tzinfo is not None
+                    and op.created_at <= stamp <= datetime.fromisoformat(op.result["deadline"])
+                )
+            except (TypeError, ValueError):
+                return False
         turns = [t for t in thread["turns"] if t["id"] == proof["turn_id"]]
         if len(turns) != 1 or turns[0]["status"] != "completed":
             return False
