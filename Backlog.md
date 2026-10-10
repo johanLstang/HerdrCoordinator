@@ -1545,9 +1545,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-35 Låt Integration Agent styra tasks genom verktyg
 
-**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
+**Epic/fas/prioritet:** E-09 / 9 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `7f990cb9-be35-485f-a9bc-a3ff468de448`.
 
-**Körbar:** Ja — F34 granskad/integrerad/Done5 i E09 och E08 Done/main verifierad; kontrollera aktuell tilldelning och externa villkor före plock.
+**Körbar:** Nej — granskad, faktiskt integrerad till E09 och slutverifierad; ingen ny start.
 
 **Källa:** A §§4.2, 5, 17–23, 43; W §§7–10, 20–28, 39. **Berör:** MCP, scheduler, Review, Integration-policy.
 
@@ -1569,9 +1569,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-35.A1:** Agenten kan starta två oberoende tasks, hantera review/fix och fylla ledig slot via verktygen.
-- [ ] **F-35.A2:** Förslag att starta beroende task för tidigt eller använda stale approval avvisas deterministiskt.
-- [ ] **F-35.A3:** Attention/resume och taskstatus hanteras genom rätt services och utan direkt TeamPlayer-skrivning från Worker.
+- [x] **F-35.A1:** Agenten kan starta två oberoende tasks, hantera review/fix och fylla ledig slot via verktygen.
+- [x] **F-35.A2:** Förslag att starta beroende task för tidigt eller använda stale approval avvisas deterministiskt.
+- [x] **F-35.A3:** Attention/resume och taskstatus hanteras genom rätt services och utan direkt TeamPlayer-skrivning från Worker.
 
 **Verifiering:** Scenario med inspelade agentsvar plus verkligt prov av verktygsstyrt taskflöde.
 
@@ -1612,6 +1612,8 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 **Aktuell native granskning och verifiering 2026-10-10:** båda originalens sparade input har faktiskt återlästs av Integration via resume_task och returnerat ACTIVE_AND_SYNCED/board_sync CONFIRMED, med oförändrade SID. Per-anrop-factory med färsk verklig TeamPlayer-anslutning fungerar; tidigare förlorad retur bevaras och orsaken är inte fastställd. A:s ursprungliga pytest-miljöfel rättades genom explicit PATH till redan installerad projekt-venv; Worker körde faktiskt om samma pytestkontroll (fem tester/sex subtester PASS) och unittest14 PASS på oförändrad ren ed25a41c. Det tidigare felet redovisas i ny rapport, README saknas fortfarande för verklig review/fix. B:s fullständiga aktuella context932e15eb har hämtats och fått native task_approve APPROVED; taskmerge/eftertester/stopp/boardsynk återstår. B granskas oberoende medan A verifieringsmiljö förtydligas; C kräver fortfarande A Done. Sex slutliga input-/correction-tidsfall/exit0 (31,83 s) verifierar aktuell kod separat. F35 InProgress21/Active, E09 Active8/0 av 3; inga acceptanskriterier eller utvecklingsmerger är ännu klara.
 
 **Nativeprov komplett, utvecklingsreview återstår 2026-10-10:** samma Integration-SID styrde faktiskt tre tasks genom scoped MCP. A/B startades med max2 reserverade Workers; tidig C nekades. Native Attention/parkering, originalinput/samma-SID-resume, komplett review/numrerad README-fix i samma A-SID och nya aktuella godkännanden verifierade. B/A/C har faktiska no-ff-merger e4a6f3b7/d2e9fcf1/cba439a1, oberoende eftertest exit0, fysisk Worker STOPPED och färsk TeamPlayer Done15/18/15. C återfyllde frigjord slot efter verifierad A Done. Fixture-main d4215a26 är oförändrad och fixtureepic Active. Full [nativehistorik och Git/SQLite/board-avstämning](docs/integration/F-35-native.json) bevarar operatorns separata original-ACK-avstämning, transportproblem, två F13-hostreloads, extern prefix-/testmiljöinput och rapportförtydliganden. Operatorns felaktiga originalbas-instruktion korrigerades mot worker_source: fillistan avser registrerad inkommande epicbas, inte enbart senaste README-commit eller ärvda B-filer. Inga felaktiga rapporter godkändes. Slutlig aktuell sourcegrind39 PASS159,39s/exit0. Integration stoppades genom F13 e4b7e451/SUCCEEDED och faktisk STOPPED före bara egen namngiven serverstop; alla refs/worktrees/SQLite/sessioner bevaras. F35 Testing23/Active och E09 Active8/0 av 3; utvecklingens fullreview, Task→E09 och eftertester återstår. F36 är nästa efter verifierad Done.
+
+**Verifierad utvecklingsleverans 2026-10-10:** Bootstrap Integration APPROVED source `cc0252a8585e15e0b6c9ece7f3b938aa6fa998c5` mot E09 `5d7f96830c75c5b1c371602fd47e28019f8c290e` och aktuell main `73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7`. Full23-filsdiff230694bytes/4856rader/SHA256 `f98cc30e386eb09ed9411a542c101e21c2ea0fa97c931f8bf5b96f3b5205291c`; faktisk GitAdapter no-ff Task→E09 `caefaff24c785721a507c58447229f28da5c5aab`/op `7c175475-cf6e-4f03-a650-144c3ca8b9bf`, exakta parents/identisk reviewed tree. Samma39 source-/posttester PASS159,39s/131,02s exit0; Ruff/build/READMECLI/60 exakta wheelmoduler/tre policies/99 länkar/authscan PASS. [Review och integrationsunderlag](docs/reviews/F-35.md) och [maskinläsbar review](docs/reviews/F-35.json). F35.A1–A3 uppfyllda och TeamPlayer Done25/User105. E09 Active8/egenacceptans0/3; F36 nästa utan parallell implementation. Tidigare hinder/rapport- och operatorfel ovan är bevarad historik.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -2151,7 +2153,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 41 | F-33 | Task/feature | Verifiera att Attention inte stoppar andra tasks | E-08 | 8 | f7a0c038-4f49-48d0-ba09-fbca7bfe0e92 | P1 | Done | Nej | 3/3 | E-07, F-32, X-01, X-02 | APPROVED73a9f9a→afc71c7, merge20a692b;51 eftertester/gates/native fullslots+treDone PASS; TeamPlayerDone7. |
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Active8; F34 Done6 efter review/no-ff969de88d/134 eftertester; egenacceptans0/3, F35 plockad InProgress2. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
-| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Active | Ja | 0/3 | E-08, F-34, X-01, X-02 | Testing24/User105; native3 tasks Done, full review/fix/Attention/samma-SID/max2/refill verifierade; Integration/Workers stoppade, fixture-main oförändrad. Source39 PASS; utvecklingsreview/merge/eftertester återstår. |
+| 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Planned | Nej | 0/3 | E-08, F-35 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Planned | Nej | 0/3 | E-08, F-36, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

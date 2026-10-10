@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "READY_FOR_REVIEW_NATIVE_VERIFIED",
+  "status": "DONE_DEVELOPMENT_INTEGRATED_VERIFIED",
   "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
   "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
   "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
@@ -15,8 +15,8 @@
     "stop_operation_id": "3ce530e8-89a3-462a-a383-1d89b9e1e648",
     "stop_status": "SUCCEEDED"
   },
-  "acceptance": "Native fixture and current source gates verified; development Integration review/merge/posttests remain before task Done",
-  "next_action": "Bootstrap Integration performs current full source review, Task→E09 no-ff merge, relevant postintegration tests, then fresh CAS Done and backlog sync. F36 follows immediately.",
+  "acceptance": "F35 A1-A3 verified after complete actual native proof, current full source review, no-ff development integration and postverification",
+  "next_action": "F36 prioritized next; E09 remains Active/own acceptance0/3 until aggregate handoff and later main integration.",
   "stop": {
     "operation_id": "e4b7e451-6480-4505-83b6-ea0e4c902f28",
     "status": "SUCCEEDED",
@@ -61,8 +61,8 @@
       "schema_lock_existing_policies_unchanged": true
     },
     "native_workflow_complete": true,
-    "integration_review_complete": false,
-    "development_merge": null,
+    "integration_review_complete": true,
+    "development_merge": "caefaff24c785721a507c58447229f28da5c5aab",
     "final_control": {
       "command": "uv run --locked pytest tests/test_integration_control.py tests/test_codex_mcp_launch.py -x",
       "tests": 19,
@@ -131,6 +131,14 @@
       "exit_code": 0,
       "seconds": 159.388,
       "xml_sha256": "b8628c6c845b4f4cea1edd7ba63f9c14fb38201a5fd63e458a3ed54901226233"
+    },
+    "post_tests": {
+      "command": "uv run --locked pytest tests/test_integration_control.py tests/test_codex_mcp_launch.py tests/test_codex_message_timing.py tests/test_task_resume_service.py::test_delayed_input_ack_observation_requires_proven_original_deadline tests/test_task_changes_service.py::test_delayed_correction_observation_requires_proven_original_deadline -x --junitxml=/tmp/herdr-f35-postintegration.xml",
+      "passed": 39,
+      "exit_code": 0,
+      "seconds": 131.016,
+      "merge_commit": "caefaff24c785721a507c58447229f28da5c5aab",
+      "xml_sha256": "24009335c6d35f20564985abd59d981234419b17835ca1c4a75d4cbf834b2619"
     }
   },
   "current_product_files": {
@@ -156,8 +164,8 @@
   "current_product_files_note": "Current source hashes; actual r5 second F13 host reload records the loaded control/timing files separately. Native full task workflow remains incomplete.",
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
-    "status": "Testing",
-    "confirmed_version": 24,
+    "status": "Done",
+    "confirmed_version": 26,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
@@ -676,8 +684,8 @@
     ],
     "proof": "F-35-native.json"
   },
-  "teamplayer_status": "Testing",
-  "teamplayer_version": 24,
+  "teamplayer_status": "Done",
+  "teamplayer_version": 26,
   "server_stop": {
     "only_named_server": "hc-f35-r4-20261010",
     "command_exit_code": 0,
