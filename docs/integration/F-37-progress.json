@@ -57,8 +57,7 @@
     "One incomplete unscoped native tool request after resume was cancelled; agent re-read current overview and rebuilt its own valid request. No operator task start/schedule/review/approval/merge or report fabrication.",
     "Operator supplied explicit user Hej input only after real blocked/parked Worker observations; scoped native UI choices were authorized by the user for F37-r1.",
     "No full OS credential isolation claim; F38/F47 remain. Fixture epic main merge is not in scope.",
-    "Native aggregate RPC transcript is clipped; full persisted receipt and matching native final identifiers/hashes independently verified while live.",
-    "Development review/Task→E09/postchecks pending; E09 aggregate 892-test suite still running."
+    "Native aggregate RPC transcript is clipped; full persisted receipt and matching native final identifiers/hashes independently verified while live."
   ],
   "status_update_version": 12,
   "status_description_readback": "CONFIRMED_DONE13_EXACT",
@@ -127,12 +126,22 @@
   "server_status": "not running",
   "stop_operation_id": "4a747a75-914a-4250-a086-a6c2f61291e9",
   "source_suite": {
-    "collected": 892,
-    "status": "RUNNING",
-    "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6"
+    "status": "PASS",
+    "passed": 892,
+    "seconds": 2337.021,
+    "exit_code": 0,
+    "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
+    "xml": "../reviews/E-09-source.xml",
+    "106_source_files_unchanged": true
   },
   "development_review_source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
   "development_review_target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
   "development_merge": "73bca342db32cf320631e0a8c9055ef010d1ce21",
-  "development_operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5"
+  "development_operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5",
+  "scoped_ui_helper_final": {
+    "stage": "UI_HELPER_FINISHED",
+    "exit_code": 0,
+    "approved_forms_in_final_helper": 9,
+    "all_scoped_ui_choices_in_native_proof": 11
+  }
 }
