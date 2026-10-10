@@ -127,6 +127,95 @@ def test_timeout_stays_starting_keeps_slot_and_rejects_late_ack(setup, monkeypat
     assert t.codex_session_id is None and len(h.sent) == 1
 
 
+@pytest.mark.parametrize("record_timeout", [False, True])
+def test_delayed_observer_reconciles_dated_on_time_ack_without_resend(
+    setup, monkeypatch, record_timeout
+):
+    s, i, h, history = setup
+    h.prompt = lambda *a, **k: h.sent.append(a[1])
+    assert s.dispatch(i, "t1", "fixture")["status"] == "WAITING"
+    delivery_time = int(utc_now().timestamp())
+    monkeypatch.setattr(
+        "orchestrator.application.runtime_assignment_service.utc_now",
+        lambda: utc_now() + timedelta(seconds=60),
+    )
+    if record_timeout:
+        with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+            s.observe(i, "t1")
+    h.session_id = SID
+    history.reply(h.sent[0])
+    history.turns[-1]["completedAt"] = delivery_time
+    result = s.dispatch(i, "t1", "fixture")
+    assert result["status"] == "CONFIRMED"
+    assert result["ack"]["timely_completion_verified"] is True
+    assert s.store.get_task("t1").internal_status == TaskState.WORKING
+    assert len(h.sent) == 1
+    with StateStore(s.settings.sqlite_path) as db:
+        recovered = RuntimeAssignmentService(s.settings, db, h, history)
+        assert recovered.dispatch(i, "t1", "fixture") == result
+    assert len(h.sent) == 1
+
+
+@pytest.mark.parametrize("timing", ["late", "missing", "string", "boolean", "boundary"])
+def test_timeout_does_not_accept_unproven_or_late_completion(setup, monkeypatch, timing):
+    s, i, h, history = setup
+    h.prompt = lambda *a, **k: h.sent.append(a[1])
+    s.dispatch(i, "t1", "fixture")
+    from datetime import datetime
+
+    op = s.store.get_operation("p", s.KIND, "t1")
+    deadline = datetime.fromisoformat(op.result["deadline"]).timestamp()
+    monkeypatch.setattr(
+        "orchestrator.application.runtime_assignment_service.utc_now",
+        lambda: utc_now() + timedelta(seconds=60),
+    )
+    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+        s.observe(i, "t1")
+    h.session_id = SID
+    history.reply(h.sent[0])
+    timestamps = {
+        "late": int(deadline) + 1,
+        "string": str(int(deadline) - 10),
+        "boolean": True,
+        "boundary": int(deadline),
+    }
+    if timing != "missing":
+        history.turns[-1]["completedAt"] = timestamps[timing]
+    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+        s.dispatch(i, "t1", "fixture")
+    assert s.store.get_task("t1").internal_status == TaskState.STARTING
+    assert len(h.sent) == 1
+
+
+@pytest.mark.parametrize("timely", [True, False])
+def test_exact_native_ack_time_is_independent_of_long_turn_completion(setup, monkeypatch, timely):
+    s, i, h, history = setup
+    h.prompt = lambda *a, **k: h.sent.append(a[1])
+    s.dispatch(i, "t1", "fixture")
+    delivered = utc_now()
+    monkeypatch.setattr(
+        "orchestrator.application.runtime_assignment_service.utc_now",
+        lambda: utc_now() + timedelta(seconds=60),
+    )
+    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+        s.observe(i, "t1")
+    h.session_id = SID
+    history.reply(h.sent[0])
+    turn = history.turns[-1]
+    turn["completedAt"] = int((delivered + timedelta(seconds=90)).timestamp())
+    turn["items"][-1]["nativeObservedAt"] = (
+        delivered + timedelta(seconds=0 if timely else 60)
+    ).isoformat()
+    if timely:
+        result = s.dispatch(i, "t1", "fixture")
+        assert result["status"] == "CONFIRMED"
+        assert result["ack"]["native_observed_at"] == delivered.isoformat()
+    else:
+        with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+            s.dispatch(i, "t1", "fixture")
+    assert len(h.sent) == 1
+
+
 @pytest.mark.parametrize(
     "attack",
     [

@@ -79,6 +79,8 @@ class EpicStartService:
             policy_hash=digest(self.policy),
             external_epic_id=external_epic_id,
         )
+        if getattr(herdr, "mcp_fingerprint", None) is not None:
+            self.configuration["mcp_configuration"] = herdr.mcp_fingerprint
 
     def _scope(self, actor, project_id, epic_id, run_id):
         if (

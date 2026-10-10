@@ -49,6 +49,17 @@ def create_server(service: RuntimeService) -> Server:
         ]
     ]
 
+    if service.integration_control is not None:
+        tools.append(
+            Tool(
+                name="integration_overview",
+                description="Fresh board and task/runtime/slot overview for the registered epic.",
+                input_schema=TaskGetNextRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False),
+            )
+        )
+
     if service.epic_start is not None:
         tools.append(
             Tool(
@@ -177,12 +188,18 @@ def create_server(service: RuntimeService) -> Server:
             )
 
     if service.teamplayer_sync is not None:
-        for name in ("set_task_status", "set_epic_status"):
+        for name in (
+            ("set_task_status",)
+            if service.integration_control
+            else ("set_task_status", "set_epic_status")
+        ):
             tools.append(
                 Tool(
                     name=name,
                     description="Mirror verified state; caller cannot choose status or evidence.",
-                    input_schema=Target.model_json_schema(),
+                    input_schema=(
+                        TaskParkRequest if service.integration_control else Target
+                    ).model_json_schema(),
                     output_schema=ToolResponse.model_json_schema(),
                     annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
                 )
