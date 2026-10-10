@@ -1,14 +1,14 @@
 {
   "feature": "F37",
-  "stage": "NATIVE_VERIFIED_DEVELOPMENT_REVIEW_PENDING",
-  "local_status": "Active",
-  "teamplayer_status": "Testing",
-  "teamplayer_version": 11,
+  "stage": "DONE_VERIFIED_TASK_INTEGRATED",
+  "local_status": "Done",
+  "teamplayer_status": "Done",
+  "teamplayer_version": 13,
   "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
-  "acceptance_verified": 0,
+  "acceptance_verified": 3,
   "source_checkpoint": "5397745e8e8024640b9308ecf91b4e48281bcbca",
   "epic_status": "Active",
-  "epic_acceptance_verified": 0,
+  "epic_acceptance_verified": 3,
   "native_server": "hc-f37-r1-20261010",
   "server_pid": 2926419,
   "server_process_start": "112422377",
@@ -60,8 +60,8 @@
     "Native aggregate RPC transcript is clipped; full persisted receipt and matching native final identifiers/hashes independently verified while live.",
     "Development review/Task→E09/postchecks pending; E09 aggregate 892-test suite still running."
   ],
-  "status_update_version": 7,
-  "status_description_readback": "CONFIRMED",
+  "status_update_version": 12,
+  "status_description_readback": "CONFIRMED_DONE13_EXACT",
   "native_ui_permission_sha256": "35359edfeb5364fef6603b1b92908b79af35f8834d679fa8fd474815afca41e4",
   "control_intent": {
     "request_id": "59a24356-ded6-43cf-8957-174dd9974c4d",
@@ -130,5 +130,9 @@
     "collected": 892,
     "status": "RUNNING",
     "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6"
-  }
+  },
+  "development_review_source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+  "development_review_target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+  "development_merge": "73bca342db32cf320631e0a8c9055ef010d1ce21",
+  "development_operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5"
 }

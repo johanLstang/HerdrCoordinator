@@ -200,3 +200,11 @@ Den samlade E09-körningen med 892 insamlade tester på denna checkpoint är
 E09 behåller Active till samlad verifiering, slutreview, PR/main-merge och
 slutverifiering. Bootstrapundantaget gäller utvecklingsintegration; den
 verkliga produkttestepicen har egna registrerade resurser och mergas inte till main.
+
+## Efter utvecklingsintegration
+
+F37 är Done12/User105 efter APPROVED98a6ed16, faktisk no-ff73bca342
+och relevanta E09-efterkontroller PASS. F37.A1–A3 uppfyllda och E09:s
+egenacceptans3/3 styrkt av nativekvittot. [Slutreview/integration](../reviews/F-37.md).
+E09 kvar Active; samlad892-suite, PR/main-merge och slutverifiering återstår.
+Tidigare sektioner och deras status/versioner är faktisk leveranshistorik.
