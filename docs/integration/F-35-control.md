@@ -144,3 +144,17 @@ filhashar jämförs med dess sourcecommit e8b2dc2, inte F35:s ändrade filer.
 Aktuell GitKraken PermissionRequest för task_start väntar i registrerad r3-session.
 Session/server behålls igång för användarens beslut på Pi:n; inga Workers
 eller merger finns ännu. Begäran upprepas inte och hooken kringgås inte.
+
+## Saknad permission-UI i GitKraken Desktop
+
+Pi:ns installerade Desktop-paket är 12.4.0, verifierat med dpkg-query.
+CLI 3.1.76 upptäcker Codex och dess installerade hooks, men användarens
+skärmbild visar bara worktreekort utan agentstatus eller Allow/Deny. Enligt
+[GitKrakens versionshistorik](https://help.gitkraken.com/gitkraken-desktop/current/)
+infördes Codex live-status och permissionkort i Desktop 12.4.1.
+Operatören uppdaterar därför Desktop till minst 12.4.1 och kontrollerar Codex
+Plugin under Preferences > External Tools > Agent Status Integrations innan
+samma faktiska väntande begäran godkänns. Ingen uppdatering, hookändring eller
+ny dispatch utfördes vid diagnosen. CLI open-session nådde ingen matchande
+Desktop-vy; kopplingen skall kontrolleras efter uppdateringen. F35 är fortsatt
+NeedsApproval/Attention, E09 Active, session/server hålls igång.

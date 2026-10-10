@@ -25,7 +25,7 @@
     "worker_starts_confirmed": 0
   },
   "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
-  "next_action": "User approves the actual pending GitKraken task_start request on Pi; Integration verifies same existing request. Keep native session/server running; no replay, restart, stop or hook bypass.",
+  "next_action": "Operator updates GitKraken Desktop to at least 12.4.1 and verifies Codex Plugin and session association, then approves the same pending task_start request. No hook bypass, replay or native restart.",
   "stop": null,
   "local_verification": {
     "regression": {
@@ -90,7 +90,7 @@
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
     "status": "NeedsApproval",
-    "confirmed_version": 10,
+    "confirmed_version": 11,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
@@ -132,5 +132,18 @@
     "resume_operations": 0,
     "reason": "Server restart replaced terminal identity. Original verified stop and journal preserved; no adoption."
   },
-  "native_session_kept_running": true
+  "native_session_kept_running": true,
+  "gitkraken_diagnosis": {
+    "desktop_package_version": "12.4.0",
+    "package_check": "dpkg-query",
+    "cli_version": "3.1.76",
+    "codex_hooks_installed": true,
+    "minimum_desktop_for_codex_permission_ui": "12.4.1",
+    "source": "https://help.gitkraken.com/gitkraken-desktop/current/",
+    "open_session_delivered": false,
+    "cached_matched_workspace": "/home/stang/Documents/Projects/HerdrCoordinator",
+    "user_screenshot": "correct r3 worktree; no live agent status or permission buttons",
+    "application_updated": false,
+    "hooks_changed": false
+  }
 }
