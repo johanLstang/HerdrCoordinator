@@ -3,6 +3,7 @@
 from pydantic import ValidationError
 
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
+from orchestrator.application.epic_completion_service import EpicCompletionError
 from orchestrator.application.epic_start_service import EpicStartError
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.application.task_scheduler_service import SchedulerError
@@ -12,6 +13,7 @@ from orchestrator.domain.policy import Role
 from orchestrator.domain.states import TaskState
 from orchestrator.domain.worker_contracts import LocalTaskSpec
 from orchestrator.mcp.contracts import (
+    EpicCompleteRequest,
     PolicyRequest,
     Target,
     TaskApprovalRequest,
@@ -54,8 +56,18 @@ READS = {"integration_overview", "runtime_status", "policy_check", "task_get_nex
 class IntegrationControlService:
     operations = frozenset(MODELS)
 
-    def __init__(self, epic_start, scheduler, log):
+    def __init__(self, epic_start, scheduler, log, *, epic_completion=None):
         self.epic_start, self.scheduler = epic_start, scheduler
+        self.epic_completion = epic_completion
+        self.models = dict(MODELS)
+        if epic_completion is not None:
+            if (
+                epic_completion.epic_start is not epic_start
+                or epic_completion.scheduler is not scheduler
+            ):
+                raise IntegrationControlError("EPIC_COMPLETION_CONFIGURATION_INVALID")
+            self.models["epic_complete"] = EpicCompleteRequest
+        self.operations = frozenset(self.models)
         self.store, self.settings = scheduler.store, scheduler.settings
         self.actor = epic_start.principal
         configured = {v.task.task_id: v.task for v in epic_start.spec.tasks}
@@ -119,7 +131,7 @@ class IntegrationControlService:
 
     async def call(self, actor, operation, arguments):
         try:
-            request = MODELS[operation].model_validate(arguments)
+            request = self.models[operation].model_validate(arguments)
         except ValidationError:
             return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid control schema")
         try:
@@ -137,6 +149,16 @@ class IntegrationControlService:
         try:
             if operation == "integration_overview":
                 result = ToolResponse(ok=True, code="OK", message="Integration overview")
+            elif (
+                operation == "policy_check"
+                and request.operation == "epic_complete"
+                and self.epic_completion is not None
+            ):
+                result = ToolResponse(
+                    ok=request.epic_run_id == actor.epic_run_id,
+                    code="OK" if request.epic_run_id == actor.epic_run_id else "FORBIDDEN",
+                    message="completion requires the registered epic target",
+                )
             elif operation == "policy_check" and request.operation == "integration_overview":
                 result = ToolResponse(ok=True, code="OK", message="registered overview available")
             elif operation == "task_start":
@@ -147,6 +169,16 @@ class IntegrationControlService:
                     code="OK" if started else "TASK_START_PENDING",
                     message="explicit task start observed",
                     data=data,
+                )
+            elif operation == "epic_complete":
+                completed = await self.epic_completion.complete(
+                    actor, request.epic_run_id, key=request.request_key
+                )
+                result = ToolResponse(
+                    ok=completed.status == "SUCCEEDED",
+                    code=completed.error_code or completed.result["stage"],
+                    message="aggregate epic verification recorded; Coordinator review follows",
+                    data=completed.model_dump(mode="json"),
                 )
             elif operation in READS or operation == "task_schedule":
                 result = await self.delegate.call_async(operation, arguments)
@@ -208,6 +240,8 @@ class IntegrationControlService:
                                 }
                             }
                         )
+        except EpicCompletionError as error:
+            result = self._preserve_result(result, str(error))
         except (SchedulerError, TaskStartError, TeamPlayerError) as error:
             result = self._preserve_result(result, str(error))
         except Exception:
@@ -312,5 +346,14 @@ class IntegrationControlService:
             available_worker_slots=max(0, self.settings.max_workers - reserved),
             selection=advice,
             tasks=rows,
-            next_allowed_operations=["integration_overview", "task_get_next", "task_schedule"],
+            next_allowed_operations=(
+                ["integration_overview", "task_get_next", "task_schedule"]
+                + (
+                    ["epic_complete"]
+                    if self.epic_completion is not None
+                    and rows
+                    and all(t["state"] == "DONE" for t in rows)
+                    else []
+                )
+            ),
         )

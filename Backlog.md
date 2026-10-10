@@ -1619,9 +1619,9 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 
 ### Task F-36 Verifiera epicen och lämna komplett reviewunderlag
 
-**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `e8e489aa-0235-436a-adc0-4c61703dab9e`.
+**Epic/fas/prioritet:** E-09 / 9 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `e8e489aa-0235-436a-adc0-4c61703dab9e`.
 
-**Körbar:** Nej — invänta F-35 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — plockad InProgress2/User105; F35 Done26, F31–33 Done och verifierad E08 på main. Ingen ändrad ordning.
 
 **Källa:** A §§24–25, 43; W §§29–31. **Berör:** epic_complete, epicacceptans, testkörning, rapport.
 
@@ -1640,6 +1640,10 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 **Verifiering:** Serviceprov med varierat taskmedlemskap, testfel och commits samt diffkontroll i temporärt Git.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Fastställt implementationskontrakt 2026-10-10:** Integration-only `EpicCompletionService`, explicit operatorregistrerat och oföränderligt taskscope/krav/acceptansversion samt separata argv/timeouts för build, test och epicacceptans. `epic_complete` exponeras endast i F34/F35-komposition med aktuell registrerad principal; anropet tar project/epicRun/requestKey, inga kommandon, roller eller godkännandebooleaner från agenten. Färsk User-tilldelning, exakt medlemskap, verkliga Done-/review-/Git-/eftertest-/stopp-/slot-/boardbevis krävs. Underlaget binds till aktuell ren epic/main-SHA, full diff, medlemskap och konfigurationshash. Varje processavsikt och faktiskt delresultat sparas före nästa steg; okänt processutfall omsänds inte automatiskt, känt lyckat steg återanvänds. Ny/återöppnad task, ändrade SHA/kriterier eller konfiguration ogiltigförklarar äldre underlag. Endast samtliga faktiska exit0 ger beständigt EPIC_READY_FOR_REVIEW; epicboard förblir Active och ingen approval/main-merge sker. Rapporten sammanställs av tjänsten från verifierade fakta, inklusive tasksummeringar, review-/merge-/test-/runtimeidentiteter och begränsningar. Riktig Git/SQLite och MCP-SDK verifieras med simulerad runtime/board tydligt angivet; full native-epic lämnas till F37.
+
+**Startunderlag:** Bootstrap Integration förberedde task/e09-f36 från ren E09 `8db5e054f7e8ce2bd2340670179c691b28e3c897`, main `73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7`; manuellt worktree utan fabricerad produktregistrering. Rollövergång till Worker för implementation i detta worktree. Acceptans ännu 0/3; inga sluttester/review/merge intygade.
 
 ### Task F-37 Verifiera en epic styrd av Integration Agent
 
@@ -2154,7 +2158,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 42 | E-09 | Epic | Låt en långlivad Integration Agent driva en epic | — | 9 | fd79802a-93dd-4b77-b4b4-71ba93060ad6 | P1 | Active | Ja | 0/3 | E-08 Done på main | Active8; F34 Done6 efter review/no-ff969de88d/134 eftertester; egenacceptans0/3, F35 plockad InProgress2. |
 | 43 | F-34 | Task/feature | Starta en enda långlivad Integration Agent per epic | E-09 | 9 | 678fb877-d9c7-4d07-a182-9ee79cc0cbdc | P0 | Done | Nej | 3/3 | E-08, X-01, X-02 | APPROVEDe8b2dc2→73f6476, merge969de88d/134 eftertester/gates/native single-session/reopen/SDK PASS; TeamPlayerDone6. |
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
-| 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Planned | Nej | 0/3 | E-08, F-35 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Active | Ja | 0/3 | E-08, F-35 | InProgress2/User105; task/e09-f36 från E09 8db5e054. Kontrakt fastställt; aggregate epic_complete implementeras, ingen main-merge. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Planned | Nej | 0/3 | E-08, F-36, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Planned | Nej | 0/3 | E-09 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Planned | Nej | 0/3 | E-09, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
