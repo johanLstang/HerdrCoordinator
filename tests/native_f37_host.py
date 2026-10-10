@@ -1,6 +1,7 @@
 """Protected operator factory for the F37 real native proof (not a pytest fixture)."""
 
 import asyncio
+import hashlib
 import json
 import os
 import shlex
@@ -24,6 +25,7 @@ from orchestrator.config import Settings
 from orchestrator.domain.codex_mcp_launch import CodexMCPLaunch
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.domain.teamplayer import LocalBoardBinding
+from orchestrator.domain.worker_contracts import LocalTaskSpec
 from orchestrator.event_log import EventLog
 from orchestrator.mcp.principal import load_principal
 from orchestrator.mcp.server import serve_stdio
@@ -48,6 +50,41 @@ def protected_config(path):
             return json.load(stream)
     finally:
         os.close(fd)
+
+
+def human_prerequisite_probe(c, integration):
+    """Trusted operator decision, checked on every eligibility/start observation.
+
+    Availability of actual human input permits runtime start. The answer is
+    still delivered separately by InputDecision after an actual Worker block.
+    No agent-supplied readiness boolean or fabricated state is accepted.
+    """
+    path = Path(c["completion"]["acceptance"]["argv"][-1])
+    expected = "b138f532b649373c6ed416f6d7d8e8cb63eb11900f93077c4b1fa3c1b2c6c715"
+    specs = {
+        v["task_id"]: LocalTaskSpec.model_validate(v).model_dump(mode="json")
+        for v in c["specs"].values()
+    }
+
+    def probe(spec):
+        if spec.model_dump(mode="json") != specs.get(spec.task_id):
+            return False
+        value = protected_config(path)
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        try:
+            raw = os.read(fd, (1 << 20) + 1)
+        finally:
+            os.close(fd)
+        return (
+            hashlib.sha256(raw).hexdigest() == expected
+            and json.loads(raw) == value
+            and value.get("source") == "USER_EXPLICIT_F37_PREFIX"
+            and value.get("prefix") == "Hej"
+            and value.get("session_id") == "01a126e7-6860-7e13-b3c8-0aeaa451f30e"
+            and integration.epic_run_id == "54311f5a-9556-4d6f-ba13-6ac6a1a5f973"
+        )
+
+    return probe
 
 
 @asynccontextmanager
@@ -104,6 +141,7 @@ async def composition(config_path):
                 sync=sync,
                 external_epic_id=c["native_epic"],
             )
+            prerequisite_probe = human_prerequisite_probe(c, integration)
             selection = TaskSelectionService(
                 settings,
                 store,
@@ -112,10 +150,12 @@ async def composition(config_path):
                 task_order=tuple(c["specs"]),
                 epic_prerequisites={local_epic: ()},
                 codex=codex,
+                prerequisite_probe=prerequisite_probe,
             )
             scheduler = TaskSchedulerService(
                 settings, store, selection, sync, workers, codex, review_provider=None
             )
+            scheduler.start.prerequisite_probe = prerequisite_probe
             completion = EpicCompletionService(epic, scheduler, c["completion"])
             log = EventLog(stream=sys.stderr)
             control = IntegrationControlService(epic, scheduler, log, epic_completion=completion)
