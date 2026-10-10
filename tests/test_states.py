@@ -341,6 +341,8 @@ def test_schema_one_migrates_and_replays_after_reopen(tmp_path):
             EpicRun(id="e", project_id="p", epic_id="e", branch="feature/e", worktree_path="/tmp/e")
         )
         store.db.execute("DROP TABLE transition_events")
+        store.db.execute("DROP TABLE project_operations")
+        store.db.execute("DROP TABLE coordinator_runs")
         store.db.execute("PRAGMA user_version=1")
     with StateStore(path) as store:
         service = StateService(store)
