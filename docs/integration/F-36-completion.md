@@ -14,8 +14,7 @@ Använd inga credentials i argv, spec, rapport eller versionshanterade filer.
 Processoutput returneras eller loggas inte av denna tjänst.
 
 Konfigurationen kopieras till kanonisk JSON, versionsbinds och hashas.
-Nästan oföränderliga modellobjekt med muterbara listor används inte som
-beständig konfiguration. Agenten får inte byta scope, kriterier, kommando,
+Modellernas muterbara listor används inte som beständig konfiguration. Agenten får inte byta scope, kriterier, kommando,
 roll, miljö eller timeout via MCP.
 
 Komponera `IntegrationControlService(epic_start, scheduler, log,
