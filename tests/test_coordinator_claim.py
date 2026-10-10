@@ -23,7 +23,9 @@ from orchestrator.application.coordinator_runtime_service import (
 )
 from orchestrator.application.epic_start_service import EpicStartService
 from orchestrator.application.runtime_service import RuntimeService
+from orchestrator.domain.models import EpicRun
 from orchestrator.domain.policy import Actor, Role
+from orchestrator.domain.states import EpicState
 from orchestrator.domain.teamplayer import LocalBoardBinding
 from orchestrator.event_log import EventLog
 from orchestrator.mcp.server import create_server
@@ -403,3 +405,54 @@ def test_foreign_or_unregistered_connections_cannot_use_project_control(setup, r
     }))
     assert not response.ok and response.code == "COORDINATOR_SCOPE_DENIED"
     assert not natives and not claims.store.get_runs()
+
+
+@pytest.mark.parametrize("setup", ["priority"], indirect=True)
+def test_foreign_active_board_epic_prevents_a_second_start(setup):
+    claims, actor, board, _, natives, _ = setup
+    board.epics[0]["status"] = "InProgress"
+    result = run(claims.claim(actor, "p", "foreign-active"))
+    assert result["status"] == "WAIT", result
+    assert not natives and claims.store.get_runs() == []
+    assert run(claims.overview(actor, "p"))["candidates"] == []
+    assert claims.store.project_operations(claims.runtime.run_id, kind=claims.KIND) == []
+
+
+@pytest.mark.parametrize("state", [EpicState.PLANNED, EpicState.ACTIVE, EpicState.DONE])
+def test_unreserved_registered_epic_prevents_another_start(setup, state):
+    claims, actor, _, _, natives, _ = setup
+    existing = EpicRun(
+        id="foreign-epic-run", project_id="p", epic_id="unowned-epic",
+        branch="feature/epic-unowned", worktree_path="/tmp/unowned",
+        status=state,
+    )
+    claims.store.add_epic(existing)
+    result = run(claims.claim(actor, "p", "foreign-runtime"))
+    assert result["status"] == "WAIT", result
+    assert not natives and claims.store.get_runs() == [existing]
+    assert run(claims.overview(actor, "p"))["candidates"] == []
+
+
+@pytest.mark.parametrize("setup", ["priority"], indirect=True)
+def test_owned_retry_does_not_bypass_a_second_unowned_active_epic(setup):
+    claims, actor, board, _, natives, _ = setup
+    first = run(claims.claim(actor, "p", "first-owned"))
+    assert first["epic_id"] == "E-35" and first["status"] == "REGISTERED"
+    original = claims.store.get_project_operation("p", claims.KIND, "first-owned")
+    board.epics[0]["status"] = "InProgress"
+    for key in ("first-owned", "different-key"):
+        assert run(claims.claim(actor, "p", key))["status"] == "WAIT"
+    assert len(natives) == 1 and next(iter(natives.values())).starts == 1
+    assert claims.store.get_project_operation("p", claims.KIND, "first-owned") == original
+    assert len(claims.store.project_operations(claims.runtime.run_id, kind=claims.KIND)) == 1
+
+
+@pytest.mark.parametrize("setup", ["priority"], indirect=True)
+@pytest.mark.parametrize("status", ["InProgress", "Testing", "Paused", "NeedsReview", "Done"])
+def test_pending_epic_with_unowned_started_task_prevents_second_start(setup, status):
+    claims, actor, board, _, natives, _ = setup
+    board.tasks[0]["status"] = status
+    result = run(claims.claim(actor, "p", "unowned-task"))
+    assert result["status"] == "WAIT", result
+    assert not natives and claims.store.get_runs() == []
+    assert run(claims.overview(actor, "p"))["candidates"] == []

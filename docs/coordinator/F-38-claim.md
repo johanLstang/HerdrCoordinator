@@ -58,6 +58,10 @@ Samma nyckel återfinner ursprunglig operation. En ny nyckel under aktiv reserva
 återger EXISTING och startar inget. Partiell start behåller reservation och F34:s
 ursprungliga journal; okända effekter kan aldrig ersättas med en ny epicrun.
 F38 frigör inte reservationen. F40 ska göra detta först efter faktisk slutleverans.
+En främmande redan aktiv boardepic, en Pending-epic med påbörjade tasks eller
+en oavslutad registrerad EpicRun utan samma reservation stoppar nya claims och
+visas som hinder utan kandidater i overview. Även retry på eget claim nekas
+när en andra främmande epic finns.
 WAIT skapar inga epic-/taskruns, worktrees, Integration, Workers eller falskt Done.
 
 ## Runtimegrind och sessionskonfiguration
@@ -113,3 +117,5 @@ De verifierar positiva starter, prioritet/ordning, race, återförsök, scope, o
 schema 1/2-migration och negativa gränsfall. Detta är ingen native säkerhetsattest.
 Native Coordinator-start/ACK/omstart/WAIT/stopp återstår; ingen acceptans markeras
 före faktisk verifiering, utvecklingsreview, Task→Epic och integrationskontroller.
+
+Aktuell korrigerings- och fullverifiering finns i [utvecklingsreview](../reviews/F-38-review-1.md). Nativeprovets eget godkännande och slutgrindar kvarstår.

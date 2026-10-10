@@ -167,6 +167,29 @@ class CoordinatorClaimService:
         claims = [ProjectOperation.model_validate_json(row[0]) for row in rows]
         return [op for op in claims if op.result.get("stage") != "RELEASED"]
 
+    def _foreign_epics(self, board, active):
+        owned_epics = {op.result["epic_id"] for op in active}
+        owned_runs = {op.result["epic_run_id"] for op in active}
+        started_tasks = {BoardStatus.IN_PROGRESS, BoardStatus.TESTING, BoardStatus.PAUSED,
+                         BoardStatus.NEEDS_REVIEW, BoardStatus.DONE}
+        blockers = []
+        for entry in self.spec.epics:
+            native = board.epic(entry.native_epic_id)
+            if native is None or entry.spec.epic_id in owned_epics:
+                continue
+            if native.status not in {"Pending", "Done"}:
+                blockers.append(dict(epic_id=entry.spec.epic_id, code="UNOWNED_ACTIVE_EPIC"))
+            elif native.status == "Pending" and any(
+                task.status in started_tasks for task in board.epic_tasks(native.id)
+            ):
+                blockers.append(dict(epic_id=entry.spec.epic_id, code="EPIC_TASKS_NOT_PLANNED"))
+        blockers.extend(dict(epic_id=run.epic_id, code="UNOWNED_EPIC_RUNTIME")
+                        for run in self.store.get_runs()
+                        if isinstance(run, EpicRun) and run.project_id == self.spec.project_id
+                        and run.id not in owned_runs
+                        and (run.status != EpicState.DONE or run.completed_at is None))
+        return blockers
+
     async def overview(self, actor, project_id):
         self._scope(actor, project_id)
         board = await self.reader.read_project()
@@ -175,6 +198,10 @@ class CoordinatorClaimService:
             main = self.runtime.main()
             candidates, blockers = self._evaluate(board, actor, main)
             active = self._active_claims()
+            foreign = self._foreign_epics(board, active)
+            if foreign:
+                candidates = []
+                blockers = [b for b in blockers if b not in foreign] + foreign
             if active:
                 candidates = []
                 blockers = [b for b in blockers if not (
@@ -214,6 +241,10 @@ class CoordinatorClaimService:
             with self.store.transaction():
                 existing = self.store.get_project_operation(project_id, self.KIND, key)
                 active = self._active_claims()
+                foreign = self._foreign_epics(board, active)
+                if foreign:
+                    return dict(status="WAIT", reason="UNOWNED_ACTIVE_EPIC",
+                                blockers=[b for b in blockers if b not in foreign] + foreign)
                 if any(o.coordinator_run_id != self.runtime.run_id for o in active):
                     raise CoordinatorError("EPIC_CLAIM_FOREIGN_OWNER")
                 if len(active) > 1:

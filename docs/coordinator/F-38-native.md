@@ -1,7 +1,7 @@
 # F38-r1: förberett verkligt Coordinatorprov
 
-Detta är förberedelseunderlag, ingen intygad nativeframgång. Utvecklings-F38 är
-InProgress, E10 Active och acceptans 0/3. F37-r1:s godkännande gäller den avslutade
+Detta är förberedelseunderlag, ingen intygad nativeframgång. Utvecklings-F38 väntar nu i
+NeedsApproval/Attention, E10 Active och acceptans 0/3. F37-r1:s godkännande gäller den avslutade
 F37-sessionen; det ger inget förhandsgodkännande för en ny F38-dialog.
 
 ## Avgränsning och identiteter
@@ -64,3 +64,15 @@ Positiva claim/start/race är separata serviceprov med faktiskt Git/SQLite/F34/S
 och tydligt kontrollerade runtime-/board-/gateadaptrar. De verifierar funktion och
 failure recovery; de är ingen OS-säkerhetsattest eller full autonom F41-leverans.
 Task-Done kräver även aktuell utvecklingsreview, faktisk Task→E10 och eftertester.
+
+## Faktisk start och nytt approvalhinder
+
+Checkpoint `4e8fb47480a42a1c6f4d716e46c2dc86fa3b5aae`, egen server PID222855/start114325421, Herdr0.9.3/protokoll22. Faktisk projekt-Coordinator registrerad med original-ACK inom den sparade 45sekundersgränsen: run `9997e70a-5bec-4521-8145-4f6499507d80`, agent `hc-c-e0ae9e37ee994158a7ee8f45`, pane w1:p1, SID `01a12809-f3e2-7753-bb10-9ae22f326102`. Omöppnad SQLite/komposition återfann samma run/SID/ACK utan extra agent eller assignment.
+
+En enda journalförd kontrollprompt skickades. Samma agent anropade faktiskt `coordinator_overview`; service gav RUNTIME_SECURITY_GATE_UNVERIFIED, inga aktiva epics eller reservation. Nästa `epic_claim_next` ligger i verklig ny approvaldialog för projekt f38-probe-r1/nyckel f38-r1-native-claim-v1. Dialogtext och scope är sparade, inget val skickat. Herdr-skillens krav på mänskligt beslut gäller den nya dialogen; F37/r5:s tidigare tillstånd utökas inte. Användaren tillfrågad om endast detta anrop.
+
+State/Git visar 0 epic-/taskruns, 0 claims/Workers/merger och ren oförändrad main d4215a26. Native guard-WAIT, slutrapport och fysisk stopp återstår. TeamPlayer NeedsApproval9/lokal Attention, kriterier0/3; E10 kvar Active8/egenacceptans0/3. Full954-suite på checkpoint/123 källbindningar kör separat; 107 foundation-, 137 boundary- och 64 integrationsprov har passerat. Ingen native full OS/autonomigaranti ges och inget task-/epic-Done intygas i detta hinderunderlag.
+
+## Verifierad utvecklingskorrigering medan native-dialogen väntar
+
+954 sourceprov passerade på checkpoint4e (2320.94s/exit0/123 oförändrade bindningar). Därefter rättades tre reproducerade ensam-epic-brister i claim/overview; 41 claimprov passerar på faktisk korrigerad Task-kod (21.65s/exit0), övriga121 källfiler byteidentiska. [Review, historik och nya SHA-bindningar](../reviews/F-38-review-1.md). Nativeprovet är uttryckligen bundet till sin ursprungliga checkpoint4e/session/configuration; inget nytt native claimresultat eller stopp intygas genom de ändrade servicetesterna. Dialogen väntar fortfarande på eget mänskligt beslut.
