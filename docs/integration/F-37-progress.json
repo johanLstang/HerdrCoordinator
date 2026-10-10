@@ -1,0 +1,147 @@
+{
+  "feature": "F37",
+  "stage": "DONE_VERIFIED_TASK_INTEGRATED",
+  "local_status": "Done",
+  "teamplayer_status": "Done",
+  "teamplayer_version": 13,
+  "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+  "acceptance_verified": 3,
+  "source_checkpoint": "5397745e8e8024640b9308ecf91b4e48281bcbca",
+  "epic_status": "Active",
+  "epic_acceptance_verified": 3,
+  "native_server": "hc-f37-r1-20261010",
+  "server_pid": 2926419,
+  "server_process_start": "112422377",
+  "epic_run_id": "54311f5a-9556-4d6f-ba13-6ac6a1a5f973",
+  "start_operation_id": "6b6bb065-47a0-4843-88cb-cde15897aa92",
+  "start_stage": "REGISTERED",
+  "confirmed_start_sha256": "f8cd7ef9abd625c44f325b30df6280427ca5eac0da548d1ff162b8c00b11b4d6",
+  "integration_session_id": "01a126e7-6860-7e13-b3c8-0aeaa451f30e",
+  "integration_agent_id": "hc-ba6d43f8214f4b389db4d9c5",
+  "pane_id": "w1:p1",
+  "terminal_id": "term_65d7ff7da9ecd1",
+  "native_tasks": 3,
+  "native_task_merges": 3,
+  "native_epic": "c3309a13-5350-4d19-b668-592cac9eadc3",
+  "external_tasks": {
+    "a": "b224e9c0-de87-4739-91ee-e65a9b792f66",
+    "b": "535e110e-b2cc-41c9-a7f9-46d348443f18",
+    "c": "455fb603-5099-42ef-b8ee-f587f9c802ea"
+  },
+  "pending_permission_tool": null,
+  "pending_permission_task": null,
+  "approval_source": "USER_EXPLICIT_F37_R1",
+  "human_prefix": "Hej",
+  "fixture_main": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "project_main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+  "mains_unchanged": true,
+  "checks": {
+    "ruff": 0,
+    "py_compile": 0,
+    "document_links": "PASS",
+    "native_report_hash": "066f3f9313f296644ad77170ec7d741b9ebd622c0af5b01800a37aab50ea0044",
+    "native_proof_sha256": "6229b6fd38763161a869cd8046b8135d875d943b5d8ea08fb115c436ad6d7a2f",
+    "native_tasks": 3,
+    "native_deliveries_tests_stops_done": "PASS",
+    "full_native_diff_hash": "cba19a62e3ca301bd7d02831607290ecb9171df741251ffefe29f2c8afa038bc",
+    "106_source_files_unchanged": true,
+    "production_schema_lock_config_policies_unchanged": true,
+    "wheel_modules": 62,
+    "policies": 3,
+    "checked_local_links": 117,
+    "all_changed_files_auth_scan": true,
+    "full_suite": "PENDING, recorded separately; structural checks do not imply pytest PASS"
+  },
+  "limits": [
+    "Initial A/B prerequisite gate denials had known no effect; operator corrected trusted human-input probe and used actual F13 stop/resume of original Integration SID, separately recorded.",
+    "One incomplete unscoped native tool request after resume was cancelled; agent re-read current overview and rebuilt its own valid request. No operator task start/schedule/review/approval/merge or report fabrication.",
+    "Operator supplied explicit user Hej input only after real blocked/parked Worker observations; scoped native UI choices were authorized by the user for F37-r1.",
+    "No full OS credential isolation claim; F38/F47 remain. Fixture epic main merge is not in scope.",
+    "Native aggregate RPC transcript is clipped; full persisted receipt and matching native final identifiers/hashes independently verified while live."
+  ],
+  "status_update_version": 12,
+  "status_description_readback": "CONFIRMED_DONE13_EXACT",
+  "native_ui_permission_sha256": "35359edfeb5364fef6603b1b92908b79af35f8834d679fa8fd474815afca41e4",
+  "control_intent": {
+    "request_id": "59a24356-ded6-43cf-8957-174dd9974c4d",
+    "stage": "PROMPT_RETURNED",
+    "text_sha256": "5dc382e170a3d9781a66b1e00e9de6fc85c19cd79a0a9c250e7ab98946894085",
+    "session_id": "01a126e7-6860-7e13-b3c8-0aeaa451f30e",
+    "created_at": "2026-10-10T17:41:41.679138+00:00"
+  },
+  "human_decision_sha256": "b138f532b649373c6ed416f6d7d8e8cb63eb11900f93077c4b1fa3c1b2c6c715",
+  "initial_native_results": [
+    "C DEPENDENCY_NOT_DONE",
+    "A/B TASK_PREREQUISITE_UNVERIFIED; 0 Workers",
+    "trusted human prerequisite probe was missing from operator composition"
+  ],
+  "current_loaded_source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
+  "observed_peak_worker_slots": 2,
+  "pre_input_park": {
+    "stage": "BOTH_PARKED_BEFORE_HUMAN_INPUT_DELIVERY",
+    "tasks": [
+      {
+        "task_id": "f37-b",
+        "task_run_id": "0def57f4-ce99-4d6f-9153-c9d5946aec2f",
+        "session_id": "01a127a6-9575-7471-b9e1-657c2a13f231",
+        "board_status": "NeedsInput",
+        "version": 6,
+        "physical_runtime": "STOPPED",
+        "slot": null,
+        "blocker_id": "c7db356b-f519-42e9-984a-2cae9e7a2341"
+      },
+      {
+        "task_id": "f37-a",
+        "task_run_id": "77a698ca-a44d-419a-84e2-e9ee59340aed",
+        "session_id": "01a127a6-5150-7c70-bd6e-71342cb66b54",
+        "board_status": "NeedsInput",
+        "version": 6,
+        "physical_runtime": "STOPPED",
+        "slot": null,
+        "blocker_id": "3e3a5954-0857-445a-bc32-8aabe7195a07"
+      }
+    ]
+  },
+  "original_integration_reload": {
+    "stage": "SAME_SESSION_HOST_RELOADED",
+    "run_id": "54311f5a-9556-4d6f-ba13-6ac6a1a5f973",
+    "session_id": "01a126e7-6860-7e13-b3c8-0aeaa451f30e",
+    "new_host_sha256": "c9469aa994e4733d86cefaa1e79bbd4d7cfa530543fb2293003a54f207a06caf",
+    "old_host_sha256": "4b4a671732c2bb141ad3ff7468fd5407deaaadb92af9d4e8bbf22b0dcef9f5e8",
+    "registered_connection_verified": true,
+    "workers_unchanged": true,
+    "stop_id": "a0446351-5634-4672-aea1-ab36bbdfa27f",
+    "resume_id": "75dfe3c6-a5bb-4e30-ae71-2c53ddadafab"
+  },
+  "incomplete_native_start_request": {
+    "outcome": "CANCELLED_BEFORE_EXECUTION",
+    "reason": "Native agent lost saved tool variables after actual resume; no project/run/spec in the request. Fresh overview confirmed no effect, agent rebuilt its own valid request."
+  },
+  "native_proof": "F-37-native.json",
+  "native_proof_sha256": "6229b6fd38763161a869cd8046b8135d875d943b5d8ea08fb115c436ad6d7a2f",
+  "aggregate_operation_id": "10e64ff5-95ad-42fc-b205-f7a516a755da",
+  "aggregate_stage": "EPIC_READY_FOR_REVIEW",
+  "aggregate_report_hash": "066f3f9313f296644ad77170ec7d741b9ebd622c0af5b01800a37aab50ea0044",
+  "runtime_status": "STOPPED",
+  "server_status": "not running",
+  "stop_operation_id": "4a747a75-914a-4250-a086-a6c2f61291e9",
+  "source_suite": {
+    "status": "PASS",
+    "passed": 892,
+    "seconds": 2337.021,
+    "exit_code": 0,
+    "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
+    "xml": "../reviews/E-09-source.xml",
+    "106_source_files_unchanged": true
+  },
+  "development_review_source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+  "development_review_target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+  "development_merge": "73bca342db32cf320631e0a8c9055ef010d1ce21",
+  "development_operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5",
+  "scoped_ui_helper_final": {
+    "stage": "UI_HELPER_FINISHED",
+    "exit_code": 0,
+    "approved_forms_in_final_helper": 9,
+    "all_scoped_ui_choices_in_native_proof": 11
+  }
+}

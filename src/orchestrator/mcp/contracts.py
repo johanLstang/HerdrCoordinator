@@ -37,6 +37,13 @@ class TaskStartRequest(BaseModel):
     task: LocalTaskSpec
 
 
+class EpicStartRequest(BaseModel):
+    model_config = Target.model_config
+    project_id: Identity
+    epic_id: Identity
+    epic_run_id: Identity
+
+
 class TaskReviewRequest(BaseModel):
     model_config = Target.model_config
     project_id: Identity
@@ -74,3 +81,7 @@ class TaskBlockReviewRequest(TaskParkRequest):
 
 class TaskResumeRequest(TaskParkRequest):
     decision: InputDecision
+
+
+class EpicCompleteRequest(TaskGetNextRequest):
+    request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")

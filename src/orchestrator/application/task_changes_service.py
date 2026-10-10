@@ -311,16 +311,16 @@ class TaskChangesService:
                     "review_id": op.result["review_id"],
                     "ack": op.result["ack"],
                 }
-            if op.status == "TIMED_OUT":
-                raise TaskChangesError("CORRECTION_ACK_TIMEOUT")
             if op.result["stage"] != "DISPATCH_REQUESTED":
                 raise TaskChangesError("CORRECTION_NOT_DISPATCHED")
             if task.internal_status != TaskState.CHANGES_REQUESTED:
                 raise TaskChangesError("CORRECTION_TASK_CHANGED")
             facts, _ = self._runtime(actor, task, op)
+            thread = self._thread(task)
             proof = self.assignment.match_native_ack(
-                op, self._thread(task), self._ack(task, op), runtime_status=facts["status"]
+                op, thread, self._ack(task, op), runtime_status=facts["status"]
             )
+            timely = self.assignment._completed_before_deadline(op, thread, proof)
             with self.store.transaction():
                 task, _ = self._scope(actor, run_id)
                 current = self.store.get_operation(task.project_id, self.KIND, key)
@@ -331,9 +331,10 @@ class TaskChangesService:
                         "review_id": current.result["review_id"],
                         "ack": current.result["ack"],
                     }
-                if current.status == "TIMED_OUT" or utc_now() > datetime.fromisoformat(
+                expired = current.status == "TIMED_OUT" or utc_now() > datetime.fromisoformat(
                     current.result["deadline"]
-                ):
+                )
+                if expired and not timely:
                     self.store.update_operation(
                         current.model_copy(
                             update={
@@ -361,6 +362,8 @@ class TaskChangesService:
                         "session_id": task.codex_session_id,
                         "correlation_id": op.result["correlation_id"],
                     }
+                    if expired:
+                        ack |= {"timely_completion_verified": True}
                     self.store.update_operation(
                         current.model_copy(
                             update={

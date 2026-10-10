@@ -336,6 +336,72 @@ class TaskSchedulerService:
             except (TeamPlayerError, SchedulerError, TaskStartError) as error:
                 self._pause(actor, self.store.get_task(task.id), str(error))
 
+    async def start_selected(self, actor, epic_run_id, spec):
+        """F35 explicit agent choice, with the same F29 lock and guarded claim pipeline."""
+        epic = self._scope(actor, epic_run_id)
+        spec = LocalTaskSpec.model_validate(spec)
+        with self._lock(actor.project_id):
+            owner = self.store.get_operation(actor.project_id, "epic_schedule", epic.id)
+            if owner is not None and (
+                owner.result.get("scheduler_id") != self.scheduler_id
+                or owner.result.get("actor") != actor.model_dump(mode="json")
+            ):
+                raise SchedulerError("SCHEDULER_EPIC_OWNER_CHANGED")
+            await self.sync._identity()
+            self._board = await self.selection.reader.read_project()
+            native = self._board.epic(self.sync._reference(epic, False))
+            if (
+                native is None
+                or native.status != "InProgress"
+                or native.binding is None
+                or native.binding.local_id != epic.epic_id
+            ):
+                raise SchedulerError("SCHEDULER_EPIC_BINDING_UNVERIFIED")
+            configured = [
+                LocalTaskSpec.model_validate(v)
+                for v in self.selection.specs.values()
+                if LocalTaskSpec.model_validate(v).task_id == spec.task_id
+            ]
+            if len(configured) != 1 or configured[0] != spec:
+                raise SchedulerError("SCHEDULER_TASK_SPEC_CHANGED")
+            # start.claim evaluates the complete current dependency/Git/owner evidence again.
+            task, _ = self.start.claim(actor, epic.id, spec, timeout_seconds=self.timeout_seconds)
+            if owner is None:
+                self.store.add_operation(
+                    Operation(
+                        project_id=actor.project_id,
+                        epic_run_id=epic.id,
+                        kind="epic_schedule",
+                        idempotency_key=epic.id,
+                        result={
+                            "actor": actor.model_dump(mode="json"),
+                            "scheduler_id": self.scheduler_id,
+                        },
+                    )
+                )
+            self._record(actor, task)
+            try:
+                await self._fresh_owned(actor, task)
+                if task.internal_status == TaskState.CLAIMED:
+                    task = self.start.prepare_git(
+                        actor, epic.id, spec, timeout_seconds=self.timeout_seconds
+                    )
+                if not await self._sync(actor, task):
+                    self._record(actor, task, "SYNC_PENDING", resume_phase="CLAIMED")
+                    return {"status": "PENDING", "task": task.model_dump(mode="json")}
+                await self._fresh_owned(actor, task)
+                result = self.start.start(
+                    actor, epic.id, spec, timeout_seconds=self.timeout_seconds
+                )
+                task = self.store.get_task(task.id)
+                self._record(actor, task, "OBSERVING")
+                if not await self._sync(actor, task):
+                    self._record(actor, task, "SYNC_PENDING", resume_phase="OBSERVING")
+                return result
+            except (TeamPlayerError, SchedulerError, TaskStartError) as error:
+                self._pause(actor, self.store.get_task(task.id), str(error))
+                raise
+
     async def _review_task(self, actor, task):
         handoffs = [
             o
@@ -465,7 +531,12 @@ class TaskSchedulerService:
             if decision is None or decision["result"] != "CHANGES_REQUESTED":
                 raise SchedulerError("SCHEDULER_CORRECTION_NOT_OWNED")
             self.changes.request(
-                actor, task.id, decision, key="schedule-decision:" + decision["context_id"]
+                actor,
+                task.id,
+                decision,
+                key=op.result.get(
+                    "correction_request_key", "schedule-decision:" + decision["context_id"]
+                ),
             )
             task = self.store.get_task(task.id)
         if task.internal_status == TaskState.WORKING:

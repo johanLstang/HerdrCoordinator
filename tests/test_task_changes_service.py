@@ -254,6 +254,34 @@ def test_unknown_delivery_timeout_keeps_changes_requested_slot_and_rejects_late_
     assert len(h.sent) == 2 and len(s.store.get_reviews(task.id)) == 1
 
 
+@pytest.mark.parametrize("completion", ["early", "late", "missing"])
+def test_delayed_correction_observation_requires_proven_original_deadline(
+    setup, monkeypatch, completion
+):
+    s, a, w, decision, h, history, _ = setup
+    h.prompt = lambda *args, **kwargs: h.sent.append(args[1])
+    assert s.request(a, w.task_run_id, decision, key="dated-fix")["status"] == "WAITING"
+    delivered = int(utc_now().timestamp())
+    monkeypatch.setattr(
+        "orchestrator.application.task_changes_service.utc_now",
+        lambda: utc_now() + timedelta(seconds=60),
+    )
+    with pytest.raises(TaskChangesError, match="ACK_TIMEOUT"):
+        s.observe(a, w.task_run_id, key="dated-fix")
+    history.reply(h.sent[-1], turn_id="delayed-correction-observation")
+    if completion != "missing":
+        history.turns[-1]["completedAt"] = delivered + (60 if completion == "late" else 0)
+    if completion == "early":
+        result = s.request(a, w.task_run_id, decision, key="dated-fix")
+        assert result["status"] == "CONFIRMED"
+        assert result["ack"]["timely_completion_verified"] is True
+        assert s.store.get_task(w.task_run_id).internal_status == TaskState.WORKING
+    else:
+        with pytest.raises(TaskChangesError, match="ACK_TIMEOUT"):
+            s.request(a, w.task_run_id, decision, key="dated-fix")
+    assert len(h.sent) == 2 and len(s.store.get_reviews(w.task_run_id)) == 1
+
+
 def test_crash_after_review_recovers_registration_without_duplicate_or_new_session(
     setup, monkeypatch
 ):

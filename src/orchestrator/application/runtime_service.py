@@ -1,6 +1,7 @@
 from pydantic import ValidationError
 
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
+from orchestrator.application.epic_start_service import EpicStartError
 from orchestrator.application.state_service import StateError, StateService
 from orchestrator.application.task_approval_service import TaskApprovalError
 from orchestrator.application.task_attention_service import AttentionError
@@ -15,6 +16,7 @@ from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.event_log import EventLog
 from orchestrator.mcp.contracts import (
+    EpicStartRequest,
     PolicyRequest,
     Target,
     TaskApprovalRequest,
@@ -31,6 +33,7 @@ from orchestrator.mcp.contracts import (
 from orchestrator.persistence.store import StateStore, StoreError
 
 _ROLES = {
+    "integration_overview": {Role.INTEGRATION},
     "runtime_status": set(Role),
     "policy_check": set(Role),
     "task_report_ready": {Role.WORKER},
@@ -99,6 +102,8 @@ class RuntimeService:
         task_scheduler=None,
         task_attention=None,
         task_resume=None,
+        epic_start=None,
+        integration_control=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -112,6 +117,8 @@ class RuntimeService:
         self.task_scheduler = task_scheduler
         self.task_attention = task_attention
         self.task_resume = task_resume
+        self.epic_start = epic_start
+        self.integration_control = integration_control
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -127,6 +134,20 @@ class RuntimeService:
         return record
 
     def call(self, operation: str, arguments: dict) -> ToolResponse:
+        if (
+            self.integration_control is not None
+            and operation not in self.integration_control.operations
+        ):
+            return ToolResponse(
+                ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
+            )
+        if (
+            self.integration_control is not None
+            and operation in self.integration_control.operations
+        ):
+            return ToolResponse(
+                ok=False, code="ASYNC_CONTROL_REQUIRED", message="use guarded async control"
+            )
         response = self._call(operation, arguments)
         # Never log caller-supplied operation names, raw arguments or exception payloads.
         self.log.emit(
@@ -139,6 +160,36 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if (
+            self.integration_control is not None
+            and operation not in self.integration_control.operations
+        ):
+            return ToolResponse(
+                ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
+            )
+        if (
+            self.integration_control is not None
+            and operation in self.integration_control.operations
+        ):
+            response = await self.integration_control.call(self.actor, operation, arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
+        if operation == "epic_start" and self.epic_start is not None:
+            response = await self._start_epic(arguments)
+            self.log.emit(
+                "mcp.policy",
+                "INFO" if response.ok else "WARNING",
+                "tool decision",
+                code=response.code,
+                role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if operation in {"resume_task", "worker_resume"} and self.task_resume is not None:
             response = await self._resume_input(arguments)
             self.log.emit(
@@ -193,6 +244,33 @@ class RuntimeService:
             role=self.actor.role if self.actor else "Unregistered",
         )
         return response
+
+    async def _start_epic(self, arguments):
+        if self.actor is None:
+            return ToolResponse(ok=False, code="UNAUTHENTICATED", message="unregistered connection")
+        if self.actor.role != Role.COORDINATOR:
+            return ToolResponse(ok=False, code="FORBIDDEN", message="epic start role denied")
+        try:
+            request = EpicStartRequest.model_validate(arguments)
+        except ValidationError:
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid epic target")
+        try:
+            result = await self.epic_start.start(
+                self.actor, request.project_id, request.epic_id, request.epic_run_id
+            )
+            registered = result["stage"] == "REGISTERED"
+            return ToolResponse(
+                ok=registered,
+                code="OK" if registered else result["reason"] or "EPIC_START_PENDING",
+                message="epic start confirmed" if registered else "epic start pending",
+                data=result,
+            )
+        except EpicStartError as error:
+            return ToolResponse(ok=False, code=str(error), message="reconcile recorded epic start")
+        except Exception:
+            return ToolResponse(
+                ok=False, code="EPIC_START_UNVERIFIED", message="reconcile recorded epic start"
+            )
 
     async def _sync_teamplayer(self, operation, arguments):
         if self.actor is None:
@@ -282,6 +360,14 @@ class RuntimeService:
                 return ToolResponse(
                     ok=False, code="FORBIDDEN", message="role cannot request this operation"
                 )
+            if request.operation == "integration_overview" and self.integration_control is not None:
+                return ToolResponse(ok=True, code="OK", message="registered control is available")
+            if request.operation == "epic_start" and self.epic_start is not None:
+                if record.id != self.epic_start.principal.epic_run_id:
+                    return ToolResponse(
+                        ok=False, code="FORBIDDEN", message="epic start scope denied"
+                    )
+                return ToolResponse(ok=True, code="OK", message="epic start service available")
             if (
                 request.operation in {"task_report_ready", "task_report_blocked"}
                 and self.worker_reports is not None

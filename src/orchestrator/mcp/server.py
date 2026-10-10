@@ -14,6 +14,8 @@ from mcp.types import (
 
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
+    EpicCompleteRequest,
+    EpicStartRequest,
     PolicyRequest,
     Target,
     TaskApprovalRequest,
@@ -47,6 +49,45 @@ def create_server(service: RuntimeService) -> Server:
             ),
         ]
     ]
+
+    if service.integration_control is not None:
+        tools.append(
+            Tool(
+                name="integration_overview",
+                description="Fresh board and task/runtime/slot overview for the registered epic.",
+                input_schema=TaskGetNextRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False),
+            )
+        )
+
+    if (
+        service.integration_control is not None
+        and "epic_complete" in service.integration_control.operations
+    ):
+        tools.append(
+            Tool(
+                name="epic_complete",
+                description=(
+                    "Run trusted aggregate build/test/acceptance and persist current "
+                    "epic handoff; no main merge."
+                ),
+                input_schema=EpicCompleteRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
+
+    if service.epic_start is not None:
+        tools.append(
+            Tool(
+                name="epic_start",
+                description="Start the operator-configured epic from a Coordinator connection.",
+                input_schema=EpicStartRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            )
+        )
 
     if service.task_scheduler is not None:
         tools.append(
@@ -165,12 +206,18 @@ def create_server(service: RuntimeService) -> Server:
             )
 
     if service.teamplayer_sync is not None:
-        for name in ("set_task_status", "set_epic_status"):
+        for name in (
+            ("set_task_status",)
+            if service.integration_control
+            else ("set_task_status", "set_epic_status")
+        ):
             tools.append(
                 Tool(
                     name=name,
                     description="Mirror verified state; caller cannot choose status or evidence.",
-                    input_schema=Target.model_json_schema(),
+                    input_schema=(
+                        TaskParkRequest if service.integration_control else Target
+                    ).model_json_schema(),
                     output_schema=ToolResponse.model_json_schema(),
                     annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
                 )

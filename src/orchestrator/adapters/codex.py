@@ -3,8 +3,10 @@
 import json
 import os
 import selectors
+import stat
 import subprocess
 import time
+from datetime import datetime
 from pathlib import Path
 
 
@@ -90,6 +92,7 @@ class CodexAdapter:
                             raise ValueError
                         if item["type"] == "userMessage" and not isinstance(item["content"], list):
                             raise ValueError
+                self._attach_message_times(thread)
             return thread
         except (OSError, ValueError, KeyError, TypeError, AttributeError):
             raise CodexError("CODEX_METADATA_UNVERIFIED") from None
@@ -109,3 +112,80 @@ class CodexAdapter:
                     p.kill()
                     p.wait(timeout=3)
             p.stdout.close()
+
+    @staticmethod
+    def _attach_message_times(thread):
+        """Optional private native evidence; never trust a caller-provided timestamp.
+
+        App-server item identities/text remain authoritative. A matching local
+        response record supplies timing only, without returning raw journal data.
+        Missing, partial or inconsistent journals provide no timing evidence.
+        """
+        for turn in thread["turns"]:
+            for item in turn["items"]:
+                item.pop("nativeObservedAt", None)
+        fd = None
+        try:
+            root = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))) / "sessions"
+            path = Path(thread["path"])
+            sid = thread["sessionId"]
+            if (
+                not path.is_absolute()
+                or not path.resolve().is_relative_to(root.resolve())
+                or not path.name.endswith("-" + sid + ".jsonl")
+            ):
+                return
+            fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+            info = os.fstat(fd)
+            if (
+                not stat.S_ISREG(info.st_mode)
+                or info.st_uid != os.getuid()
+                or info.st_size > (8 << 20)
+            ):
+                return
+            with os.fdopen(fd, "r", encoding="utf-8") as journal:
+                fd = None
+                raw = journal.read((8 << 20) + 1)
+            if len(raw.encode()) > 8 << 20:
+                return
+            rows = [json.loads(line) for line in raw.splitlines()]
+            if not rows or rows[0].get("type") != "session_meta":
+                return
+            meta = rows[0]["payload"]
+            if meta.get("id") != sid or Path(meta.get("cwd", "")) != Path(thread["cwd"]):
+                return
+            observed = {}
+            active = None
+            for row in rows[1:]:
+                value = row.get("payload", {})
+                if row.get("type") == "event_msg" and value.get("type") == "task_started":
+                    active = value.get("turn_id")
+                elif row.get("type") == "event_msg" and value.get("type") == "task_complete":
+                    active = None
+                elif (
+                    active
+                    and row.get("type") == "response_item"
+                    and value.get("type") == "message"
+                    and value.get("role") == "assistant"
+                ):
+                    parts = value.get("content", [])
+                    if not parts or any(p.get("type") != "output_text" for p in parts):
+                        continue
+                    text = "".join(p["text"] for p in parts)
+                    stamp = datetime.fromisoformat(row["timestamp"])
+                    if stamp.tzinfo is None:
+                        return
+                    key = (active, value["id"])
+                    if key in observed:
+                        return
+                    observed[key] = (text, stamp.isoformat())
+            for turn in thread["turns"]:
+                for item in turn["items"]:
+                    evidence = observed.get((turn["id"], item["id"]))
+                    if item["type"] == "agentMessage" and evidence and item["text"] == evidence[0]:
+                        item["nativeObservedAt"] = evidence[1]
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            return
+        finally:
+            if fd is not None:
+                os.close(fd)

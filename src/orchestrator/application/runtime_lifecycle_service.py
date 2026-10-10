@@ -55,6 +55,7 @@ class RuntimeLifecycleService:
             or run.herdr_server_session != self.herdr.server_session
             or op.result.get("server_session") != self.herdr.server_session
             or op.result.get("sandbox") != self.herdr.sandbox
+            or op.result.get("mcp_configuration") != getattr(self.herdr, "mcp_fingerprint", None)
             or op.result.get("cwd") != run.worktree_path
             or op.result.get("branch") != run.branch
             or op.result.get("name") != name

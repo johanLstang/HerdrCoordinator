@@ -371,3 +371,25 @@ Active kräver korrelerad native bekräftelse av svaret.
 [Scenario och operatörsinstruktion](docs/attention/F-33-nativeprov.md) beskriver
 A:s parkering, B/C:s leveranser, sparat beslut vid fulla slots och begränsad
 samma-session-resume. Aktuella explicita reviews och verkliga services krävs.
+
+## Registrerad Integration-start (F34)
+
+`EpicStartService` och explicit injicerat MCP `epic_start` startar en operatörsbunden
+Integration för en epic, med fullständigt uppdrag och strikt native bekräftelse.
+Samma ägare/startavsikt återanvänds vid retry och SQLite-omstart utan nya Workers
+eller dubbla sessioner. Se [startkedja och recovery](docs/integration/F-34-start.md)
+och [faktiskt native prov](docs/integration/F-34-native.json). F35 levererar
+agentstyrda taskverktyg; CLI aktiverar ingen implicit epicloop.
+
+
+### Samlad epicverifiering (F36)
+
+Registrerad F34/F35-Integration kan få `epic_complete` genom den valfria
+operatörskompositionen `EpicCompletionService` och `EpicCompletionSpec`.
+Tre betrodda argv/timeouts verifierar build, test och epicacceptans efter att
+hela det explicita scopet har faktiska Done-/review-/merge-/eftertest-/stoppbevis.
+Komplett diff mot aktuell main, commits, taskmedlemskap, acceptansrevision och
+delresultat sparas i SQLite före `EPIC_READY_FOR_REVIEW`. Ändrade underlag
+kräver omverifiering; kända steg återanvänds, okänt processutfall omsänds inte
+automatiskt. Epicboard förblir Active och Coordinator tar slutreview och
+main-integration separat. Se [konfiguration, grindar och recovery](docs/integration/F-36-completion.md).

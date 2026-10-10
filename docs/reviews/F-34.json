@@ -1,0 +1,173 @@
+{
+  "task": "F34",
+  "task_id": "678fb877-d9c7-4d07-a182-9ee79cc0cbdc",
+  "role": "Bootstrap Integration",
+  "status": "READY_FOR_REVIEW",
+  "branch": "task/e09-f34",
+  "source": "e8b2dc2a23fbf514cbfda61c41342261af3adfe5",
+  "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+  "tests": {
+    "command": "uv run --locked pytest tests/test_epic_start.py tests/test_mcp.py tests/test_worktrees.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_persistence.py -x",
+    "passed": 134,
+    "seconds": 64.152,
+    "exit_code": 0
+  },
+  "gates": {
+    "files": [
+      "Backlog.md",
+      "README.md",
+      "docs/integration/F-34-native.json",
+      "docs/integration/F-34-start.md",
+      "prompts/integration-v1.md",
+      "pyproject.toml",
+      "src/orchestrator/application/epic_start_service.py",
+      "src/orchestrator/application/runtime_service.py",
+      "src/orchestrator/application/worktree_service.py",
+      "src/orchestrator/domain/integration_contracts.py",
+      "src/orchestrator/mcp/contracts.py",
+      "src/orchestrator/mcp/server.py",
+      "tests/test_epic_start.py"
+    ],
+    "wheel_modules": 58,
+    "policies": 3,
+    "local_links": 130,
+    "auth_scan": true,
+    "native_code_binding": true,
+    "schema_lock_existing_policies_unchanged": true
+  },
+  "full_patch": {
+    "bytes": 73807,
+    "sha256": "bb2cf89eff008f07c56bd241668b35a64fa1e977b2b83c68040628d9b6704349",
+    "lines": 1445
+  },
+  "native": {
+    "version": 1,
+    "kind": "actual-native-herdr-codex-and-mcp-sdk",
+    "server": "hc-f34-20261009",
+    "epic": {
+      "id": "e4b606b8-3129-4495-a48d-ff76f7dd1b56",
+      "project_id": "f34-probe",
+      "epic_id": "f34-epic",
+      "branch": "feature/epic-f34-epic",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f34/.herdr/probes/f34/trees/f34-probe/epic-f34-epic",
+      "status": "ACTIVE",
+      "integration_agent_id": "hc-3107dad3568a425b975d7881",
+      "herdr_workspace_id": "w1",
+      "herdr_server_session": "hc-f34-20261009",
+      "herdr_tab_id": "w1:t1",
+      "herdr_pane_id": "w1:p1",
+      "herdr_terminal_id": "term_65d6bd57f82b31",
+      "codex_session_id": "01a121bf-e620-7081-97e1-e92adad365fe",
+      "base_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+      "current_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+      "approved_source_commit": null,
+      "approved_target_commit": null,
+      "merge_commit": null,
+      "started_at": "2026-10-09T17:39:44.757301Z",
+      "completed_at": null
+    },
+    "operation_id": "ca9cf2a8-7103-4916-b16e-8543bc5cd6d3",
+    "stage": "REGISTERED",
+    "assignment_hash": "bce49cf1ca8fd7bda9537436285512941df3e4f4777719dcb069aaa888255e43",
+    "context_hash": "91dccc3d745f402fd23944c37a4a729984b7147885c4231ad1a77d662dd18f19",
+    "ack": {
+      "turn_id": "01a121bf-f0d6-7ea1-8c77-69437ca99b2a",
+      "item_id": "msg_0593b02838dc0a1b016ac926e98af48191915fbfbf91b24b73",
+      "message_hash": "a711ad99ab93d98625b678c5007f756597891bcf56a2bc9f94ad24507f1e0e43",
+      "session_id": "01a121bf-e620-7081-97e1-e92adad365fe"
+    },
+    "thread_id": "01a121bf-e620-7081-97e1-e92adad365fe",
+    "session_id": "01a121bf-e620-7081-97e1-e92adad365fe",
+    "actual_user_turns": 1,
+    "tasks": 0,
+    "worker_slots": 0,
+    "scope": {
+      "own": true,
+      "foreign": "FORBIDDEN",
+      "epic_start": "FORBIDDEN",
+      "main_merge": "FORBIDDEN"
+    },
+    "teamplayer_sync": "not enabled in this native startup fixture",
+    "product_files": {
+      "src/orchestrator/application/epic_start_service.py": "77de186781870596173a20212a1653f5ab1163f35df234fab6ca9a5d922431a4",
+      "src/orchestrator/domain/integration_contracts.py": "13be526d4377bffd1af73f900d733e9a4bb0b2947a87dba3ba93150ebec906fd",
+      "src/orchestrator/application/worktree_service.py": "56dee552e6ef9262a315b6968c723472c547d172d42f5170ae884bec91771081",
+      "src/orchestrator/application/runtime_service.py": "1a40ff8919d9217a3ed0752f6dbf3f977cabe87d6c00b45bae10f8e37849d29f",
+      "src/orchestrator/mcp/contracts.py": "85d86fadd815ca504d0739a073690c62c848f49577bf8a88308d62bb77179750",
+      "src/orchestrator/mcp/server.py": "3f4c4e6b8291cda3110cff3ab6047074ee6fd355591cfd8fa32d69f1cffa7261",
+      "prompts/integration-v1.md": "c6a8ee346e6ff776e1f29bfb14a3120b3fc45da42ca7c7c6d31214279ede978b"
+    },
+    "sqlite_reopen_replay": {
+      "operation_id": "ca9cf2a8-7103-4916-b16e-8543bc5cd6d3",
+      "epic_run_id": "e4b606b8-3129-4495-a48d-ff76f7dd1b56",
+      "project_id": "f34-probe",
+      "epic_id": "f34-epic",
+      "branch": "feature/epic-f34-epic",
+      "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f34/.herdr/probes/f34/trees/f34-probe/epic-f34-epic",
+      "session_id": "01a121bf-e620-7081-97e1-e92adad365fe",
+      "integration_agent_id": "hc-3107dad3568a425b975d7881",
+      "stage": "REGISTERED",
+      "reason": null
+    },
+    "stop": {
+      "operation_id": "ff9646b7-c563-4564-ad7a-e79b6b4d5207",
+      "status": "SUCCEEDED",
+      "actual_runtime_status": "STOPPED",
+      "session_id": "01a121bf-e620-7081-97e1-e92adad365fe"
+    }
+  },
+  "limits": "Operator-enabled Python API; native startup/session and SDK proven, optional initial TeamPlayer sync tested with controlled adapter. No task control loop/main merge; F35-F37/F38/F47 remain. Actual Task-to-E09 review, merge and postverification pending.",
+  "decision": "APPROVED",
+  "full_review": "All 13 files/1445 full patch lines read; actual private SQLite/native Codex SDK ACK/thread/session/process stop/Git facts independently checked; no blocking findings.",
+  "operation_id": "f3d9e533-dde3-4910-b8e2-9085dbb2bd7a",
+  "native_review": {
+    "actual_codex_turns": 1,
+    "actual_ack": {
+      "turn_id": "01a121bf-f0d6-7ea1-8c77-69437ca99b2a",
+      "item_id": "msg_0593b02838dc0a1b016ac926e98af48191915fbfbf91b24b73",
+      "message_hash": "a711ad99ab93d98625b678c5007f756597891bcf56a2bc9f94ad24507f1e0e43"
+    },
+    "stop_physically_inactive": true,
+    "fixture_branch_main_preserved": true
+  },
+  "merge_stage": "DONE",
+  "bootstrap_exception": "Manual development worktrees have no product run/runtime registration; GitAdapter after independent branch/path/base/clean/current SHA and exact full review under common lock. No adoption or fabricated ownership/run/session/slot evidence.",
+  "merge_commit": "969de88d91bee32231d81e980a97b643c2ad40fa",
+  "post_tests": {
+    "command": "uv run --locked pytest tests/test_epic_start.py tests/test_mcp.py tests/test_worktrees.py tests/test_runtime_start.py tests/test_runtime_lifecycle.py tests/test_persistence.py -x",
+    "passed": 134,
+    "seconds": 65.396,
+    "exit_code": 0,
+    "merge_commit": "969de88d91bee32231d81e980a97b643c2ad40fa"
+  },
+  "post_gates": {
+    "files": [
+      "Backlog.md",
+      "README.md",
+      "docs/integration/F-34-native.json",
+      "docs/integration/F-34-start.md",
+      "prompts/integration-v1.md",
+      "pyproject.toml",
+      "src/orchestrator/application/epic_start_service.py",
+      "src/orchestrator/application/runtime_service.py",
+      "src/orchestrator/application/worktree_service.py",
+      "src/orchestrator/domain/integration_contracts.py",
+      "src/orchestrator/mcp/contracts.py",
+      "src/orchestrator/mcp/server.py",
+      "tests/test_epic_start.py"
+    ],
+    "wheel_modules": 58,
+    "policies": 3,
+    "local_links": 130,
+    "auth_scan": true,
+    "native_code_binding": true,
+    "schema_lock_existing_policies_unchanged": true
+  },
+  "teamplayer_version": 6,
+  "task_text_sync_confirmed": true,
+  "epic_status": {
+    "status": "InProgress",
+    "version": 8,
+    "acceptance": "0/3"
+  }
+}

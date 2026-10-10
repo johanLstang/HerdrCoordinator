@@ -1,0 +1,91 @@
+{
+  "review": {
+    "task": "F37",
+    "task_id": "b8e3bd6d-2287-447a-9f48-bb7863101cd6",
+    "role": "Bootstrap Integration",
+    "worker_handoff": "READY_FOR_REVIEW",
+    "source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+    "target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+    "main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+    "branch": "task/e09-f37",
+    "target_branch": "feature/epic-e09",
+    "files": [
+      "Backlog.md",
+      "docs/integration/F-37-native.json",
+      "docs/integration/F-37-native.md",
+      "docs/integration/F-37-progress.json",
+      "tests/native_f37_acceptance.py",
+      "tests/native_f37_host.py",
+      "tests/native_f37_probe.py"
+    ],
+    "full_patch": {
+      "bytes": 288434,
+      "sha256": "912ad99da28d3f06937ab91c0420d5e53764c8dfcd728522401bd4ed75877b6b",
+      "lines": 4585
+    },
+    "source_checkpoint": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
+    "gates": {
+      "native_report_hash": "066f3f9313f296644ad77170ec7d741b9ebd622c0af5b01800a37aab50ea0044",
+      "native_proof_sha256": "6229b6fd38763161a869cd8046b8135d875d943b5d8ea08fb115c436ad6d7a2f",
+      "native_tasks": 3,
+      "native_deliveries_tests_stops_done": "PASS",
+      "full_native_diff_hash": "cba19a62e3ca301bd7d02831607290ecb9171df741251ffefe29f2c8afa038bc",
+      "106_source_files_unchanged": true,
+      "production_schema_lock_config_policies_unchanged": true,
+      "wheel_modules": 62,
+      "policies": 3,
+      "checked_local_links": 117,
+      "all_changed_files_auth_scan": true,
+      "full_suite": "PENDING, recorded separately; structural checks do not imply pytest PASS"
+    },
+    "decision": "APPROVED",
+    "review": [
+      "Entire three-file native harness read: guarded fresh authenticated per-request composition, actual protected human prerequisite, F34/F13 lifecycle, durable prompt intents before dispatch/no blind replay, read-only receipt inspection, bounded trusted semantic acceptance. No production source, lock, schema or policy changes.",
+      "Full changed documentation and 236919-byte public native evidence examined through all serialized records and actual receipt/manifest/diff digests; three real task source/target approvals, no-ff parents, complete current task patches, test exit0, actual stops, slots, fresh authenticated User105 Done, same-SID correction/Attention, dependency/max2 and original native final receipt identity verified. Native full epic fixture patch read in full, including runnable README and validation/dependency tests.",
+      "Operator prerequisite correction/reload and Cancel of an incomplete native call are explicit. No operator semantic taskstart/scheduling/review/approval/merge/completion decisions. Native RPC text clipping is explicit; independently current full persisted receipt and exact native final receipt hashes suffice for F37 report acceptance, no unclipped transcript claim.",
+      "Own original Integration runtime actual F13 STOPPED confirmed before named server stop; private state/worktrees/session history retained. Auth material scan, local links, 106 unchanged source bindings, 62 exact wheel modules/3 policies and Ruff/build/READMECLI pass.",
+      "F37 task scope is native scenario harness and verification documentation. Full 892-test source suite is an E09 aggregate gate still running; it is not claimed passed or used to approve untested production changes. E09 remains Active until separate aggregate review/PR/main/final verification."
+    ],
+    "verified_criteria": [
+      "F-37.A1",
+      "F-37.A2",
+      "F-37.A3"
+    ],
+    "findings": [],
+    "bootstrap_exception": "Manual development worktrees have no product runtime/run registration. GitAdapter only after actual clean/path/branch/base/current SHA, complete review, common-directory lock and verification. No adoption or fabricated task ownership/session/slot evidence.",
+    "operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5"
+  },
+  "integration": {
+    "operation_id": "18377c56-86d5-4b71-a0a5-939d1306c4d5",
+    "stage": "DONE_VERIFIED_TEAMPLAYER_DONE",
+    "source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+    "target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+    "review_sha256": "ccd18a69895defa8854067188b45c82a42891a5c218c4d1b7c939efba4c4b809",
+    "bootstrap_exception": "Manual development worktrees have no product runtime/run registration. GitAdapter only after actual clean/path/branch/base/current SHA, complete review, common-directory lock and verification. No adoption or fabricated task ownership/session/slot evidence.",
+    "merge_commit": "73bca342db32cf320631e0a8c9055ef010d1ce21",
+    "post_checks": {
+      "ruff": 0,
+      "build": 0,
+      "readme_cli": 0,
+      "native_report_hash": "066f3f9313f296644ad77170ec7d741b9ebd622c0af5b01800a37aab50ea0044",
+      "native_proof_sha256": "6229b6fd38763161a869cd8046b8135d875d943b5d8ea08fb115c436ad6d7a2f",
+      "native_tasks": 3,
+      "native_deliveries_tests_stops_done": "PASS",
+      "full_native_diff_hash": "cba19a62e3ca301bd7d02831607290ecb9171df741251ffefe29f2c8afa038bc",
+      "106_source_files_unchanged": true,
+      "production_schema_lock_config_policies_unchanged": true,
+      "wheel_modules": 62,
+      "policies": 3,
+      "checked_local_links": 117,
+      "all_changed_files_auth_scan": true,
+      "full_suite": "PENDING, recorded separately; structural checks do not imply pytest PASS"
+    },
+    "teamplayer": {
+      "status": "Done",
+      "status_version": 12,
+      "user": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "details_version": 13,
+      "description_readback": "CONFIRMED_EXACT"
+    }
+  }
+}

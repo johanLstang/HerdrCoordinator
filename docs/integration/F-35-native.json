@@ -1,0 +1,1826 @@
+{
+  "version": 1,
+  "kind": "actual-native-herdr-codex-scoped-mcp-git-sqlite-teamplayer",
+  "server": "hc-f35-r4-20261010",
+  "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+  "integration_session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+  "integration_agent": "hc-3d63c5eda997457790f57a45",
+  "epic_branch": "feature/epic-f35-epic-r5",
+  "epic_commit": "cba439a1f71182cd4b31cca9509bc3b032cb7c1b",
+  "fixture_main_unchanged": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "fixture_epic_status": "Active; no main merge/aggregate handoff in F35",
+  "tasks": [
+    {
+      "task_id": "f35-a",
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+      "branch": "task/f35-epic-r5-f35-a",
+      "source_commit": "af8d62c88218963e64783069f681b15f971a2659",
+      "merge_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+      "merge_operation_id": "096b93bc-c512-4f7b-aec7-3f59eb15beac",
+      "context_id": "cef50c780a7a501edea152d74c9c672531b9ff7023972452c4d6f89813c7624a",
+      "target_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+      "diff": {
+        "complete": true,
+        "bytes": 2200,
+        "sha256": "31143798a2740b1b5971f7c38d5fb46b1f732f68b03db7b0da0de01ceae94f2c"
+      },
+      "changed_files": [
+        {
+          "path": "README.md",
+          "status": "M",
+          "additions": 11,
+          "deletions": 0,
+          "binary": false
+        },
+        {
+          "path": "f35_alpha.py",
+          "status": "A",
+          "additions": 6,
+          "deletions": 0,
+          "binary": false
+        },
+        {
+          "path": "tests/test_f35_alpha.py",
+          "status": "A",
+          "additions": 30,
+          "deletions": 0,
+          "binary": false
+        }
+      ],
+      "verified_criteria": [
+        "normalize(' a ') == 'A' och normalize('') == 'UNKNOWN'",
+        "Egna tester och operatörstest passerar",
+        "README har ett exempel för normalize"
+      ],
+      "approval_id": "59789b6c-2964-458b-be46-2bfc1d738aed",
+      "review_test": {
+        "operation_id": "5971e3a3-c983-4583-ac3e-a01bc19ea81e",
+        "key": "review-test:8e5fc629-8c72-42b9-af21-879bcc11af4f",
+        "status": "SUCCEEDED",
+        "source_commit": "af8d62c88218963e64783069f681b15f971a2659",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "target_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+        "exit_code": 0,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "timeout": 300
+      },
+      "delivery_test": {
+        "id": "b170dd9b-4050-4797-aa2c-5d802b5e7353",
+        "status": "SUCCEEDED",
+        "delivery_id": "096b93bc-c512-4f7b-aec7-3f59eb15beac",
+        "merge_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+        "source_commit": "af8d62c88218963e64783069f681b15f971a2659",
+        "target_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "timeout": 300,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "exit_code": 0
+      },
+      "stop": {
+        "id": "b4b8f359-19f9-4773-8dc0-65789149f33c",
+        "status": "SUCCEEDED",
+        "stage": "STOPPED",
+        "inactive": true
+      },
+      "runtime": "STOPPED",
+      "board": {
+        "task_id": "9be2fb7d-a112-4952-b278-5b73d7dcb70a",
+        "status": "Done",
+        "version": 18,
+        "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+      },
+      "worker_teamplayer_mutating_mcp_calls": 0
+    },
+    {
+      "task_id": "f35-b",
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+      "branch": "task/f35-epic-r5-f35-b",
+      "source_commit": "4ebb342c0acf141b4d556ec581602a6729811a28",
+      "merge_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+      "merge_operation_id": "a7a3baa3-287a-403e-a5c0-ea5030f04b44",
+      "context_id": "932e15eba7b10092314c7db155fdca49dc4cd2f684594a2fa83e76272afedb84",
+      "target_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+      "diff": {
+        "complete": true,
+        "bytes": 1105,
+        "sha256": "7a99b26fe22a0b74e6bc28c492d8b655445bf00c86bacab2abf65b6118f19a24"
+      },
+      "changed_files": [
+        {
+          "path": "f35_beta.py",
+          "status": "A",
+          "additions": 6,
+          "deletions": 0,
+          "binary": false
+        },
+        {
+          "path": "tests/test_f35_beta.py",
+          "status": "A",
+          "additions": 23,
+          "deletions": 0,
+          "binary": false
+        }
+      ],
+      "verified_criteria": [
+        "total([1,-2,4]) == 3 och total([]) == 0",
+        "Egna tester och operatörstest passerar"
+      ],
+      "approval_id": "4203ac1b-2d8d-4eed-9f3b-34c7304b5498",
+      "review_test": {
+        "operation_id": "4312aef0-e670-4f62-97f4-dd2a88f1a1c0",
+        "key": "review-test:f9a29c14-ca39-4949-bac1-98b85c745d35",
+        "status": "SUCCEEDED",
+        "source_commit": "4ebb342c0acf141b4d556ec581602a6729811a28",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "target_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+        "exit_code": 0,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "timeout": 300
+      },
+      "delivery_test": {
+        "id": "83af872d-c37a-40ca-b008-3fc4b6c0f748",
+        "status": "SUCCEEDED",
+        "delivery_id": "a7a3baa3-287a-403e-a5c0-ea5030f04b44",
+        "merge_commit": "e4a6f3b7ba1d90e7b697baa7ac058eeb0d5ddb42",
+        "source_commit": "4ebb342c0acf141b4d556ec581602a6729811a28",
+        "target_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "timeout": 300,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "exit_code": 0
+      },
+      "stop": {
+        "id": "04ffe3c9-c95a-4e29-8f16-1b34577aa4e6",
+        "status": "SUCCEEDED",
+        "stage": "STOPPED",
+        "inactive": true
+      },
+      "runtime": "STOPPED",
+      "board": {
+        "task_id": "63494f9a-e154-42af-8f33-48410a0c26b5",
+        "status": "Done",
+        "version": 15,
+        "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+      },
+      "worker_teamplayer_mutating_mcp_calls": 0
+    },
+    {
+      "task_id": "f35-c",
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "session_id": "01a1268c-b177-7340-a856-5a48a42d54f0",
+      "branch": "task/f35-epic-r5-f35-c",
+      "source_commit": "c2ad7600083ad64602ee9b9c1f8a4c02eda8c14e",
+      "merge_commit": "cba439a1f71182cd4b31cca9509bc3b032cb7c1b",
+      "merge_operation_id": "b5e0a228-675d-4401-b70e-7f6312367e0e",
+      "context_id": "3bb27520434e4ed14c245ab7630cc05730ac7168a9c9cd534b2e095298a70080",
+      "target_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+      "diff": {
+        "complete": true,
+        "bytes": 1559,
+        "sha256": "af5e4d7b80c774eee8ada2967f440a8a827b7b2790823b790a487d448d73abc1"
+      },
+      "changed_files": [
+        {
+          "path": "f35_gamma.py",
+          "status": "A",
+          "additions": 8,
+          "deletions": 0,
+          "binary": false
+        },
+        {
+          "path": "tests/test_f35_gamma.py",
+          "status": "A",
+          "additions": 29,
+          "deletions": 0,
+          "binary": false
+        }
+      ],
+      "verified_criteria": [
+        "render(' a ') == 'status=A' och render('') == 'status=UNKNOWN'",
+        "Egna tester och operatörstest passerar"
+      ],
+      "approval_id": "42446e82-b2a5-4b24-a964-35a4eb20a563",
+      "review_test": {
+        "operation_id": "4a1ef557-84ed-4be5-b8c8-ea32497990b6",
+        "key": "review-test:defffb9e-c96b-4d38-96a0-3b3b35fd0b22",
+        "status": "SUCCEEDED",
+        "source_commit": "c2ad7600083ad64602ee9b9c1f8a4c02eda8c14e",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "target_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+        "exit_code": 0,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "timeout": 300
+      },
+      "delivery_test": {
+        "id": "553e0338-1e07-4727-8b3c-782fdc605b9d",
+        "status": "SUCCEEDED",
+        "delivery_id": "b5e0a228-675d-4401-b70e-7f6312367e0e",
+        "merge_commit": "cba439a1f71182cd4b31cca9509bc3b032cb7c1b",
+        "source_commit": "c2ad7600083ad64602ee9b9c1f8a4c02eda8c14e",
+        "target_commit": "d2e9fcf140cf5231e94f415589ce49d606d04a5c",
+        "command_hash": "026683611d053e184b9122cf5cacd00ddd7f391f411ef6fd51807baa3f47f149",
+        "timeout": 300,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.venv/bin/python",
+          "/tmp/herdr-f35-r5-operator-20261010/verify.py"
+        ],
+        "exit_code": 0
+      },
+      "stop": {
+        "id": "df97c4cb-76b3-4240-897d-843f740e6f2b",
+        "status": "SUCCEEDED",
+        "stage": "STOPPED",
+        "inactive": true
+      },
+      "runtime": "STOPPED",
+      "board": {
+        "task_id": "863a2e0a-07d3-4110-81cc-bb0b8282054d",
+        "status": "Done",
+        "version": 15,
+        "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+      },
+      "worker_teamplayer_mutating_mcp_calls": 0
+    }
+  ],
+  "peak_native_reported_worker_reservations": 2,
+  "dependent_c_started_after_a_done": true,
+  "native_tool_calls": [
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-3b68f48e-c3d9-4af4-90fd-156b76c59e89",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-98cc060c-7ba0-4fe5-886c-2999173c48db",
+      "tool": "task_get_next",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-eac35a21-d019-4d39-85db-a46a1d6debf4",
+      "tool": "task_start",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-c",
+      "request_key": null,
+      "code": "DEPENDENCY_NOT_DONE",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-4a978da7-bc7b-4c1a-a3ce-b32e75963a78",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-a",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-566f6f22-5500-4a4f-a306-9168556a15d3",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-b",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-59439541-5267-477b-b80c-6c128e564683",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-a02fdd20-e1fc-4f8e-8ce8-1aedbc469edc",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-8489f708-a8da-42ab-8cc1-da1b47dd7ece",
+      "tool": "runtime_status",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-463ef35f-0357-4244-bbd4-8735feb61c2b",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-e93e43b2-daf2-4cb4-b96b-d482c4e84843",
+      "tool": "runtime_status",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "INVALID_ARGUMENT",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": null
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-9e4850c3-4cba-4cbc-a79d-80f68a7962bb",
+      "tool": "runtime_status",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "INVALID_ARGUMENT",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": null
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-25f26adc-efc5-4b89-acdb-f908cbc08d7e",
+      "tool": "runtime_status",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1263e-f96b-7140-811b-2bc304720951",
+      "item_id": "exec-4f4e37c7-d800-4fdd-bee0-3170f6080690",
+      "tool": "runtime_status",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-2c3846de-c36d-4940-9364-2065dea87a3d",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-4796a8cd-c28b-4319-b741-01a5ab44a3c0",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-50a5eeaf-7aa7-45e6-a315-269f79fd61c2",
+      "tool": "task_park_blocked",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-aef72c7f-5610-4da9-a544-856142f91f79",
+      "tool": "task_park_blocked",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-f4fdbf08-76b4-4d4f-9c04-a6414cd5a228",
+      "tool": "resume_task",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "RESUME_UNCONFIRMED",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-02ec62e6-db29-4085-b38e-6f1c8bcc6c27",
+      "tool": "resume_task",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "INPUT_PENDING",
+      "ok": false,
+      "operation_id": "74a7b9ec-9af4-42e9-89e8-63f519d11765",
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-7820b5a8-b032-4d4b-ae74-cc198a73fe6e",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-c5fbbc81-c642-4a06-80ef-30cc20052945",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-e55d0635-1f88-4c9c-b2d2-7509f2b4980d",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12659-143a-74e3-ba0d-ef8aa807a15a",
+      "item_id": "exec-39dfc9ea-b6ea-4d02-944b-22001e32f28d",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1266d-78a5-7593-838a-bb2eade19989",
+      "item_id": "exec-2b3887dc-e568-4eb9-9a5f-716882a4fa4c",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a1266d-78a5-7593-838a-bb2eade19989",
+      "item_id": "exec-6ee2c67e-334d-4ce6-b026-11bf6cdb5e89",
+      "tool": "resume_task",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "TEAMPLAYER_RESPONSE_UNAVAILABLE",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": null
+    },
+    {
+      "turn_id": "01a1266d-78a5-7593-838a-bb2eade19989",
+      "item_id": "exec-ba5f6d8e-bfd5-4efb-8cf2-070a5b11e926",
+      "tool": "resume_task",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "TEAMPLAYER_RESPONSE_UNAVAILABLE",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": null
+    },
+    {
+      "turn_id": "01a1266d-78a5-7593-838a-bb2eade19989",
+      "item_id": "exec-bef2aa90-acca-443f-85c7-d751ee84564d",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": null
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-0574b22c-ee5c-45f4-81b5-d6a39ae27d72",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-b9077b73-a11e-4257-904b-9fc49d33d230",
+      "tool": "resume_task",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": "1b427fe3-2c2e-409a-a320-ca6c1a3406d4",
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-dc376b42-a0df-4969-a296-5400cc38134a",
+      "tool": "resume_task",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": "74a7b9ec-9af4-42e9-89e8-63f519d11765",
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-efde53e7-664c-47bd-af45-43bad57fb2cb",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-64205a6e-5fa7-48ec-a9e4-d742f3ddaad1",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-245f7f38-e209-4cb3-b03b-93d1308aa453",
+      "tool": "task_review_request",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": "schedule-review:f31284857e52be1d1112e2ba76348992f05c89912f6e06dca2c5f846f1ac5c2e",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "f9a29c14-ca39-4949-bac1-98b85c745d35",
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-10f4d4c5-d6ba-4379-930f-6abbd488a836",
+      "tool": "task_approve",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": "f35-agent-b-approve-932e15eba7b10092314c7db155fdca49dc4cd2f684594a2fa83e76272afedb84",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "4203ac1b-2d8d-4eed-9f3b-34c7304b5498",
+      "reserved_workers": 2
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-93536cb3-e2ee-4781-a69f-d443ff0b30d9",
+      "tool": "task_merge",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "task_id": null,
+      "request_key": "f35-agent-b-merge-932e15eba7b10092314c7db155fdca49dc4cd2f684594a2fa83e76272afedb84",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "a7a3baa3-287a-403e-a5c0-ea5030f04b44",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12673-e5cd-70b2-9a82-645e33981556",
+      "item_id": "exec-3b5f48f7-e1e5-4da5-bb33-19685ed20467",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-7048d2be-4344-4d0d-84e2-3847807e0918",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-15a8cd87-b6a2-4e3a-8657-b720091471b7",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-a",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-0befd3ee-4fb1-4ea1-87aa-a0b3e6e1a4ae",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-be77072e-733a-4195-8795-51790b6afe00",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-03073ac4-c474-4ff9-b29c-63499f965104",
+      "tool": "task_review_request",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "schedule-review:10fedfd08225e629897d7a12e22b94bff744cf1799b99b5cc53dacc33d632125",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "6cdd0896-3b5f-4e4b-9f31-24c550c36bc6",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-f3740198-3a33-4525-a1d3-59bfaee63418",
+      "tool": "task_request_changes",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "f35-agent-a-readme-fix",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "3d56ecc5-0fdb-4281-9e4f-7e895525fb73",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-d6888fdd-47a3-4117-9c73-3fe83e74ebb9",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-ff54862f-f0ab-4c44-99c7-e1aecc390cad",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-c40540c7-c392-47f0-8a94-894ad3a2bd25",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-e31ce327-bf50-429c-8b35-cb99c608f8d4",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-eb575006-74f8-4c24-af04-0f2784353c3b",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-60dbac4d-911d-4bda-a3e9-31bc09ebc843",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12681-0019-7840-b86c-156eb03d9761",
+      "item_id": "exec-507f6dc0-ebdf-437e-9d85-97c87a25b225",
+      "tool": "task_review_request",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "schedule-review:10fedfd08225e629897d7a12e22b94bff744cf1799b99b5cc53dacc33d632125",
+      "code": "REVIEW_TASK_NOT_READY",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12688-ee80-7be2-8ae3-7b7bd829c839",
+      "item_id": "exec-76f78d6f-4242-4f77-96d0-e901d294fd3d",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12688-ee80-7be2-8ae3-7b7bd829c839",
+      "item_id": "exec-669b6688-62d3-447c-b528-376762f7e526",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-a",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12688-ee80-7be2-8ae3-7b7bd829c839",
+      "item_id": "exec-feab3804-f763-4729-8868-6ede9cf020f0",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12688-ee80-7be2-8ae3-7b7bd829c839",
+      "item_id": "exec-7a202507-4f16-40ed-8269-23d6b859b1d4",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a12688-ee80-7be2-8ae3-7b7bd829c839",
+      "item_id": "exec-94b79661-ae86-4e15-be75-768c4a321d53",
+      "tool": "task_review_request",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "schedule-review:10fedfd08225e629897d7a12e22b94bff744cf1799b99b5cc53dacc33d632125",
+      "code": "REVIEW_TASK_NOT_READY",
+      "ok": false,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-56cadac7-40bd-49ca-84c8-f279bc819759",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-6c66fd76-39f5-49aa-8494-39f6f6003538",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-a",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-3daba398-66a9-465a-92c6-3cbe4cbbf434",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-5f4a817a-924d-4ca7-901f-9400773c0f35",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-f5460ba0-bcfe-4808-9d77-1a5f2ddd653b",
+      "tool": "task_review_request",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "schedule-review:ca3b517bd04db4fa2606a21bd6d911883235b940a1a3c72d08bd9009ab645839",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "8e5fc629-8c72-42b9-af21-879bcc11af4f",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-0bbdc029-bdde-471b-bc7f-2edba94009fe",
+      "tool": "task_approve",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "f35-agent-a-approve-cef50c780a7a501edea152d74c9c672531b9ff7023972452c4d6f89813c7624a",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "59789b6c-2964-458b-be46-2bfc1d738aed",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-70a927dc-7c90-49fa-a044-3d2e05fa8844",
+      "tool": "task_merge",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "task_id": null,
+      "request_key": "f35-agent-a-merge-cef50c780a7a501edea152d74c9c672531b9ff7023972452c4d6f89813c7624a",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "096b93bc-c512-4f7b-aec7-3f59eb15beac",
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-fb6d2772-5c22-44cb-a81d-d4c6ea9178b7",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-3b4d1ac4-6f30-445b-b842-570a19e090fa",
+      "tool": "task_start",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": "f35-c",
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-2887513d-1eeb-4e0a-ac90-deaa69049466",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-a33794ae-d011-4e07-a35b-6bcd0f6c5a70",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-eed4dc16-e8d5-41ae-81f2-96c4f91e99b6",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-56f01d02-c0e9-4a84-9451-114f1f63569d",
+      "tool": "task_park_blocked",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-c9924143-c38f-4980-9f12-7250bb4b1bb6",
+      "tool": "resume_task",
+      "status": "failed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "task_id": null,
+      "request_key": null,
+      "code": "INPUT_PENDING",
+      "ok": false,
+      "operation_id": "0ceb06b3-a5ff-49cf-a19a-15209c33dc63",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-2246e301-692f-40ed-a1e6-e05b9ed51787",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-8c79a3a1-365c-4f32-b285-705cd81dcf46",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-11b745a4-5ebc-4bd2-b17a-31caa4d8e607",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-7223eea1-db43-45c1-ab9f-f3dbd07799bd",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-d0fd6a71-bc23-493f-9b4a-8dca4c175f9f",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-b5fc7389-660a-46df-9f83-f64fd47e03b8",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-2a27740e-4012-41e3-8116-12a951b5c62b",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-bbeb059e-3666-4c72-b525-9de2643dbbf0",
+      "tool": "task_schedule",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-c877be97-c144-4da3-bd68-e88c1a273d4a",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-4ac21868-3d41-46f6-b6a8-77982560c272",
+      "tool": "task_review_request",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "task_id": null,
+      "request_key": "schedule-review:3bd48de459d20115e52a79736395c0487b8d6ab14d59cffe23a1eca1f8193d51",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "defffb9e-c96b-4d38-96a0-3b3b35fd0b22",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-5e33e5e6-86f5-422b-8864-b67efbaec19a",
+      "tool": "task_approve",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "task_id": null,
+      "request_key": "f35-agent-c-approve-3bb27520434e4ed14c245ab7630cc05730ac7168a9c9cd534b2e095298a70080",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "42446e82-b2a5-4b24-a964-35a4eb20a563",
+      "reserved_workers": 1
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-1de65cf1-d4fd-4f90-a403-65a952441fc5",
+      "tool": "task_merge",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": null,
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "task_id": null,
+      "request_key": "f35-agent-c-merge-3bb27520434e4ed14c245ab7630cc05730ac7168a9c9cd534b2e095298a70080",
+      "code": "OK",
+      "ok": true,
+      "operation_id": "b5e0a228-675d-4401-b70e-7f6312367e0e",
+      "reserved_workers": 0
+    },
+    {
+      "turn_id": "01a1268a-daf1-7cd0-b2eb-f0acb20fccfd",
+      "item_id": "exec-efb952d4-3d0e-49e1-a61b-ac5efff5b442",
+      "tool": "integration_overview",
+      "status": "completed",
+      "project_id": "f35-probe-r5",
+      "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "task_run_id": null,
+      "task_id": null,
+      "request_key": null,
+      "code": "OK",
+      "ok": true,
+      "operation_id": null,
+      "reserved_workers": 0
+    }
+  ],
+  "same_session_correction": {
+    "operation_id": "3d56ecc5-0fdb-4281-9e4f-7e895525fb73",
+    "request_key": "f35-agent-a-readme-fix",
+    "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+    "ack": {
+      "turn_id": "01a12684-8844-7571-acfe-515775719107",
+      "item_id": "msg_02f383e589da09b9016aca5f6099a887d2b0f2e9e535c16739",
+      "message_hash": "6d0548f6fca0f9659e6a92f39c70cb5d37410f885d5fe1d60282839d3390847c",
+      "native_observed_at": "2026-10-10T15:53:08.111000+00:00",
+      "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+      "correlation_id": "0297df13-d792-4823-8427-f05b0b8177c2"
+    },
+    "decision": {
+      "version": 1,
+      "result": "CHANGES_REQUESTED",
+      "context_id": "0938c9c8a4d1fcb91ad2313cc25f0ae3e4e2b6a6fa3e43d105226445136c88aa",
+      "issues": [
+        {
+          "number": 1,
+          "problem": "The complete current diff changes only f35_alpha.py and its tests. README.md still documents greeting.greet and contains no normalize usage example, so the original README criterion is unmet.",
+          "requested_change": "In this same Worker session, add a runnable README.md Python example importing normalize from f35_alpha and demonstrating normalize(' a ') == 'A' and normalize('') == 'UNKNOWN'. Preserve existing content and keep the correction within the original assignment. Run the documented unittest command and meaningful own tests using the supplied existing verification environment, commit the correction, return the transport's exact correction acknowledgement and a new strict final report with the actual SHA and test outcomes.",
+          "acceptance_criteria": [
+            "README har ett exempel för normalize"
+          ]
+        }
+      ]
+    }
+  },
+  "attention_resume": [
+    {
+      "operation_id": "1b427fe3-2c2e-409a-a320-ca6c1a3406d4",
+      "task_run_id": "2d81572c-faab-4f14-ae41-89c86303b2a0",
+      "stage": "ACTIVE_AND_SYNCED",
+      "ack": {
+        "turn_id": "01a12660-0c32-7102-8b3e-d3c078f13b3b",
+        "item_id": "msg_02f383e589da09b9016aca560c123c87d2af725cb891a5ee76",
+        "message_hash": "a6f4f7776586a359ce28c30e67873431aabbb262856d53c3e481ed617e17606e",
+        "native_observed_at": "2026-10-10T15:13:19.447000+00:00",
+        "session_id": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+        "correlation_id": "4c4d9e97-2577-4898-8f7e-c0223cc6b533",
+        "timely_completion_verified": true
+      },
+      "resume_id": "76cdfaa6-2492-40c2-9f3f-bea98ddf0a60"
+    },
+    {
+      "operation_id": "74a7b9ec-9af4-42e9-89e8-63f519d11765",
+      "task_run_id": "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9",
+      "stage": "ACTIVE_AND_SYNCED",
+      "ack": {
+        "turn_id": "01a1265f-4e97-7561-bc9d-5c4f88439d76",
+        "item_id": "msg_0309c26ebcbef939016aca55d9fe2481918e40a37d91acc30d",
+        "message_hash": "f7c61c45dd45dab6aedad8c657a2ec5d7a3902aeaf818f8c83c1f1a8cafa569b",
+        "native_observed_at": "2026-10-10T15:12:29.348000+00:00",
+        "session_id": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+        "correlation_id": "7f4c8c9c-896c-47d6-957d-5c71480eabf6",
+        "timely_completion_verified": true
+      },
+      "resume_id": "46697a95-45b5-4f47-a637-7797966e4a17"
+    },
+    {
+      "operation_id": "0ceb06b3-a5ff-49cf-a19a-15209c33dc63",
+      "task_run_id": "85e57bca-5710-4066-893c-397e386f02ed",
+      "stage": "ACTIVE_AND_SYNCED",
+      "ack": {
+        "turn_id": "01a1268f-404c-7413-a104-9c00b8fe0d9b",
+        "item_id": "msg_03f04c6e2d0b19f5016aca621f45688191a62e54db08652442",
+        "message_hash": "ebab0fed0750f672c834c5e5d5124f532d960d30ffc1e1a1271d1cad52ba1080",
+        "native_observed_at": "2026-10-10T16:04:50.233000+00:00",
+        "session_id": "01a1268c-b177-7340-a856-5a48a42d54f0",
+        "correlation_id": "72eac64f-4f35-4edc-a0cd-35885b25e046"
+      },
+      "resume_id": "14c46f52-e830-4d7d-841b-153be5511145"
+    }
+  ],
+  "product_files": {
+    "src/orchestrator/application/integration_control_service.py": "d57981e3774b8a56674120fe2d4f129120940da092c7c8d7fc0920487294ecd5",
+    "src/orchestrator/domain/codex_mcp_launch.py": "0a350df6a74d4ab3b1f38bae8137016f134d190831f0561945e27d5ed5a424b8",
+    "src/orchestrator/application/task_scheduler_service.py": "466d62cc1a0f518c19f42b38dd015ba1761d8494700e028248c102d526584647",
+    "src/orchestrator/application/runtime_service.py": "3d92a1cb3f4c83ab724e804038b70b5a2026fa8e8fde1077e8db95618639ade7",
+    "src/orchestrator/mcp/server.py": "259612479f54ab6928418228974bebded36c5bbf3458ef56b982ce2ff804b9d0",
+    "src/orchestrator/adapters/herdr.py": "b3b0b941180b309c66dcb5f65991a4389a8ca51efd31342e5ee0e9ca1f39b072",
+    "src/orchestrator/application/runtime_start_service.py": "e63126e6f11105078ff9be3c66547cc95d84217e3e02a0ab2dc8227766c0c4fd",
+    "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
+    "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066",
+    "src/orchestrator/application/runtime_assignment_service.py": "ed4f10aa43154c26523eb8e7f79b0930c9a1a56fc5822e04554c749c37bef099",
+    "tests/test_runtime_assignment.py": "b117c7881a4994b2d26f02fb410f88a3432b69eec3e0693d155dc2990f06da62",
+    "tests/test_integration_control.py": "f88af7870ab7ce6d7f97d647e1987a718154162c732b0cbc6b75a63217d3d5f8",
+    "src/orchestrator/adapters/codex.py": "26720918af681f4a81be78ec7fa3d5603c23f64088e5f9acdfd50e8a4dbbf6e4",
+    "src/orchestrator/application/task_resume_service.py": "96a7abe13d0cf78e6dfc409e9868f7bccc4a986a3e1c7151fe07d15ea6ef3da5",
+    "src/orchestrator/application/task_changes_service.py": "6b6884d0d1c672048739d960712553aa3f07af55a473c775bddd48f0a51ddf40",
+    "tests/test_codex_message_timing.py": "489409f638aa1d1ee4006bba138ff47ddeeb01882eaf847703dc7445469369dc",
+    "tests/test_task_resume_service.py": "ec44ef0868f8ae30f46bf90835ecf9c8a3aa92f8cdf28995a3cd93d51526cf97",
+    "tests/test_task_changes_service.py": "de4a0c2c90cdca7f94f870eedb75a3565d5cfda20534c087929731ec8e9e0b12"
+  },
+  "limitations": [
+    "Original start ACK reconciliation was performed by the Integration operator through existing scheduler service, separately recorded; later input/review/fix/merges were native agent tools.",
+    "Operator supplied prefix input, available verification environment and report-format clarifications; one incorrect original-base clarification was corrected against actual registered source evidence. All rejected reports and original attempts are preserved.",
+    "Per-tool operator factory refreshes real authenticated transport; previous lost response cause remains unknown. Two actual same-SID F13 reloads preserved all Worker bindings.",
+    "No full OS credential isolation claimed; F38/F47 remain. No epic aggregate acceptance or main integration is claimed in F35."
+  ],
+  "integration_stop": {
+    "operation_id": "e4b7e451-6480-4505-83b6-ea0e4c902f28",
+    "status": "SUCCEEDED",
+    "actual_runtime": "STOPPED",
+    "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87"
+  },
+  "same_session_host_reloads": [
+    {
+      "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+      "stop": {
+        "id": "c21d1789-27a8-4001-97e3-38366df1ca85",
+        "project_id": "f35-probe-r5",
+        "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+        "task_run_id": null,
+        "kind": "stop_runtime",
+        "idempotency_key": "f35-load-timing-host-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "3d63c5ed-a997-4577-90f5-7a453aa70558",
+          "reason": "",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 1304419,
+                "start_time": "111312778"
+              },
+              {
+                "pid": 1304426,
+                "start_time": "111312782"
+              },
+              {
+                "pid": 1304598,
+                "start_time": "111312912"
+              },
+              {
+                "pid": 1304599,
+                "start_time": "111312913"
+              },
+              {
+                "pid": 1304604,
+                "start_time": "111312913"
+              },
+              {
+                "pid": 1304627,
+                "start_time": "111312929"
+              },
+              {
+                "pid": 1306520,
+                "start_time": "111320440"
+              }
+            ],
+            "groups": [
+              1304419,
+              1304598,
+              1304599,
+              1304604,
+              1306520
+            ]
+          },
+          "delivery_key": null,
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-10T15:26:11.328909Z",
+        "updated_at": "2026-10-10T15:26:14.879868Z"
+      },
+      "actual_stop": "STOPPED",
+      "worker_bindings_before": {
+        "2d81572c-faab-4f14-ae41-89c86303b2a0": {
+          "sid": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+          "branch": "task/f35-epic-r5-f35-a",
+          "path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/task-f35-epic-r5-f35-a",
+          "slot": 1
+        },
+        "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9": {
+          "sid": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+          "branch": "task/f35-epic-r5-f35-b",
+          "path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/task-f35-epic-r5-f35-b",
+          "slot": 2
+        }
+      },
+      "resume": {
+        "id": "66186701-f24a-4471-b61e-65b4eb2996f1",
+        "project_id": "f35-probe-r5",
+        "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+        "task_run_id": null,
+        "kind": "resume_runtime",
+        "idempotency_key": "f35-load-timing-host-resume",
+        "status": "SUCCEEDED",
+        "result": {
+          "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+          "stop_operation_id": "c21d1789-27a8-4001-97e3-38366df1ca85",
+          "stage": "RESUMED",
+          "worker_slot": null,
+          "processes": [
+            {
+              "pid": 1573633,
+              "start_time": "111615286"
+            },
+            {
+              "pid": 1573664,
+              "start_time": "111615295"
+            }
+          ]
+        },
+        "error_code": null,
+        "created_at": "2026-10-10T15:26:15.728887Z",
+        "updated_at": "2026-10-10T15:26:23.760907Z"
+      },
+      "registered_connection_verified": true,
+      "worker_bindings_unchanged": true,
+      "loaded_host_product_files": {
+        "src/orchestrator/adapters/codex.py": "2b48776d05c480210cff84c10ff6ba4496cf9ea5b77595a284d4eaf9c29ac574",
+        "src/orchestrator/application/runtime_assignment_service.py": "ed4f10aa43154c26523eb8e7f79b0930c9a1a56fc5822e04554c749c37bef099",
+        "src/orchestrator/application/task_resume_service.py": "96a7abe13d0cf78e6dfc409e9868f7bccc4a986a3e1c7151fe07d15ea6ef3da5",
+        "src/orchestrator/application/task_changes_service.py": "6b6884d0d1c672048739d960712553aa3f07af55a473c775bddd48f0a51ddf40",
+        "src/orchestrator/application/integration_control_service.py": "d57981e3774b8a56674120fe2d4f129120940da092c7c8d7fc0920487294ecd5"
+      }
+    },
+    {
+      "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+      "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+      "stop": {
+        "id": "9253e1b1-e390-4076-8313-99b6ee2f437b",
+        "project_id": "f35-probe-r5",
+        "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+        "task_run_id": null,
+        "kind": "stop_runtime",
+        "idempotency_key": "f35-fresh-board-host-stop",
+        "status": "SUCCEEDED",
+        "result": {
+          "generation": "66186701-f24a-4471-b61e-65b4eb2996f1",
+          "reason": "",
+          "stage": "STOPPED",
+          "process_proof": {
+            "identities": [
+              {
+                "pid": 1573633,
+                "start_time": "111615286"
+              },
+              {
+                "pid": 1573664,
+                "start_time": "111615295"
+              },
+              {
+                "pid": 1574226,
+                "start_time": "111615444"
+              },
+              {
+                "pid": 1574245,
+                "start_time": "111615448"
+              },
+              {
+                "pid": 1574252,
+                "start_time": "111615450"
+              },
+              {
+                "pid": 1574378,
+                "start_time": "111615490"
+              },
+              {
+                "pid": 1604332,
+                "start_time": "111625465"
+              }
+            ],
+            "groups": [
+              1573633,
+              1574226,
+              1574245,
+              1574252,
+              1604332
+            ]
+          },
+          "delivery_key": null,
+          "inactive": true
+        },
+        "error_code": null,
+        "created_at": "2026-10-10T15:33:35.914018Z",
+        "updated_at": "2026-10-10T15:33:37.849910Z"
+      },
+      "actual_stop": "STOPPED",
+      "worker_bindings_before": {
+        "2d81572c-faab-4f14-ae41-89c86303b2a0": {
+          "sid": "01a1264e-286c-7e02-a045-fca7dd7f2ad5",
+          "branch": "task/f35-epic-r5-f35-a",
+          "path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/task-f35-epic-r5-f35-a",
+          "slot": 1
+        },
+        "70ddc1fb-bf8d-43c8-adea-ed9f5ef24fb9": {
+          "sid": "01a1264e-7619-7c92-ab65-995e5b1837a0",
+          "branch": "task/f35-epic-r5-f35-b",
+          "path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/task-f35-epic-r5-f35-b",
+          "slot": 2
+        }
+      },
+      "resume": {
+        "id": "26f649a8-b3ab-4113-8506-80b9dc8f4c6f",
+        "project_id": "f35-probe-r5",
+        "epic_run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+        "task_run_id": null,
+        "kind": "resume_runtime",
+        "idempotency_key": "f35-fresh-board-host-resume",
+        "status": "SUCCEEDED",
+        "result": {
+          "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+          "stop_operation_id": "9253e1b1-e390-4076-8313-99b6ee2f437b",
+          "stage": "RESUMED",
+          "worker_slot": null,
+          "processes": [
+            {
+              "pid": 1636096,
+              "start_time": "111659547"
+            },
+            {
+              "pid": 1636103,
+              "start_time": "111659551"
+            }
+          ]
+        },
+        "error_code": null,
+        "created_at": "2026-10-10T15:33:38.440327Z",
+        "updated_at": "2026-10-10T15:33:43.482367Z"
+      },
+      "registered_connection_verified": true,
+      "worker_bindings_unchanged": true,
+      "loaded_host_product_files": {
+        "src/orchestrator/adapters/codex.py": "26720918af681f4a81be78ec7fa3d5603c23f64088e5f9acdfd50e8a4dbbf6e4",
+        "src/orchestrator/application/runtime_assignment_service.py": "ed4f10aa43154c26523eb8e7f79b0930c9a1a56fc5822e04554c749c37bef099",
+        "src/orchestrator/application/task_resume_service.py": "96a7abe13d0cf78e6dfc409e9868f7bccc4a986a3e1c7151fe07d15ea6ef3da5",
+        "src/orchestrator/application/task_changes_service.py": "6b6884d0d1c672048739d960712553aa3f07af55a473c775bddd48f0a51ddf40",
+        "src/orchestrator/application/integration_control_service.py": "d57981e3774b8a56674120fe2d4f129120940da092c7c8d7fc0920487294ecd5"
+      }
+    }
+  ],
+  "source_checkpoint": "871c9ddf3f146dbcb55b144fd63a2f179bd2d9bb",
+  "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
+  "teamplayer_project_id": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "server_stop": {
+    "only_named_server": "hc-f35-r4-20261010",
+    "command_exit_code": 0,
+    "actual_server_pid_absent": true,
+    "agents_before_server_stop": 0
+  }
+}

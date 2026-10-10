@@ -68,6 +68,8 @@ class RuntimeStartService:
                     or op.task_run_id != (run.id if task else None)
                     or op.result.get("server_session") != self.herdr.server_session
                     or op.result.get("sandbox") != self.herdr.sandbox
+                    or op.result.get("mcp_configuration")
+                    != getattr(self.herdr, "mcp_fingerprint", None)
                     or op.result.get("branch") != run.branch
                     or op.result.get("cwd") != run.worktree_path
                 ):
@@ -114,6 +116,7 @@ class RuntimeStartService:
                     "stage": "INTENT",
                     "server_session": self.herdr.server_session,
                     "sandbox": self.herdr.sandbox,
+                    "mcp_configuration": getattr(self.herdr, "mcp_fingerprint", None),
                     "cwd": run.worktree_path,
                     "branch": run.branch,
                     "name": name,

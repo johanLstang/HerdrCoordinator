@@ -9,6 +9,7 @@ from pathlib import Path
 from uuid import UUID
 
 from orchestrator.adapters.codex import CodexAdapter, CodexError
+from orchestrator.domain.codex_mcp_launch import CodexMCPLaunch
 
 
 class HerdrError(RuntimeError):
@@ -36,7 +37,9 @@ def process_stamp(pid: int, argv: list[str], cwd: str) -> str:
 
 
 class HerdrAdapter:
-    def __init__(self, server_session: str, *, sandbox: str = "read-only"):
+    def __init__(
+        self, server_session: str, *, sandbox: str = "read-only", mcp: CodexMCPLaunch | None = None
+    ):
         if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}", server_session):
             raise HerdrError("INVALID_RUNTIME_CONFIGURATION")
         if sandbox not in {"read-only", "workspace-write"}:
@@ -44,6 +47,11 @@ class HerdrAdapter:
         if os.environ.get("HERDR_ENV") != "1":
             raise HerdrError("HERDR_CONTEXT_REQUIRED")
         self.server_session, self.sandbox = server_session, sandbox
+        self.mcp = CodexMCPLaunch.model_validate(mcp) if mcp is not None else None
+
+    @property
+    def mcp_fingerprint(self):
+        return self.mcp.fingerprint if self.mcp else None
 
     def call(self, *args: str, timeout: int = 15) -> dict:
         try:
@@ -137,6 +145,7 @@ class HerdrAdapter:
             "on-request",
             "--cd",
             cwd,
+            *(self.mcp.cli_args() if self.mcp else []),
             timeout=35,
         )
 
@@ -194,6 +203,7 @@ class HerdrAdapter:
                 "on-request",
                 "--cd",
                 cwd,
+                *(self.mcp.cli_args() if self.mcp else []),
             ]
             cli = shutil.which("codex")
             if cli is None:
