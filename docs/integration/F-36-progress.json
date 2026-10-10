@@ -1,9 +1,9 @@
 {
   "task": "F36",
   "task_id": "e8e489aa-0235-436a-adc0-4c61703dab9e",
-  "status": "Testing5",
-  "local_status": "Active",
-  "role": "Worker",
+  "status": "Done8",
+  "local_status": "Done",
+  "role": "Bootstrap Integration",
   "branch": "task/e09-f36",
   "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4",
   "base": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
@@ -50,11 +50,52 @@
       "auth_scan": true,
       "historical_f34_code_binding": true,
       "schema_lock_existing_policies_unchanged": true
+    },
+    "postintegration": {
+      "passed": 14,
+      "seconds": 359.58,
+      "exit_code": 0,
+      "xml": "docs/reviews/F-36-post.xml",
+      "command": [
+        "uv",
+        "run",
+        "--locked",
+        "pytest",
+        "tests/test_epic_completion.py::test_current_complete_handoff_sdk_persisted_diff_and_no_main_merge",
+        "tests/test_epic_completion.py::test_failed_actual_command_never_hands_off_and_reuses_failure",
+        "tests/test_epic_completion.py::test_old_ready_receipt_requires_fresh_source_manifest_and_acceptance[epic]",
+        "tests/test_epic_completion.py::test_old_ready_receipt_requires_fresh_source_manifest_and_acceptance[main]",
+        "tests/test_epic_completion.py::test_crash_step_checkpoint_preserves_intent_without_repeating_process",
+        "tests/test_epic_completion.py::test_new_failed_verification_invalidates_old_ready_and_leaves_active",
+        "tests/test_epic_completion.py::test_current_physical_worker_evidence_not_just_saved_stop",
+        "tests/test_integration_control.py::test_sdk_two_explicit_choices_dependency_gate_review_merge_and_refill",
+        "tests/test_integration_control.py::test_correction_returns_to_same_worker_and_new_current_review",
+        "tests/test_epic_integration.py::test_actual_main_delivery_and_verification_do_not_set_done",
+        "tests/test_mcp.py::test_registered_worker_reads_own_runtime_and_cannot_impersonate",
+        "-x",
+        "--junitxml=/tmp/herdr-f36-post.xml"
+      ],
+      "merge_commit": "93a6e6d22caac4572841a0bc56a673a8c0301209"
     }
   },
-  "review": "READY_FOR_REVIEW",
-  "merge": null,
-  "acceptance_verified": 0,
+  "review": "APPROVED",
+  "merge": {
+    "operation_id": "ddd20f8d-d1fb-4872-a90d-b0762d5a4f29",
+    "stage": "DONE_VERIFIED_TEAMPLAYER_DONE",
+    "source": "0f67b82d43c0141212e0ef6da620252aa8e715a2",
+    "target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+    "review_sha256": "1bdc8fbc33e391c44dac10feeeac8a8bbc85b1ea4425576246594c8f1d0a0ab4",
+    "bootstrap_exception": "Manual development worktrees have no product runtime/run registration. GitAdapter only after actual clean/path/branch/base/current SHA, complete review, common-directory lock and verification. No adoption or fabricated task ownership/session/slot evidence.",
+    "merge_commit": "93a6e6d22caac4572841a0bc56a673a8c0301209"
+  },
+  "acceptance_verified": 3,
   "integration_boundary": "Actual Git/SQLite/processes/MCP SDK, controlled runtime and board; F37 native proof remains",
-  "next": "Bootstrap Integration full review, actual Task→E09 and posttests before Done"
+  "next": "F37 next; E09 Active0/3 pending native aggregate proof and whole epic integration",
+  "teamplayer": {
+    "status": "Done",
+    "version": 8,
+    "user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "description_sync": "CONFIRMED",
+    "status_readback": "CONFIRMED"
+  }
 }

@@ -1,23 +1,50 @@
 {
   "task": "F36",
   "task_id": "e8e489aa-0235-436a-adc0-4c61703dab9e",
-  "stage": "READY_FOR_REVIEW",
-  "branch": "task/e09-f36",
-  "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4",
-  "review_target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+  "role": "Bootstrap Integration",
+  "worker_handoff": "READY_FOR_REVIEW",
+  "source": "0f67b82d43c0141212e0ef6da620252aa8e715a2",
+  "target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
   "main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
-  "source_tests": {
+  "branch": "task/e09-f36",
+  "target_branch": "feature/epic-e09",
+  "files": [
+    "Backlog.md",
+    "README.md",
+    "docs/integration/F-36-completion.md",
+    "docs/integration/F-36-progress.json",
+    "docs/reviews/F-36-source.xml",
+    "docs/reviews/F-36.json",
+    "docs/reviews/F-36.md",
+    "src/orchestrator/application/epic_completion_service.py",
+    "src/orchestrator/application/integration_control_service.py",
+    "src/orchestrator/application/state_service.py",
+    "src/orchestrator/domain/epic_completion.py",
+    "src/orchestrator/mcp/contracts.py",
+    "src/orchestrator/mcp/server.py",
+    "tests/test_epic_completion.py"
+  ],
+  "full_patch": {
+    "bytes": 84564,
+    "sha256": "5ec8e62b042be4fd16fdcc8cf0f9396bfe1a7351eeb20232c3499a32d73863fd",
+    "lines": 1388
+  },
+  "tests": {
     "passed": 104,
     "seconds": 969.51,
     "exit_code": 0,
-    "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4",
-    "xml": "docs/reviews/F-36-source.xml"
+    "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4"
   },
   "gates": {
     "files": [
       "Backlog.md",
       "README.md",
       "docs/integration/F-36-completion.md",
+      "docs/integration/F-36-progress.json",
+      "docs/reviews/F-36-post.xml",
+      "docs/reviews/F-36-source.xml",
+      "docs/reviews/F-36.json",
+      "docs/reviews/F-36.md",
       "src/orchestrator/application/epic_completion_service.py",
       "src/orchestrator/application/integration_control_service.py",
       "src/orchestrator/application/state_service.py",
@@ -28,12 +55,67 @@
     ],
     "wheel_modules": 62,
     "policies": 3,
-    "local_links": 136,
+    "local_links": 146,
     "auth_scan": true,
     "historical_f34_code_binding": true,
     "schema_lock_existing_policies_unchanged": true
   },
-  "scope": "Trusted aggregate epic_complete and persisted EPIC_READY_FOR_REVIEW; no approval/main-merge",
-  "limitations": "Real Git/processes/SQLite/MCP SDK; controlled runtime/TeamPlayer. Full native aggregate proof is F37. No schema/lock/policy changes.",
-  "bootstrap_exception": "Manual development worktree has no product run/runtime/ownership/slot registration; Integration uses GitAdapter after separate real branch/path/base/current SHA/full review/lock checks. No adoption."
+  "decision": "APPROVED",
+  "bootstrap_exception": "Manual development worktrees have no product runtime/run registration. GitAdapter only after actual clean/path/branch/base/current SHA, complete review, common-directory lock and verification. No adoption or fabricated task ownership/session/slot evidence.",
+  "review": {
+    "complete_diff_read": true,
+    "source_code_tests_match_checkpoint": true,
+    "actual_xml_cases": 104,
+    "blocking_findings": [],
+    "criteria": [
+      "F36.A1 complete persisted manifest/current full Git diff + actual three commands + guarded SDK handoff",
+      "F36.A2 explicit scope/Done/owner/spec/review/Git/test/stop/runtime/config guards and actual failure gates",
+      "F36.A3 fresh snapshot/config/step records, durable unknown/known-step recovery, superseded handoff invalidation; no main merge"
+    ],
+    "native_boundary": "Git/SQLite/process/MCP SDK actual; controlled runtime/board; full native F37 pending",
+    "contract_review": "Operator-only immutable configuration; F34 registration and exact principal; scheduler→Git lock order; fresh facts; intent-before-process and atomic READY; no schema/lock/policy changes."
+  },
+  "operation_id": "ddd20f8d-d1fb-4872-a90d-b0762d5a4f29",
+  "stage": "DONE_VERIFIED_SYNCED",
+  "merge": {
+    "operation_id": "ddd20f8d-d1fb-4872-a90d-b0762d5a4f29",
+    "stage": "MERGED_POSTVERIFICATION_PENDING",
+    "source": "0f67b82d43c0141212e0ef6da620252aa8e715a2",
+    "target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+    "review_sha256": "1bdc8fbc33e391c44dac10feeeac8a8bbc85b1ea4425576246594c8f1d0a0ab4",
+    "bootstrap_exception": "Manual development worktrees have no product runtime/run registration. GitAdapter only after actual clean/path/branch/base/current SHA, complete review, common-directory lock and verification. No adoption or fabricated task ownership/session/slot evidence.",
+    "merge_commit": "93a6e6d22caac4572841a0bc56a673a8c0301209"
+  },
+  "posttests": {
+    "passed": 14,
+    "seconds": 359.58,
+    "exit_code": 0,
+    "xml": "docs/reviews/F-36-post.xml",
+    "command": [
+      "uv",
+      "run",
+      "--locked",
+      "pytest",
+      "tests/test_epic_completion.py::test_current_complete_handoff_sdk_persisted_diff_and_no_main_merge",
+      "tests/test_epic_completion.py::test_failed_actual_command_never_hands_off_and_reuses_failure",
+      "tests/test_epic_completion.py::test_old_ready_receipt_requires_fresh_source_manifest_and_acceptance[epic]",
+      "tests/test_epic_completion.py::test_old_ready_receipt_requires_fresh_source_manifest_and_acceptance[main]",
+      "tests/test_epic_completion.py::test_crash_step_checkpoint_preserves_intent_without_repeating_process",
+      "tests/test_epic_completion.py::test_new_failed_verification_invalidates_old_ready_and_leaves_active",
+      "tests/test_epic_completion.py::test_current_physical_worker_evidence_not_just_saved_stop",
+      "tests/test_integration_control.py::test_sdk_two_explicit_choices_dependency_gate_review_merge_and_refill",
+      "tests/test_integration_control.py::test_correction_returns_to_same_worker_and_new_current_review",
+      "tests/test_epic_integration.py::test_actual_main_delivery_and_verification_do_not_set_done",
+      "tests/test_mcp.py::test_registered_worker_reads_own_runtime_and_cannot_impersonate",
+      "-x",
+      "--junitxml=/tmp/herdr-f36-post.xml"
+    ],
+    "merge_commit": "93a6e6d22caac4572841a0bc56a673a8c0301209"
+  },
+  "teamplayer": {
+    "status": "Done",
+    "version": 8,
+    "user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "status_and_description_readback": "CONFIRMED"
+  }
 }
