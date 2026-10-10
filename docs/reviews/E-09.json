@@ -1,5 +1,5 @@
 {
-  "stage": "SOURCE_VERIFIED_MAIN_REVIEW_PENDING",
+  "stage": "MERGED_POSTVERIFIED_STATUS_SYNC_PENDING",
   "source_suite": {
     "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
     "argv": [
@@ -427,12 +427,775 @@
   "pr": "https://github.com/johanLstang/HerdrCoordinator/pull/9",
   "epic_status": "Active",
   "epic_acceptance_verified": 3,
-  "decision": "PENDING_FINAL_REVIEW",
+  "decision": "APPROVED",
   "limitations": [
     "Initial A/B prerequisite gate denials had known no effect; operator corrected trusted human-input probe and used actual F13 stop/resume of original Integration SID, separately recorded.",
     "One incomplete unscoped native tool request after resume was cancelled; agent re-read current overview and rebuilt its own valid request. No operator task start/schedule/review/approval/merge or report fabrication.",
     "Operator supplied explicit user Hej input only after real blocked/parked Worker observations; scoped native UI choices were authorized by the user for F37-r1.",
     "No full OS credential isolation claim; F38/F47 remain. Fixture epic main merge is not in scope."
   ],
-  "bootstrap_exception": "Manual development worktrees lack product runtime/run/session/slot registration. Actual GitAdapter branch/path/base/current SHA/clean/origin/full review/common-dir lock/no-ff/parents/marker/tree checks; no adoption or fabricated product facts."
+  "bootstrap_exception": "Manual development worktrees lack product runtime/run/session/slot registration. Actual GitAdapter branch/path/base/current SHA/clean/origin/full review/common-dir lock/no-ff/parents/marker/tree checks; no adoption or fabricated product facts.",
+  "review": {
+    "source": "52b5536d8d99d90c7b4be8bf27a649454ec02e50",
+    "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+    "exact_review_bindings": {
+      "Backlog.md": {
+        "blob": "e70c26d3fb01864df3e61e6f592fccd85235caf2",
+        "latest_full_task_review": null
+      },
+      "README.md": {
+        "blob": "f2eaf5fdd0d49dc6f3422548bbd34fe0e2cd0c80",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-34-native.json": {
+        "blob": "c9f865cbd0a23e1f24a7647de824a3ba637358d3",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-34-start.md": {
+        "blob": "628b6794ca8e344f6fa3509418dd332a2d21ae4c",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-35-control.md": {
+        "blob": "113ef3ab6441938fdc263b791aa98f542837a90b",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-35-native.json": {
+        "blob": "6b17a70874776e936d9549ff57b9dd701c002d11",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-35-progress.json": {
+        "blob": "8e1a9fa3ffc885cfee52babc967e31a9761b4548",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-36-completion.md": {
+        "blob": "413883293ea9ecd1222997386112b054b678fd7a",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-36-progress.json": {
+        "blob": "2a9ac78fdf5348502313b47513628652e7626f54",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-37-native.json": {
+        "blob": "166337ca3a1d28068d1a246e45ed334bd59b70fb",
+        "latest_full_task_review": 37
+      },
+      "docs/integration/F-37-native.md": {
+        "blob": "9ca792202238c25604ea01fcbe4eca3e08f3ba9b",
+        "latest_full_task_review": null
+      },
+      "docs/integration/F-37-progress.json": {
+        "blob": "26345b33a35610bf6aac84acb3fe2aee147c2003",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/E-09-source.xml": {
+        "blob": "11af7658462523c8195eeaf3c3f4080889338e22",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/E-09.json": {
+        "blob": "3ad63788d79c5b2cd1cadfc912988c3be9cf0de0",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/E-09.md": {
+        "blob": "dff2df30108633ab5630499c6c25a8889c5d1504",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/F-34.json": {
+        "blob": "74685db4d9baa240c1624af964a11c6d922d5f51",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-34.md": {
+        "blob": "59efb417ed9ce691d9f043a042e736a03cc69683",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-35.json": {
+        "blob": "6f7aa50aa3b3840a38faa13d53fb864489538016",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-35.md": {
+        "blob": "6d04f1ab7455154cee3dbbd1c521d4881098350c",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-36-post.xml": {
+        "blob": "0633e35713a4a803762543d21e8eb587743bbd53",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-36-source.xml": {
+        "blob": "4f56b0659966997471c24b0bc45062e87ab369d4",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-36.json": {
+        "blob": "79d3a116ef75897b2f636bf095019f0cdade165c",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-36.md": {
+        "blob": "5983d61f1f0dd772122e4d98a81b62ed4826fcff",
+        "latest_full_task_review": 37
+      },
+      "docs/reviews/F-37.json": {
+        "blob": "a92e964a370cd4e5e6963d9b556ff4dfc92e91e7",
+        "latest_full_task_review": null
+      },
+      "docs/reviews/F-37.md": {
+        "blob": "9d026d24e06bfbfe3a7411778b9caae1438e754b",
+        "latest_full_task_review": null
+      },
+      "prompts/integration-v1.md": {
+        "blob": "75bc2d82b7fc3d4d0e6c3f578ad210b93b9036fb",
+        "latest_full_task_review": 37
+      },
+      "pyproject.toml": {
+        "blob": "6cf3f85c46d268a3d3e9227978852a8cfe03def1",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/adapters/codex.py": {
+        "blob": "7b39dcc912983901c01c4fa92ed9dec51014a65c",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/adapters/herdr.py": {
+        "blob": "51bf0da537020d19a4d67381c1439ca212ed9a2a",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/epic_completion_service.py": {
+        "blob": "c758593c0b06b4164ea4717f080cec93c090eb49",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/epic_start_service.py": {
+        "blob": "0a2d817e99f7ee232eb5ef8ce2aeb66303be3439",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/integration_control_service.py": {
+        "blob": "2a713e7900955b6e2b2f5da5262ce16ff8b489ed",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/runtime_assignment_service.py": {
+        "blob": "be0e05fc81a754a8373285a71279e69fe02bf1c5",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/runtime_lifecycle_service.py": {
+        "blob": "37d72ac27ae4e7be1e391179efcd0a61082287a8",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/runtime_service.py": {
+        "blob": "e6504344184eb7315ff086dc9e733b375451a2b5",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/runtime_start_service.py": {
+        "blob": "296fde23c093616159f943b538a19882b7ea1782",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/state_service.py": {
+        "blob": "7e85e62f4863111f41079c1a7811d3b39274ad32",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/task_changes_service.py": {
+        "blob": "a3a5d1120f71c500330957198883b89ab3e23853",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/task_resume_service.py": {
+        "blob": "7c8c42973ab43eb2f0009d9758dc5ccd66de4eda",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/task_scheduler_service.py": {
+        "blob": "2880aafe78d6ea1a76b46ac55d15fe7fa312f087",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/application/worktree_service.py": {
+        "blob": "3c2467efeb181968fecfe0e9c77bb83f8e21e49c",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/domain/codex_mcp_launch.py": {
+        "blob": "40be59660319f13cf687a7fdb73e679d92d6a1f8",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/domain/epic_completion.py": {
+        "blob": "f5da6ab5a257d6378bc6387079898c3de1a93e7e",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/domain/integration_contracts.py": {
+        "blob": "9250e92700d33c1fc7171b81d143887e94b3fcd5",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/mcp/contracts.py": {
+        "blob": "711ce6ddf1fb04e3734435430ca7f952379084ad",
+        "latest_full_task_review": 37
+      },
+      "src/orchestrator/mcp/server.py": {
+        "blob": "f93de1228fdcd3884c0721c806b5b9f8c28f62ec",
+        "latest_full_task_review": 37
+      },
+      "tests/native_f37_acceptance.py": {
+        "blob": "ec2b59395c5031b9a963010cc014658becd1f3c0",
+        "latest_full_task_review": 37
+      },
+      "tests/native_f37_host.py": {
+        "blob": "6d8df05f3f32b7e24f261289979acde92f50ecb0",
+        "latest_full_task_review": 37
+      },
+      "tests/native_f37_probe.py": {
+        "blob": "61503d1a4e8d31dca15b4d8be70f70ae630b02e5",
+        "latest_full_task_review": 37
+      },
+      "tests/test_codex_mcp_launch.py": {
+        "blob": "a3970134072b68a28104814fb0a1eab8ac6c0127",
+        "latest_full_task_review": 37
+      },
+      "tests/test_codex_message_timing.py": {
+        "blob": "d2925aca4384dcc58bcd6956cf3e8f7f6f5d0054",
+        "latest_full_task_review": 37
+      },
+      "tests/test_epic_completion.py": {
+        "blob": "2a584ea3dec29d450a3b25f6312254505112fd06",
+        "latest_full_task_review": 37
+      },
+      "tests/test_epic_start.py": {
+        "blob": "35df45c906592bf543e83e8e5e500953c0baf5a0",
+        "latest_full_task_review": 37
+      },
+      "tests/test_integration_control.py": {
+        "blob": "f70d6fa4842dec4a15558b5bb780dc023ca71037",
+        "latest_full_task_review": 37
+      },
+      "tests/test_runtime_assignment.py": {
+        "blob": "905960dee9c12a96e194374f728aa0815d0b918d",
+        "latest_full_task_review": 37
+      },
+      "tests/test_task_changes_service.py": {
+        "blob": "d749ebfcb0d60ede8bf35d1c9709a57f155e09c9",
+        "latest_full_task_review": 37
+      },
+      "tests/test_task_resume_service.py": {
+        "blob": "e7431960a86324e1afe0af69144412d299bd4390",
+        "latest_full_task_review": 37
+      }
+    },
+    "full_reviews": [
+      {
+        "task": 34,
+        "source": "e8b2dc2a23fbf514cbfda61c41342261af3adfe5",
+        "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+        "full_patch": {
+          "bytes": 73807,
+          "sha256": "bb2cf89eff008f07c56bd241668b35a64fa1e977b2b83c68040628d9b6704349",
+          "lines": 1445
+        }
+      },
+      {
+        "task": 35,
+        "source": "cc0252a8585e15e0b6c9ece7f3b938aa6fa998c5",
+        "target": "5d7f96830c75c5b1c371602fd47e28019f8c290e",
+        "full_patch": {
+          "bytes": 230694,
+          "sha256": "f98cc30e386eb09ed9411a542c101e21c2ea0fa97c931f8bf5b96f3b5205291c",
+          "lines": 4856
+        }
+      },
+      {
+        "task": 36,
+        "source": "0f67b82d43c0141212e0ef6da620252aa8e715a2",
+        "target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+        "full_patch": {
+          "bytes": 84564,
+          "sha256": "5ec8e62b042be4fd16fdcc8cf0f9396bfe1a7351eeb20232c3499a32d73863fd",
+          "lines": 1388
+        }
+      },
+      {
+        "task": 37,
+        "source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+        "target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+        "full_patch": {
+          "bytes": 288434,
+          "sha256": "912ad99da28d3f06937ab91c0420d5e53764c8dfcd728522401bd4ed75877b6b",
+          "lines": 4585
+        }
+      }
+    ],
+    "full_patch": {
+      "bytes": 874807,
+      "sha256": "f5ee9b084d283b27231d79623983d43b35e44528f423a1e48bac01e3be1665b5",
+      "lines": 13445
+    },
+    "wheel_modules": 62,
+    "policies": 3,
+    "checked_local_links": 183,
+    "all_changed_files_auth_scan": true,
+    "unchanged_schema_lock_existing_policies": true,
+    "native_receipt": "F37 actual all3done/stop/max2/sameSID/currentaggregate independently verified, no fixture main merge; explicit operator actions/transcript clipping remain documented",
+    "suite": "PASS892; actual execution and JUnit source checkpoint6d, current all106 files unchanged",
+    "role": "Bootstrap Coordinator",
+    "branch": "feature/epic-e09",
+    "target_branch": "main",
+    "main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+    "decision": "APPROVED",
+    "tests": {
+      "source": "6d6526b7492946aac3902671bd80f9d6e950d0b6",
+      "argv": [
+        "uv",
+        "run",
+        "--locked",
+        "pytest",
+        "-x",
+        "--junitxml=/tmp/herdr-f37-source.xml"
+      ],
+      "exit_code": 0,
+      "passed": 892,
+      "seconds": 2337.021,
+      "xml_sha256": "73a81cc29a3eaba60853c6fe489ec8c991eb3bb8ba400149fb6e0037e2010e35",
+      "files": {
+        "pyproject.toml": "2cf74c0a55b954a21c24f4fc2b2bdfa03bec62c7d90b2ef4d3218838a594dfd5",
+        "src/AGENTS.md": "3326ddb6ad15322aea3c5ea2ef15db85c14a92a65446e4450d24b29a7a8fa911",
+        "src/orchestrator/__init__.py": "b9a288f7c8d33390b639b0a88c7782aa470251e15250bae48e58f3c2719164af",
+        "src/orchestrator/__main__.py": "c80853943cd5ee3a8dec1e4a2abf8c176f157cbc996c33a560aec46272bf0bb8",
+        "src/orchestrator/adapters/__init__.py": "54302bd9cd006611636f4179b4dbf546e759b65f6b39e331d7322c9e7e293854",
+        "src/orchestrator/adapters/codex.py": "26720918af681f4a81be78ec7fa3d5603c23f64088e5f9acdfd50e8a4dbbf6e4",
+        "src/orchestrator/adapters/git.py": "9562947152e0dd3de0cae05d7fddc83f6a7ec1c5c6060224d7ffb05f8ebdc26c",
+        "src/orchestrator/adapters/herdr.py": "b3b0b941180b309c66dcb5f65991a4389a8ca51efd31342e5ee0e9ca1f39b072",
+        "src/orchestrator/adapters/processes.py": "682cebef3d2288c948fcfbfcc0f0d1bc2f304a7db7f10219bff7607485dc0f32",
+        "src/orchestrator/adapters/teamplayer_mcp.py": "c9ca572c6144fe69c8bdb22d22fb22bbcb6364707e399406b4aaf8a926705523",
+        "src/orchestrator/application/__init__.py": "40dae748055e6a3acf3a85d0bf91cb1ce9421ac28945ffe6e5827747b91d1b19",
+        "src/orchestrator/application/epic_completion_service.py": "080e5247bf07956020806d9ff730d4726017b529c3b749987728368609f35086",
+        "src/orchestrator/application/epic_integration_service.py": "8ed184cd830bc5a34ed45f2737c6a12f2a1770413bf003e85d46d0b01e18cf10",
+        "src/orchestrator/application/epic_start_service.py": "8a0b976d37f57be0e5d2436a9802d39eb255c21473390294de0a90511b6ee066",
+        "src/orchestrator/application/git_integration_service.py": "112dc1bd3ba6f48725385cbdab2edbac6e102de399c1517bd52e752617718e76",
+        "src/orchestrator/application/git_review_service.py": "f7f5cb57a154f90f90eec00d464d5b97811c688e75df4a1155f25643991c8a39",
+        "src/orchestrator/application/integration_control_service.py": "97edcb962517f5db0977296c98f462584f7d2e797717c90d2f175a1989860b27",
+        "src/orchestrator/application/review_prompt.py": "1df619a7fe1f6e2a3b4c81e369690b63b8c487e5b4253145fa8d77b86a3e2e88",
+        "src/orchestrator/application/runtime_assignment_service.py": "ed4f10aa43154c26523eb8e7f79b0930c9a1a56fc5822e04554c749c37bef099",
+        "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
+        "src/orchestrator/application/runtime_service.py": "3d92a1cb3f4c83ab724e804038b70b5a2026fa8e8fde1077e8db95618639ade7",
+        "src/orchestrator/application/runtime_start_service.py": "e63126e6f11105078ff9be3c66547cc95d84217e3e02a0ab2dc8227766c0c4fd",
+        "src/orchestrator/application/state_service.py": "c65efe7fa0add6228331bcfaf01d1ad131759dacbfedb594e91aa9c9166793ae",
+        "src/orchestrator/application/task_approval_service.py": "270f7861a7a33e0bd34e5d24266dec93c978de6c778c4b51cd7529bfd6568535",
+        "src/orchestrator/application/task_attention_service.py": "87c44c3a91008eb1b600f346bf82e534b61561c2639310ad61fd8e5594cb73fd",
+        "src/orchestrator/application/task_changes_service.py": "6b6884d0d1c672048739d960712553aa3f07af55a473c775bddd48f0a51ddf40",
+        "src/orchestrator/application/task_cleanup_service.py": "5476db5f55f1b4c95c1bbd17cce3c736bb068db05a73d10b290b0cc2abaf88cd",
+        "src/orchestrator/application/task_delivery_evidence.py": "b45be8ab7b2971a2f3d7b60e79b5d319467b96f6520fa3b99439740f986fd42b",
+        "src/orchestrator/application/task_merge_service.py": "3a9db563ff158d9742ca75926a92d8da1bed09723cdc5ccfe3c6bbd87cd6c11f",
+        "src/orchestrator/application/task_resume_intent.py": "eae64910baabc57de465b7d8a8f007e901a9e3aed31faece753814f71c3ead05",
+        "src/orchestrator/application/task_resume_service.py": "96a7abe13d0cf78e6dfc409e9868f7bccc4a986a3e1c7151fe07d15ea6ef3da5",
+        "src/orchestrator/application/task_review_service.py": "021306a6d84f033d2653d82f668dd7156a5939446353880214eb06a52c48edc9",
+        "src/orchestrator/application/task_scheduler_service.py": "466d62cc1a0f518c19f42b38dd015ba1761d8494700e028248c102d526584647",
+        "src/orchestrator/application/task_selection_service.py": "afc354d40a5e11653209dbac02cd5cf2bd0a01026b582ac2babe4826d33f6358",
+        "src/orchestrator/application/task_start_service.py": "063a049e6deb9a99d7bf5d1672013594ff2bf2f66113fb0b206c2623abe264e5",
+        "src/orchestrator/application/teamplayer_evidence.py": "184fd719e95f901f113d7a8caa511787de21cbcfee8b746b9eaccdd00f67fba2",
+        "src/orchestrator/application/teamplayer_reader.py": "4199883d6aed3fe68f1be280d3695c2e500bbed1f8742bc2a2cf66a35c729e8e",
+        "src/orchestrator/application/teamplayer_sync.py": "5eb9a3da6f6b68b83fd8856e71e3e56d26607e7af4c8f8e6492612399a99fba9",
+        "src/orchestrator/application/worker_prompt.py": "7817faca597b319dacfa0c19be01897c5140a6b32b700b2bb969c730dc34d54c",
+        "src/orchestrator/application/worker_report.py": "c788e98914633054ca124103221841a4a3c156334c17a7e171d5aac30db2570e",
+        "src/orchestrator/application/worker_report_service.py": "38c5695e561715b5a94fea3862e33e372525e88b02dccd964b8dae8272f40182",
+        "src/orchestrator/application/worker_slots.py": "7b26ecc01c8a538ea675445f554a09dec69f6c3bb3c353c8d56f5936a16d8428",
+        "src/orchestrator/application/worktree_service.py": "56dee552e6ef9262a315b6968c723472c547d172d42f5170ae884bec91771081",
+        "src/orchestrator/cli.py": "e4fdfed7c7096f19a10c2c59ed8299029d40a2dc38f2f76d60854697113d2c30",
+        "src/orchestrator/config.py": "f0b6517b96834beb3ab3bfb8da4edc02a83d6c3722d4f7f2dfa58bfb60624bf2",
+        "src/orchestrator/domain/__init__.py": "3b79510c763d64599f6e554cafa658e3feffea3d8ca88f56e35a0e60b681dbe8",
+        "src/orchestrator/domain/attention.py": "c59e93051a1eda1b720758f0e4d088df4e53cfea6b71bb8ddd448d4f442b5a38",
+        "src/orchestrator/domain/codex_mcp_launch.py": "0a350df6a74d4ab3b1f38bae8137016f134d190831f0561945e27d5ed5a424b8",
+        "src/orchestrator/domain/epic_completion.py": "2e433d93d747d8d43d4c58f5da08f0f72bd823995ac3e14eff851c390d3f53ba",
+        "src/orchestrator/domain/git_facts.py": "c2a6150f7c452a49ccd17b85f859cd67bd3b2de521d530e3ab084c12ced8194a",
+        "src/orchestrator/domain/integration_contracts.py": "13be526d4377bffd1af73f900d733e9a4bb0b2947a87dba3ba93150ebec906fd",
+        "src/orchestrator/domain/models.py": "1581b21c7f0f08e5cafad865a0939a756e103786b28e1cbaf197e05d99b6827b",
+        "src/orchestrator/domain/policy.py": "9794f58e3c999cdbe2895c6356a605814c2efe3788e1762922c16afd7c46c92b",
+        "src/orchestrator/domain/review_contracts.py": "18bfffe6d62e1b3f307cb1858bfa55791e6653639e034ea8183927379d9a88de",
+        "src/orchestrator/domain/states.py": "68b078994ce6e4e844214c3b2f47b660e33c7b544103e81e9bf3aecab72599cc",
+        "src/orchestrator/domain/teamplayer.py": "6e19018bd712029e44a9244dcd4478675b74f44620ef8e954c96c186f929418e",
+        "src/orchestrator/domain/worker_contracts.py": "486898bec25d1ca423fb7b6bd6c490d1735ef1a9c75aa8098a59574c9524d287",
+        "src/orchestrator/event_log.py": "d50ae2945a1f4529e1271abdc74995eb7b57f22237352983301b21d0254d9967",
+        "src/orchestrator/mcp/__init__.py": "bef622bd46f0d75d74d7febe20b64d59813a7cbe8822f9f1153c3849a8bc8075",
+        "src/orchestrator/mcp/contracts.py": "56c938c53d8ed904d3de4d2493aed09202915e01209d3172c23499c3bdecc6f9",
+        "src/orchestrator/mcp/principal.py": "17bdb0a85f997c242a2e115e5c1c63dba0425a2c626b665fe4121705e41a1ec9",
+        "src/orchestrator/mcp/server.py": "d834ea15c08f272a609982eb88ff6aebde4109511eb2826caae0da121f68b88e",
+        "src/orchestrator/persistence/__init__.py": "f0901e56ad2f99de99e016c2d1aa11aa04207007328fe52b8891b4997f33ed72",
+        "src/orchestrator/persistence/store.py": "c840942242208373be03078f4fa87d9c5e8b820f62181f82117185a354df6a8f",
+        "tests/AGENTS.md": "6608e86aab92ec75628689e8e33e4a94846a4849c10c277eff1526af237dc3a2",
+        "tests/native_f37_acceptance.py": "cf60f2ff6ce8f4d045c7ea92cd3880e1c80319cdd1586b8b1573005d47673f12",
+        "tests/native_f37_host.py": "c9469aa994e4733d86cefaa1e79bbd4d7cfa530543fb2293003a54f207a06caf",
+        "tests/native_f37_probe.py": "6d5a0fe201b77e18d44d7f02053c7e3880058809e9c3ed4d87ea93dac5c6a2dc",
+        "tests/test_codex_mcp_launch.py": "9a58787ff9d03394dfee475216b2c06eeb2c57a5343be0abfd7e5599ba541cf6",
+        "tests/test_codex_message_timing.py": "489409f638aa1d1ee4006bba138ff47ddeeb01882eaf847703dc7445469369dc",
+        "tests/test_epic_completion.py": "9d9f054d06da6f7ea98d4529eff2c6c50521cf6edbdfe15d30b99b1617881429",
+        "tests/test_epic_integration.py": "4b001a5fe76f1a2d8e6ee7a68ff205f82e29d1c34a069bc271580338fcd842bb",
+        "tests/test_epic_start.py": "88dc889089e118bd5f1a3f1ee26aab5af6b30bdc892805eba1dbc36b25001e6a",
+        "tests/test_f30_timeline.py": "2bb7da0a1b7823e5e6bb2c9f2cd1ca18c742bc479d92c008e663ac6f25822390",
+        "tests/test_f33_timeline.py": "e35cab6ab22b42cf0baa74b4d8f1720326a2ccf37c835165caf60ba96fa625d1",
+        "tests/test_git_integration.py": "f1a5d074209e3d561f4dc1b614c21a00abb04c51b78a1aeef6e14788321536b3",
+        "tests/test_git_review.py": "e41afd3648ebaca4d72b9214e104d4f7e83c9695a23a1e3e15fde384c3f17e29",
+        "tests/test_integration_control.py": "f88af7870ab7ce6d7f97d647e1987a718154162c732b0cbc6b75a63217d3d5f8",
+        "tests/test_mcp.py": "b7b81f4b9521628bd7120bd682170ac4fedf5258abf08e739c87b4f0e1dd4985",
+        "tests/test_persistence.py": "44731c0540939bcf05fe9a929d707ba79e2aeecc22720b4f7c8efe636cd9c689",
+        "tests/test_runtime_assignment.py": "b117c7881a4994b2d26f02fb410f88a3432b69eec3e0693d155dc2990f06da62",
+        "tests/test_runtime_lifecycle.py": "875cf4f1c99b483182c480c701dbd8da1cfc3963cfefb4b7d8ecf71bfb0cb7f9",
+        "tests/test_runtime_start.py": "05bf4e71bc0ad7104a9ccc9bf378d364a87f00de69a998943e8f2125003d9c48",
+        "tests/test_startup.py": "997bc9c3074f99c0e4322f294f8188d1d651c376bf139c86b4edd9cca3b73df3",
+        "tests/test_states.py": "9b32f4fae1218e86d637367c6fdc47f9ebcc6deb0bea171eb7333c1da679a2f2",
+        "tests/test_task_approval_service.py": "a243be8e6e30a8d066301231f277c43309eeba2607b880a6a363fe4d2c1775e0",
+        "tests/test_task_attention_service.py": "87016679e98ec31b281ad4479e3367c8792d5e551394c035924ec8efb028b1f7",
+        "tests/test_task_changes_cli.py": "4ce625f64a2d67ac47db289d3eba2c4e391e025e85401dde8f7862dbc720c2f9",
+        "tests/test_task_changes_service.py": "de4a0c2c90cdca7f94f870eedb75a3565d5cfda20534c087929731ec8e9e0b12",
+        "tests/test_task_cleanup.py": "fd8fea59537fceea801c3149f1a35253882bdd7338a4b633d83377b309012bd1",
+        "tests/test_task_merge_service.py": "90cc1cc81602b247eec834e1cff1850664a807c7b70a9b193dc8946fed50f588",
+        "tests/test_task_resume_service.py": "ec44ef0868f8ae30f46bf90835ecf9c8a3aa92f8cdf28995a3cd93d51526cf97",
+        "tests/test_task_review_cli.py": "22d13c8791a94ad67a6261cbcc91300e4d867ab800ee8eb0a62caad72b58dd2a",
+        "tests/test_task_review_service.py": "e9a6897a58dbd5d4cec0bb1b7e066e0b44dff3f199f6230dac80388ee0e2ce43",
+        "tests/test_task_scheduler.py": "0b0971957d647f2e6f35cb78c55f2ebaf21ac14a838eb8dfb6f6f915bb2fecb2",
+        "tests/test_task_selection.py": "b84a0660c1c1e6e92faa4c3e60c99be40547a3021802b66e34534737856c7339",
+        "tests/test_task_start.py": "8c059e0767b918527e220290ad6448d4be913d898ce598467c9df5dd8bcf1abc",
+        "tests/test_task_start_cli.py": "d939d18f9880fe945a40a3fd2608ac72bfd96cb80dd0ed820feff1e9ceb167e5",
+        "tests/test_teamplayer_reader.py": "a1371f5f1517d8fe26cb34bd1dd15d081e7937aaee6a81ab6ea59349140ffb9b",
+        "tests/test_teamplayer_sync.py": "1525f171eb50a44ccbd8652a49f8698229f2af0ebec42b59417d999264a06e4a",
+        "tests/test_teamplayer_writer.py": "630a86718bed6e10884b942b79fdbd4f751c762bf680d112bd4ad8a26e384f14",
+        "tests/test_worker_contracts.py": "085b2b37ad0cd05dddc2a78e38af569e3a0b299b3dea43a36758d77e0044b30e",
+        "tests/test_worker_report_service.py": "0cdbbf001b84aa70c911f34ee99dfae0078ed12dad5d8a5890e87ae50737f17e",
+        "tests/test_worker_slots.py": "fde9ccd899e0c12730a0175d8a6342772d483a499348879e916ab0ccaf906f43",
+        "tests/test_worktrees.py": "0040d62c917a5fb1018e0a17dd4b2ea2e8d1dc651d634b1d2dffb9ca9676d704",
+        "uv.lock": "6a5da87c971c38dd87d665697cebb37be82f0ef139667cd62a9722fa19c92c43"
+      },
+      "106_files_unchanged": true
+    },
+    "gates": {
+      "native_report_hash": "066f3f9313f296644ad77170ec7d741b9ebd622c0af5b01800a37aab50ea0044",
+      "native_proof_sha256": "6229b6fd38763161a869cd8046b8135d875d943b5d8ea08fb115c436ad6d7a2f",
+      "native_tasks": 3,
+      "native_deliveries_tests_stops_done": "PASS",
+      "full_native_diff_hash": "cba19a62e3ca301bd7d02831607290ecb9171df741251ffefe29f2c8afa038bc",
+      "106_source_files_unchanged": true,
+      "production_schema_lock_config_policies_unchanged": true,
+      "wheel_modules": 62,
+      "policies": 3,
+      "checked_local_links": 133,
+      "all_changed_files_auth_scan": true,
+      "full_suite": "PASS892, actual execution/JUnit recorded separately; structural checks verify unchanged source bindings"
+    },
+    "pr": "https://github.com/johanLstang/HerdrCoordinator/pull/9",
+    "findings": [],
+    "bootstrap_exception": "Manual development worktrees lack product runtime/run/session/slot registration. Actual GitAdapter branch/path/base/current SHA/clean/origin/full review/common-dir lock/no-ff/parents/marker/tree checks; no adoption or fabricated product facts.",
+    "full_review": [
+      "All current production/prompt/test/build blobs bound to exact complete saved APPROVED task reviews F34–F37; current full 57-file diff, cross-task composition, source XML and postreview metadata examined. Full874807-byte/13445-line diff hashf5ee9b08 saved.",
+      "Current EpicStart, IntegrationControl, EpicCompletion services and all changed surrounding runtime/adapter/assignment/scheduler/contract/MCP/state paths inspected; registered principal/scopes before effects, fresh owner/deps/exact membership and immutable configuration, latest review/merge parents/operation marker/test/physical stop/slots, lock order and durable process/dispatch intents/known outcomes preserved.",
+      "F37 actual three native DONE/no-ff/test/STOPPED deliveries, same original SID input/correction, max2/dependency/refill/current aggregate receipt/full manifests/full source patches/current final identifiers independently verified with original live principal before own stop. Header/CAS current statuses and User105 ownership checked.",
+      "All892 tests actual exit0/JUnit0 failures/errors/skipped on code6d; all106 code/test/config/lock files identical at reviewed current epic52b5536d. Ruff/build/CLI/62 exact wheel modules/3 packaged policies/local links/authscan/schema2/lock/existing policies PASS; no untested changed production code or migration.",
+      "Operator host prerequisite correction/F13 same-session reload and Cancel incomplete request are explicit; no operator task workflow decisions/fabricated agent reports; native RPC clipping/full persisted receipt evidence and no full OS credential isolation claim retained. Fixtures main unchanged at native proof and now. F38 autonomous runtime gate remains.",
+      "Manual development bootstrap uses GitAdapter with separate actual paths/branch/base/current SHA/clean/latestorigin/common-dir lock/no-ff/parents/marker/identical reviewed tree; no adoption/fabricated product state. Coordinator approval is only for exact current source52b5536d and main73f64767; final main checks and board Done follow actual merge."
+    ],
+    "operation_id": "5b95e42f-bcfc-4f51-8f5a-87f9c506ec90"
+  },
+  "integration": {
+    "operation_id": "5b95e42f-bcfc-4f51-8f5a-87f9c506ec90",
+    "stage": "MERGED_POSTVERIFIED_STATUS_SYNC_PENDING",
+    "source": "52b5536d8d99d90c7b4be8bf27a649454ec02e50",
+    "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+    "review_sha256": "19dba2a503fc4714c3f096b79fa752c353c7f12eb7b97c2402e89d10e7461e59",
+    "bootstrap_exception": "Manual development worktrees lack product runtime/run/session/slot registration. Actual GitAdapter branch/path/base/current SHA/clean/origin/full review/common-dir lock/no-ff/parents/marker/tree checks; no adoption or fabricated product facts.",
+    "merge_commit": "3566f263592b9fe3c618ba06b193b3c382d57103",
+    "post_tests": {
+      "argv": [
+        "uv",
+        "run",
+        "--locked",
+        "pytest",
+        "tests/test_epic_start.py::test_sdk_registration_scope_and_role_arguments",
+        "tests/test_integration_control.py::test_board_owner_change_and_unregistered_runtime_block_all_mutation_paths",
+        "tests/test_epic_completion.py::test_current_complete_handoff_sdk_persisted_diff_and_no_main_merge",
+        "-x",
+        "--junitxml=/tmp/herdr-e09-post.xml"
+      ],
+      "passed": 3,
+      "seconds": 38.573,
+      "reported_seconds": 38.58,
+      "exit_code": 0,
+      "main_commit": "3566f263592b9fe3c618ba06b193b3c382d57103",
+      "xml_sha256": "8b550ef75c5a4bdaf91345399d077fea8db444bf7be57c6d786a83182330b9dc"
+    },
+    "post_gates": {
+      "ruff": 0,
+      "build": 0,
+      "readme_cli": 0,
+      "correct_main_import": true,
+      "source": "3566f263592b9fe3c618ba06b193b3c382d57103",
+      "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+      "exact_review_bindings": {
+        "Backlog.md": {
+          "blob": "e70c26d3fb01864df3e61e6f592fccd85235caf2",
+          "latest_full_task_review": null
+        },
+        "README.md": {
+          "blob": "f2eaf5fdd0d49dc6f3422548bbd34fe0e2cd0c80",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-34-native.json": {
+          "blob": "c9f865cbd0a23e1f24a7647de824a3ba637358d3",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-34-start.md": {
+          "blob": "628b6794ca8e344f6fa3509418dd332a2d21ae4c",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-35-control.md": {
+          "blob": "113ef3ab6441938fdc263b791aa98f542837a90b",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-35-native.json": {
+          "blob": "6b17a70874776e936d9549ff57b9dd701c002d11",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-35-progress.json": {
+          "blob": "8e1a9fa3ffc885cfee52babc967e31a9761b4548",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-36-completion.md": {
+          "blob": "413883293ea9ecd1222997386112b054b678fd7a",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-36-progress.json": {
+          "blob": "2a9ac78fdf5348502313b47513628652e7626f54",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-37-native.json": {
+          "blob": "166337ca3a1d28068d1a246e45ed334bd59b70fb",
+          "latest_full_task_review": 37
+        },
+        "docs/integration/F-37-native.md": {
+          "blob": "9ca792202238c25604ea01fcbe4eca3e08f3ba9b",
+          "latest_full_task_review": null
+        },
+        "docs/integration/F-37-progress.json": {
+          "blob": "26345b33a35610bf6aac84acb3fe2aee147c2003",
+          "latest_full_task_review": null
+        },
+        "docs/reviews/E-09-source.xml": {
+          "blob": "11af7658462523c8195eeaf3c3f4080889338e22",
+          "latest_full_task_review": null
+        },
+        "docs/reviews/E-09.json": {
+          "blob": "3ad63788d79c5b2cd1cadfc912988c3be9cf0de0",
+          "latest_full_task_review": null
+        },
+        "docs/reviews/E-09.md": {
+          "blob": "dff2df30108633ab5630499c6c25a8889c5d1504",
+          "latest_full_task_review": null
+        },
+        "docs/reviews/F-34.json": {
+          "blob": "74685db4d9baa240c1624af964a11c6d922d5f51",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-34.md": {
+          "blob": "59efb417ed9ce691d9f043a042e736a03cc69683",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-35.json": {
+          "blob": "6f7aa50aa3b3840a38faa13d53fb864489538016",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-35.md": {
+          "blob": "6d04f1ab7455154cee3dbbd1c521d4881098350c",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-36-post.xml": {
+          "blob": "0633e35713a4a803762543d21e8eb587743bbd53",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-36-source.xml": {
+          "blob": "4f56b0659966997471c24b0bc45062e87ab369d4",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-36.json": {
+          "blob": "79d3a116ef75897b2f636bf095019f0cdade165c",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-36.md": {
+          "blob": "5983d61f1f0dd772122e4d98a81b62ed4826fcff",
+          "latest_full_task_review": 37
+        },
+        "docs/reviews/F-37.json": {
+          "blob": "a92e964a370cd4e5e6963d9b556ff4dfc92e91e7",
+          "latest_full_task_review": null
+        },
+        "docs/reviews/F-37.md": {
+          "blob": "9d026d24e06bfbfe3a7411778b9caae1438e754b",
+          "latest_full_task_review": null
+        },
+        "prompts/integration-v1.md": {
+          "blob": "75bc2d82b7fc3d4d0e6c3f578ad210b93b9036fb",
+          "latest_full_task_review": 37
+        },
+        "pyproject.toml": {
+          "blob": "6cf3f85c46d268a3d3e9227978852a8cfe03def1",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/adapters/codex.py": {
+          "blob": "7b39dcc912983901c01c4fa92ed9dec51014a65c",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/adapters/herdr.py": {
+          "blob": "51bf0da537020d19a4d67381c1439ca212ed9a2a",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/epic_completion_service.py": {
+          "blob": "c758593c0b06b4164ea4717f080cec93c090eb49",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/epic_start_service.py": {
+          "blob": "0a2d817e99f7ee232eb5ef8ce2aeb66303be3439",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/integration_control_service.py": {
+          "blob": "2a713e7900955b6e2b2f5da5262ce16ff8b489ed",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/runtime_assignment_service.py": {
+          "blob": "be0e05fc81a754a8373285a71279e69fe02bf1c5",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/runtime_lifecycle_service.py": {
+          "blob": "37d72ac27ae4e7be1e391179efcd0a61082287a8",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/runtime_service.py": {
+          "blob": "e6504344184eb7315ff086dc9e733b375451a2b5",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/runtime_start_service.py": {
+          "blob": "296fde23c093616159f943b538a19882b7ea1782",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/state_service.py": {
+          "blob": "7e85e62f4863111f41079c1a7811d3b39274ad32",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/task_changes_service.py": {
+          "blob": "a3a5d1120f71c500330957198883b89ab3e23853",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/task_resume_service.py": {
+          "blob": "7c8c42973ab43eb2f0009d9758dc5ccd66de4eda",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/task_scheduler_service.py": {
+          "blob": "2880aafe78d6ea1a76b46ac55d15fe7fa312f087",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/application/worktree_service.py": {
+          "blob": "3c2467efeb181968fecfe0e9c77bb83f8e21e49c",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/domain/codex_mcp_launch.py": {
+          "blob": "40be59660319f13cf687a7fdb73e679d92d6a1f8",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/domain/epic_completion.py": {
+          "blob": "f5da6ab5a257d6378bc6387079898c3de1a93e7e",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/domain/integration_contracts.py": {
+          "blob": "9250e92700d33c1fc7171b81d143887e94b3fcd5",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/mcp/contracts.py": {
+          "blob": "711ce6ddf1fb04e3734435430ca7f952379084ad",
+          "latest_full_task_review": 37
+        },
+        "src/orchestrator/mcp/server.py": {
+          "blob": "f93de1228fdcd3884c0721c806b5b9f8c28f62ec",
+          "latest_full_task_review": 37
+        },
+        "tests/native_f37_acceptance.py": {
+          "blob": "ec2b59395c5031b9a963010cc014658becd1f3c0",
+          "latest_full_task_review": 37
+        },
+        "tests/native_f37_host.py": {
+          "blob": "6d8df05f3f32b7e24f261289979acde92f50ecb0",
+          "latest_full_task_review": 37
+        },
+        "tests/native_f37_probe.py": {
+          "blob": "61503d1a4e8d31dca15b4d8be70f70ae630b02e5",
+          "latest_full_task_review": 37
+        },
+        "tests/test_codex_mcp_launch.py": {
+          "blob": "a3970134072b68a28104814fb0a1eab8ac6c0127",
+          "latest_full_task_review": 37
+        },
+        "tests/test_codex_message_timing.py": {
+          "blob": "d2925aca4384dcc58bcd6956cf3e8f7f6f5d0054",
+          "latest_full_task_review": 37
+        },
+        "tests/test_epic_completion.py": {
+          "blob": "2a584ea3dec29d450a3b25f6312254505112fd06",
+          "latest_full_task_review": 37
+        },
+        "tests/test_epic_start.py": {
+          "blob": "35df45c906592bf543e83e8e5e500953c0baf5a0",
+          "latest_full_task_review": 37
+        },
+        "tests/test_integration_control.py": {
+          "blob": "f70d6fa4842dec4a15558b5bb780dc023ca71037",
+          "latest_full_task_review": 37
+        },
+        "tests/test_runtime_assignment.py": {
+          "blob": "905960dee9c12a96e194374f728aa0815d0b918d",
+          "latest_full_task_review": 37
+        },
+        "tests/test_task_changes_service.py": {
+          "blob": "d749ebfcb0d60ede8bf35d1c9709a57f155e09c9",
+          "latest_full_task_review": 37
+        },
+        "tests/test_task_resume_service.py": {
+          "blob": "e7431960a86324e1afe0af69144412d299bd4390",
+          "latest_full_task_review": 37
+        }
+      },
+      "full_reviews": [
+        {
+          "task": 34,
+          "source": "e8b2dc2a23fbf514cbfda61c41342261af3adfe5",
+          "target": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+          "full_patch": {
+            "bytes": 73807,
+            "sha256": "bb2cf89eff008f07c56bd241668b35a64fa1e977b2b83c68040628d9b6704349",
+            "lines": 1445
+          }
+        },
+        {
+          "task": 35,
+          "source": "cc0252a8585e15e0b6c9ece7f3b938aa6fa998c5",
+          "target": "5d7f96830c75c5b1c371602fd47e28019f8c290e",
+          "full_patch": {
+            "bytes": 230694,
+            "sha256": "f98cc30e386eb09ed9411a542c101e21c2ea0fa97c931f8bf5b96f3b5205291c",
+            "lines": 4856
+          }
+        },
+        {
+          "task": 36,
+          "source": "0f67b82d43c0141212e0ef6da620252aa8e715a2",
+          "target": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+          "full_patch": {
+            "bytes": 84564,
+            "sha256": "5ec8e62b042be4fd16fdcc8cf0f9396bfe1a7351eeb20232c3499a32d73863fd",
+            "lines": 1388
+          }
+        },
+        {
+          "task": 37,
+          "source": "98a6ed1620f516b813d520de4f13e4e2eb69ae5c",
+          "target": "517530ab9057a5a1e87179b37b3e2e3c51a1460a",
+          "full_patch": {
+            "bytes": 288434,
+            "sha256": "912ad99da28d3f06937ab91c0420d5e53764c8dfcd728522401bd4ed75877b6b",
+            "lines": 4585
+          }
+        }
+      ],
+      "full_patch": {
+        "bytes": 874807,
+        "sha256": "f5ee9b084d283b27231d79623983d43b35e44528f423a1e48bac01e3be1665b5",
+        "lines": 13445
+      },
+      "wheel_modules": 62,
+      "policies": 3,
+      "checked_local_links": 183,
+      "all_changed_files_auth_scan": true,
+      "unchanged_schema_lock_existing_policies": true,
+      "native_receipt": "F37 actual all3done/stop/max2/sameSID/currentaggregate independently verified, no fixture main merge; explicit operator actions/transcript clipping remain documented",
+      "suite": "PASS892 at code6d; actual main all106 source bindings identical, posttests separately recorded"
+    }
+  }
 }
