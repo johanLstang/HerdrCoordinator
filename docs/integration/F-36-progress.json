@@ -1,0 +1,60 @@
+{
+  "task": "F36",
+  "task_id": "e8e489aa-0235-436a-adc0-4c61703dab9e",
+  "status": "Testing5",
+  "local_status": "Active",
+  "role": "Worker",
+  "branch": "task/e09-f36",
+  "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4",
+  "base": "8db5e054f7e8ce2bd2340670179c691b28e3c897",
+  "main": "73f64767b6196d5b0786b41b6dbdf39b8a8f5fe7",
+  "verification": {
+    "initial_service": {
+      "passed": 21,
+      "seconds": 636.91,
+      "exit_code": 0,
+      "binding": "Earlier uncommitted implementation; historical only"
+    },
+    "focused_checkpoint": {
+      "passed": 4,
+      "seconds": 127.36,
+      "exit_code": 0,
+      "binding": "Earlier uncommitted checkpoint; historical only"
+    },
+    "current_source": {
+      "passed": 104,
+      "seconds": 969.51,
+      "exit_code": 0,
+      "code_checkpoint": "28f6322fdb35550bdcbbda7475e5a122781776c4",
+      "xml": "docs/reviews/F-36-source.xml"
+    },
+    "ruff": "PASS",
+    "build": "PASS",
+    "readme_check": "PASS",
+    "structure": {
+      "files": [
+        "Backlog.md",
+        "README.md",
+        "docs/integration/F-36-completion.md",
+        "src/orchestrator/application/epic_completion_service.py",
+        "src/orchestrator/application/integration_control_service.py",
+        "src/orchestrator/application/state_service.py",
+        "src/orchestrator/domain/epic_completion.py",
+        "src/orchestrator/mcp/contracts.py",
+        "src/orchestrator/mcp/server.py",
+        "tests/test_epic_completion.py"
+      ],
+      "wheel_modules": 62,
+      "policies": 3,
+      "local_links": 136,
+      "auth_scan": true,
+      "historical_f34_code_binding": true,
+      "schema_lock_existing_policies_unchanged": true
+    }
+  },
+  "review": "READY_FOR_REVIEW",
+  "merge": null,
+  "acceptance_verified": 0,
+  "integration_boundary": "Actual Git/SQLite/processes/MCP SDK, controlled runtime and board; F37 native proof remains",
+  "next": "Bootstrap Integration full review, actual Task→E09 and posttests before Done"
+}

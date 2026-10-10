@@ -81,3 +81,7 @@ class TaskBlockReviewRequest(TaskParkRequest):
 
 class TaskResumeRequest(TaskParkRequest):
     decision: InputDecision
+
+
+class EpicCompleteRequest(TaskGetNextRequest):
+    request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")

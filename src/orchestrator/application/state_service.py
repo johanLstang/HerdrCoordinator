@@ -30,7 +30,7 @@ _TASK_EDGES = {
 _EPIC_EDGES = {
     E.PLANNED: {E.ACTIVE},
     E.ACTIVE: {E.READY_FOR_REVIEW},
-    E.READY_FOR_REVIEW: {E.REVIEWING},
+    E.READY_FOR_REVIEW: {E.REVIEWING, E.ACTIVE},
     E.REVIEWING: {E.APPROVED, E.CHANGES_REQUESTED, E.READY_FOR_REVIEW},
     E.CHANGES_REQUESTED: {E.ACTIVE},
     E.APPROVED: {E.MERGING, E.CHANGES_REQUESTED},
@@ -270,6 +270,8 @@ class StateService:
             require(epic.status == expected, "epic state changed; reread before retry")
             require(target in _EPIC_EDGES[expected], "epic transition is not allowed")
             updates = {"status": target}
+            if target == E.ACTIVE and expected == E.READY_FOR_REVIEW:
+                require(bool(facts.reason.strip()), "aggregate invalidation requires a reason")
             if target == E.READY_FOR_REVIEW and expected == E.ACTIVE:
                 tasks = self.store.get_tasks(epic.id)
                 require(

@@ -14,6 +14,7 @@ from mcp.types import (
 
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
+    EpicCompleteRequest,
     EpicStartRequest,
     PolicyRequest,
     Target,
@@ -57,6 +58,23 @@ def create_server(service: RuntimeService) -> Server:
                 input_schema=TaskGetNextRequest.model_json_schema(),
                 output_schema=ToolResponse.model_json_schema(),
                 annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False),
+            )
+        )
+
+    if (
+        service.integration_control is not None
+        and "epic_complete" in service.integration_control.operations
+    ):
+        tools.append(
+            Tool(
+                name="epic_complete",
+                description=(
+                    "Run trusted aggregate build/test/acceptance and persist current "
+                    "epic handoff; no main merge."
+                ),
+                input_schema=EpicCompleteRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
             )
         )
 
