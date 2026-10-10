@@ -158,3 +158,35 @@ samma faktiska väntande begäran godkänns. Ingen uppdatering, hookändring ell
 ny dispatch utfördes vid diagnosen. CLI open-session nådde ingen matchande
 Desktop-vy; kopplingen skall kontrolleras efter uppdateringen. F35 är fortsatt
 NeedsApproval/Attention, E09 Active, session/server hålls igång.
+
+## Avstämt VNC-avbrott och r4
+
+Användaren har uppdaterat Desktop till12.6.0 och rapporterar VNC-krasch efter
+att approval syntes. Den gamla egna Herdr-servern kör inte längre; dess båda
+registrerade nativeprocesser är borta, Codex-turn interrupted och GitKraken
+session ended. Avbrottets orsak är inte fastställd. Noll taskruns/Workers/merger
+och samma tre externa fixturetasks Pending2 verifierades. R3-resurser bevaras;
+F13-stopp eller återställd runtimebindning fabriceras inte.
+
+Separat r4-run c6e2d60a-fd95-4a85-ae8d-fa93d927f82a använder samma godkända
+fixture-repo och board-ID:n på egen hc-f35-r4-20261010 headlessserver, startad
+som fristående process med skyddad lokal logg. Ny F05/F34-registrering, session
+och scoped MCP-anslutning verifieras före nytt explicit kontrolluppdrag. Det
+är ett nytt isolerat prov, ingen generell produktrecovery eller adoption.
+F35 InProgress/Active, E09 Active; F36/F37 väntar på verifierad leverans.
+
+R4 visade Codex uppdateringsläge och avslutades efter npm-uppdatering med
+Please restart Codex före F34-ACK; båda processerna är borta, inga tasks/Workers
+eller merger. Journalen PENDING/DISPATCH_REQUESTED/UNKNOWN bevaras utan replay
+eller fabricerat F13-stopp. CLI är nu0.162.1. Ny separat r5-run
+2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1 är F34 REGISTERED med faktiskt ACK/session
+01a1263d-e132-7a43-9aba-2c94bb228b87 på feature/epic-f35-epic-r5. Samma egna
+headlessserver och samma godkända repo/fixtureboard, ny privat profil/SQLite.
+Nytt kontrolluppdrag skickas efter registreringen; aktuell permission avstäms
+i GitKraken12.6.0. R3/r4-resurser och deras verkliga utfall bevaras.
+
+R5 är nu kopplad till exakt rätt worktree i GitKraken12.6.0. Faktisk
+PermissionRequest för task_start väntar sedan14:37:29Z i session01a1263d;
+användaren väljer Allow på feature/epic-f35-epic-r5. Read-only overview/get_next
+har körts, noll tasks/Workers/merger före gate. F35 NeedsApproval/Attention14,
+E09 Active. Egen headlessserver/session bevaras igång för samma begäran.

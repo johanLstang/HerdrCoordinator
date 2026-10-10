@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "status": "NATIVE_R3_PERMISSION_REQUEST_PENDING",
+  "status": "NATIVE_R5_PERMISSION_REQUEST_PENDING",
   "fixture_epic_id": "690c899f-b1c9-4a26-adae-8db68cd7ff22",
-  "run_id": "eaac9f71-c484-42e2-8af6-2324a9ea9198",
-  "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+  "run_id": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+  "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
   "confirmed_read_tools": [
     "integration_overview",
     "task_get_next"
@@ -16,16 +16,16 @@
     "stop_status": "SUCCEEDED"
   },
   "pending_permission": {
-    "source": "~/.codex/hooks.json PermissionRequest",
-    "hook": "GitKrakenCLI gk ai hook run --host codex --blocking",
-    "operation": "herdr_coordinator.task_start",
-    "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+    "operation": "mcp__herdr_coordinator__task_start",
     "state": "blocked",
-    "observed_at": "2026-10-10T13:09:23.973Z",
+    "since": "2026-10-10T14:37:29Z",
+    "session_id": "01a1263d-e132-7a43-9aba-2c94bb228b87",
+    "matched_workspace": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e09-f35/.herdr/probes/f35-r5/trees/f35-probe-r5/epic-f35-epic-r5",
+    "source": "GitKraken PermissionRequest hook",
     "worker_starts_confirmed": 0
   },
   "acceptance": "not yet satisfied; no READY_FOR_REVIEW, merge, task Done or epic Done claimed",
-  "next_action": "Operator updates GitKraken Desktop to at least 12.4.1 and verifies Codex Plugin and session association, then approves the same pending task_start request. No hook bypass, replay or native restart.",
+  "next_action": "User selects Allow on feature/epic-f35-epic-r5 task_start card in GitKraken12.6.0. Integration then observes the same pending request. Keep headlessserver and session alive, no replay or restart.",
   "stop": null,
   "local_verification": {
     "regression": {
@@ -90,7 +90,7 @@
   "teamplayer": {
     "task_id": "7f990cb9-be35-485f-a9bc-a3ff468de448",
     "status": "NeedsApproval",
-    "confirmed_version": 11,
+    "confirmed_version": 15,
     "execution_owner": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
@@ -134,7 +134,7 @@
   },
   "native_session_kept_running": true,
   "gitkraken_diagnosis": {
-    "desktop_package_version": "12.4.0",
+    "desktop_package_version": "12.6.0",
     "package_check": "dpkg-query",
     "cli_version": "3.1.76",
     "codex_hooks_installed": true,
@@ -144,6 +144,58 @@
     "cached_matched_workspace": "/home/stang/Documents/Projects/HerdrCoordinator",
     "user_screenshot": "correct r3 worktree; no live agent status or permission buttons",
     "application_updated": false,
-    "hooks_changed": false
-  }
+    "hooks_changed": false,
+    "application_updated_by_user": true,
+    "minimum_desktop_version_satisfied": true,
+    "current_session_association_verified": true
+  },
+  "previous_r3": {
+    "status": "NATIVE_R3_PERMISSION_REQUEST_PENDING",
+    "run_id": "eaac9f71-c484-42e2-8af6-2324a9ea9198",
+    "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+    "pending_permission": {
+      "source": "~/.codex/hooks.json PermissionRequest",
+      "hook": "GitKrakenCLI gk ai hook run --host codex --blocking",
+      "operation": "herdr_coordinator.task_start",
+      "session_id": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+      "state": "blocked",
+      "observed_at": "2026-10-10T13:09:23.973Z",
+      "worker_starts_confirmed": 0
+    },
+    "after_crash": {
+      "old_run": "eaac9f71-c484-42e2-8af6-2324a9ea9198",
+      "old_session": "01a125ed-dc9c-78a2-9f3a-ab8cb507fcc7",
+      "actual_native_server": "NOT_RUNNING",
+      "gk_state": "ended",
+      "actual_old_processes_absent": true,
+      "task_runs": 0,
+      "task_start_tool_result": null,
+      "thread_status": "interrupted",
+      "verified_lifecycle_stop": false,
+      "original_resources_preserved": true,
+      "new_run": "c6e2d60a-fd95-4a85-ae8d-fa93d927f82a",
+      "new_server": "hc-f35-r4-20261010",
+      "fixture_base": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+      "desktop_package_version": "12.6.0"
+    }
+  },
+  "previous_r4": {
+    "old_run": "c6e2d60a-fd95-4a85-ae8d-fa93d927f82a",
+    "actual_runtime": "MISSING_UNCONFIRMED",
+    "epic_start_status": "PENDING",
+    "epic_start_stage": "DISPATCH_REQUESTED",
+    "transport": "UNKNOWN",
+    "observed_terminal_message": "Updating Codex via npm install -g @openai/codex; Update ran successfully! Please restart Codex.",
+    "codex_version_after": "0.162.1",
+    "actual_old_processes_absent": true,
+    "task_runs": 0,
+    "ack_registered": false,
+    "verified_lifecycle_stop": false,
+    "original_resources_preserved": true,
+    "new_run": "2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1",
+    "new_server": "hc-f35-r4-20261010"
+  },
+  "native_server": "hc-f35-r4-20261010",
+  "native_branch": "feature/epic-f35-epic-r5",
+  "codex_cli_version": "0.162.1"
 }
