@@ -1,0 +1,338 @@
+{
+  "version": 1,
+  "scenario": "F38-r1 original Coordinator registration/reopen, guarded WAIT and physical stop",
+  "native_code_checkpoint": "4e8fb47480a42a1c6f4d716e46c2dc86fa3b5aae",
+  "corrected_code_checkpoint": "b554e791a0f5979e80d1b190836afe05a532ef47",
+  "coordinator_before_stop": {
+    "id": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "project_id": "f38-probe-r1",
+    "actor_id": "f38-coordinator-r1",
+    "branch": "main",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e06-f26/.herdr/probes/f26/repo",
+    "initial_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+    "configuration_hash": "308526d170bc0d6af4c01ce45d4fe0fb78b7433876494813155e616ad8d9e2b8",
+    "status": "ACTIVE",
+    "coordinator_agent_id": "hc-c-e0ae9e37ee994158a7ee8f45",
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f38-r1-20261011",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d8466cad55d1",
+    "codex_session_id": "01a12809-f3e2-7753-bb10-9ae22f326102",
+    "started_at": "2026-10-10T22:58:21.851756Z",
+    "completed_at": null
+  },
+  "coordinator_after_stop": {
+    "id": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "project_id": "f38-probe-r1",
+    "actor_id": "f38-coordinator-r1",
+    "branch": "main",
+    "worktree_path": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e06-f26/.herdr/probes/f26/repo",
+    "initial_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+    "configuration_hash": "308526d170bc0d6af4c01ce45d4fe0fb78b7433876494813155e616ad8d9e2b8",
+    "status": "STOPPED",
+    "coordinator_agent_id": "hc-c-e0ae9e37ee994158a7ee8f45",
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f38-r1-20261011",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65d8466cad55d1",
+    "codex_session_id": "01a12809-f3e2-7753-bb10-9ae22f326102",
+    "started_at": "2026-10-10T22:58:21.851756Z",
+    "completed_at": "2026-10-15T12:08:19.109492Z"
+  },
+  "configuration_hash": "308526d170bc0d6af4c01ce45d4fe0fb78b7433876494813155e616ad8d9e2b8",
+  "original_start_operation": {
+    "id": "55ac101e-b389-40cc-8056-1409f1054a4e",
+    "project_id": "f38-probe-r1",
+    "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "kind": "coordinator_start",
+    "idempotency_key": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "status": "SUCCEEDED",
+    "result": {
+      "stage": "REGISTERED",
+      "name": "hc-c-e0ae9e37ee994158a7ee8f45",
+      "binding": {
+        "workspace_id": "w1",
+        "tab_id": "w1:t1",
+        "pane_id": "w1:p1",
+        "terminal_id": "term_65d8466cad55d1"
+      },
+      "processes": [
+        {
+          "pid": 233454,
+          "start_time": "114327887"
+        },
+        {
+          "pid": 233483,
+          "start_time": "114327892"
+        }
+      ],
+      "prompt_hash": "d2e93a837fc3f1672aec664a1f4d991211d965ff9e731a11b3f666cb15300e2b",
+      "confirmation": {
+        "version": 1,
+        "status": "COORDINATOR_READY",
+        "project_id": "f38-probe-r1",
+        "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+        "correlation_id": "55ac101e-b389-40cc-8056-1409f1054a4e",
+        "configuration_hash": "308526d170bc0d6af4c01ce45d4fe0fb78b7433876494813155e616ad8d9e2b8",
+        "initial_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563"
+      },
+      "deadline": "2026-10-10T22:59:10.813584+00:00",
+      "ack": {
+        "session_id": "01a12809-f3e2-7753-bb10-9ae22f326102",
+        "turn_id": "01a12809-fed3-77b3-ac58-dbab7e477c10",
+        "item_id": "msg_0865e9d1bdb7475d016acac317157881918905a9bb26db6aa6",
+        "message_hash": "06b3297b2e88820a2ae55cc1afac7e7e818fecd032b425407454d7622767a4e3"
+      }
+    },
+    "error_code": null,
+    "created_at": "2026-10-10T22:58:21.851819Z",
+    "updated_at": "2026-10-10T22:58:33.658508Z"
+  },
+  "original_ack_message": {
+    "type": "agentMessage",
+    "id": "msg_0865e9d1bdb7475d016acac317157881918905a9bb26db6aa6",
+    "text": "{\"configuration_hash\":\"308526d170bc0d6af4c01ce45d4fe0fb78b7433876494813155e616ad8d9e2b8\",\"coordinator_run_id\":\"9997e70a-5bec-4521-8145-4f6499507d80\",\"correlation_id\":\"55ac101e-b389-40cc-8056-1409f1054a4e\",\"initial_commit\":\"d4215a26ba5e77d64a1fd4aed4117e5313c43563\",\"project_id\":\"f38-probe-r1\",\"status\":\"COORDINATOR_READY\",\"version\":1}",
+    "phase": "final_answer",
+    "memoryCitation": null,
+    "delivery": null,
+    "questions": null,
+    "nativeObservedAt": "2026-10-10T22:58:32.986000+00:00"
+  },
+  "native_calls": [
+    {
+      "type": "mcpToolCall",
+      "id": "exec-34c8b67e-9970-4463-9f89-5ab0c629a34a",
+      "server": "herdr_coordinator",
+      "tool": "coordinator_overview",
+      "status": "completed",
+      "arguments": {
+        "project_id": "f38-probe-r1"
+      },
+      "appContext": null,
+      "mcpAppUi": null,
+      "pluginId": null,
+      "readOnlyHint": true,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"ok\": true, \"code\": \"OK\", \"message\": \"verified Coordinator result\", \"data\": {\"project_id\": \"f38-probe-r1\", \"coordinator_run_id\": \"9997e70a-5bec-4521-8145-4f6499507d80\", \"main_commit\": \"d4215a26ba5e77d64a1fd4aed4117e5313c43563\", \"candidates\": [\"f38-epic-r1\"], \"blockers\": [], \"runtime_gate\": \"RUNTIME_SECURITY_GATE_UNVERIFIED\", \"reservation\": false, \"active_epics\": []}}"
+          }
+        ],
+        "structuredContent": {
+          "ok": true,
+          "code": "OK",
+          "message": "verified Coordinator result",
+          "data": {
+            "project_id": "f38-probe-r1",
+            "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+            "main_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+            "candidates": [
+              "f38-epic-r1"
+            ],
+            "blockers": [],
+            "runtime_gate": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+            "reservation": false,
+            "active_epics": []
+          }
+        },
+        "_meta": null
+      },
+      "error": null,
+      "durationMs": 2613
+    },
+    {
+      "type": "mcpToolCall",
+      "id": "exec-3afdbed0-26c5-462c-bf3e-108795894762",
+      "server": "herdr_coordinator",
+      "tool": "epic_claim_next",
+      "status": "completed",
+      "arguments": {
+        "project_id": "f38-probe-r1",
+        "request_key": "f38-r1-native-claim-v1"
+      },
+      "appContext": null,
+      "mcpAppUi": null,
+      "pluginId": null,
+      "readOnlyHint": false,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"ok\": true, \"code\": \"OK\", \"message\": \"verified Coordinator result\", \"data\": {\"status\": \"WAIT\", \"reason\": \"RUNTIME_SECURITY_GATE_UNVERIFIED\", \"blockers\": []}}"
+          }
+        ],
+        "structuredContent": {
+          "ok": true,
+          "code": "OK",
+          "message": "verified Coordinator result",
+          "data": {
+            "status": "WAIT",
+            "reason": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+            "blockers": []
+          }
+        },
+        "_meta": null
+      },
+      "error": null,
+      "durationMs": 10187
+    }
+  ],
+  "agent_final_report": {
+    "status": "WAIT",
+    "project_id": "f38-probe-r1",
+    "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "session_id": null,
+    "main_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+    "overview": {
+      "ok": true,
+      "code": "OK",
+      "message": "verified Coordinator result",
+      "data": {
+        "project_id": "f38-probe-r1",
+        "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+        "main_commit": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+        "candidates": [
+          "f38-epic-r1"
+        ],
+        "blockers": [],
+        "runtime_gate": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+        "reservation": false,
+        "active_epics": []
+      }
+    },
+    "claim_result": {
+      "ok": true,
+      "code": "OK",
+      "message": "verified Coordinator result",
+      "data": {
+        "status": "WAIT",
+        "reason": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+        "blockers": []
+      }
+    }
+  },
+  "agent_report_session_id_is_null": true,
+  "trusted_session_id": "01a12809-f3e2-7753-bb10-9ae22f326102",
+  "real_registration_revalidated_before_stop": true,
+  "stop_operation": {
+    "id": "eceff655-7ba8-4d52-ab21-6ca6d21db473",
+    "project_id": "f38-probe-r1",
+    "coordinator_run_id": "9997e70a-5bec-4521-8145-4f6499507d80",
+    "kind": "coordinator_stop",
+    "idempotency_key": "f38-r1-final-stop",
+    "status": "SUCCEEDED",
+    "result": {
+      "stage": "STOPPED",
+      "process_proof": {
+        "identities": [
+          {
+            "pid": 233454,
+            "start_time": "114327887"
+          },
+          {
+            "pid": 233483,
+            "start_time": "114327892"
+          },
+          {
+            "pid": 234295,
+            "start_time": "114328042"
+          },
+          {
+            "pid": 302686,
+            "start_time": "114341235"
+          }
+        ],
+        "groups": [
+          233454,
+          234295,
+          302686
+        ]
+      },
+      "start_operation_id": "55ac101e-b389-40cc-8056-1409f1054a4e",
+      "inactive": true
+    },
+    "error_code": null,
+    "created_at": "2026-10-15T12:07:38.472903Z",
+    "updated_at": "2026-10-15T12:08:19.111533Z"
+  },
+  "physical_inactive": true,
+  "poststop_process_info": {
+    "foreground_process_group_id": 233426,
+    "foreground_processes": [
+      {
+        "argv": [
+          "/bin/bash"
+        ],
+        "cmdline": "/bin/bash",
+        "cwd": "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e06-f26/.herdr/probes/f26/repo",
+        "name": "bash",
+        "pid": 233426
+      }
+    ],
+    "pane_id": "w1:p1",
+    "shell_pid": 233426
+  },
+  "fixture_main": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "fixture_main_unchanged": true,
+  "no_epic_or_task_runs": true,
+  "no_claim_reservation": true,
+  "database_counts": {
+    "coordinator_runs": 1,
+    "epic_runs": 0,
+    "task_runs": 0,
+    "reviews": 0,
+    "operations": 0,
+    "external_references": 0,
+    "transition_events": 0
+  },
+  "database_foreign_key_errors": 0,
+  "approval": {
+    "user_text": "Godkänn F38-r",
+    "interpreted_scope": "The immediately preceding F38-r1 single-call approval request",
+    "decision": "ALLOW_ONCE",
+    "session_id": "01a12809-f3e2-7753-bb10-9ae22f326102",
+    "agent": "hc-c-e0ae9e37ee994158a7ee8f45",
+    "server": "hc-f38-r1-20261011",
+    "project_id": "f38-probe-r1",
+    "tool": "epic_claim_next",
+    "request_key": "f38-r1-native-claim-v1",
+    "observed_at": "2026-10-15T12:05:45.338176+00:00",
+    "ui_sha256": "e28cfb424d2aff8a5e09fd50d6cfe67611980b2fd0f450b44433bd5ee655807f",
+    "stage": "KEY_SENT"
+  },
+  "server_stop": {
+    "stage": "STOPPED",
+    "server": "hc-f38-r1-20261011",
+    "pid": 222855,
+    "start_time": "114325421",
+    "coordinator_physically_stopped": true,
+    "created_at": "2026-10-15T12:09:25.849784+00:00",
+    "response": {
+      "session": {
+        "default": false,
+        "name": "hc-f38-r1-20261011",
+        "running": false,
+        "session_dir": "/home/stang/.config/herdr/sessions/hc-f38-r1-20261011",
+        "socket_path": "/home/stang/.config/herdr/sessions/hc-f38-r1-20261011/herdr.sock"
+      },
+      "stopped": true
+    },
+    "pid_absent": true
+  },
+  "fixture_board": {
+    "epic_id": "29066c6e-c787-49f5-adcf-6e2207c42a12",
+    "task_id": "030ffc3b-f2f2-4f5a-ac15-eb9da3e56b86",
+    "task_status": "Pending",
+    "task_version": 1,
+    "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee"
+  },
+  "recovery": "First stop returned wrapped TEAMPLAYER_CONNECTION_FAILED; actual durable EXIT_PENDING and absent agent re-read. Same key reconciled inactivity without a second exit.",
+  "limits": [
+    "No positive native autonomous Integration start or OS isolation attested. D02/F17 remains closed.",
+    "Native guarded flow uses checkpoint4e; subsequent single-epic guard correction is separately verified by41 tests; other121 source bindings unchanged.",
+    "Agent reported session_id:null. Actual SID independently verified from registered runtime/Herdr/Codex thread."
+  ]
+}

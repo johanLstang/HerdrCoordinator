@@ -115,7 +115,6 @@ Serviceproven använder faktisk temporär Git/SQLite/F34 och SDK-MCP, med uttryc
 kontrollerade Herdr/Codex/TeamPlayer/process- och positiva gateadaptrar.
 De verifierar positiva starter, prioritet/ordning, race, återförsök, scope, owner,
 schema 1/2-migration och negativa gränsfall. Detta är ingen native säkerhetsattest.
-Native Coordinator-start/ACK/omstart/WAIT/stopp återstår; ingen acceptans markeras
-före faktisk verifiering, utvecklingsreview, Task→Epic och integrationskontroller.
+Native Coordinator-start/ACK/omstart/WAIT/stopp är verifierade; [faktiska bevis](F-38-native.md). Acceptans slutmarkeras efter aktuell utvecklingsreview, Task→Epic och integrationskontroller.
 
 Aktuell korrigerings- och fullverifiering finns i [utvecklingsreview](../reviews/F-38-review-1.md). Nativeprovets eget godkännande och slutgrindar kvarstår.

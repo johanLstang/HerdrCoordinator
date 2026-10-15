@@ -1,6 +1,8 @@
-# F38-r1: förberett verkligt Coordinatorprov
+# F38-r1: verkligt Coordinatorprov
 
-Detta är förberedelseunderlag, ingen intygad nativeframgång. Utvecklings-F38 väntar nu i
+**Aktuellt resultat 2026-10-15:** Originalstart/ACK/omöppnad state, faktisk MCP-WAIT och fysisk STOPPED är verifierade. Egen server är stoppad. [Maskinläsbara faktiska bevis](F-38-native.json). Tidigare förberedelse- och hinderanteckningar nedan bevaras som historik.
+
+Ursprungligt förberedelseunderlag: Utvecklings-F38 väntar nu i
 NeedsApproval/Attention, E10 Active och acceptans 0/3. F37-r1:s godkännande gäller den avslutade
 F37-sessionen; det ger inget förhandsgodkännande för en ny F38-dialog.
 
@@ -76,3 +78,31 @@ State/Git visar 0 epic-/taskruns, 0 claims/Workers/merger och ren oförändrad m
 ## Verifierad utvecklingskorrigering medan native-dialogen väntar
 
 954 sourceprov passerade på checkpoint4e (2320.94s/exit0/123 oförändrade bindningar). Därefter rättades tre reproducerade ensam-epic-brister i claim/overview; 41 claimprov passerar på faktisk korrigerad Task-kod (21.65s/exit0), övriga121 källfiler byteidentiska. [Review, historik och nya SHA-bindningar](../reviews/F-38-review-1.md). Nativeprovet är uttryckligen bundet till sin ursprungliga checkpoint4e/session/configuration; inget nytt native claimresultat eller stopp intygas genom de ändrade servicetesterna. Dialogen väntar fortfarande på eget mänskligt beslut.
+
+## Slutfört verkligt prov 2026-10-15
+
+Användarens ”Godkänn F38-r” tolkades i den direkt föregående frågans F38-r1-scope.
+Samma SID/dialog/projekt/nyckel och valt Allow återverifierades. Ett ALLOW_ONCE-
+intent säkrades före en enda Enter. Samma native Coordinator gjorde totalt två
+MCP-anrop: originaloverview och epic_claim_next. Claim returnerade faktiskt
+`WAIT / RUNTIME_SECURITY_GATE_UNVERIFIED`, inga blockerare, inga reservationer,
+epic-/taskruns, Integration eller Workers. Fixturemain d4215a26 är oförändrad.
+Native task är fortfarande Pending1/User105. Ingen kontrollprompt omsändes.
+
+Registreringens ursprungliga ACK/process/SID/configuration återvaliderades före
+stopp. Agentens slutrapport återger exakt faktiskt claimresultat men session_id
+är null; faktisk SID kommer oberoende från native metadata och registrerad run.
+Detta redovisas uttryckligen i beviset och fylls inte i som agentens utsaga.
+
+Första stoppanropets wrapper gav TEAMPLAYER_CONNECTION_FAILED. Återläsning visade
+sparad EXIT_PENDING och frånvarande agent. Samma stoppnyckel återupptog enbart
+fysisk kontroll: STOPPED, completion timestamp, inaktiv fångad processgrupp och
+bara rätt shell i rätt pane. Ingen andra exit/interrupt skickades. Därefter stoppades
+enbart egen namngiven server; not running och faktiskt frånvarande PID222855
+bekräftades. Historik, SQLite, identiteter och samtliga fixture-refs bevarades.
+
+Nativeflödet gäller checkpoint4e; den senare ensam-epic-korrigeringen är separat
+verifierad med41 aktuella claimprov och identiska övriga121 källbindningar.
+Positiva starter/race är serviceprov med verklig Git/SQLite/F34 och kontrollerade
+runtime-/board-/gateadaptrar. D02/F17 och F41:s positiva autonoma OS-målmiljö är
+fortfarande olösta. Utvecklingens taskreview/Task→E10/eftertester avslutas separat.
