@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "stage": "DEVELOPMENT_CASES_PASSED_NOT_DELIVERED",
+  "command": "uv run --locked pytest -q tests/test_coordinator_delivery.py tests/test_coordinator_delivery_project.py --tb=short --junitxml=/tmp/herdr-f40-delivery-initial.xml",
+  "junit": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "20",
+    "time": "1395.138",
+    "timestamp": "2026-10-15T17:48:43.432345+02:00",
+    "hostname": "raspberrypi"
+  },
+  "exit_code": 0,
+  "reported_seconds": 1395.14,
+  "junit_sha256": "bd6118fa581fa56672904315f0242601622528b25970c57e5a1354628e5c52a5",
+  "provenance": "Early 20-case diagnostic collection, before the later continuation reread line and four additional current cases. Not represented as the final current-source suite. Earlier 3-case smoke passed294.31s. Current checkpoint regression follows. Real Git/SQLite/process/MCP; native/board/security peers controlled.",
+  "native": "Not started; two actual User105 fixture tasks are Pending. No native main merge, development task integration or Done is claimed."
+}

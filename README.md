@@ -412,3 +412,15 @@ templates och feedback återförs till samma registrerade Integration-session.
 Ursprunglig registrering och gamla Done-/review-/mergebevis bevaras. Nytt F36-handoff
 och ny review krävs efter korrigeringen. Se [konfiguration och recovery](docs/coordinator/F-39-review.md).
 F39 exponerar ingen main-merge eller fortsättningsloop; F40–41 återstår.
+
+## Epicleverans och fortsättning (F40)
+
+Den separata registrerade `coordinator_epic_deliver`-förmågan knyter aktuell
+F39-approval till en faktisk F08-mainmerge, fysiskt F13-stopp, oberoende sluttest,
+Done-synk och release före nästa F38-claim. Kända effekter återanvänds efter avbrott;
+fel behåller faktisk merge och hindrar för tidig fortsättning. Rootens ändliga
+epicpolicyregister tillåter nästa verkliga run utan ändrad konfiguration och
+bevarar verifierade korrigeringars beroendebevis.
+Se [komposition, säkerhetsgrind och recovery](docs/coordinator/F-40-delivery.md).
+Generell autonomi kräver fortsatt positiv D02/F17-grind; ett separat avgränsat
+manuellt provgodkännande gäller endast sitt konkreta granskningsunderlag.

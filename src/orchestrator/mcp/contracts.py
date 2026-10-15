@@ -101,6 +101,10 @@ class CoordinatorReviewContextRequest(TaskGetNextRequest):
     request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
 
 
+class CoordinatorDeliveryRequest(CoordinatorReviewContextRequest):
+    verification_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
 class CoordinatorReviewReadRequest(TaskGetNextRequest):
     context_id: str = Field(pattern=r"^[0-9a-f]{64}$")
     chunk_index: int = Field(strict=True, ge=0, le=2047)

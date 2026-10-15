@@ -22,6 +22,10 @@ from orchestrator.adapters.teamplayer_correction import TeamPlayerCorrectionCrea
 from orchestrator.adapters.teamplayer_mcp import OperatorHeaders, teamplayer_connection
 from orchestrator.application.coordinator_claim_service import CoordinatorClaimService
 from orchestrator.application.coordinator_control_service import CoordinatorControlService
+from orchestrator.application.coordinator_delivery_service import (
+    CoordinatorDeliveryService,
+    delivery_capability,
+)
 from orchestrator.application.coordinator_review_service import (
     CoordinatorReviewService,
     review_capability,
@@ -61,6 +65,11 @@ async def composition(config_path):
     coordinator = load_principal(Path(c["coordinator_profile"]), settings)
     integration = load_principal(Path(c["integration_profile"]), settings)
     policy = CoordinatorReviewPolicy.model_validate_json(canonical_json(c["policy"]))
+    delivery_enabled = c.get("enable_delivery", False)
+    policies = ([CoordinatorReviewPolicy.model_validate_json(canonical_json(p))
+                 for p in c["review_policies"]] if delivery_enabled else [policy])
+    root_settings = (settings.model_copy(update={"review_context": None})
+                     if delivery_enabled else settings)
     native = tomllib.loads((Path.home() / ".codex/config.toml").read_text())["mcp_servers"][
         "teamplayer"
     ]
@@ -80,9 +89,14 @@ async def composition(config_path):
             root_herdr = herdr("coordinator", "read-only")
             integration_herdr = herdr("integration", "read-only")
             workers = herdr("worker", "workspace-write")
+            capabilities = {"coordinator_review": review_capability(policies)}
+            if delivery_enabled:
+                capabilities["coordinator_delivery"] = delivery_capability(
+                    capabilities["coordinator_review"],
+                )
             runtime = CoordinatorRuntimeService(
-                settings, store, root_herdr, c["spec"], coordinator, c["run_id"], codex=codex,
-                capabilities={"coordinator_review": review_capability([policy])},
+                root_settings, store, root_herdr, c["spec"], coordinator, c["run_id"], codex=codex,
+                capabilities=capabilities,
             )
             # Real F34 creates and owns the Integration worktree/runtime. This sync
             # only covers its immutable original native bindings at registration.
@@ -132,13 +146,37 @@ async def composition(config_path):
                                                   epic_id=policy.native_epic_id,
                                                   user_id=policy.user_id)
             subject = CoordinatorReviewSubject(runtime, original, policy, factory, creator)
-            reviews = CoordinatorReviewService(runtime, {integration.epic_run_id: subject})
+            reviews = CoordinatorReviewService(runtime, {integration.epic_run_id: subject},
+                                                policies=policies if delivery_enabled else None)
             control = subject.context()[0]
-            claims = CoordinatorClaimService(runtime, control.scheduler.selection.reader,
-                                              denied_factory, runtime_gate=None)
+            claims_reader = control.scheduler.selection.reader
+            if delivery_enabled:
+                bindings = {p.native_epic_id: LocalBoardBinding(local_id=p.original.epic_id)
+                            for p in policies}
+                for p in policies:
+                    bindings.update({identity: LocalBoardBinding(local_id=entry.task.task_id)
+                                     for identity, entry in zip(p.native_task_ids,
+                                                                p.original.tasks, strict=True)})
+                spec, ids, _ = subject.plan.current()
+                bindings.update({identity: LocalBoardBinding(local_id=entry.task.task_id)
+                                 for identity, entry in zip(ids, spec.tasks, strict=True)})
+                claims_reader = TeamPlayerReader(adapter, project_id=policy.native_project_id,
+                                                  user_id=policy.user_id,
+                                                  project_name="HerdrCoordinator",
+                                                  bindings=bindings)
+            claims = CoordinatorClaimService(
+                runtime, claims_reader, denied_factory, runtime_gate=None,
+                delivery_contexts={subject.run_id: settings},
+                scopes={subject.run_id: tuple(t.task.task_id
+                                             for t in subject.plan.current()[0].tasks)},
+            )
+            delivery = CoordinatorDeliveryService(reviews, claims) if delivery_enabled else None
+            if delivery is not None:
+                claims.completed_plan = delivery.completed_plan
             root_service = RuntimeService(
                 store, coordinator, log,
-                coordinator_control=CoordinatorControlService(claims, review=reviews),
+                coordinator_control=CoordinatorControlService(claims, review=reviews,
+                                                               delivery=delivery),
             )
             yield c, runtime, original, subject, reviews, root_service, control
 

@@ -14,6 +14,7 @@ from mcp.types import (
 
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
+    CoordinatorDeliveryRequest,
     CoordinatorOverviewRequest,
     CoordinatorReviewContextRequest,
     CoordinatorReviewReadRequest,
@@ -254,6 +255,14 @@ def create_server(service: RuntimeService) -> Server:
                 ("coordinator_review_submit", "Record a current decision and linked corrections.",
                  CoordinatorReviewSubmitRequest),
             ]]
+        if service.coordinator_control.delivery is not None:
+            tools.append(Tool(
+                name="coordinator_epic_deliver",
+                description="Deliver the current approved epic, then continue after verified Done.",
+                input_schema=CoordinatorDeliveryRequest.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(),
+                annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
+            ))
 
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)
