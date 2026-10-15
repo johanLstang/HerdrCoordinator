@@ -143,9 +143,12 @@ class EpicIntegrationService(GitIntegrationService):
         approved: bool,
         feedback="",
         verified_criteria=None,
+        allow_failed_rejection=False,
     ):
         if type(approved) is not bool or (not approved and not feedback.strip()):
             raise IntegrationError("explicit review decision and rejection reason required")
+        if type(allow_failed_rejection) is not bool or allow_failed_rejection and approved:
+            raise IntegrationError("failed verification can only support a rejection")
         with self._lock(), self.store.transaction():
             epic = self._epic(actor, run_id)
             if verified_criteria is not None and (
@@ -163,6 +166,8 @@ class EpicIntegrationService(GitIntegrationService):
             )
             if verified_criteria is not None:
                 request["verified_criteria"] = verified_criteria
+            if allow_failed_rejection:
+                request["allow_failed_rejection"] = True
             old = self._epic_prior(epic, "epic_review", key)
             if old:
                 if any(old.result.get(k) != v for k, v in request.items()):
@@ -171,11 +176,19 @@ class EpicIntegrationService(GitIntegrationService):
             source, target = self._epic_pair(epic)
             manifest = self._manifest(epic)
             verification = self._epic_prior(epic, "verify_epic", verification_key)
+            failed_rejection = (
+                allow_failed_rejection and not approved and verification is not None
+                and verification.status == "FAILED" and verification.error_code == "TEST_FAILED"
+                and type(verification.result.get("exit_code")) is int
+                and verification.result["exit_code"] > 0
+                and epic.status == E.READY_FOR_REVIEW
+            )
             if (
                 not self.reviews.epic_review(actor, run_id).reviewable
                 or verification is None
-                or verification.status != "SUCCEEDED"
-                or verification.result.get("exit_code") != 0
+                or not (failed_rejection or verification.status == "SUCCEEDED"
+                        and type(verification.result.get("exit_code")) is int
+                        and verification.result["exit_code"] == 0)
                 or verification.result.get("command_hash") != self.command_hash
                 or verification.result.get("manifest") != manifest
                 or (
@@ -189,7 +202,7 @@ class EpicIntegrationService(GitIntegrationService):
             states = StateService(self.store)
             facts = VerifiedFacts(
                 scope_complete=True,
-                tests_passed=True,
+                tests_passed=not failed_rejection,
                 verification_commit=source,
                 source_commit=source,
                 target_commit=target,
