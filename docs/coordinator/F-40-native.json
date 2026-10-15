@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "stage": "WAITING_FOR_ACTUAL_FOLDER_TRUST_AND_F40_SESSION_CONSENT",
+  "source_checkpoint": "c6c7822980abdce66a599534081c4287142fbd99",
+  "config_sha256": "f59484b22ffc7fd885162a17f67cbc417f9fd55e889375364c9a27faa686f46f",
+  "fixture": "/tmp/herdr-f40-r1-fixture-20261015/repo",
+  "fixture_main": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+  "server": "hc-f40-r1-20261015",
+  "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+  "coordinator_status": "STARTING",
+  "coordinator_agent_id": "hc-c-e4089d995c8f4dac88f4a08a",
+  "coordinator_session_id": null,
+  "pane_id": "w1:p1",
+  "actual_visible_ui": "\n  Folder access\n  /tmp/herdr-f40-r1-fixture-20261015/repo\n\n  Trust this folder? Codex can read, edit, and run files here, subject to your permission settings. Folder settings\n  can run code automatically, even without a model request. Continue only if you trust these files. Your trust\n  decision will be saved.\n\n› 1. Trust and continue\n  2. Quit\n\n  enter continue · esc quit\n",
+  "actual_ui_sha256": "b86b905e635dedbe546ca388cf39497b57d2f2a78f9dabb2ec920e0f3dc2f88e",
+  "epic_runs": 0,
+  "task_runs": 0,
+  "native_main_merge": false,
+  "development_task_merge": false,
+  "autonomy_gate": false,
+  "external_epics": [
+    "9213a12d-4403-47cf-8669-a438bd51bb6b",
+    "c3602afc-a227-4428-9279-15fd573de367"
+  ],
+  "external_tasks": [
+    "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
+    "07c3075f-b694-4f86-9b51-f9fc3edf8035"
+  ],
+  "observed_at": "2026-10-15T16:53:32.044728+00:00",
+  "own_server": {
+    "pid": 1615840,
+    "process_start": "155220692",
+    "running": true
+  },
+  "regression": {
+    "verified_cases": 233,
+    "artifact": "../reviews/F-40-current.json",
+    "product_pins": 83,
+    "verification_pins": 55
+  },
+  "authorization_received": false,
+  "development_board": {
+    "task_status": "NeedsApproval",
+    "task_version": 9,
+    "local_kanban": "Attention",
+    "epic_status": "Active",
+    "epic_version": 10,
+    "descriptions_synced": true
+  }
+}
