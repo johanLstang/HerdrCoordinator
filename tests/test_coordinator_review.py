@@ -20,6 +20,7 @@ from test_task_scheduler import Board, approve
 from test_teamplayer_reader import T1, E, P, U, native_tools, reader
 from test_teamplayer_reader import task as native_task
 
+from orchestrator.adapters.herdr import HerdrError
 from orchestrator.adapters.teamplayer_correction import TeamPlayerCorrectionCreator
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError, TeamPlayerMCPWriter
 from orchestrator.application.coordinator_claim_service import CoordinatorClaimService
@@ -157,7 +158,7 @@ def review_setup(epic_setup, request):  # noqa: F811
 
     root_native.prompt = root_prompt
     runtime = CoordinatorRuntimeService(
-        settings, initial.store, root_native, dict(
+        settings.model_copy(update={"review_context": None}), initial.store, root_native, dict(
             version=1, project_id="p", native_project_id=P, title="Fixture project",
             sources=["README.md"], epics=[dict(version=1, native_epic_id=E,
                                               native_task_ids=[T1], priority="P0", spec=data)],
@@ -446,3 +447,84 @@ def test_actual_independent_failure_can_only_reject_then_updated_code_passes(rev
         assert result["status"] == "EPIC_APPROVED" and result["current"]
 
     asyncio.run(run())
+
+
+def test_lost_dispatch_response_and_partial_group_receipt_do_not_repeat_effects(
+    review_setup, monkeypatch,
+):
+    f = review_setup
+
+    async def run():
+        control = await deliver_one(f, T1, "F-01")
+        await control.epic_completion.complete(f.integration, "e", key="baseline")
+        summary, _ = await read_context(f, "review")
+        first = rejection(summary["context_id"])
+        decision = ChangesDecision(version=1, result="CHANGES_REQUESTED",
+                                   context_id=first.context_id, issues=[
+                                       first.issues[0], first.issues[0].model_copy(update={
+                                           "number": 2, "problem": "Second concrete correction",
+                                       }),
+                                   ])
+        choices = [CorrectionChoice(version=1, issue_number=n, template_id="fix") for n in (1, 2)]
+        actual_prompt = f.sessions.prompt
+
+        def lost_prompt_reply(name, text, *, timeout_ms):
+            actual_prompt(name, text, timeout_ms=timeout_ms)
+            raise HerdrError("UNKNOWN_RUNTIME_OUTCOME")
+
+        monkeypatch.setattr(f.sessions, "prompt", lost_prompt_reply)
+        actual_save = f.subject.plan.save
+
+        def lost_group_receipt(op, **kwargs):
+            saved = actual_save(op, **kwargs)
+            if kwargs.get("stage") == "DISPATCHED":
+                raise RuntimeError("Process loss after first actual dispatch receipt")
+            return saved
+
+        monkeypatch.setattr(f.subject.plan, "save", lost_group_receipt)
+        with pytest.raises(RuntimeError, match="Process loss after first"):
+            await f.review.submit(f.coordinator, "p", "e", "reject", decision, choices)
+        ops = f.subject.plan.operations()
+        assert [o.result["stage"] for o in ops] == ["DISPATCHED", "ACTIVE"]
+        assert len(f.creates) == 2
+        sent = len(f.sessions.sent)
+        monkeypatch.setattr(f.subject.plan, "save", actual_save)
+        result = await f.review.submit(f.coordinator, "p", "e", "reject", decision, choices)
+        assert result["dispatch"] == "DISPATCHED"
+        assert len(result["tasks"]) == 2 and len(f.creates) == 2
+        assert all(o.result["stage"] == "DISPATCHED" for o in f.subject.plan.operations())
+        assert len(f.sessions.sent) == sent
+        assert len(control.store.get_tasks("e")) == 1
+        assert all(t.worker_slot is None for t in control.store.get_tasks("e"))
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("change", ["none", "criteria", "identity", "capacity"])
+def test_child_review_context_must_match_policy_and_other_settings_cannot_change(
+    review_setup, change,
+):
+    f = review_setup
+    parent = f.subject.original_start
+    settings = parent.settings
+    assert f.review.runtime.settings.review_context is None
+    assert settings.review_context is not None
+    if change == "capacity":
+        altered = settings.model_copy(update={"max_workers": 1})
+    elif change == "none":
+        altered = settings.model_copy(update={"review_context": None})
+    else:
+        fields = {"acceptance_criteria": ["Foreign acceptance"]} if change == "criteria" else {
+            "epic_id": "foreign-epic",
+        }
+        altered = settings.model_copy(update={
+            "review_context": settings.review_context.model_copy(update=fields),
+        })
+    other = EpicStartService(altered, parent.store, parent.herdr, parent.spec, parent.principal,
+                              codex=parent.codex)
+    before = parent.store.db.total_changes
+    with pytest.raises(CoordinatorError, match="SUBJECT_CONFIGURATION_INVALID"):
+        CoordinatorReviewSubject(f.review.runtime, other, f.policy,
+                                 f.subject.factory, f.subject.creator)
+    assert parent.store.db.total_changes == before
+    assert not f.creates

@@ -2,10 +2,12 @@
 
 ## Leveransläge
 
-Implementation pågår i `task/e10-f39`, från E10 `ae122afe`. TeamPlayer F39 är
-InProgress och E10 Active. Kriterierna är ännu inte slutverifierade. Serviceprov
-med kontrollerade native-adaptrar ersätter inte det verkliga före/efter-provet,
-utvecklingsreview, Task→Epic och eftertester. D02/F17:s autonomigrind består.
+Implementation och verifiering är färdiga i `task/e10-f39`, från E10 `ae122afe`.
+TeamPlayer F39 är ännu InProgress och E10 Active tills utvecklingsreview,
+Task→Epic och eftertester passerar. Hela973-baseline och den efterföljande
+12-provsverifieringen av en avgränsad konfigurationsrättning passerar.
+[Verkligt före/efter-prov och stopp](F-39-native.md) är genomfört; serviceprov med
+kontrollerade native-adaptrar redovisas separat. D02/F17:s autonomigrind består.
 
 ## Operatörskomposition
 
@@ -15,13 +17,21 @@ utvecklingsreview, Task→Epic och eftertester. D02/F17:s autonomigrind består.
 2. `CoordinatorReviewPolicy` anger originalets F34-specifikation och native-ID:n,
    autentiserad User, F36-kontrakt, oberoende verifieringskommando och tillåtna
    `CorrectiveTaskTemplate`. Agenten anger endast template-ID för numrerade fynd.
-3. `CoordinatorReviewSubject` binds till samma state/settings och faktiska
-   F34-registrering. Dess factory bygger F35/F36 från
+3. `CoordinatorReviewSubject` binds till samma state och projektinställningar samt
+   faktisk F34-registrering. Projekt-Coordinatorn kan sakna egen review_context.
+   En registrerad epics review_context måste exakt motsvara policyns ursprungliga
+   EpicReviewSpec; övriga projektinställningar får inte avvika. Dess factory bygger F35/F36 från
    `RegisteredIntegrationPlan`, inte från gamla cachade taskspecifikationer.
 4. Fabriken bygger selection med planens exakta native-ID:n/specifikationer/ordning,
    sync med aktuella lokala task-ID:n och scheduler med `registration=view`.
    `completion_for(policy, view.spec)` ger aktuellt F36-kontrakt. Tjänsten kontrollerar
    kompositionen innan den används.
+
+F40:s fortsättningskomposition måste använda den effektiva planens task-ID:n,
+medlemskap och nya granskningsbevis. Ursprunglig F38/F34-specifikation skrivs inte
+om för att dölja korrigeringstasks. F38:s nuvarande krav på identiska startinställningar
+behöver då hanteras uttryckligt för epicernas separata granskningskontext; F39 öppnar
+ingen automatisk claim eller autonomigrind.
 5. Tillför `review=service` till samma `CoordinatorControlService` som projektets
    claimtjänst. MCP tar projekt, epicrun, stabila nycklar, kontext-ID, läsindex och
    strukturerat beslut. Roll, commands, alternativa specs och testboolar nekas.
@@ -108,6 +118,7 @@ Coordinator-principal, verifierad worktreeägare/board och inga upptagna Workers
 Den skapar ingen F38-claim och adopterar inga utvecklingsworktrees. Produktens
 automatiska claim behåller faktisk `runtime_gate=None` och kan inte starta.
 
-Det verkliga före/efter-provet återstår. En faktisk ny approvaldialog ska inspekteras
-och få sitt eget mänskliga sessionsbundna beslut enligt Herdr-skillen. F38:s
-engångsgodkännande gäller inte detta prov. Epic→main och full autonomi hör till F40–41.
+Det verkliga före/efter-provet är genomfört med användarens separata F39-r1-beslut
+och journalförda konkreta dialogval. F38:s engångsgodkännande återanvändes inte.
+Nativekälla och senare R1-rättning har separata källbindningar. Epic→main och
+full autonomi hör till F40–41.

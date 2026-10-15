@@ -6,6 +6,7 @@ from orchestrator.application.epic_correction_plan import CorrectionPlanError, E
 from orchestrator.application.epic_integration_service import EpicIntegrationService
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.domain.epic_completion import EpicCompletionSpec
+from orchestrator.domain.review_contracts import EpicReviewSpec
 from orchestrator.domain.teamplayer import BoardEpic
 from orchestrator.domain.worker_contracts import LocalTaskSpec, canonical_json
 
@@ -32,12 +33,20 @@ class CoordinatorReviewSubject:
         self.run_id = original_start.principal.epic_run_id
         configured = next((e for e in runtime.spec.epics
                            if e.native_epic_id == policy.native_epic_id), None)
+        expected_review = EpicReviewSpec(
+            version=1, project_id=policy.original.project_id, epic_id=policy.original.epic_id,
+            requirements=policy.original.requirements,
+            acceptance_criteria=policy.original.acceptance_criteria,
+            sources=policy.original.sources,
+        )
         if configured is None or configured.spec != policy.original or (
             configured.native_task_ids != policy.native_task_ids
             or runtime.spec.native_project_id != policy.native_project_id
             or runtime.spec.project_id != policy.original.project_id
             or runtime.store is not original_start.store
-            or runtime.settings != original_start.settings
+            or runtime.settings.model_dump(exclude={"review_context"})
+            != original_start.settings.model_dump(exclude={"review_context"})
+            or original_start.settings.review_context != expected_review
             or original_start.external_epic_id not in {None, policy.native_epic_id}
             or creator.project_id != policy.native_project_id
             or creator.epic_id != policy.native_epic_id or creator.user_id != policy.user_id
@@ -72,7 +81,7 @@ class CoordinatorReviewSubject:
         actual = {identity: LocalTaskSpec.model_validate(value)
                   for identity, value in selection.specs.items()}
         if control.epic_start is not view or control.store is not self.runtime.store or (
-            control.settings != self.runtime.settings or completion is None
+            control.settings != self.original_start.settings or completion is None
             or completion.spec != completion_for(self.policy, spec)
             or completion.epic_start is not view or completion.scheduler is not control.scheduler
             or control.scheduler.registration is not view
