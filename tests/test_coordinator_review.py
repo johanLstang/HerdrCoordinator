@@ -38,6 +38,7 @@ from orchestrator.application.coordinator_runtime_service import (
     CoordinatorRuntimeService,
 )
 from orchestrator.application.epic_completion_service import EpicCompletionService
+from orchestrator.application.epic_integration_service import EpicIntegrationService
 from orchestrator.application.epic_start_service import EpicStartService
 from orchestrator.application.integration_control_service import IntegrationControlService
 from orchestrator.application.runtime_service import RuntimeService
@@ -528,3 +529,66 @@ def test_child_review_context_must_match_policy_and_other_settings_cannot_change
                                  f.subject.factory, f.subject.creator)
     assert parent.store.db.total_changes == before
     assert not f.creates
+
+
+@pytest.mark.parametrize("moment", ["before", "after"])
+@pytest.mark.parametrize("change", ["owner", "criteria", "version", "extra"])
+def test_board_drift_during_correction_never_activates_or_dispatches(
+    review_setup, monkeypatch, moment, change,
+):
+    f = review_setup
+
+    def drift():
+        row = f.board.tasks[0]
+        if change == "extra":
+            f.board.tasks.append(deepcopy(row) | {"taskId": str(uuid4())})
+        else:
+            row["version"] += 1
+            if change == "owner":
+                row["responsibleUserId"] = str(uuid4())
+            elif change == "criteria":
+                row["acceptanceCriteria"] = ["Changed externally"]
+
+    async def run():
+        control = await deliver_one(f, T1, "F-01")
+        await control.epic_completion.complete(f.integration, "e", key="baseline")
+        summary, _ = await read_context(f, "review")
+        decision = rejection(summary["context_id"])
+        choices = [CorrectionChoice(version=1, issue_number=1, template_id="fix")]
+        if moment == "before":
+            register = EpicIntegrationService.register_epic_review
+
+            def changed_after_review(manager, *args, **kwargs):
+                result = register(manager, *args, **kwargs)
+                drift()
+                return result
+
+            monkeypatch.setattr(
+                EpicIntegrationService, "register_epic_review", changed_after_review,
+            )
+        else:
+            call = f.client.call_tool.side_effect
+
+            async def changed_after_create(name, arguments):
+                result = await call(name, arguments)
+                if name == "create_task":
+                    drift()
+                return result
+
+            f.client.call_tool.side_effect = changed_after_create
+        sent = len(f.sessions.sent)
+        result = await f.review.submit(f.coordinator, "p", "e", "reject", decision, choices)
+        expected = ("CORRECTION_UNREGISTERED_TASK_MEMBERSHIP" if change == "extra"
+                    else "CORRECTION_REVIEWED_TASK_SCOPE_CHANGED")
+        assert result.get("attention") == expected, result
+        assert len(f.creates) == (0 if moment == "before" else 1)
+        assert control.store.get_epic("e").status == EpicState.CHANGES_REQUESTED
+        assert len(f.subject.plan.current()[0].tasks) == 1
+        assert len(f.sessions.sent) == sent
+        assert len(control.store.get_tasks("e")) == 1
+        again = await f.review.submit(f.coordinator, "p", "e", "reject", decision, choices)
+        assert again["attention"] == expected
+        assert len(f.creates) == (0 if moment == "before" else 1)
+        assert len(f.sessions.sent) == sent
+
+    asyncio.run(run())

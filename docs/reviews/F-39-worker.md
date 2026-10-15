@@ -18,6 +18,9 @@ inte in i sitt eget träd. Worker har inte integrerat Task→Epic eller satt Don
 - Ursprungliga F34-registreringar och tidigare Done-/review-/mergebevis bevaras.
   Schedulerns ägare behålls endast med verifierad projektion och i övrigt samma
   konfiguration. Föråldrade vyer nekas.
+- R2: gamla granskade taskversioner/tilldelning/spec och medlemskap återvalideras
+  före create och planaktivering. Bara exakt egna skapandeintentioner tillåts;
+  drift ger hinder utan dispatch eller dubblerad create på retry.
 - R1: projekt-Coordinator utan egen epic-review_context kan använda en registrerad
   epics exakta egna granskningskontext. Andra inställningsskillnader eller felaktig
   identitet/acceptans nekas före effekt.
@@ -29,19 +32,19 @@ inte in i sitt eget träd. Worker har inte integrerat Task→Epic eller satt Don
 | Full README-suite | 973 PASS,4322.63s,exit0; [baselinesource](F-39-source-eded.json), [JUnit](F-39-source-eded.xml) |
 | Nytt gruppdispatch-/avbrottsprov | 1 PASS,91.24s; [JUnit](F-39-dispatch-crash.xml) |
 | Slutlig R1/F39-suite | 12 PASS,176.68s,exit0; [nuvarande source/kommandon](F-39-r1.json), [JUnit](F-39-r1.xml) |
+| Slutlig R2/F39-suite | 20 PASS,336.55s,exit0; [källbindningar](F-39-r2.json), [JUnit](F-39-r2.xml) |
 | Native före/efter | Faktisk exit1 → korrigering → exit0/current approval; [scenario](../coordinator/F-39-native.md), [bindningar](../coordinator/F-39-native.json) |
 | Lint/build/READMECLI | PASS på aktuell kod |
 | Aktuellt wheel | Exakt73 källmoduler/fempolicies; isolerad wheelimport/policy PASS |
 
 Baseline och native körde produktkällan på checkpoint eded024a. Alla81 bindningar
-var oförändrade fram till faktiskt stopp. Därefter ändrades endast
-`coordinator_review_subject.py` för R1; övriga80 bindningar är oförändrade. Alla12
-aktuella F39-prov kör projekt-Coordinator utan egen granskningskontext och omfattar
-full korrigeringskedja, felaktig child-konfiguration, create-/review-/dispatchavbrott,
-MCP-/roll-/scopegränser, läsrecept och ändrad main. Stängd faktisk nativekonfiguration
-är kompatibilitetskontrollerad utan ny runtime eller stateeffekt. Ingen fullständig
-973-omkörning påstås efter denna enda avgränsade rättning och inget nytt liveprov
-påstås genom servicetesterna.
+var oförändrade fram till faktiskt stopp. Därefter ändrades två produktfiler: `coordinator_review_subject.py` för R1 och
+`coordinator_correction_service.py` för R2; övriga79 bindningar är oförändrade.
+Alla20 aktuella F39-prov omfattar hela korrigeringskedjan, R1:s child-konfiguration,
+create-/review-/dispatchavbrott, MCP-/roll-/scopegränser, läsrecept, ändrad main och
+åtta fall med boarddrift före/efter create. Stängd faktisk nativekonfiguration är
+R1-kompatibilitetskontrollerad utan ny runtime eller stateeffekt. Ingen fullständig
+973-omkörning eller nytt liveprov påstås efter dessa avgränsade rättningar.
 
 ## Begränsningar och fortsatt integration
 

@@ -1,5 +1,9 @@
 """Real task creation before additive activation; one original Integration dispatch."""
 
+import json
+
+from pydantic import ValidationError
+
 from orchestrator.adapters.herdr import HerdrError
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.coordinator_runtime_service import CoordinatorError
@@ -34,6 +38,78 @@ class CoordinatorCorrectionService:
         _, scope_hash = await subject.board_facts(subject.creator.adapter)
         if scope_hash != context.result["epic_board_scope_hash"]:
             raise CoordinatorError("CORRECTION_EPIC_SCOPE_CHANGED")
+        await self._task_scope(subject, review, context)
+        # Network observations cannot certify that the local base stayed unchanged.
+        epic = self.store.get_epic(subject.run_id)
+        if epic.status != EpicState.CHANGES_REQUESTED or (
+            subject.original_start.git.head(epic.branch) != context.result["source_commit"]
+            or self.owner.runtime.main() != context.result["target_commit"]
+        ):
+            raise CoordinatorError("CORRECTION_REJECTED_BASE_CHANGED")
+
+    async def _task_scope(self, subject, review, context):
+        """Fresh reviewed rows plus only this decision's actual create effects."""
+        spec, identities, membership = subject.plan.current()
+        if membership != context.result["membership_hash"] or (
+            digest(context.result["document"]) != context.result["context_id"]
+        ):
+            raise CoordinatorError("CORRECTION_REVIEWED_TASK_SCOPE_CHANGED")
+        document = json.loads(context.result["document"])
+        versions = {row["board_task_id"]: row["board_version"]
+                    for row in document["task_results"]}
+        if len(versions) != len(document["task_results"]) or set(versions) != set(identities):
+            raise CoordinatorError("CORRECTION_REVIEWED_TASK_SCOPE_CHANGED")
+        result = await subject.creator.adapter.read(
+            "list_tasks", {"projectId": subject.policy.native_project_id},
+        )
+        try:
+            if result["projectId"] != subject.policy.native_project_id:
+                raise ValueError
+            rows = [BoardTask.model_validate(row) for row in result["tasks"]
+                    if row.get("epicId") == subject.policy.native_epic_id
+                    and row.get("taskType") != "Epic"]
+        except (KeyError, TypeError, ValueError, ValidationError):
+            raise CoordinatorError("CORRECTION_BOARD_TASKS_UNVERIFIED") from None
+        by_id = {row.id: row for row in rows}
+        if len(by_id) != len(rows):
+            raise CoordinatorError("CORRECTION_BOARD_TASKS_UNVERIFIED")
+        bindings = {entry.task.task_id: identity for epic in self.owner.runtime.spec.epics
+                    for entry, identity in zip(epic.spec.tasks, epic.native_task_ids, strict=True)}
+        bindings.update({entry.task.task_id: identity for entry, identity in zip(
+            spec.tasks, identities, strict=True,
+        )})
+        for entry, identity in zip(spec.tasks, identities, strict=True):
+            row = by_id.get(identity)
+            deps = [bindings.get(value) for value in entry.task.dependencies]
+            if row is None or row.project_id != subject.policy.native_project_id or (
+                row.version != versions[identity] or row.status != "Done"
+                or row.execution_owner_kind != "User"
+                or row.responsible_user_id != subject.policy.user_id
+                or row.name != entry.task.name
+                or list(row.acceptance_criteria) != entry.task.acceptance_criteria
+                or None in deps or set(row.dependencies) != set(deps)
+                or len(row.dependencies) != len(deps)
+            ):
+                raise CoordinatorError("CORRECTION_REVIEWED_TASK_SCOPE_CHANGED")
+        allowed = set(identities)
+        for op in subject.plan.operations():
+            if op.result["review_key"] != review.idempotency_key or op.status == "SUCCEEDED":
+                continue
+            matches = [row for row in rows if op.result["marker"] in row.description.splitlines()]
+            if len(matches) > 1:
+                raise CoordinatorError("CORRECTION_RECONCILIATION_AMBIGUOUS")
+            if matches:
+                if op.result["stage"] == "INTENT":
+                    raise CoordinatorError("CORRECTION_UNEXPECTED_PREEXISTING_TASK")
+                row = self._validate_created(subject, matches[0].model_dump(
+                    mode="json", by_alias=True), self._request(subject, op))
+                if row.id in allowed or op.result.get("native_task_id", row.id) != row.id:
+                    raise CoordinatorError("CORRECTION_CREATED_TASK_SCOPE_MISMATCH")
+                allowed.add(row.id)
+            elif op.result.get("native_task_id") is not None:
+                raise CoordinatorError("CORRECTION_CREATED_TASK_SCOPE_MISMATCH")
+        if set(by_id) != allowed:
+            raise CoordinatorError("CORRECTION_UNREGISTERED_TASK_MEMBERSHIP")
 
     def _request(self, subject, correction):
         entry = IntegrationTask.model_validate(correction.result["entry"])
@@ -70,6 +146,7 @@ class CoordinatorCorrectionService:
         task = BoardTask.model_validate(row)
         if task.project_id != subject.policy.native_project_id or (
             task.epic_id != subject.policy.native_epic_id
+            or task.task_type != request["taskType"]
             or task.name != request["name"] or task.status != "Pending"
             or task.execution_owner_kind != "User"
             or task.responsible_user_id != subject.policy.user_id
