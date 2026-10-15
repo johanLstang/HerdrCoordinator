@@ -1705,7 +1705,7 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 
 **Fas:** 10. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `559a4c95-3282-4b4b-a30f-97f9d0dbbaea`.
 
-**Körbar:** Ja för nästa manuell F39-implementation från verifierad E09/main och integrerad F38; autonom produktstart kräver fortfarande D02/F17-verifiering. **Beroende:** E-09 Done på main.
+**Körbar:** Ja för nästa manuell F40-implementation från verifierad E09/main och integrerad F39; autonom produktstart kräver fortfarande D02/F17-verifiering. **Beroende:** E-09 Done på main.
 
 **Källa:** A §§4.1, 25–27, 31, 44, 47–48, 50; W §§5–6, 30–34, 37–40.
 
@@ -1729,7 +1729,7 @@ En långlivad Coordinator kan välja nästa körbara epic, ta emot verifierad le
 ### Epicacceptans
 
 - [x] **E-10.A1:** Coordinator väljer endast prioriterad körbar epic och startar högst en aktiv epic i MVP.
-- [ ] **E-10.A2:** Slutreview kan begära korrigering och därefter godkänna aktuell epic för main-merge.
+- [x] **E-10.A2:** Slutreview kan begära korrigering och därefter godkänna aktuell epic för main-merge.
 - [ ] **E-10.A3:** Epicen blir Done efter main-merge och slutverifiering; nästa beroende epic startar från nya main.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
@@ -1799,9 +1799,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-39 Slutgranska epic och återför korrigeringskrav
 
-**Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Active. **TeamPlayer Task-ID:** `0657116a-4cf9-483f-aa9f-57612d7cee39`.
+**Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Done. **TeamPlayer Task-ID:** `0657116a-4cf9-483f-aa9f-57612d7cee39`.
 
-**Körbar:** Ja för nästa manuell implementation efter F38 Done och faktisk Task→E10 e02a84db/post121; X02 verifieras för den konkreta korrigeringsförmågan före automatisk effekt.
+**Körbar:** Nej — granskad och verifierad Task→E10 levererad; F40 är nästa kandidat.
 
 **Källa:** A §§25–26, 31, 44; W §§30–32. **Berör:** Coordinator-review, epicreviewhistorik, korrigerande tasks.
 
@@ -1813,9 +1813,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-39.A1:** Coordinator kan underkänna epic med konkreta kriterier och Integration Agent kan genomföra kopplad korrigering.
-- [ ] **F-39.A2:** Ny epicreview bedömer uppdaterad kod/tasklista och bevarar tidigare beslut.
-- [ ] **F-39.A3:** Integration/Worker kan inte godkänna epicen för main; ändrad main gör gamla approval obrukbara.
+- [x] **F-39.A1:** Coordinator kan underkänna epic med konkreta kriterier och Integration Agent kan genomföra kopplad korrigering.
+- [x] **F-39.A2:** Ny epicreview bedömer uppdaterad kod/tasklista och bevarar tidigare beslut.
+- [x] **F-39.A3:** Integration/Worker kan inte godkänna epicen för main; ändrad main gör gamla approval obrukbara.
 
 **Verifiering:** Serviceprov och verkligt korrigeringsscenario med före/efter-review och tasklänkar.
 
@@ -1846,11 +1846,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Worker-leverans efter R2:** 20 aktuella F39-prov PASS336.55s/exit0, inklusive åtta förändringar av owner/kriterier/version/medlemskap före och efter create. Ingen felaktig planaktivering/dispatch eller dubbel create vid retry. Två produktfiler ändrade efter baseline/native;79 andra källbindningar identiska. Nytt exakt wheel73moduler/fempolicies, isolerad wheelimport/policy, lint/build/READMECLI PASS. [R2-källor/JUnit](docs/reviews/F-39-r2.json), [Workerunderlag](docs/reviews/F-39-worker.md). READY_FOR_REVIEW lämnas med ny exakt commit; tidigare kandidat469c är ersatt. Ingen merge eller Done ännu; Testing/Active0/3 tills Integration godkänt och efterverifierat verklig Task→E10.
 
+**Verifierad leverans:** Bootstrap Integration godkände exakt task04fe79399a743d9e53a6e9f7d0db855399df6d14 mot E10ae122afe/mainb6ceb995. GitAdapter/common-dir flock/no-ff gav faktisk mergea388e6b4356851ef71410935e7092d9ddc19ed71 med rätt föräldrar och identiskt granskat träd, utan produktadoption av utvecklingsworktrees.100 eftertester PASS801.41s/exit0; lint/build/READMECLI/source81/wheel73/fempolicies/190länkar PASS. F39 Done8 efter färsk CAS; kriterier3/3 och Kanban Done. [Slutreview/leverans](docs/reviews/F-39-final.md), [maskinunderlag](docs/reviews/F-39-final.json), [eftertest-JUnit](docs/reviews/F-39-post.xml). E10 eget A2 verifierat, Active2/3; nästa F40. Ingen ändrad ordning, main oförändrad och D02/F17-autonomigrind kvar. Task-/epicbeskrivningar återläses och synkas före nästa start.
+
 ### Task F-40 Integrera epic och fortsätt efter slutverifiering
 
 **Epic/fas/prioritet:** E-10 / 10 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `4073e26d-b095-47e3-99a6-7704f757f485`.
 
-**Körbar:** Nej — invänta F-39 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — F39 granskad, integrerad till E10 och efterverifierad; föregående E09 ligger på main.
 
 **Källa:** A §§25–27, 30, 44; W §§33–34, 40. **Berör:** Epicservice, Git Manager, TeamPlayer, Coordinatorloop.
 
@@ -2254,10 +2256,10 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Done | Nej | 3/3 | E-08, F-35 | Done8/User105; APPROVED0f67b82/full14-file diff5ec8e62b; no-ff93a6e6d/source104/post14/gates PASS. E09 Active0/3; F37 nästa. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Done | Nej | 3/3 | E-08, F-36, X-01, X-02 | Done12/User105; fullreview98a6ed16/diff912ad99d, no-ff73bca342; native3 DONE/max2/samma-SID-input-fix/F36 EPIC_READY och efterkontroller PASS. |
-| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Active | Ja | 1/3 | E-09 Done på main | Active; A1 verifierad via F38/mergee02a84db/post121. Nästa F39; D02/F17-autonomi stängd. |
+| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Active | Ja | 2/3 | E-09 Done på main | Active; A1/F38 och A2/F39 granskade/integrerade/verifierade. Nästa F40; D02/F17-autonomi stängd. |
 | 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Done | Nej | 3/3 | E-09, X-01, X-02 | Granskad9fc0c830; mergee02a84db; post121 PASS; native WAIT/stopp. |
-| 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Active | Ja | 0/3 | E-09, F-38, X-02 | Nästa efter F38 Done/mergee02a84db/post121; konkret X02-gate före korrigeringseffekt. |
-| 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Planned | Nej | 0/3 | E-09, F-39 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Done | Nej | 3/3 | E-09, F-38, X-02 | Granskad04fe7939; mergea388e6b4; post100 PASS; faktiskt native före/efter/stopp. |
+| 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Planned | Ja | 0/3 | E-09, F-39 | Nästa efter F39 Done8/mergea388e6b4/post100; fastställ leverans-/retrykontrakt före kod. |
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Planned | Nej | 0/3 | E-09, F-40, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Nej | 0/3 | E-10 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Nej | 0/3 | E-10 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
