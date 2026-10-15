@@ -15,6 +15,9 @@ from mcp.types import (
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
     CoordinatorOverviewRequest,
+    CoordinatorReviewContextRequest,
+    CoordinatorReviewReadRequest,
+    CoordinatorReviewSubmitRequest,
     EpicClaimRequest,
     EpicCompleteRequest,
     EpicStartRequest,
@@ -237,6 +240,20 @@ def create_server(service: RuntimeService) -> Server:
             ("epic_claim_next", "Reserve the next verified epic and start its Integration.",
              EpicClaimRequest),
         ]]
+        if service.coordinator_control.review is not None:
+            tools += [Tool(
+                name=name, description=description, input_schema=model.model_json_schema(),
+                output_schema=ToolResponse.model_json_schema(), annotations=ToolAnnotations(
+                    read_only_hint=name == "coordinator_review_read", destructive_hint=False,
+                ),
+            ) for name, description, model in [
+                ("coordinator_review_context", "Verify and capture current epic review evidence.",
+                 CoordinatorReviewContextRequest),
+                ("coordinator_review_read", "Read one bounded current review document chunk.",
+                 CoordinatorReviewReadRequest),
+                ("coordinator_review_submit", "Record a current decision and linked corrections.",
+                 CoordinatorReviewSubmitRequest),
+            ]]
 
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)

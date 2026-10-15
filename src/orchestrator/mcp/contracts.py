@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, model_validator
 
 from orchestrator.domain.attention import InputDecision, ReviewBlockDecision
+from orchestrator.domain.coordinator_review import CorrectionChoice
 from orchestrator.domain.models import Identity
 from orchestrator.domain.review_contracts import ApprovalDecision, ChangesDecision
 from orchestrator.domain.worker_contracts import LocalTaskSpec
@@ -94,3 +95,17 @@ class CoordinatorOverviewRequest(BaseModel):
 
 class EpicClaimRequest(CoordinatorOverviewRequest):
     request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
+class CoordinatorReviewContextRequest(TaskGetNextRequest):
+    request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
+class CoordinatorReviewReadRequest(TaskGetNextRequest):
+    context_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    chunk_index: int = Field(strict=True, ge=0, le=2047)
+
+
+class CoordinatorReviewSubmitRequest(CoordinatorReviewContextRequest):
+    decision: ApprovalDecision | ChangesDecision = Field(discriminator="result")
+    choices: tuple[CorrectionChoice, ...] = ()

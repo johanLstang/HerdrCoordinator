@@ -397,3 +397,18 @@ main-integration separat. Se [konfiguration, grindar och recovery](docs/integrat
 ## Projekt-Coordinator och nästa epic (F38)
 
 En separat registrerad Coordinator-session äger projektplanen från main utan Worker-slot eller artificiell EpicRun. Det scoped MCP-gränssnittet erbjuder `coordinator_overview` och `epic_claim_next`; tjänsten verifierar färsk board/User/Write, prioritet, backloggordning, faktisk main-leverans för beroenden och beständig ensamreservation före F34-start. Olöst D02/F17 ger WAIT utan start. Se [konfiguration, schema 3 och recovery](docs/coordinator/F-38-claim.md). Slutreview/main-merge/fortsättning levereras i F39–F41.
+
+## Slutreview och korrigeringsplan (F39)
+
+Operatören kan registrera `CoordinatorReviewPolicy` och `CoordinatorReviewService`
+som en separat fingerprintad capability i projektets verkliga Coordinatorrun.
+`coordinator_review_context`, `coordinator_review_read` och
+`coordinator_review_submit` binder beslutet till aktuell kod, main, fullständig diff,
+taskleveranser, acceptans och oberoende tester. Varje del av granskningsdokumentet
+måste ha lästs genom tjänsten före beslut.
+
+Vid underkännande skapas riktiga User-tilldelade korrigeringstasks från tillåtna
+templates och feedback återförs till samma registrerade Integration-session.
+Ursprunglig registrering och gamla Done-/review-/mergebevis bevaras. Nytt F36-handoff
+och ny review krävs efter korrigeringen. Se [konfiguration och recovery](docs/coordinator/F-39-review.md).
+F39 exponerar ingen main-merge eller fortsättningsloop; F40–41 återstår.

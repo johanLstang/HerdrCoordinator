@@ -2,6 +2,7 @@
 
 import fcntl
 import os
+import re
 from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime, timedelta
@@ -38,7 +39,8 @@ class CoordinatorRuntimeService:
     KIND = "coordinator_start"
 
     def __init__(
-        self, settings, store, herdr, spec, principal, run_id, *, codex=None, processes=None
+        self, settings, store, herdr, spec, principal, run_id, *, codex=None, processes=None,
+        capabilities=None,
     ):
         self.spec = CoordinatorSpec.model_validate(deepcopy(spec))
         if principal.role != Role.COORDINATOR or principal.project_id != self.spec.project_id or (
@@ -48,17 +50,27 @@ class CoordinatorRuntimeService:
         self.settings, self.store, self.herdr = settings, store, herdr
         self.principal, self.run_id = principal, run_id
         self.codex, self.processes = codex or CodexAdapter(), processes or ProcessObserver()
+        self.capabilities = dict(capabilities or {})
+        if len(self.capabilities) > 16 or any(
+            not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", name)
+            or not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value)
+            for name, value in self.capabilities.items()
+        ):
+            raise CoordinatorError("COORDINATOR_CAPABILITY_CONFIGURATION_INVALID")
         self.git = GitAdapter(settings.repository)
         self.policy = load_policy()
         self.configuration_hash = self._configuration_hash()
 
     def _configuration_hash(self):
-        return digest(canonical_json(dict(
+        configuration = dict(
             settings=self.settings.model_dump(mode="json"), spec=self.spec.model_dump(mode="json"),
             principal=self.principal.model_dump(mode="json"), policy_hash=digest(self.policy),
             server_session=self.herdr.server_session, sandbox=self.herdr.sandbox,
             mcp_configuration=getattr(self.herdr, "mcp_fingerprint", None),
-        )))
+        )
+        if self.capabilities:
+            configuration["capabilities"] = self.capabilities
+        return digest(canonical_json(configuration))
 
     @contextmanager
     def lock(self):
@@ -191,7 +203,7 @@ class CoordinatorRuntimeService:
                     coordinator_run_id=run.id, correlation_id=op.id,
                     configuration_hash=run.configuration_hash, initial_commit=run.initial_commit,
                 )
-                prompt = canonical_json(dict(
+                assignment = dict(
                     version=1, policy=self.policy,
                     context=dict(project_id=run.project_id, coordinator_run_id=run.id,
                                  branch="main", worktree_path=run.worktree_path,
@@ -200,7 +212,10 @@ class CoordinatorRuntimeService:
                         dict(epic_id=e.spec.epic_id, title=e.spec.title, priority=e.priority,
                              dependencies=e.spec.dependencies) for e in self.spec.epics
                     ]), confirmation=confirmation,
-                ))
+                )
+                if self.capabilities:
+                    assignment["capabilities"] = self.capabilities
+                prompt = canonical_json(assignment)
                 if len(prompt.encode()) > 65536:
                     raise CoordinatorError("COORDINATOR_ASSIGNMENT_TOO_LARGE")
                 op = self._save(
