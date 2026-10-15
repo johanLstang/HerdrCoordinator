@@ -425,7 +425,9 @@ def test_project_lock_and_registered_policy_set_deny_unverified_subjects(deliver
         waiting = CoordinatorReviewService(service.runtime, {}, policies=[f.policy])
         with pytest.raises(CoordinatorError, match="SCOPE_DENIED"):
             await waiting.context(f.coordinator, "p", "unregistered-run", "review")
-        waiting.policies[f.policy.native_epic_id].original.title = "Unregistered policy change"
+        waiting.policies[f.policy.native_epic_id].original.acceptance_criteria.append(
+            "Unregistered nested policy change",
+        )
         with pytest.raises(CoordinatorError, match="CONFIGURATION_CHANGED"):
             waiting.verify_configuration()
         assert service.store.db.total_changes == before
