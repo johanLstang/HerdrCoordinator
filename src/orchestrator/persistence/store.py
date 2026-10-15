@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from uuid import uuid4
 
+from orchestrator.domain.coordinator import CoordinatorRun, ProjectOperation
 from orchestrator.domain.models import (
     EpicRun,
     ExternalReference,
@@ -13,7 +14,23 @@ from orchestrator.domain.models import (
     TransitionEvent,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
+_PROJECT_SCHEMA = (
+    """CREATE TABLE coordinator_runs (
+        id TEXT PRIMARY KEY, project_id TEXT NOT NULL, actor_id TEXT NOT NULL,
+        status TEXT NOT NULL, completed_at TEXT, payload TEXT NOT NULL,
+        UNIQUE(id, project_id))""",
+    """CREATE UNIQUE INDEX coordinator_owner ON coordinator_runs(project_id)
+        WHERE completed_at IS NULL""",
+    """CREATE TABLE project_operations (
+        id TEXT PRIMARY KEY, project_id TEXT NOT NULL, coordinator_run_id TEXT NOT NULL,
+        kind TEXT NOT NULL, idempotency_key TEXT NOT NULL, payload TEXT NOT NULL,
+        UNIQUE(project_id, kind, idempotency_key),
+        FOREIGN KEY(coordinator_run_id, project_id) REFERENCES coordinator_runs(id, project_id))""",
+    """CREATE UNIQUE INDEX project_claim_owner ON project_operations(project_id)
+        WHERE kind = 'epic_claim'
+        AND coalesce(json_extract(payload, '$.result.stage'), '') != 'RELEASED'""",
+)
 _EVENT_SCHEMA = """CREATE TABLE transition_events (
     project_id TEXT NOT NULL, event_id TEXT NOT NULL, epic_run_id TEXT NOT NULL,
     task_run_id TEXT, payload TEXT NOT NULL, PRIMARY KEY(project_id, event_id),
@@ -125,7 +142,7 @@ class StateStore:
     def initialize(self) -> None:
         with self.transaction() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version in {1, SCHEMA_VERSION}:
+            if version in {1, 2, SCHEMA_VERSION}:
                 required = {
                     "epic_runs",
                     "task_runs",
@@ -140,8 +157,16 @@ class StateStore:
                     raise StoreError("state database schema is incomplete")
                 if version == 1:
                     db.execute(_EVENT_SCHEMA)
-                    db.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
                 elif "transition_events" not in actual:
+                    raise StoreError("state database schema is incomplete")
+                if version < 3:
+                    for statement in _PROJECT_SCHEMA:
+                        db.execute(statement)
+                    db.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
+                elif not {
+                    "coordinator_runs", "coordinator_owner", "project_operations",
+                    "project_claim_owner",
+                } <= actual:
                     raise StoreError("state database schema is incomplete")
                 return
             if version != 0:
@@ -153,7 +178,102 @@ class StateStore:
             for statement in _SCHEMA:
                 db.execute(statement)
             db.execute(_EVENT_SCHEMA)
+            for statement in _PROJECT_SCHEMA:
+                db.execute(statement)
             db.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
+
+    def add_coordinator(self, record: CoordinatorRun) -> None:
+        record = CoordinatorRun.model_validate(record.model_dump())
+        with self.transaction() as db:
+            db.execute(
+                "INSERT INTO coordinator_runs VALUES (?, ?, ?, ?, ?, ?)",
+                (record.id, record.project_id, record.actor_id, record.status,
+                 record.completed_at.isoformat() if record.completed_at else None,
+                 record.model_dump_json()),
+            )
+
+    def get_coordinator(self, run_id: str) -> CoordinatorRun | None:
+        row = self.db.execute(
+            "SELECT payload FROM coordinator_runs WHERE id = ?", (run_id,)
+        ).fetchone()
+        return CoordinatorRun.model_validate_json(row[0]) if row else None
+
+    def project_coordinators(self, project_id: str) -> list[CoordinatorRun]:
+        return [CoordinatorRun.model_validate_json(row[0]) for row in self.db.execute(
+            "SELECT payload FROM coordinator_runs WHERE project_id = ? ORDER BY id",
+            (project_id,),
+        )]
+
+    def update_coordinator(self, record: CoordinatorRun) -> None:
+        record = CoordinatorRun.model_validate(record.model_dump())
+        with self.transaction() as db:
+            prior = self.get_coordinator(record.id)
+            if prior is None or any(
+                getattr(record, name) != getattr(prior, name)
+                for name in ("project_id", "actor_id", "branch", "worktree_path",
+                             "initial_commit", "configuration_hash", "started_at")
+            ):
+                raise StoreError("Coordinator immutable identity changed")
+            if prior.completed_at is not None and record != prior:
+                raise StoreError("completed Coordinator cannot be adopted or reopened")
+            if any(
+                getattr(prior, name) is not None
+                and getattr(record, name) != getattr(prior, name)
+                for name in (
+                    "coordinator_agent_id", "herdr_workspace_id", "herdr_server_session",
+                    "herdr_tab_id", "herdr_pane_id", "herdr_terminal_id", "codex_session_id",
+                )
+            ):
+                raise StoreError("registered Coordinator native identity changed")
+            db.execute(
+                "UPDATE coordinator_runs SET status=?, completed_at=?, payload=? WHERE id=?",
+                (record.status, record.completed_at.isoformat() if record.completed_at else None,
+                 record.model_dump_json(), record.id),
+            )
+
+    def add_project_operation(self, record: ProjectOperation) -> None:
+        record = ProjectOperation.model_validate(record.model_dump())
+        with self.transaction() as db:
+            db.execute(
+                "INSERT INTO project_operations VALUES (?, ?, ?, ?, ?, ?)",
+                (record.id, record.project_id, record.coordinator_run_id, record.kind,
+                 record.idempotency_key, record.model_dump_json()),
+            )
+
+    def get_project_operation(
+        self, project_id: str, kind: str, key: str
+    ) -> ProjectOperation | None:
+        row = self.db.execute(
+            "SELECT payload FROM project_operations "
+            "WHERE project_id=? AND kind=? AND idempotency_key=?",
+            (project_id, kind, key),
+        ).fetchone()
+        return ProjectOperation.model_validate_json(row[0]) if row else None
+
+    def project_operations(
+        self, coordinator_run_id: str, *, kind: str
+    ) -> list[ProjectOperation]:
+        return [ProjectOperation.model_validate_json(row[0]) for row in self.db.execute(
+            "SELECT payload FROM project_operations WHERE coordinator_run_id=? AND kind=? "
+            "ORDER BY rowid", (coordinator_run_id, kind),
+        )]
+
+    def update_project_operation(self, record: ProjectOperation) -> None:
+        record = ProjectOperation.model_validate(record.model_dump())
+        with self.transaction() as db:
+            prior = self.get_project_operation(
+                record.project_id, record.kind, record.idempotency_key
+            )
+            if prior is None or any(
+                getattr(record, name) != getattr(prior, name)
+                for name in ("id", "project_id", "coordinator_run_id", "kind",
+                             "idempotency_key", "created_at")
+            ):
+                raise StoreError("project operation immutable identity changed")
+            db.execute(
+                "UPDATE project_operations SET payload=? WHERE id=?",
+                (record.model_dump_json(), record.id),
+            )
 
     def add_epic(self, record: EpicRun) -> None:
         with self.transaction() as db:

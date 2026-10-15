@@ -85,3 +85,12 @@ class TaskResumeRequest(TaskParkRequest):
 
 class EpicCompleteRequest(TaskGetNextRequest):
     request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+
+
+class CoordinatorOverviewRequest(BaseModel):
+    model_config = Target.model_config
+    project_id: Identity
+
+
+class EpicClaimRequest(CoordinatorOverviewRequest):
+    request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")

@@ -1,0 +1,47 @@
+{
+  "status": "CHANGES_REQUESTED",
+  "role": "bootstrap Integration",
+  "source_commit": "4e8fb47480a42a1c6f4d716e46c2dc86fa3b5aae",
+  "target_commit": "b6ceb9956f512a2ed2330fe24b2cd741d83738fb",
+  "main_commit": "b6ceb9956f512a2ed2330fe24b2cd741d83738fb",
+  "bootstrap_exception": "Development task/epic worktrees have no product lifecycle and are never adopted.",
+  "source_worktree": ".worktrees/task-e10-f38",
+  "target_worktree": ".worktrees/epic-e10",
+  "diff_sha256": "4b828b7ba6e6f9ad8325e764d8eb01de5e3d4ed3ca2165dbd164cfe09107e090",
+  "diff_bytes": 143206,
+  "files": 23,
+  "source_bindings": 123,
+  "findings": [
+    {
+      "criterion": "F-38.A2",
+      "detail": "An active whitelisted board epic without claim reservation permits a second Integration.",
+      "regression": "test_foreign_active_board_epic_prevents_a_second_start"
+    },
+    {
+      "criterion": "F-38.A2",
+      "detail": "An unreserved persisted active project EpicRun permits a second Integration.",
+      "regression": "test_unreserved_registered_epic_prevents_another_start"
+    },
+    {
+      "criterion": "F-38.A2",
+      "detail": "A Pending board epic with a started unowned task permits a second Integration.",
+      "regression": "test_pending_epic_with_unowned_started_task_prevents_second_start"
+    }
+  ],
+  "negative_tests": {
+    "tests": 2,
+    "failures": 2,
+    "exit_code": 1,
+    "seconds": 4.83
+  },
+  "merge_allowed": false,
+  "native_approval_pending": true,
+  "additional_negative_tests": {
+    "tests": "5",
+    "failures": "5",
+    "errors": "0",
+    "skipped": "0",
+    "time": "7.529",
+    "exit_code": 1
+  }
+}

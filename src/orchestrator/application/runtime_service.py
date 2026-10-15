@@ -104,6 +104,7 @@ class RuntimeService:
         task_resume=None,
         epic_start=None,
         integration_control=None,
+        coordinator_control=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -119,6 +120,7 @@ class RuntimeService:
         self.task_resume = task_resume
         self.epic_start = epic_start
         self.integration_control = integration_control
+        self.coordinator_control = coordinator_control
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -134,6 +136,9 @@ class RuntimeService:
         return record
 
     def call(self, operation: str, arguments: dict) -> ToolResponse:
+        if self.coordinator_control is not None:
+            return ToolResponse(ok=False, code="ASYNC_CONTROL_REQUIRED",
+                                message="use guarded async Coordinator control")
         if (
             self.integration_control is not None
             and operation not in self.integration_control.operations
@@ -160,6 +165,13 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if self.coordinator_control is not None:
+            response = await self.coordinator_control.call(self.actor, operation, arguments)
+            self.log.emit(
+                "mcp.policy", "INFO" if response.ok else "WARNING", "tool decision",
+                code=response.code, role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if (
             self.integration_control is not None
             and operation not in self.integration_control.operations

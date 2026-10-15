@@ -14,6 +14,8 @@ from mcp.types import (
 
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.mcp.contracts import (
+    CoordinatorOverviewRequest,
+    EpicClaimRequest,
     EpicCompleteRequest,
     EpicStartRequest,
     PolicyRequest,
@@ -222,6 +224,19 @@ def create_server(service: RuntimeService) -> Server:
                     annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False),
                 )
             )
+
+    if service.coordinator_control is not None:
+        tools = [Tool(
+            name=name, description=description, input_schema=model.model_json_schema(),
+            output_schema=ToolResponse.model_json_schema(), annotations=ToolAnnotations(
+                read_only_hint=name == "coordinator_overview", destructive_hint=False,
+            ),
+        ) for name, description, model in [
+            ("coordinator_overview", "Read the configured project plan and blockers.",
+             CoordinatorOverviewRequest),
+            ("epic_claim_next", "Reserve the next verified epic and start its Integration.",
+             EpicClaimRequest),
+        ]]
 
     async def list_tools(ctx: ServerRequestContext, params: PaginatedRequestParams | None):
         return ListToolsResult(tools=tools)
