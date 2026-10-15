@@ -1,0 +1,80 @@
+{
+  "decision": "APPROVED",
+  "role": "bootstrap Integration",
+  "source": "9fc0c8308aff64cd728941f94afc0cf41d9c0a45",
+  "target": "b6ceb9956f512a2ed2330fe24b2cd741d83738fb",
+  "main": "b6ceb9956f512a2ed2330fe24b2cd741d83738fb",
+  "source_branch": "task/e10-f38",
+  "target_branch": "feature/epic-e10",
+  "full_patch": {
+    "bytes": 352226,
+    "sha256": "1a8778e0c2475d9f426b3b86a7300fa2b74a09b1131957968438e6d7f1b465d0",
+    "files": 31
+  },
+  "findings": "Review1 three active-epic findings closed by current 41-test correction; no remaining blocking findings.",
+  "reviewed": [
+    "domain/immutable project spec and role-bound runtime registration",
+    "fresh User/Write/board scope, priority/dependencies/main delivery proof",
+    "project/common Git locks, durable single reservation, F34 start/retry",
+    "schema1/2 additive migration to3; old payload/DDL/relationships preserved",
+    "MCP two guarded operations, strict inputs, denial/no fallthrough",
+    "native original ACK/reopen/scoped Allow once/actual WAIT/no start/physical stop",
+    "current 123-source bindings:954 baseline and41 corrected claim tests; no new full964 claim",
+    "package four policies and unchanged default launch fingerprint",
+    "all changed-file credential scan and current main/target paths/branches/clean/SHA"
+  ],
+  "criteria": {
+    "A1": "Positive Git/SQLite/F34 controlled-runtime priority/order/current-main tests",
+    "A2": "Concurrent DB/service connections, stable owner/key, recovery and10 active-epic regressions",
+    "A3": "Native original session WAIT/no resources plus dependency/empty/false-gate negative service cases"
+  },
+  "native_proof_sha256": "267a3d9e527e1991d2fd0033987e349c92ece71e94ffc7b8f5a58ffb6ba559fa",
+  "bootstrap_exception": "Unregistered development worktrees are not adopted; explicit GitAdapter integration with independent review and common-dir flock. Product services only handled registered native probe.",
+  "post_merge_required": true,
+  "integration": {
+    "stage": "DONE_VERIFIED_AND_SYNCHRONIZED",
+    "operation_id": "1c6c815c-e7f6-4835-aedf-d3532d05f04d",
+    "source": "9fc0c8308aff64cd728941f94afc0cf41d9c0a45",
+    "target": "b6ceb9956f512a2ed2330fe24b2cd741d83738fb",
+    "source_branch": "task/e10-f38",
+    "target_branch": "feature/epic-e10",
+    "review_sha256": "dcd23aa53b3a25817181e13f09c909bc4f443e42351ac26483c572d164304b27",
+    "bootstrap_exception": "Unregistered development worktrees are not adopted; explicit GitAdapter integration with independent review and common-dir flock. Product services only handled registered native probe.",
+    "merge_commit": "e02a84db8e952eb0cd3d672e96a4afb308a0a47a",
+    "post": {
+      "command": "uv run --locked pytest tests/test_coordinator_claim.py tests/test_coordinator_runtime.py tests/test_coordinator_persistence.py tests/test_codex_mcp_launch.py tests/test_states.py tests/test_mcp.py tests/test_epic_start.py::test_sdk_registration_scope_and_role_arguments -q --junitxml=/tmp/herdr-f38-post.xml",
+      "junit": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "121",
+        "time": "51.064",
+        "timestamp": "2026-10-15T14:14:13.134496+02:00",
+        "hostname": "raspberrypi"
+      },
+      "reported_seconds": 51.23,
+      "exit_code": 0,
+      "xml_sha256": "b806615f1feb264494200b51d3cfde507c078bb3fc45000ba24cec7d40f33fd5"
+    },
+    "gates": {
+      "ruff_exit": 0,
+      "build_exit": 0,
+      "readme_cli_exit": 0,
+      "exact_wheel_modules": 67,
+      "exact_policies": 4,
+      "current_source_bindings": 123,
+      "epic_import_verified": true
+    },
+    "teamplayer": {
+      "task_status": "Done",
+      "task_version": 16,
+      "epic_status": "Active",
+      "epic_version": 9,
+      "descriptions_synced": true
+    }
+  },
+  "task_status": "Done",
+  "teamplayer_version": 16,
+  "limitations": "Native guarded run at4e and controlled positive service tests are distinct. D02/F17/F41 positive OS/autonomy gate remains unresolved."
+}

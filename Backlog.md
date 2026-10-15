@@ -1705,7 +1705,7 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 
 **Fas:** 10. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `559a4c95-3282-4b4b-a30f-97f9d0dbbaea`.
 
-**Körbar:** Ja för manuell F38-implementation från verifierad E09/main; autonom produktstart kräver fortfarande D02/F17-verifiering. **Beroende:** E-09 Done på main.
+**Körbar:** Ja för nästa manuell F39-implementation från verifierad E09/main och integrerad F38; autonom produktstart kräver fortfarande D02/F17-verifiering. **Beroende:** E-09 Done på main.
 
 **Källa:** A §§4.1, 25–27, 31, 44, 47–48, 50; W §§5–6, 30–34, 37–40.
 
@@ -1728,7 +1728,7 @@ En långlivad Coordinator kan välja nästa körbara epic, ta emot verifierad le
 
 ### Epicacceptans
 
-- [ ] **E-10.A1:** Coordinator väljer endast prioriterad körbar epic och startar högst en aktiv epic i MVP.
+- [x] **E-10.A1:** Coordinator väljer endast prioriterad körbar epic och startar högst en aktiv epic i MVP.
 - [ ] **E-10.A2:** Slutreview kan begära korrigering och därefter godkänna aktuell epic för main-merge.
 - [ ] **E-10.A3:** Epicen blir Done efter main-merge och slutverifiering; nästa beroende epic startar från nya main.
 
@@ -1736,11 +1736,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Aktuell start 2026-10-11:** E10 Active7 efter färsk statusCAS, F38 InProgress4/User105 före kod. E09 Done12/PR9/main3566f263 och aktuell mainb6ceb995 verifierade. Manuella rena epic-/task-worktrees skapade genom GitAdapter, ingen produktadoption. F38:s guardimplementation inkluderar korrekt nekande vid olöst runtimegräns; autonom körning/merge aktiveras inte. Egenacceptans0/3 tills verklig samlad leverans; E10 behåller Active under hinder.
 
+**Efter F38 2026-10-15:** F38 är granskad, no-ff-integrerad till epic och efterverifierad (121 PASS). E10 är fortsatt Active; egenacceptans1/3 räknas från A1:s faktiska val-/ensam-epic-prov, inte antalet klara tasks. A2/slutreview-korrigering och A3/main-merge-fortsättning återstår i F39–41. [Leveransunderlag](docs/reviews/F-38-final.md).
+
 ### Task F-38 Välj och claima nästa epic med Coordinator
 
-**Epic/fas/prioritet:** E-10 / 10 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `64b97b6e-2251-4964-9b67-f67d709de9bf`.
+**Epic/fas/prioritet:** E-10 / 10 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `64b97b6e-2251-4964-9b67-f67d709de9bf`.
 
-**Körbar:** Ja för avgränsad manuell implementation/verifiering efter E09 Done12/PR9/main3566f263 och aktuell ren main b6ceb995. Autonom produktstart är fortsatt spärrad av D02/F17 tills faktisk runtimeverifiering; ingen isoleringsgaranti antas.
+**Körbar:** Nej — F38 är levererad och verifierad till E10. D02/F17:s positiva OS-/autonomigrind kvarstår inför senare autonomt produktflöde.
 
 **Källa:** A §§4.1, 5–6, 29, 31, 44; W §§5–6, 34, 38. **Berör:** Coordinator-session, epic_claim_next, projektpolicy.
 
@@ -1754,9 +1756,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-38.A1:** Högst prioriterad körbar epic väljs och startar sin Integration Agent från aktuell main.
-- [ ] **F-38.A2:** Samtidiga claimförsök skapar högst en aktiv epic och samma Coordinatorägarskap.
-- [ ] **F-38.A3:** Ej uppfyllt beroende, olöst runtimegräns eller tom kandidatlista ger väntan/blockerare utan start.
+- [x] **F-38.A1:** Högst prioriterad körbar epic väljs och startar sin Integration Agent från aktuell main.
+- [x] **F-38.A2:** Samtidiga claimförsök skapar högst en aktiv epic och samma Coordinatorägarskap.
+- [x] **F-38.A3:** Ej uppfyllt beroende, olöst runtimegräns eller tom kandidatlista ger väntan/blockerare utan start.
 
 **Verifiering:** Serviceprov med olika epicgrafer och parallella claim; verkligt Coordinator-startprov.
 
@@ -1793,11 +1795,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Nativeprovet slutfört 2026-10-15:** Samma ursprungliga SID/ACK/configuration och två faktiska agent-MCP-anrop verifierade. Efter ALLOW_ONCE gav epic_claim_next faktiskt WAIT/RUNTIME_SECURITY_GATE_UNVERIFIED; inga claims/epic-/taskruns/Workers/merger och oförändrad fixturemain d4215a26. Native boardtask Pending1/User105. Fysisk STOPPED/inaktiv processgrupp/shell och avslutad egen namngiven server/PID verifierade. Första stoppets okända wrapputfall avstämdes från EXIT_PENDING med samma nyckel utan extra exit. [Native underlag och begränsningar](docs/coordinator/F-38-native.md), [fullt maskinbevis](docs/coordinator/F-38-native.json). Agentens rapport-SID null redovisas, faktisk SID verifierad oberoende. D02/F17:s positiva autonomi-/OS-grind kvarstår separat; detta prov verifierar korrekt nekande. F38 Testing/Active, slutreview/Task→E10/efterprov återstår före Done.
 
+**Levererad och verifierad 2026-10-15:** F38 Done15 efter aktuell APPROVED-review av task `9fc0c8308aff64cd728941f94afc0cf41d9c0a45` mot epic/main `b6ceb9956f512a2ed2330fe24b2cd741d83738fb`; hela31-filsdiff352226bytes/hash1a8778e0. Faktisk GitAdapter/common-lock no-ff Task→E10 `e02a84db8e952eb0cd3d672e96a4afb308a0a47a`/op `1c6c815c-e7f6-4835-aedf-d3532d05f04d`; parents/marker/identiskt reviewed tree verifierade.121 efterprov PASS51.23s/exit0, lint/build/READMECLI/rätt import/wheel67/fyra policies/123 källbindningar PASS. Alla tre F38-kriterier verifierade; positiva kontrollerade servicefall och faktisk native guarded WAIT/start/ACK/reopen/stopp redovisas separat. [Slutreview och full leveransproof](docs/reviews/F-38-final.md). D02/F17:s positiva OS-/autonomigrind gäller fortsatt inför F41. E10 Active, egenacceptans1/3 genom dess A1; nästa F39.
+
 ### Task F-39 Slutgranska epic och återför korrigeringskrav
 
 **Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `0657116a-4cf9-483f-aa9f-57612d7cee39`.
 
-**Körbar:** Nej — invänta F-38 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja för nästa manuell implementation efter F38 Done och faktisk Task→E10 e02a84db/post121; X02 verifieras för den konkreta korrigeringsförmågan före automatisk effekt.
 
 **Källa:** A §§25–26, 31, 44; W §§30–32. **Berör:** Coordinator-review, epicreviewhistorik, korrigerande tasks.
 
@@ -2225,9 +2229,9 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Done | Nej | 3/3 | E-08, F-35 | Done8/User105; APPROVED0f67b82/full14-file diff5ec8e62b; no-ff93a6e6d/source104/post14/gates PASS. E09 Active0/3; F37 nästa. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Done | Nej | 3/3 | E-08, F-36, X-01, X-02 | Done12/User105; fullreview98a6ed16/diff912ad99d, no-ff73bca342; native3 DONE/max2/samma-SID-input-fix/F36 EPIC_READY och efterkontroller PASS. |
-| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Active | Ja | 0/3 | E-09 Done på main | Active7; F38 InProgress4, manuell guardimplementation. D02/F17 spärrar fortsatt autonom produktstart. |
-| 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Active | Nej | 0/3 | E-09, X-01, X-02 | NeedsApproval9/User105: ny faktisk F38-r1 epic_claim_next-dialog i registrerad Coordinator-SID; original ACK/overview/ingen claim, 954-suite kör. |
-| 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Planned | Nej | 0/3 | E-09, F-38, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Active | Ja | 1/3 | E-09 Done på main | Active; A1 verifierad via F38/mergee02a84db/post121. Nästa F39; D02/F17-autonomi stängd. |
+| 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Done | Nej | 3/3 | E-09, X-01, X-02 | Granskad9fc0c830; mergee02a84db; post121 PASS; native WAIT/stopp. |
+| 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Planned | Ja | 0/3 | E-09, F-38, X-02 | Nästa efter F38 Done/mergee02a84db/post121; konkret X02-gate före korrigeringseffekt. |
 | 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Planned | Nej | 0/3 | E-09, F-39 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Planned | Nej | 0/3 | E-09, F-40, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Nej | 0/3 | E-10 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
