@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "stage": "NATIVE_SCENARIO_IN_PROGRESS",
+  "observed_at": "2026-10-15T13:48:07.887758+00:00",
+  "source_checkpoint": "eded024a88b4401bc6695b2a5aa36fe2f9ca9505",
+  "product_source_pins": "/tmp/herdr-f39-source-pins.json",
+  "operator_driver_sha256": "56e5183feb6e5c7d70526fe0cb5d957f48fcabf4ccd7bced7eac8d9539c2214b",
+  "server": "hc-f39-r1-20261015",
+  "server_start": {
+    "stage": "PROCESS_STARTED",
+    "argv": [
+      "/home/stang/.local/bin/herdr",
+      "--session",
+      "hc-f39-r1-20261015",
+      "server"
+    ],
+    "server": "hc-f39-r1-20261015",
+    "configuration_sha256": "665c63698e38587e9e7e5b10d3221e8c51101b3f42792dd06c72e59cc2c50eca",
+    "pid": 3503543,
+    "start_time": "154134547"
+  },
+  "config_sha256": "665c63698e38587e9e7e5b10d3221e8c51101b3f42792dd06c72e59cc2c50eca",
+  "coordinator": {
+    "run_id": "b1b7cfe9-f71f-4ae5-ab0d-63b1f516ba84",
+    "session_id": "01a13fc4-45b2-71d1-9e3c-fa720a87a911",
+    "agent_id": "hc-c-bb1149da67594df9a352162e",
+    "status": "ACTIVE",
+    "configuration_hash": "4f84d24d91b09fb3d6d8a1d258e26ed581618a4ce16ee9a5667ac20936ae2117",
+    "start_operation_id": "6dec851f-b79a-44a7-bf5c-039661429cd1",
+    "start_stage": "REGISTERED"
+  },
+  "integration": {
+    "run_id": "0e219621-d55c-4efc-b52f-f9cdec1fed10",
+    "session_id": "01a13fc5-4e15-78f3-afc4-6d7bab6b7723",
+    "agent_id": "hc-84bdcfe9563343ab8113b647",
+    "status": "ACTIVE",
+    "start_operation_id": "45838756-87b6-4497-a863-59f35016e7b1",
+    "start_stage": "REGISTERED"
+  },
+  "native_project": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "native_epic": "cc1051d1-0666-4fb7-b0a7-aa458d02f0e1",
+  "native_seed_task": "d9ee85a3-f657-4155-8b3c-6ce82d8d6f2f",
+  "main_before": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "worker_snapshots": [
+    {
+      "run_id": "662ea4ae-46b8-4320-8791-b91c725b911b",
+      "task_id": "f39-seed-r1",
+      "session_id": "01a13fcc-d2d6-76c1-a546-e3e01a49a2c6",
+      "status": "PARKED",
+      "slot": null
+    }
+  ],
+  "operator_approval": {
+    "source": "USER_EXPLICIT",
+    "text": "Ja, godkänn F39-r1-verktygen",
+    "journaled_choices": [
+      {
+        "file": "approval-task-start-seed-v1.json",
+        "stage": "KEY_SENT",
+        "choice": "ALLOW_ONCE"
+      },
+      {
+        "file": "approval-task-schedule-v1.json",
+        "stage": "KEY_SENT",
+        "choice": "ALLOW_SESSION"
+      }
+    ]
+  },
+  "fixture_input_event": {
+    "reason": "Pre-existing fixture AGENTS requires an explicit same-session prefix decision. Initial Worker correctly reported BLOCKED and was physically parked with slot release.",
+    "blocker_id": "9231b035-e8e5-48d7-b33f-6e7fe8461d3d",
+    "input_id": "5ebd20df-ab7b-44f4-9e2e-23732bfa4cd2",
+    "answer_source": "Operator confirmed Hej from the current registered task and existing preference; sent to Integration for actual F32 same-session resume."
+  },
+  "handoff_before": null,
+  "review_before": null,
+  "correction": null,
+  "handoff_after": null,
+  "review_after": null,
+  "stopped": false,
+  "limitations": [
+    "Native correction and before/after review not yet complete.",
+    "Manual genuine registered product runs, no development worktree adoption or fabricated F38 claim.",
+    "D02/F17 OS/autonomy gate remains closed; this is not autonomous F41 proof."
+  ]
+}

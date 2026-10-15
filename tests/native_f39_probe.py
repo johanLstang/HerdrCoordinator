@@ -70,12 +70,21 @@ async def main():
                 if run is not None and run.codex_session_id:
                     thread = runtime.codex.read_thread(run.codex_session_id, run.worktree_path)
                     save(root / (run.id + "-thread.json"), thread)
-            operations = runtime.store.project_operations(runtime.run_id)
+            kinds = runtime.store.db.execute(
+                "SELECT DISTINCT kind FROM project_operations WHERE coordinator_run_id = ?",
+                (runtime.run_id,),
+            ).fetchall()
+            operations = [o for (kind,) in kinds
+                          for o in runtime.store.project_operations(runtime.run_id, kind=kind)]
+            epic_kinds = runtime.store.db.execute(
+                "SELECT DISTINCT kind FROM operations WHERE epic_run_id = ?", (run_id,),
+            ).fetchall()
+            epic_operations = [o for (kind,) in epic_kinds
+                               for o in runtime.store.get_operations(run_id, kind=kind)]
             save(root / "observed.json", dict(
                 runs=[r.model_dump(mode="json") for r in runs if r is not None],
                 project_operations=[o.model_dump(mode="json") for o in operations],
-                epic_operations=[o.model_dump(mode="json")
-                                 for o in runtime.store.get_operations(run_id)] if epic else [],
+                epic_operations=[o.model_dump(mode="json") for o in epic_operations],
                 main=runtime.main(),
                 effective_spec=subject.plan.current()[0].model_dump(mode="json"),
             ))
