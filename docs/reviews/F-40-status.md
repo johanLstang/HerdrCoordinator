@@ -1,7 +1,7 @@
-# F40 verifierad kod, väntande nativegodkännande
+# F40 verifierad kod, pågående nativeprov
 
 Kodcheckpoint bb452da; testorakel/metadata c6c7822.83 produkt-/policy-/konfigurations-
-bindningar är byte-identiska. F40 är **NeedsApproval9 / Attention0/3**,
+bindningar är byte-identiska. F40 är **Testing11 / Active0/3**,
 User105/blitterbot@gmail.com; backlogg och TeamPlayer är återlästa/synkroniserade.
 E10 är fortsatt Active10/2 av3. F39 Done9 är integrerad och efterverifierad.
 
@@ -36,13 +36,12 @@ wheelimport/policy passerade. Factual stdio-catalog: Root6, Integration16
 
 ## Konkret kvarvarande steg
 
-[Det verkliga F40-r1-provet](../coordinator/F-40-native.md) väntar vid Codex
-”Trust this folder?” för `/tmp/herdr-f40-r1-fixture-20261015/repo`.
-Användaren har tillfrågats om mapp/förväntade egna sessionsverktyg. Servern och
-ursprungliga Root-startavsikten är bevarade, inga Integration-/Worker-runs,
-slots eller mainmerges finns. Inget Native-SID/ACK har fabricerats.
+[Det verkliga F40-r1-provet](../coordinator/F-40-native.md) är återupptaget efter
+användarens uttryckliga mapp-/verktygsgodkännande. Samma root har verkligt ACK/SID;
+den genuina F34-Integrationen är registrerad och F39-attached före Workerstart.
+Alla83 produkt- och55 verifieringsbindningar återkontrollerade identiska.
 
-Efter samtycke: återuppta samma startavsikt, genomför verklig native leverans och
-review, få exakt reviewbunden begränsad fixture-mainauktorisation, verifiera
-F40-effekter/stopp, slutgranska och integrera utvecklings-F40 till E10 med efterprov.
-Först då kan F40 bli Done. D02/F17:s generella autonomigrind består inför F41.
+Fortsätt verklig Workerleverans och native Coordinator-review; därefter krävs
+separat exakt reviewbunden begränsad fixture-mainauktorisation enligt D02/F17.
+Slutgranska/integrera utvecklings-F40 till E10 och efterverifiera före Done.
+Generell autonomigrind består inför F41.

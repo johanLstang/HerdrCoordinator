@@ -1,20 +1,18 @@
 {
   "version": 1,
-  "stage": "WAITING_FOR_ACTUAL_FOLDER_TRUST_AND_F40_SESSION_CONSENT",
+  "stage": "NATIVE_INTEGRATION_ACTIVE",
   "source_checkpoint": "c6c7822980abdce66a599534081c4287142fbd99",
   "config_sha256": "f59484b22ffc7fd885162a17f67cbc417f9fd55e889375364c9a27faa686f46f",
   "fixture": "/tmp/herdr-f40-r1-fixture-20261015/repo",
   "fixture_main": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
   "server": "hc-f40-r1-20261015",
   "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
-  "coordinator_status": "STARTING",
+  "coordinator_status": "ACTIVE",
   "coordinator_agent_id": "hc-c-e4089d995c8f4dac88f4a08a",
-  "coordinator_session_id": null,
+  "coordinator_session_id": "01a143de-70c8-71d3-9f24-11c5278e7517",
   "pane_id": "w1:p1",
-  "actual_visible_ui": "\n  Folder access\n  /tmp/herdr-f40-r1-fixture-20261015/repo\n\n  Trust this folder? Codex can read, edit, and run files here, subject to your permission settings. Folder settings\n  can run code automatically, even without a model request. Continue only if you trust these files. Your trust\n  decision will be saved.\n\n› 1. Trust and continue\n  2. Quit\n\n  enter continue · esc quit\n",
-  "actual_ui_sha256": "b86b905e635dedbe546ca388cf39497b57d2f2a78f9dabb2ec920e0f3dc2f88e",
-  "epic_runs": 0,
-  "task_runs": 0,
+  "epic_runs": 1,
+  "task_runs": 1,
   "native_main_merge": false,
   "development_task_merge": false,
   "autonomy_gate": false,
@@ -26,7 +24,7 @@
     "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
     "07c3075f-b694-4f86-9b51-f9fc3edf8035"
   ],
-  "observed_at": "2026-10-15T16:53:32.044728+00:00",
+  "observed_at": "2026-10-16T08:43:42.981332+00:00",
   "own_server": {
     "pid": 1615840,
     "process_start": "155220692",
@@ -38,13 +36,37 @@
     "product_pins": 83,
     "verification_pins": 55
   },
-  "authorization_received": false,
+  "authorization_received": true,
   "development_board": {
-    "task_status": "NeedsApproval",
-    "task_version": 9,
-    "local_kanban": "Attention",
-    "epic_status": "Active",
-    "epic_version": 10,
-    "descriptions_synced": true
-  }
+    "status": "Testing",
+    "version": 11,
+    "local": "Active",
+    "acceptance": "0/3"
+  },
+  "integration": {
+    "run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+    "agent": "hc-264a2a0077464da7aaea489f",
+    "session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
+    "stage": "REGISTERED",
+    "attachment_id": "091cba2a-ee61-424e-a2b6-644ccded11f9"
+  },
+  "authorization": {
+    "source": "USER_EXPLICIT",
+    "text": "Ja, godkänn F40-r1",
+    "scope": "Own fixture folder and F40-r1 session tools only; no fixture-main permit",
+    "operator_receipt": "/tmp/herdr-f40-r1-operator-20261015/user-f40-r1-approval-20261016.json"
+  },
+  "historical_folder_dialog": "\n  Folder access\n  /tmp/herdr-f40-r1-fixture-20261015/repo\n\n  Trust this folder? Codex can read, edit, and run files here, subject to your permission settings. Folder settings\n  can run code automatically, even without a model request. Continue only if you trust these files. Your trust\n  decision will be saved.\n\n› 1. Trust and continue\n  2. Quit\n\n  enter continue · esc quit\n",
+  "historical_folder_dialog_sha256": "b86b905e635dedbe546ca388cf39497b57d2f2a78f9dabb2ec920e0f3dc2f88e",
+  "worker_runs": [
+    {
+      "id": "fe294276-3943-442a-b76e-474b0f3ef791",
+      "task_id": "f40-seed-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "internal_status": "STARTING",
+      "worker_slot": 1,
+      "codex_session_id": null,
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1"
+    }
+  ]
 }
