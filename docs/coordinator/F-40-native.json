@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "stage": "NATIVE_INTEGRATION_ACTIVE",
+  "stage": "CURRENT_APPROVED_REVIEW_AWAITING_SEPARATE_USER_MAIN_APPROVAL",
   "source_checkpoint": "c6c7822980abdce66a599534081c4287142fbd99",
   "config_sha256": "f59484b22ffc7fd885162a17f67cbc417f9fd55e889375364c9a27faa686f46f",
   "fixture": "/tmp/herdr-f40-r1-fixture-20261015/repo",
@@ -24,7 +24,7 @@
     "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
     "07c3075f-b694-4f86-9b51-f9fc3edf8035"
   ],
-  "observed_at": "2026-10-16T08:43:42.981332+00:00",
+  "observed_at": "2026-10-16T09:03:31.426309+00:00",
   "own_server": {
     "pid": 1615840,
     "process_start": "155220692",
@@ -38,16 +38,16 @@
   },
   "authorization_received": true,
   "development_board": {
-    "status": "Testing",
-    "version": 11,
-    "local": "Active",
-    "acceptance": "0/3"
+    "status": "NeedsApproval",
+    "local": "Attention",
+    "acceptance": "0/3",
+    "version": 13
   },
   "integration": {
     "run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
     "agent": "hc-264a2a0077464da7aaea489f",
     "session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
-    "stage": "REGISTERED",
+    "stage": "EPIC_APPROVED_PENDING_MAIN_AUTHORIZATION",
     "attachment_id": "091cba2a-ee61-424e-a2b6-644ccded11f9"
   },
   "authorization": {
@@ -61,12 +61,83 @@
   "worker_runs": [
     {
       "id": "fe294276-3943-442a-b76e-474b0f3ef791",
-      "task_id": "f40-seed-r1",
+      "project_id": "f40-probe-r1",
       "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
-      "internal_status": "STARTING",
-      "worker_slot": 1,
-      "codex_session_id": null,
-      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1"
+      "task_id": "f40-seed-r1",
+      "branch": "task/f40-epic-r1-f40-seed-r1",
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+      "resume_state": null,
+      "internal_status": "DONE",
+      "kanban_status": "Done",
+      "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+      "worker_slot": null,
+      "herdr_workspace_id": "w3",
+      "herdr_server_session": "hc-f40-r1-20261015",
+      "herdr_tab_id": "w3:t1",
+      "herdr_pane_id": "w3:p1",
+      "herdr_terminal_id": "term_65df12d4106043",
+      "codex_session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+      "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "current_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "started_at": "2026-10-16T08:44:37.352884Z",
+      "completed_at": "2026-10-16T08:55:09.967602Z"
     }
-  ]
+  ],
+  "approved_review": {
+    "id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+    "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+    "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+    "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+    "bytes": 17595,
+    "read_chunks": [
+      0,
+      1,
+      2
+    ],
+    "current": true,
+    "proof": "F-40-r1-main-review.json"
+  },
+  "separate_main_authorization_received": false,
+  "board_readback": {
+    "observed_at": "2026-10-16T09:05:01.467633+00:00",
+    "development_task": {
+      "id": "4073e26d-b095-47e3-99a6-7704f757f485",
+      "status": "NeedsApproval",
+      "version": 13,
+      "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "description_exact_backlog": true
+    },
+    "development_epic": {
+      "id": "559a4c95-3282-4b4b-a30f-97f9d0dbbaea",
+      "status": "InProgress",
+      "version": 10
+    },
+    "native_tasks": [
+      {
+        "id": "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
+        "status": "Done",
+        "version": 9
+      },
+      {
+        "id": "07c3075f-b694-4f86-9b51-f9fc3edf8035",
+        "status": "Pending",
+        "version": 1
+      }
+    ],
+    "native_epics": [
+      {
+        "id": "9213a12d-4403-47cf-8669-a438bd51bb6b",
+        "status": "InProgress",
+        "version": 3
+      },
+      {
+        "id": "c3602afc-a227-4428-9279-15fd573de367",
+        "status": "Pending",
+        "version": 2
+      }
+    ]
+  }
 }

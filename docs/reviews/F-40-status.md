@@ -1,7 +1,7 @@
-# F40 verifierad kod, pågående nativeprov
+# F40 verifierad kod och native review, väntande mainbeslut
 
 Kodcheckpoint bb452da; testorakel/metadata c6c7822.83 produkt-/policy-/konfigurations-
-bindningar är byte-identiska. F40 är **Testing11 / Active0/3**,
+bindningar är byte-identiska. F40 är **NeedsApproval / Attention0/3**,
 User105/blitterbot@gmail.com; backlogg och TeamPlayer är återlästa/synkroniserade.
 E10 är fortsatt Active10/2 av3. F39 Done9 är integrerad och efterverifierad.
 
@@ -36,12 +36,18 @@ wheelimport/policy passerade. Factual stdio-catalog: Root6, Integration16
 
 ## Konkret kvarvarande steg
 
-[Det verkliga F40-r1-provet](../coordinator/F-40-native.md) är återupptaget efter
-användarens uttryckliga mapp-/verktygsgodkännande. Samma root har verkligt ACK/SID;
-den genuina F34-Integrationen är registrerad och F39-attached före Workerstart.
-Alla83 produkt- och55 verifieringsbindningar återkontrollerade identiska.
+[Det verkliga F40-r1-provet](../coordinator/F-40-native.md) har levererat provtasken
+via native Worker/Integration: riktig commit, review, no-ff Task→Epic, eftertest,
+fysisk Worker STOPPED och slotrelease/Done. Samlad verifiering passerade. Samma
+Coordinator läste3/3 chunks och registrerade aktuell EPIC_APPROVED39246d45 för
+source6033883 mot oförändrad mainb4919eb. Alla83 produkt-/55 verifieringsbindningar
+är oförändrade.
 
-Fortsätt verklig Workerleverans och native Coordinator-review; därefter krävs
-separat exakt reviewbunden begränsad fixture-mainauktorisation enligt D02/F17.
-Slutgranska/integrera utvecklings-F40 till E10 och efterverifiera före Done.
-Generell autonomigrind består inför F41.
+[Hela diffen och konkreta mainbeslutet](../coordinator/F-40-r1-main-review.md)
+är förberett och separat användargodkännande efterfrågat enligt F40-kontrakt9/
+D02/F17. Tidigare mapp-/verktygsgodkännande är genomfört; ingen mainpermit,
+mainmerge eller utvecklingsmerge/Done finns. Samma root/Integration/server bevaras.
+
+Efter faktiskt godkännande återstår native F40-leverans/stopp/sluttest/synk och
+negativ fortsättningsgrind, därefter utvecklingsreview/Task→E10/eftertest före Done.
+E10 förblir Active; generell autonomigrind består inför F41.
