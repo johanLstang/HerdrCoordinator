@@ -1915,9 +1915,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-10 / 10 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb`.
 
-**Körbar:** Nej — invänta F-40 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja för runtimeförberedelse och verifiering från F40 Done/E10bas68d8249. Själva autonoma produktstarten är fortsatt spärrad tills verkliga runtimegränser är verifierade.
 
-**Källa:** A §§44, 47–48; W §§5–34, 41–42. **Berör:** End-to-end-prov, MVP-acceptans.
+**Källa:** A §§44, 47–48; W §§5–34, 41–42. **Berör:** End-to-end-prov, MVP-acceptans samt nödvändigt sammanhängande valfritt stöd för sessionsprofiler, Worker-egencommit och isolerade testkommandon.
 
 **Beroenden:** F-40. **Externa förutsättningar:** X-01, X-02 och godkända runtimegränser; separata små testepics.
 
@@ -1934,6 +1934,12 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Verkligt Herdr/Codex/Git/TeamPlayer-prov med oberoende kontroll av Git, tester, roller och tidslinje.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Fastställt runtime-/provkontrakt före kod 2026-10-20:** F40 Done18, granskad44cb0ef/no-ff f4d6621/35 eftertester PASS1263.82s samt verifierad native huvudleverans/repeat/stopp/synk. E10 aktuell/pushad bas68d82495cf1cea4d46b18f10e44125bcfcb73560, mainb6ceb995 och E09 Done på main; User105/Write och alla taskberoenden Done återlästa. Ren manuell task/e10-f41-worktree förberedd från denna E10, utan produktadoption. F41 ännu Planned medan detta dokumentationskontrakt synkas; ingen kodändring eller native start gjord.
+
+Scopeprecisering för att uppfylla samma tre kriterier: F41 levererar minsta sammanhängande runtimeaktivering som dess autonoma scenario kräver, i stället för att anta att F17:s olösta gränser redan är säkrade. Valfritt låst Codex-sessionsprofilkontrakt och en Worker-endpoint för egen commit hör ihop: Worker-shell får inte skriva gemensam Git-metadata eller eskalera. Skyddad commitservice verifierar verklig egen task/runtime/slot/PID/cwd/registrering, sparar före-effekt-intention/träd/parent och avstämmer faktisk commitmarker efter okänt svar. Endast eget scope, inga fria refs/paths/kommandon/SHA/roller och inga merge-/boardrättigheter. Standardargv/kataloger bevaras utan ny registrering. Alla oberoende targettester körs med betrodd isolerad argv. Rootens verkliga säkerhetsgrind binds till aktuell konfigurations-/policy-/broker-/testhash och main; inga positiva boolar eller gamla bounded permits ersätter mätning. Fullt [beslut och arbetsinstruktion](docs/coordinator/F-41-runtime-plan.md) är styrande innan implementation. Samtliga3 acceptanskriterier och definitionen av Done är oförändrade.
+
+Lokal ofarlig förmätning på Codex0.162.1 visar att explicit restriktiv profil kan tillåta egen write men neka extern/fake-state-läsning, egen.git-write (EROFS), nät-/hostsocket och synlighet av en faktiskt levande operator-PID. Hostmarkörer bevarade. [Exakta argv/resultat](docs/coordinator/F-41-prerequisite-audit.json). Det är ett separat fristående kapabilitetsprov, inte ett native-run eller positiv RuntimeGateEvidence. Tidigare helper-/profilstartfel och stale-PID-diagnostik räknas inte som slutbevis. Positiv faktisk gate och F41.A1–A3 återstår; ingen generell autonomi aktiverad eller ändrad implementationsordning.
 
 ## Epic E-11 Återhämta körningar efter avbrott och omstart
 
@@ -2299,7 +2305,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Done | Nej | 3/3 | E-09, X-01, X-02 | Granskad9fc0c830; mergee02a84db; post121 PASS; native WAIT/stopp. |
 | 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Done | Nej | 3/3 | E-09, F-38, X-02 | Granskad04fe7939; mergea388e6b4; post100 PASS; faktiskt native före/efter/stopp. |
 | 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Done | Ja | 3/3 | E-09, F-39 | Granskad44cb0ef/no-ff f4d6621;35 eftertester PASS1263.82s. Native6aab460/repeat/stopp/test/Done verifierade; generell gate kvar inför F41. |
-| 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Planned | Nej | 0/3 | E-09, F-40, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Planned | Ja | 0/3 | E-09, F-40, X-01, X-02 | F40 Done; runtime/provkontrakt synkas före kod. Autonom start spärrad tills faktisk gate verifierats. |
 | 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Nej | 0/3 | E-10 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Nej | 0/3 | E-10 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Planned | Nej | 0/3 | E-10, F-42, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
