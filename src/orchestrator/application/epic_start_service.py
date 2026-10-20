@@ -251,7 +251,10 @@ class EpicStartService:
                 if result["status"] not in {"SYNCED", "EXISTING"}:
                     return self.outcome(self._save(op, error="EPIC_START_SYNC_PENDING"), epic)
             epic = self.runtime.start_epic(actor, epic.id)
-            op = self._save(op, stage="RUNTIME_READY")
+            op = self._save(
+                op, stage="RUNTIME_READY",
+                preparation_deadline=(utc_now() + timedelta(seconds=300)).isoformat(),
+            )
         if op.result["stage"] == "RUNTIME_READY":
             op = self._dispatch(actor, op)
         outcome = self._observe(actor, op)
@@ -268,6 +271,11 @@ class EpicStartService:
         return outcome
 
     def _dispatch(self, actor, op):
+        preparation_deadline = op.result.get("preparation_deadline")
+        if preparation_deadline is not None and (
+            utc_now() > datetime.fromisoformat(preparation_deadline)
+        ):
+            raise EpicStartError("INTEGRATION_PREPARATION_TIMEOUT")
         epic, start, facts = self._native(actor, op)
         if not facts["ready"]:
             raise EpicStartError("INTEGRATION_RUNTIME_NOT_IDLE")
@@ -301,6 +309,20 @@ class EpicStartService:
             or Path(baseline["cwd"]) != Path(epic.worktree_path)
         ):
             raise EpicStartError("INTEGRATION_SESSION_CHANGED")
+        # A failed final precondition is known not to have sent anything. Keep
+        # RUNTIME_READY so the same registered runtime can be retried. Only an
+        # actual dispatch intent consumes the single-send/ACK window.
+        _, current_start, current_facts = self._native(actor, op)
+        if current_start.id != start.id or self.git.head(epic.branch) != head:
+            raise EpicStartError("INTEGRATION_DISPATCH_CHANGED")
+        if not current_facts["ready"]:
+            raise EpicStartError("INTEGRATION_RUNTIME_NOT_IDLE")
+        if current_facts["session_id"] != sid:
+            raise EpicStartError("INTEGRATION_SESSION_CHANGED")
+        if preparation_deadline is not None and (
+            utc_now() > datetime.fromisoformat(preparation_deadline)
+        ):
+            raise EpicStartError("INTEGRATION_PREPARATION_TIMEOUT")
         op = self._save(
             op, stage="DISPATCH_REQUESTED", prompt=prompt, prompt_hash=digest(prompt),
             context=context, context_hash=context_hash, expected_ack=expected,
@@ -308,9 +330,6 @@ class EpicStartService:
             if baseline else [], start_operation_id=start.id,
             deadline=(utc_now() + timedelta(seconds=45)).isoformat(),
         )
-        epic, current_start, facts = self._native(actor, op)
-        if current_start.id != start.id or not facts["ready"] or self.git.head(epic.branch) != head:
-            raise EpicStartError("INTEGRATION_DISPATCH_CHANGED")
         try:
             self.herdr.prompt(epic.integration_agent_id, prompt, timeout_ms=45000)
             transport = "RETURNED"

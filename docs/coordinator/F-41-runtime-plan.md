@@ -274,3 +274,10 @@ vanliga fakta. Bevara äldre godkända ACK-kvittensers format; nya tidsbevis få
 orsaka falsk drift vid replay. Ingen runtime/config/frist migreras retroaktivt.
 Stoppa/bevara återstående egna R15-runtimes före ändrad fryst kod och verifiera
 rättningen med negativa tids-/roll-/scopefall samt ny hel nativekedja.
+
+
+## R16: sista pre-dispatch-kontrollen måste föregå send-intentionen
+
+Primär provepic är faktiskt Done/released på main1a97ebda42dd036529f56f7c3a45d6d96eba4c8f, med två samtidiga Workers, riktig taskfix och oberoende epicfix samt ny aktuell slutreview. Nästa epic har denna exakta bas men saknar SID, native användarmeddelande och transportkvitto. F34 sparade DISPATCH_REQUESTED före sin sista runtime-/HEAD-kontroll. Ett avvisat förvillkor före promptanropet förbrukar därmed första send och lämnar korrekt återförsök utan väg framåt. Exakt övergående orsak i R16 kan inte bevisas retrospektivt; inga gamla intentioner omsänds.
+
+Före kod fastställs rättning: slutför båda nativekontrollerna samt aktuell HEAD/startidentitet före beständig DISPATCH_REQUESTED och dess första ACK-deadline. Ett känt ej skickat, ännu RUNTIME_READY, startförsök får invänta beredd runtime inom en fast 300s förberedelsefrist. Fristen sätts en gång efter runtime-start och flyttas inte vid återförsök. Förändrad identitet eller HEAD nekas fortfarande. Efter beständig send-intention är okänt utfall enbart observation; krasch mellan intention och transport omsänder inte. Utgångna äldre ACK-frister, R16-data och levererad main ändras inte. Verifiera transient andra kontroll, crash vid send-intention, oförändrad deadline och preparation-timeout, därefter ny fryst hel körning. Inga nya verktyg eller behörigheter.

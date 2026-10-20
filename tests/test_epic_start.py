@@ -562,3 +562,51 @@ def test_registered_status_without_actual_ack_never_establishes_connection(setup
     with pytest.raises(EpicStartError, match="REGISTERED_ACK_CHANGED"):
         s.connection_principal(integration)
     assert not s.store.get_tasks("e") and len(native.prompts) == native.starts == 1
+
+
+def test_final_busy_check_does_not_consume_dispatch_or_ack_window(setup, monkeypatch):
+    s, c, _, h = setup
+    native = s._native
+    calls = 0
+
+    def busy_second(*args):
+        nonlocal calls
+        calls += 1
+        epic, op, facts = native(*args)
+        return epic, op, facts | ({"ready": False} if calls == 2 else {})
+
+    monkeypatch.setattr(s, "_native", busy_second)
+    with pytest.raises(EpicStartError, match="INTEGRATION_RUNTIME_NOT_IDLE"):
+        start(s, c)
+    before = s.store.get_operation("p", s.KIND, "e")
+    assert before.result["stage"] == "RUNTIME_READY"
+    assert "deadline" not in before.result and not h.prompts
+    preparation_deadline = before.result["preparation_deadline"]
+    assert start(s, c)["stage"] == "REGISTERED"
+    after = s.store.get_operation("p", s.KIND, "e")
+    assert after.result["preparation_deadline"] == preparation_deadline
+    assert h.starts == len(h.prompts) == 1
+
+
+def test_preparation_timeout_never_sends_or_restarts(setup, monkeypatch):
+    from datetime import datetime
+
+    s, c, _, h = setup
+    native = s._native
+
+    def busy(*args):
+        epic, op, facts = native(*args)
+        return epic, op, facts | {"ready": False}
+
+    monkeypatch.setattr(s, "_native", busy)
+    with pytest.raises(EpicStartError, match="INTEGRATION_RUNTIME_NOT_IDLE"):
+        start(s, c)
+    op = s.store.get_operation("p", s.KIND, "e")
+    deadline = op.result["preparation_deadline"]
+    monkeypatch.setattr("orchestrator.application.epic_start_service.utc_now",
+                        lambda: datetime.fromisoformat(deadline) + timedelta(seconds=1))
+    with pytest.raises(EpicStartError, match="INTEGRATION_PREPARATION_TIMEOUT"):
+        start(s, c)
+    saved = s.store.get_operation("p", s.KIND, "e")
+    assert saved.result["preparation_deadline"] == deadline
+    assert "deadline" not in saved.result and not h.prompts and h.starts == 1
