@@ -31,6 +31,15 @@ class ToolResponse(BaseModel):
     data: dict[str, JsonValue] = {}
 
 
+class WorkerWorkspaceRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True, strict=True, hide_input_in_errors=True)
+
+
+class WorkerCommitRequest(WorkerWorkspaceRequest):
+    request_key: str = Field(min_length=1, max_length=128, pattern=r"^[^\x00\r\n]+$")
+    message: str = Field(min_length=1, max_length=4096, pattern=r"^[^\x00]+$")
+
+
 class TaskStartRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True, hide_input_in_errors=True)
     project_id: Identity

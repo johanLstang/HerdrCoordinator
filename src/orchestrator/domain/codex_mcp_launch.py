@@ -18,6 +18,7 @@ class CodexMCPLaunch(BaseModel):
     args: Annotated[tuple[Text, ...], Field(min_length=1, max_length=64)]
     disabled_servers: Annotated[tuple[Text, ...], Field(max_length=128)] = ()
     disabled_plugins: Annotated[tuple[Text, ...], Field(max_length=128)] = ()
+    auto_approved_tools: Annotated[tuple[Text, ...], Field(max_length=64)] = ()
 
     @model_validator(mode="after")
     def operator_argv(self):
@@ -34,6 +35,9 @@ class CodexMCPLaunch(BaseModel):
             or len(set(self.disabled_servers)) != len(self.disabled_servers)
             or len(set(self.disabled_plugins)) != len(self.disabled_plugins)
             or "herdr_coordinator" in self.disabled_servers
+            or len(set(self.auto_approved_tools)) != len(self.auto_approved_tools)
+            or any(not re.fullmatch(r"[a-z][a-z0-9_]{0,127}", name)
+                   for name in self.auto_approved_tools)
         ):
             raise ValueError("explicit executable and bounded operator argv required")
         return self
@@ -61,4 +65,7 @@ class CodexMCPLaunch(BaseModel):
             args += ["-c", "mcp_servers." + server + ".enabled=false"]
         for plugin in self.disabled_plugins:
             args += ["-c", "plugins." + plugin + ".enabled=false"]
+        for tool in self.auto_approved_tools:
+            args += ["-c", "mcp_servers.herdr_coordinator.tools." + tool
+                     + '.approval_mode="auto"']
         return args

@@ -424,3 +424,17 @@ bevarar verifierade korrigeringars beroendebevis.
 Se [komposition, säkerhetsgrind och recovery](docs/coordinator/F-40-delivery.md).
 Generell autonomi kräver fortsatt positiv D02/F17-grind; ett separat avgränsat
 manuellt provgodkännande gäller endast sitt konkreta granskningsunderlag.
+
+## Restriktiva sessionsprofiler och Worker-commit (F41, under verifiering)
+
+Valfri intern `CodexExecutionPolicy` binder en session till explicit begränsad
+Linuxprofil, fryst nativebinär och exakt startargv. Worker skriver egen arbetsyta
+och använder en separat registrerad commitservice för egen branch; gemensam
+Git-metadata är skrivskyddad i shell. Coordinator/Integration har läsprofiler och
+sina befintliga rolltjänster. Standardstart utan profilen behåller tidigare beteende.
+
+Det egna MCP-gränssnittet accepterar endast `worker_workspace()` och
+`worker_commit(request_key, message)`, med faktisk task/runtime/slot/PID/SID-
+kontroll och beständig återhämtning efter okänt Git-svar. Detta aktiverar inte
+autonomi ensamt. Se [kontrakt, recovery och det konkreta provets grindar](docs/coordinator/F-41-execution.md).
+F41:s verkliga nativeacceptans och E10:s mainintegration återstår.
