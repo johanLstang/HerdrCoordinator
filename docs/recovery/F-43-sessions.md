@@ -124,3 +124,7 @@ Kontrollen gjorde noll SQLite-skrivningar; samma run och operation
 eller påhittas. Underlaget finns privat i `snapshot2-proof.json` och båda äldre
 konfigurationssnapshotarna är bevarade. Fortsatta prov använder den nya frysta
 källan och samma originalregistrering; detta är ännu inget native acceptansbevis.
+
+## Avstämt kodunderlag
+
+Funktionell commit `5bd6f539bb8747bc53b6fa0f968dd5483113ddf8`. Slutliga20 PASS104.75s,119 regressionsprov PASS584.17s och7 kompletterande kontroll-/projektprov PASS357.73s;143 unika fall, källskillnader redovisas uttryckligen. [Verifieringsunderlag](F-43-verification.json) och [pågående review](../reviews/F-43-progress.md). TeamPlayer NeedsApproval5/User105 och E11Active11 med egenacceptans0/3 är återlästa. Nativeprov, full leveransreview, Task→Epic och eftertester återstår.
