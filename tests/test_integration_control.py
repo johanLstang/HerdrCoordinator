@@ -133,7 +133,8 @@ def setup(epic_setup):  # noqa: F811
 
 
 def task(control, local_id):
-    return next(t for t in control.store.get_tasks("e") if t.task_id == local_id)
+    return next(t for t in control.store.get_tasks(control.epic_start.principal.epic_run_id)
+                if t.task_id == local_id)
 
 
 def finish(control, sessions, local_id):
@@ -155,8 +156,8 @@ def finish(control, sessions, local_id):
     report = dict(
         version=1,
         status="READY_FOR_REVIEW",
-        project_id="p",
-        epic_id="E-34",
+        project_id=t.project_id,
+        epic_id=control.store.get_epic(t.epic_run_id).epic_id,
         epic_run_id=t.epic_run_id,
         task_id=t.task_id,
         task_run_id=t.id,

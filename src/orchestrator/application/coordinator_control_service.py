@@ -6,6 +6,7 @@ from pydantic import ValidationError
 
 from orchestrator.application.coordinator_runtime_service import CoordinatorError
 from orchestrator.mcp.contracts import (
+    CoordinatorDeliveryRequest,
     CoordinatorOverviewRequest,
     CoordinatorReviewContextRequest,
     CoordinatorReviewReadRequest,
@@ -24,13 +25,18 @@ class CoordinatorControlService:
         "coordinator_review_submit": CoordinatorReviewSubmitRequest,
     }
 
-    def __init__(self, claims, *, review=None):
+    def __init__(self, claims, *, review=None, delivery=None):
         self.claims = claims
         self.review = review
+        self.delivery = delivery
         if review is not None:
             if review.runtime is not claims.runtime:
                 raise CoordinatorError("COORDINATOR_REVIEW_RUNTIME_MISMATCH")
             self.operations = self.operations | self.REVIEW_MODELS.keys()
+        if delivery is not None:
+            if delivery.review is not review or delivery.claims is not claims:
+                raise CoordinatorError("COORDINATOR_DELIVERY_RUNTIME_MISMATCH")
+            self.operations = self.operations | {"coordinator_epic_deliver"}
 
     async def call(self, actor, operation, arguments):
         if operation not in self.operations:
@@ -38,6 +44,14 @@ class CoordinatorControlService:
                 ok=False, code="UNKNOWN_OPERATION", message="tool is not registered"
             )
         try:
+            if self.delivery is not None and operation == "coordinator_epic_deliver":
+                request = CoordinatorDeliveryRequest.model_validate(arguments)
+                data = await self.delivery.deliver(
+                    actor, request.project_id, request.epic_run_id,
+                    request.request_key, request.verification_key,
+                )
+                return ToolResponse(ok=True, code="OK", message="verified Coordinator delivery",
+                                    data=data)
             if self.review is not None and operation in self.REVIEW_MODELS:
                 request = self.REVIEW_MODELS[operation].model_validate(arguments)
                 if operation == "coordinator_review_context":

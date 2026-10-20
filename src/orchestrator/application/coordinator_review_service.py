@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import math
+from copy import deepcopy
 from importlib.resources import files
 from pathlib import Path
 
@@ -33,24 +34,41 @@ class CoordinatorReviewService:
     READ = "coordinator_review_chunk"
     CHUNK = 8192
 
-    def __init__(self, runtime, subjects):
+    def __init__(self, runtime, subjects, *, policies=None):
         self.runtime, self.store = runtime, runtime.store
         self.subjects = dict(subjects)
-        self.configuration_hash = review_capability([s.policy for s in self.subjects.values()])
-        if not self.subjects or runtime.capabilities.get("coordinator_review") != (
+        configured = list(policies) if policies is not None else [
+            s.policy for s in self.subjects.values()
+        ]
+        self.policies = {p.native_epic_id: deepcopy(p) for p in configured}
+        plan = {e.native_epic_id: e for e in runtime.spec.epics}
+        self.configuration_hash = review_capability(configured)
+        if not configured or len(self.policies) != len(configured) or (
+            policies is not None and set(self.policies) != set(plan)
+        ) or any(p.native_epic_id not in plan or (
+            plan[p.native_epic_id].spec != p.original
+            or plan[p.native_epic_id].native_task_ids != p.native_task_ids
+            or p.native_project_id != runtime.spec.native_project_id
+        ) for p in configured) or runtime.capabilities.get("coordinator_review") != (
             self.configuration_hash
-        ) or len({s.policy.native_epic_id for s in self.subjects.values()}) != len(
-            self.subjects
-        ) or any(key != value.run_id or value.runtime is not runtime
-                 for key, value in self.subjects.items()):
+        ):
             raise CoordinatorError("COORDINATOR_REVIEW_CAPABILITY_UNREGISTERED")
+        self.verify_configuration()
+
+    def verify_configuration(self):
+        if review_capability(self.policies.values()) != self.configuration_hash or (
+            len({s.policy.native_epic_id for s in self.subjects.values()}) != len(self.subjects)
+            or any(key != value.run_id or value.runtime is not self.runtime
+                   or value.policy != self.policies.get(value.policy.native_epic_id)
+                   for key, value in self.subjects.items())
+        ):
+            raise CoordinatorError("COORDINATOR_REVIEW_CONFIGURATION_CHANGED")
 
     def _scope(self, actor, project_id, run_id, *, binding=True):
         self.runtime.connection_principal(actor)
         if project_id != self.runtime.spec.project_id or run_id not in self.subjects:
             raise CoordinatorError("COORDINATOR_REVIEW_SCOPE_DENIED")
-        if review_capability([s.policy for s in self.subjects.values()]) != self.configuration_hash:
-            raise CoordinatorError("COORDINATOR_REVIEW_CONFIGURATION_CHANGED")
+        self.verify_configuration()
         subject = self.subjects[run_id]
         parent = subject.original_start
         parent.connection_principal(parent.principal)

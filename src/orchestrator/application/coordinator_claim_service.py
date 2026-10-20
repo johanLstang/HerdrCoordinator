@@ -11,6 +11,7 @@ from orchestrator.domain.coordinator import ProjectOperation
 from orchestrator.domain.coordinator_contracts import RuntimeGateEvidence
 from orchestrator.domain.models import EpicRun, utc_now
 from orchestrator.domain.policy import Role
+from orchestrator.domain.review_contracts import EpicReviewSpec
 from orchestrator.domain.states import EpicState
 from orchestrator.domain.teamplayer import BoardStatus
 from orchestrator.domain.worker_contracts import canonical_json
@@ -22,6 +23,7 @@ class CoordinatorClaimService:
     def __init__(
         self, runtime, reader, integration_factory, *, runtime_gate=None,
         delivery_contexts=None, scopes=None, prerequisite_probe=None,
+        completed_plan=None,
     ):
         self.runtime, self.reader, self.factory = runtime, reader, integration_factory
         self.settings, self.store, self.spec = runtime.settings, runtime.store, runtime.spec
@@ -29,6 +31,7 @@ class CoordinatorClaimService:
         self.gate = runtime_gate
         self.prerequisite_probe = prerequisite_probe
         self.contexts, self.scopes = dict(delivery_contexts or {}), dict(scopes or {})
+        self.completed_plan = completed_plan
         if reader.project_id != self.spec.native_project_id:
             raise CoordinatorError("COORDINATOR_BOARD_CONFIGURATION_INVALID")
 
@@ -37,7 +40,25 @@ class CoordinatorClaimService:
             raise CoordinatorError("COORDINATOR_PROJECT_DENIED")
         self.runtime.connection_principal(actor)
 
+    def _effective(self, configured, board):
+        native = board.epic(configured.native_epic_id)
+        if native is None or native.status != "Done" or self.completed_plan is None:
+            return configured
+        effective = self.completed_plan(configured)
+        # The trusted completed-delivery provider may only append verified tasks.
+        original = configured.spec.model_dump(exclude={"tasks"})
+        if effective.model_dump(exclude={"spec", "native_task_ids"}) != configured.model_dump(
+            exclude={"spec", "native_task_ids"}
+        ) or effective.spec.model_dump(exclude={"tasks"}) != original or (
+            effective.spec.tasks[:len(configured.spec.tasks)] != configured.spec.tasks
+            or effective.native_task_ids[:len(configured.native_task_ids)]
+            != configured.native_task_ids
+        ):
+            raise CoordinatorError("EPIC_COMPLETED_PLAN_CHANGED")
+        return effective
+
     def _board_spec(self, configured, board):
+        configured = self._effective(configured, board)
         native = board.epic(configured.native_epic_id)
         if native is None or native.binding is None or (
             native.binding.local_id != configured.spec.epic_id
@@ -76,6 +97,7 @@ class CoordinatorClaimService:
 
     def _dependency(self, local_id, board, actor, main):
         configured = next(e for e in self.spec.epics if e.spec.epic_id == local_id)
+        configured = self._effective(configured, board)
         native, rows = self._board_spec(configured, board)
         if native.status != "Done" or any(r.status != BoardStatus.DONE for r in rows):
             raise CoordinatorError("EPIC_DEPENDENCY_NOT_DONE")
@@ -307,8 +329,21 @@ class CoordinatorClaimService:
         self._prerequisites(selected)
         self._gate(main)
         service = self.factory(selected, op.result["epic_run_id"])
+        review_context = EpicReviewSpec(
+            version=1, project_id=selected.spec.project_id, epic_id=selected.spec.epic_id,
+            requirements=selected.spec.requirements,
+            acceptance_criteria=selected.spec.acceptance_criteria, sources=selected.spec.sources,
+        )
+        valid_settings = isinstance(service, EpicStartService) and (
+            service.settings.model_dump(exclude={"review_context"})
+            == self.settings.model_dump(exclude={"review_context"})
+            and (service.settings.review_context == review_context or (
+                "coordinator_review" not in self.runtime.capabilities
+                and service.settings.review_context == self.settings.review_context
+            ))
+        )
         if not isinstance(service, EpicStartService) or service.spec != selected.spec or (
-            service.store is not self.store or service.settings != self.settings
+            service.store is not self.store or not valid_settings
             or service.principal.role != Role.INTEGRATION
             or service.principal.epic_run_id != op.result["epic_run_id"]
             or service.external_epic_id != selected.native_epic_id or service.sync is None

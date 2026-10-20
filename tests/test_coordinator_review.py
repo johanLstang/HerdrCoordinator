@@ -71,6 +71,7 @@ class ReviewSessions(Sessions):
 
 @pytest.fixture
 def review_setup(epic_setup, request):  # noqa: F811
+    delivery_enabled = getattr(request, "param", False) == "delivery"
     initial, coordinator, integration, _ = epic_setup
     data = initial.spec.model_dump(mode="json")
     data.update(dependencies=[], external_prerequisites=[], tasks=data["tasks"][:1])
@@ -84,9 +85,12 @@ def review_setup(epic_setup, request):  # noqa: F811
                                      sources=data["sources"]),
     ))
     sessions = ReviewSessions()
-    parent = EpicStartService(settings, initial.store, sessions, data, integration, codex=sessions)
+    parent = EpicStartService(settings, initial.store, sessions, data, integration, codex=sessions,
+                              processes=sessions if delivery_enabled else None)
     assert asyncio.run(parent.start(coordinator, "p", "E-34", "e"))["stage"] == "REGISTERED"
     board = Board({T1: data["tasks"][0]["task"]})
+    if delivery_enabled:
+        board.tasks[0]["priority"] = 3
     client = Mock()
     client.list_tools = AsyncMock(return_value=ListToolsResult(tools=native_tools()))
     creates = []
@@ -106,6 +110,13 @@ def review_setup(epic_setup, request):  # noqa: F811
             board.tasks.append(value)
             if failure == "after":
                 raise TeamPlayerError("TEAMPLAYER_WRITE_OUTCOME_UNKNOWN")
+        elif delivery_enabled and name == "update_epic_status":
+            row = next(e for e in board.epics if e["id"] == arguments["epicId"])
+            if arguments["version"] != row["version"]:
+                raise TeamPlayerError("TEAMPLAYER_VERSION_CONFLICT")
+            row.update(status=arguments["status"], version=row["version"] + 1)
+            board.applied.append((name, deepcopy(arguments)))
+            value = deepcopy(row)
         elif name.startswith("update_"):
             value = await board.write(name, arguments)
         else:
@@ -134,11 +145,16 @@ def review_setup(epic_setup, request):  # noqa: F811
     template = deepcopy(data["tasks"][0])
     template["task"].update(task_id="F-FIX", name="Correct aggregate result",
                              dependencies=["F-01"])
+    independent = command
+    failure_file = settings.sqlite_path.parent / "controlled-final-verification-failure"
+    if delivery_enabled:
+        independent = (*command[:-1], command[-1] + "; assert not Path("
+                       + repr(str(failure_file)) + ").exists()")
     policy = CoordinatorReviewPolicy.model_validate_json(canonical_json(dict(
         version=1, native_project_id=P, native_epic_id=E, user_id=U, native_task_ids=[T1],
         original=data, completion=completion.model_dump(mode="json"),
         correction_completion=extended,
-        verification=dict(argv=(command if not getattr(request, "param", False) else (
+        verification=dict(argv=(independent if getattr(request, "param", False) is not True else (
             sys.executable, "-c", "from pathlib import Path; "
             "assert Path('F-FIX-r1.result').read_text()=='verified\\n'",
         )), timeout=30), templates=[dict(
@@ -158,13 +174,19 @@ def review_setup(epic_setup, request):  # noqa: F811
         ]))
 
     root_native.prompt = root_prompt
+    capabilities = {"coordinator_review": review_capability([policy])}
+    if delivery_enabled:
+        from orchestrator.application.coordinator_delivery_service import delivery_capability
+        capabilities["coordinator_delivery"] = delivery_capability(
+            capabilities["coordinator_review"],
+        )
     runtime = CoordinatorRuntimeService(
         settings.model_copy(update={"review_context": None}), initial.store, root_native, dict(
             version=1, project_id="p", native_project_id=P, title="Fixture project",
             sources=["README.md"], epics=[dict(version=1, native_epic_id=E,
                                               native_task_ids=[T1], priority="P0", spec=data)],
         ), coordinator, "coordinator-review", codex=root_native, processes=FakeProcesses(),
-        capabilities={"coordinator_review": review_capability([policy])},
+        capabilities=capabilities,
     )
     assert runtime.start(coordinator).status == "ACTIVE"
     log = EventLog(stream=io.StringIO())
@@ -200,23 +222,25 @@ def review_setup(epic_setup, request):  # noqa: F811
     asyncio.run(review.attach_registered_product_run(coordinator, "e"))
     yield SimpleNamespace(review=review, subject=subject, coordinator=coordinator,
                           integration=integration, board=board, sessions=sessions,
-                          creates=creates, client=client, policy=policy, failures=failures)
+                          creates=creates, client=client, policy=policy, failures=failures,
+                          verification_failure_file=failure_file)
 
 
 async def deliver_one(fixture, identity, local):
     control = fixture.subject.context()[0]
+    run_id = fixture.integration.epic_run_id
     runtime = control.runtime(control.delegate.log)
     result = await runtime.call_async("task_start", dict(
-        project_id="p", epic_run_id="e", task=control.scheduler.selection.specs[identity],
+        project_id="p", epic_run_id=run_id, task=control.scheduler.selection.specs[identity],
     ))
     assert result.ok, result.model_dump(mode="json")
     finish(control, fixture.sessions, local)
-    result = await runtime.call_async("task_schedule", dict(project_id="p", epic_run_id="e"))
+    result = await runtime.call_async("task_schedule", dict(project_id="p", epic_run_id=run_id))
     assert result.ok, result
     current = task(control, local)
     assert current.internal_status == TaskState.REVIEWING
     context = next(o.result["context"] for o in reversed(
-        control.store.get_operations("e", kind="task_review_request"))
+        control.store.get_operations(run_id, kind="task_review_request"))
                    if o.task_run_id == current.id)
     result = await runtime.call_async("task_approve", dict(
         project_id="p", task_run_id=current.id, request_key="approve-" + local,
@@ -233,8 +257,9 @@ async def deliver_one(fixture, identity, local):
 
 
 async def read_context(f, key):
-    summary = await f.review.context(f.coordinator, "p", "e", key)
-    parts = [await f.review.read(f.coordinator, "p", "e", summary["context_id"], index)
+    run_id = f.integration.epic_run_id
+    summary = await f.review.context(f.coordinator, "p", run_id, key)
+    parts = [await f.review.read(f.coordinator, "p", run_id, summary["context_id"], index)
              for index in range(summary["chunks"])]
     document = json.loads("".join(part["text"] for part in parts))
     return summary, document
