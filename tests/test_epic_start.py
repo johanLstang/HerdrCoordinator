@@ -77,6 +77,10 @@ class Native(FakeHerdr):
     def read_thread(self, sid, cwd):
         return dict(id=sid, sessionId=sid, cwd=cwd, turns=deepcopy(self.turns))
 
+    def read_session(self, sid, cwd):
+        assert sid == self.sid and any(w["cwd"] == cwd for w in self.workspaces.values())
+        return dict(session_id=sid, cwd=cwd)
+
 
 @pytest.fixture
 def setup(tmp_path):

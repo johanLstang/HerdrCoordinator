@@ -118,8 +118,8 @@ class WorkerSlots:
                 occupied[run.worker_slot] = run.id
         return occupied
 
-    def verify(self, run):
-        with self.store.transaction():
+    def verify(self, run, *, read_only=False):
+        with self.store.transaction(read_only=read_only):
             run = self._task(run)
             occupied = self._occupied(run.project_id, exclude=run.id)
             if (

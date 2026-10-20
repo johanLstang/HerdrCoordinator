@@ -5,6 +5,12 @@ from uuid import uuid4
 from orchestrator.application.coordinator_runtime_service import CoordinatorError
 from orchestrator.application.epic_start_service import EpicStartService
 from orchestrator.application.git_integration_service import GitIntegrationService
+from orchestrator.application.reconciliation_service import (
+    CoordinatorObserver,
+    IntegrationObserver,
+    ReconciliationService,
+    bind_selection,
+)
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.teamplayer_evidence import TeamPlayerEvidence
 from orchestrator.domain.coordinator import ProjectOperation
@@ -24,6 +30,7 @@ class CoordinatorClaimService:
         self, runtime, reader, integration_factory, *, runtime_gate=None,
         delivery_contexts=None, scopes=None, prerequisite_probe=None,
         completed_plan=None,
+        reconciliation=None,
     ):
         self.runtime, self.reader, self.factory = runtime, reader, integration_factory
         self.settings, self.store, self.spec = runtime.settings, runtime.store, runtime.spec
@@ -32,8 +39,54 @@ class CoordinatorClaimService:
         self.prerequisite_probe = prerequisite_probe
         self.contexts, self.scopes = dict(delivery_contexts or {}), dict(scopes or {})
         self.completed_plan = completed_plan
+        self.reconciliation = reconciliation
+        self.last_reconciliation = None
+        self.epic_observers = {}
         if reader.project_id != self.spec.native_project_id:
             raise CoordinatorError("COORDINATOR_BOARD_CONFIGURATION_INVALID")
+
+    def register_epic_observer(self, startup):
+        """Operator composition only; cache a known context without creating/adopting runs."""
+        if not isinstance(startup, EpicStartService):
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_INVALID")
+        configured = next((e for e in self.spec.epics if e.spec == startup.spec), None)
+        if configured is None or (
+            startup.store is not self.store
+            or startup.principal.project_id != self.spec.project_id
+            or startup.principal.role != Role.INTEGRATION
+            or startup.external_epic_id not in {None, configured.native_epic_id}
+            or startup.settings.model_dump(exclude={"review_context"})
+            != self.settings.model_dump(exclude={"review_context"})
+        ):
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_INVALID")
+        existing = self.epic_observers.get(startup.principal.epic_run_id)
+        if existing is not None and existing.startup.configuration != startup.configuration:
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_CHANGED")
+        self.epic_observers[startup.principal.epic_run_id] = IntegrationObserver(startup)
+
+    async def reconcile(self, *, continuation_key=None):
+        self.last_reconciliation = None
+        service = self.reconciliation
+        if service is None:
+            def observers(run):
+                if run.id == self.runtime.run_id:
+                    return CoordinatorObserver(self.runtime)
+                if isinstance(run, EpicRun):
+                    return self.epic_observers.get(run.id)
+                return None
+            service = ReconciliationService(
+                self.settings, self.store, self.reader, project_id=self.spec.project_id,
+                observers=observers, evidence_contexts=self.contexts, scopes=self.scopes,
+                codex=self.runtime.codex, processes=self.runtime.processes,
+            )
+        if service.store is not self.store or service.project_id != self.spec.project_id or (
+            service.settings != self.settings
+        ):
+            raise CoordinatorError("RECONCILIATION_CONFIGURATION_INVALID")
+        self.last_reconciliation = await service.inspect(continuation_key=continuation_key)
+        if not service.current(self.last_reconciliation):
+            self.last_reconciliation["scheduling_allowed"] = False
+        return self.last_reconciliation
 
     def _scope(self, actor, project_id):
         if project_id != self.spec.project_id:
@@ -215,6 +268,7 @@ class CoordinatorClaimService:
     async def overview(self, actor, project_id):
         self._scope(actor, project_id)
         board = await self.reader.read_project()
+        reconciliation = bind_selection(await self.reconcile(), board)
         with self.runtime.lock(), self.integration._lock():
             self._scope(actor, project_id)
             main = self.runtime.main()
@@ -231,6 +285,9 @@ class CoordinatorClaimService:
                         op.result["epic_id"] == b["epic_id"] for op in active
                     )
                 )]
+            if not reconciliation["scheduling_allowed"]:
+                candidates = []
+                blockers.append(dict(epic_id=None, code="STARTUP_RECONCILIATION_REQUIRED"))
             try:
                 self._gate(main)
                 gate = "READY"
@@ -240,6 +297,7 @@ class CoordinatorClaimService:
                 project_id=project_id, coordinator_run_id=self.runtime.run_id,
                 main_commit=main, candidates=[e.spec.epic_id for e in candidates],
                 blockers=blockers, runtime_gate=gate, reservation=False,
+                reconciliation=reconciliation,
                 active_epics=[op.result["epic_id"] for op in active],
             )
 
@@ -260,6 +318,7 @@ class CoordinatorClaimService:
             if len(matches) != 1 or matches[0].get("access") != "Write":
                 raise CoordinatorError("COORDINATOR_BOARD_WRITE_DENIED")
             candidates, blockers = self._evaluate(board, actor, main)
+            report = bind_selection(await self.reconcile(continuation_key=key), board)
             with self.store.transaction():
                 existing = self.store.get_project_operation(project_id, self.KIND, key)
                 active = self._active_claims()
@@ -286,6 +345,9 @@ class CoordinatorClaimService:
                     except CoordinatorError as error:
                         return dict(status="WAIT", reason=str(error), blockers=blockers)
                     selected = candidates[0]
+                    if not report["scheduling_allowed"]:
+                        return dict(status="WAIT", reason="STARTUP_RECONCILIATION_REQUIRED",
+                                    reconciliation=report)
                     spec_hash = digest(canonical_json(selected.model_dump(mode="json")))
                     existing = ProjectOperation(
                         project_id=project_id, coordinator_run_id=self.runtime.run_id,
@@ -351,6 +413,7 @@ class CoordinatorClaimService:
             raise CoordinatorError("EPIC_CLAIM_INTEGRATION_CONFIGURATION_INVALID")
         if op.result["stage"] == "REGISTERED":
             service.connection_principal(service.principal)
+            self.register_epic_observer(service)
             return dict(status="REGISTERED", **op.result)
         # Genuine F05 preparation, after the reservation, under the repository lock.
         # This is a product run intended for this actual F34 start, never a bootstrap adoption.
@@ -373,6 +436,7 @@ class CoordinatorClaimService:
             result = current.result | dict(start=outcome)
             if outcome["stage"] == "REGISTERED":
                 service.connection_principal(service.principal)
+                self.register_epic_observer(service)
                 result["stage"] = "REGISTERED"
             current = current.model_copy(update={
                 "result": result, "updated_at": utc_now(),

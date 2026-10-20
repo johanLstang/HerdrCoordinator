@@ -1010,6 +1010,35 @@ i stället för att automatiskt gissa.
 
 ---
 
+## Implementerat F42-kontrakt
+
+`ReconciliationService` gör en läsande avstämning före nya scheduler-/Coordinatorreservationer.
+SQLite-inventeringen omfattar oavslutade Coordinator/Epic/Task-runs, slots,
+externa referenser och väntande journaler även på avslutade runs. Läsning gör
+ingen status-/Git-/runtimeändring. Rapporten skiljer VERIFIED, RESUMABLE, DRIFT
+från UNCERTAIN och anger ursprungliga identiteter, observerade commits och
+nästa tillåtna åtgärd. En Kanban-Done är inget leveransbevis.
+
+Ursprungliga runtime- och korrigeringsregistreringar används för faktiska
+session-/process-/slotkontroller. En sparad Coordinator-startcommit är en
+historisk ankare; senare main måste bevara ankaren och registrerade mainmerges.
+Task-HEAD måste motsvara sparat underlag eller den senaste verifierade kedjan
+av egna brokercommits. Ocommittat Worker-arbete bevaras. Ett Git-filter får
+inte köras som sidoeffekt av en läsande statuskontroll.
+
+Avstämningen återläser SQLite, Git och board. En ny claim binds dessutom till
+samma boardögonblicksbild som användes vid valet. Ett tidigare rapportobjekt,
+agentens rollargument eller en statusetikett ger ingen behörighet. Oavstämda
+sidoeffekter och otillgängliga källor stoppar berörd ny scheduling. Avstämd
+parkering och passiv inputväntan bevarar originalsession/slot och kan tillåta
+oberoende arbete; inga meddelanden skickas om. Integration ser sin egen epics
+resursidentiteter; Coordinator har projektets rapport.
+
+F43 återansluter och F44 återställer sidoeffekter med originalnycklar. Se
+[F42:s komposition och verifiering](docs/recovery/F-42-startup.md).
+
+---
+
 # 29. Locks
 
 Systemet bör ha logiska locks.

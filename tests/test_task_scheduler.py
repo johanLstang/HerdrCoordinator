@@ -248,7 +248,37 @@ def setup(start_setup):  # noqa: F811
         review_provider=approve,
         timeout_seconds=1,
     )
+    scheduler.reconciliation = recovery_for(scheduler, a)
     yield scheduler, a, b, w
+
+
+def recovery_for(s, actor, native=None):
+    """Real F13 registration of this fixture's owned epic, simulated native boundary.
+
+    F29 unit fixtures historically created only an epic worktree. F42 requires
+    a verifiable Integration runtime as well; no reconciliation bypass is used.
+    """
+    from test_epic_start import SID, Native
+
+    from orchestrator.application.reconciliation_service import (
+        LifecycleObserver,
+        ReconciliationService,
+    )
+    from orchestrator.application.runtime_lifecycle_service import RuntimeLifecycleService
+    from orchestrator.domain.models import TaskRun
+    native = native or Native()
+    native.sid = SID
+    coordinator = Actor(actor_id="fixture-coordinator", role=Role.COORDINATOR, project_id="p")
+    lifecycle = RuntimeLifecycleService(s.settings, s.store, native, codex=native)
+    lifecycle.start.start_epic(coordinator, actor.epic_run_id)
+    service = ReconciliationService(
+        s.settings, s.store, s.selection.reader, project_id="p",
+        observers=lambda r: LifecycleObserver(s.merge.lifecycle, actor)
+        if isinstance(r, TaskRun) else LifecycleObserver(lifecycle, coordinator),
+        codex=s.merge.lifecycle.codex, processes=s.merge.lifecycle.processes,
+    )
+    s.fixture_recovery_native = native
+    return service
 
 
 def local(s, identity):
@@ -389,6 +419,7 @@ def test_repeat_reopen_busy_and_other_principal_cannot_duplicate_or_adopt(setup)
             review_provider=approve,
             timeout_seconds=1,
         )
+        opened.reconciliation = recovery_for(opened, a, s.fixture_recovery_native)
         run(opened.tick(a, a.epic_run_id))
     assert (w.starts, len(w.sent)) == before[:2]
 
@@ -448,7 +479,7 @@ def test_no_implicit_approval_and_actual_mcp_scope(setup):
     run(probe())
 
 
-def test_changed_owner_after_advice_denies_git_runtime_and_replay(setup, monkeypatch):
+def test_changed_owner_after_advice_denies_claim_and_rechecks_after_repair(setup, monkeypatch):
     s, a, b, w = setup
     original = s.selection.evaluate
     changed = False
@@ -463,13 +494,16 @@ def test_changed_owner_after_advice_denies_git_runtime_and_replay(setup, monkeyp
 
     monkeypatch.setattr(s.selection, "evaluate", change)
     run(s.tick(a, a.epic_run_id))
-    failed = local(s, "A")
-    assert failed.worker_slot is None and not Path(failed.worktree_path).exists()
-    assert s.selection.git.head(failed.branch) is None and w.starts == 1
-    assert s.store.get_operation("p", s.KIND, failed.id).result["phase"] == "PAUSED"
+    assert {t.task_id for t in s.store.get_tasks(a.epic_run_id)} == {"B"}
+    assert w.starts == 1 and s.selection.git.head("task/e-a") is None
+    assert local(s, "B").internal_status == TaskState.WORKING
+    # The stale A choice was rejected before its claim. A fresh second
+    # selection may start independent, correctly assigned B.
+    assert s.store.get_operation("p", "task_start", "A") is None
     b.tasks[0]["responsibleUserId"] = U
     run(s.tick(a, a.epic_run_id))
-    assert w.starts == 1 and local(s, "A").id == failed.id and local(s, "A").worker_slot is None
+    assert w.starts == 2
+    assert {t.task_id for t in s.store.get_tasks(a.epic_run_id)} == {"A", "B"}
 
 
 def test_stale_approval_requeues_unchanged_task_requires_new_actual_review(setup):

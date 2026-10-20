@@ -150,9 +150,9 @@ class RuntimeStartService:
                 )
             return run, op
 
-    def _slot(self, run):
+    def _slot(self, run, *, read_only=False):
         try:
-            self.slots.verify(run)
+            self.slots.verify(run, read_only=read_only)
         except SlotError as error:
             raise RuntimeStartError(str(error)) from None
 

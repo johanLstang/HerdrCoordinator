@@ -1949,7 +1949,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ## Epic E-11 Återhämta körningar efter avbrott och omstart
 
-**Fas:** 11. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `c1a21c17-3fcf-4f15-800d-c69f61d07df8`.
+**Fas:** 11. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `c1a21c17-3fcf-4f15-800d-c69f61d07df8`.
 
 **Körbar:** Ja — E-10 Done14/PR10/main55563d2 är verifierad; externa villkor anges per task. **Beroende:** E-10 Done på main.
 
@@ -1982,9 +1982,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-42 Stäm av SQLite Git Herdr och TeamPlayer vid start
 
-**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `995ac9d9-31d6-4e87-ba5b-d8524fb2b298`.
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `995ac9d9-31d6-4e87-ba5b-d8524fb2b298`.
 
-**Körbar:** Ja — E10 är verifierad och Done på main; kontrollera aktuell tilldelning/branch före start.
+**Körbar:** Ja — E10 är verifierad och Done på main; Testing7/User105 i task/e11-f42 från main c43c9e6; Worker-resultat verifierat, review/Task→E11/eftertester återstår.
 
 **Källa:** A §§11–14, 28, 45; W §§35–40. **Berör:** Recoveryservice, runtimeinventering, statusrapport.
 
@@ -1996,11 +1996,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-42.A1:** En komplett matchande run identifieras med samma worktree, branch, session och state.
-- [ ] **F-42.A2:** Saknat worktree, annan HEAD eller Kanban Done utan mergeunderlag ger konkret avvikelse.
-- [ ] **F-42.A3:** Herdr/TeamPlayer-nätfel stoppar ny osäker scheduling men ändrar inte Git eller bevisar förlust av session.
+- [x] **F-42.A1:** En komplett matchande run identifieras med samma worktree, branch, session och state.
+- [x] **F-42.A2:** Saknat worktree, annan HEAD eller Kanban Done utan mergeunderlag ger konkret avvikelse.
+- [x] **F-42.A3:** Herdr/TeamPlayer-nätfel stoppar ny osäker scheduling men ändrar inte Git eller bevisar förlust av session.
 
-**Verifiering:** Fixturekombinationer av SQLite, Git, runtime och Kanban inklusive otillgängliga adaptrar.
+**Arbetsläge:** Bootstrap Worker i `.worktrees/task-e11-f42`, branch `task/e11-f42`, bas `c43c9e679077cd5e7f5a70454c38ea0d0af0a83b`. E11 Active9, F42 Testing7/User105. Läsande avstämning och grind före nya reservationer enligt [F42-kontraktet](docs/recovery/F-42-startup.md); ingen produktadoption av utvecklingsworktrees.
+
+**Verifiering:** Funktionell source `e81048d027dc941a94b3dc6f077f6531dfdb7c81`. 30 slutprov PASS93.72s,72 riktade register-/Coordinator-/leveransprov PASS220.96s och69 kärnprov PASS71.68s;142 unika fall efter avdrag för överlapp. Temporär faktisk Git/SQLite och MCP SDK, kontrollerade runtime-/boardpeers; inga nya nativeanspråk. Read-only/query_only, återöppnad DB, resurs-/HEAD-/Done-drift, otillgängliga adaptrar, SQL/Git/boardrace, valets boardbindning, egen brokerkedja/äldre tip, scoped rapport, parkerat arbete, passiv input och riktig tvåepics-/korrigerings-/lost-reply-pipeline ingår. Blockerande fynd99 PASS/1 FAIL på db1a5f8 rättades med processlokalt originalobservatörsregister; ingen startfabrik i läsning, och exakt leveransfall återtestat PASS. Ruff/build/READMECLI/wheel79 moduler+sex policies samt216 dokumentlänkar PASS. [Kontrakt och underlag](docs/recovery/F-42-startup.md), [maskinunderlag](docs/recovery/F-42-verification.json). READY_FOR_REVIEW; faktisk integration och eftertester återstår.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
 
@@ -2312,8 +2314,8 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Done | Nej | 3/3 | E-09, F-38, X-02 | Granskad04fe7939; mergea388e6b4; post100 PASS; faktiskt native före/efter/stopp. |
 | 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Done | Ja | 3/3 | E-09, F-39 | Granskad44cb0ef/no-ff f4d6621;35 eftertester PASS1263.82s. Native6aab460/repeat/stopp/test/Done verifierade; generell gate kvar inför F41. |
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Done | Nej | 3/3 | E-09, F-40, X-01, X-02 | Granskad7bd9c19/no-ff21b60d7; post6 PASS127.50s, runtime/migration25 PASS5.58s. R18 två nativeleveranser/fem Done; alla agenter STOPPED. |
-| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Ja | 0/3 | E-10 Done på main | E10 Done14/PR10/main55563d2 verifierad; F42 är första kandidaten. |
-| 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Ja | 0/3 | E-10 | E10 Done14 på main; läs F42-underlag och verifiera aktuell ägare före plockning. |
+| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Active | Ja | 0/3 | E-10 Done på main | E11 Active9; F42 i Testing7/User105, därefter F43–F45. |
+| 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Active | Ja | 3/3 | E-10 | Testing7/User105; source e81048d,142 unika verifierade fall/Ruff/build/CLI/wheel79+sex policies. READY_FOR_REVIEW; Task→E11/eftertest återstår. |
 | 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Planned | Nej | 0/3 | E-10, F-42, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Planned | Nej | 0/3 | E-10, F-43 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
