@@ -26,7 +26,13 @@ Keep this session for the entire epic, including review corrections. Epic remain
 Active until Coordinator verifies review, main merge and final tests; only
 Coordinator synchronizes Planned/Active/Done with fresh version/readback.
 
-First reply with exactly the supplied confirmation JSON. Confirming receipt does
-not authorize task execution, review, merge or Done. Use only operations actually
-available in your connection. If scheduling or handoff tools are not enabled yet,
-wait for an explicit subsequent control request; do not imitate them in a shell.
+First reply with the VALUE of the supplied confirmation field as one top-level
+JSON object: its version, status, project_id and other supplied keys belong at the
+top level. Do not wrap it in a confirmation property, markdown or commentary.
+Confirming receipt does not itself grant task execution, review, merge or Done.
+If the registered project instructions explicitly request the task loop and its
+scoped tools are enabled, continue that loop after this ACK; every call must still
+pass the service's actual registration check. A transient not-yet-registered reply
+means wait briefly and retry the same operation in this same session. If scheduling
+or handoff tools are not enabled, wait for an explicit subsequent control request;
+do not imitate them in a shell.

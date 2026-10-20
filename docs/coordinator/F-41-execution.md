@@ -24,6 +24,15 @@ servern `herdr_coordinator`. Den binds till fingerprint. Tom lista är oföränd
 standard. Detta är operatörskonfiguration som kräver det konkreta provets beslut;
 modellen ger inga rättigheter till andra servrar eller roller.
 
+Native preflight visade att `auto` inte innebär ett förhandsgodkännande av
+skrivverktyg: Codex nekade commit före serviceeffekt med approval policy never.
+Den uttryckligt användargodkända ändliga listan kodas därför med per-tool
+`approval_mode="approve"`, enligt [Codex MCP-konfiguration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
+Första Worker/SID/dirty worktree och dess BLOCKED-rapport är bevarade och fysiskt
+stoppade med släppt slot, utan commit eller positiv grind. Ett nytt separat
+preflightprov verifierar den korrigerade registreringen; inget gammalt
+startfingerprint eller pågående runtime skrivs om för att få kontroller att passa.
+
 ## Worker-commitservice
 
 Den separata `RuntimeService(..., worker_commit=service)` publicerar exakt:

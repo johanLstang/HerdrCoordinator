@@ -3,6 +3,7 @@
 import asyncio
 import io
 import json
+from contextlib import asynccontextmanager
 from pathlib import Path
 from types import SimpleNamespace
 from uuid import uuid4
@@ -10,10 +11,11 @@ from uuid import uuid4
 import pytest
 from mcp import Client
 from native_f37_host import protected_config
-from native_f41_host import WORKER_TOOLS, scoped_service
+from native_f41_host import WORKER_TOOLS, PerRequestRuntime, scoped_service
 from native_f41_probe import require_approval
 from native_f41_setup import prepare
 from test_codex_execution import execution_policy  # noqa: F401
+from test_epic_start import setup as epic_setup  # noqa: F401
 from test_task_start import setup as startup_setup  # noqa: F401
 from test_worker_commit import broker  # noqa: F401
 
@@ -61,3 +63,35 @@ def test_setup_is_closed_idempotence_safe_and_cannot_start_without_user_decision
     with pytest.raises(RuntimeError, match="NO_OVERWRITE"):
         prepare(root, ids, execution_policy.binary)
     assert path.read_bytes() == original
+
+
+def test_wrapped_native_ack_is_denied_with_retryable_transport_without_scheduling(
+    epic_setup, monkeypatch,  # noqa: F811
+):
+    start, coordinator, integration, native = epic_setup
+    prompt = native.prompt
+
+    def wrapped(*args, **kwargs):
+        prompt(*args, **kwargs)
+        item = native.turns[-1]["items"][-1]
+        item["text"] = json.dumps(dict(confirmation=json.loads(item["text"])))
+
+    monkeypatch.setattr(native, "prompt", wrapped)
+    result = asyncio.run(start.start(coordinator, "p", "E-34", "e"))
+    assert result["stage"] == "DISPATCH_REQUESTED"
+    run = start.store.get_epic(integration.epic_run_id)
+    env = SimpleNamespace(store=start.store,
+                          subjects={run.id: SimpleNamespace(original_start=start)})
+
+    @asynccontextmanager
+    async def composed(_):
+        yield env
+
+    monkeypatch.setattr("native_f41_host.composition", composed)
+    transport = PerRequestRuntime(None, Path("/operator/config"), "integration",
+                                  run.worktree_path, 20)
+    changes = start.store.db.total_changes
+    response = asyncio.run(transport.call_async("task_schedule", dict(epic_run_id=run.id)))
+    assert not response.ok and response.code == "INTEGRATION_CONNECTION_NOT_REGISTERED"
+    assert start.store.db.total_changes == changes and start.store.get_tasks(run.id) == []
+    assert native.starts == len(native.prompts) == 1

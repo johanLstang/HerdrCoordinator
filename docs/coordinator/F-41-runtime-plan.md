@@ -107,3 +107,39 @@ Riktade regressioner för gamla och nya startkontrakt, profil-/roll-/PID-/scope-
 nekanden, commit/retry/drift och faktisk filsystem-/testisolering. Ny nativekod
 fryses före verklig körning. All acceptans står kvar omarkerad tills det verkliga
 scenariot, aktuell review, Task→E10 och relevanta eftertester är genomförda.
+
+
+## Nativeupptäckt: automatisk aktivering efter registrerad ACK
+
+Den andra dataseten verifierade exakt native Integration-ACK/registrering och
+aktuell OS-/brokergrind, men modellen avslutade sin starttur efter ACK. En prompt
+som säger att fortsätta är inte leveransbevis. Operatören aktiverade därför denna
+befintliga session en gång för **diagnostik**, utan taskval eller merge. Full
+F41.A1 räknas inte som uppfylld i den dataseten. Båda Workers har därefter faktiskt
+observerats arbeta med unika slots/SID; taskkorrigering och resten av kedjan
+provas för att hitta konkreta återstående fel före en ny samlad autonom körning.
+
+Före nästa kodändring fastställs det minsta kompletterande stödet: ett valfritt,
+betrott och konfigurationsbundet post-ACK-aktiveringssteg i befintlig epicstart.
+Standard utan aktivering bevarar tidigare enbart-ACK-beteende och fingerprint.
+F41-kompositionen väljer aktivering uttryckligen; agentargument kan inte slå på
+den eller skicka fri text/kommandon. Ingen generell send-agent-förmåga tillkommer.
+
+Steget får bara köras efter verklig exakt F34-registrering i ursprunglig native
+Integration/SID/cwd/processbindning, inom Coordinatorns faktiska F38-reservation.
+Spara en unik epicbunden operation före eventuell prompt: ursprunglig start,
+konfiguration/spec-/meddelandehash, SID/generation och observerade baseline-turns.
+Den fasta kontrollinstruktionen ber Integration genomföra redan registrerat scope
+med dess befintliga tjänster; den väljer inga tasks, granskningsbeslut eller merge.
+
+Bekräfta faktisk korrelerad native meddelandeleverans i samma session. Transport-
+retur eller agentpåstående räcker inte. Vid tappat/okänt svar observeras samma
+intention; skicka aldrig en andra prompt blint. Fel roll/scope/ändrad start eller
+konfiguration nekas före effekt. Ett aktiveringskvitto är varken taskframgång,
+review, merge eller Done. Tidigare ACK, deadline och försöksdata får inte ändras
+retroaktivt. Spara faktisk diagnostisk operatörsinteraktion och interruption också.
+
+Verifiera defaultkompatibilitet, faktisk registrering före effekt, replays,
+förlorat svar före/efter leverans och drift. Frys sedan den nya kompositionen och
+kör en ny samlad riktig tvåepics-körning utan manuell Integration-aktivering,
+scheduling eller merge. Tidigare diagnosbevis redovisas separat.

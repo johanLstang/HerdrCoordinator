@@ -97,7 +97,7 @@ def test_own_tool_approval_roundtrip_changes_only_registered_server():
     scoped = base.model_copy(update={"auto_approved_tools": ("worker_commit",)})
     config = tomllib.loads("\n".join(scoped.cli_args()[1::2]))
     assert config["mcp_servers"]["herdr_coordinator"]["tools"] == {
-        "worker_commit": {"approval_mode": "auto"},
+        "worker_commit": {"approval_mode": "approve"},
     }
     assert scoped.fingerprint != base.fingerprint
     assert scoped.cli_args()[:-2] == base.cli_args()

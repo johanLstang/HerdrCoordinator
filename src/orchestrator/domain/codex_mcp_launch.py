@@ -67,5 +67,5 @@ class CodexMCPLaunch(BaseModel):
             args += ["-c", "plugins." + plugin + ".enabled=false"]
         for tool in self.auto_approved_tools:
             args += ["-c", "mcp_servers.herdr_coordinator.tools." + tool
-                     + '.approval_mode="auto"']
+                     + '.approval_mode="approve"']
         return args

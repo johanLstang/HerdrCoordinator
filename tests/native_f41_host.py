@@ -38,7 +38,7 @@ from orchestrator.application.coordinator_review_subject import (
 )
 from orchestrator.application.coordinator_runtime_service import CoordinatorRuntimeService
 from orchestrator.application.epic_completion_service import EpicCompletionService
-from orchestrator.application.epic_start_service import EpicStartService
+from orchestrator.application.epic_start_service import EpicStartError, EpicStartService
 from orchestrator.application.integration_control_service import IntegrationControlService
 from orchestrator.application.runtime_lifecycle_service import RuntimeLifecycleService
 from orchestrator.application.runtime_service import RuntimeService
@@ -58,6 +58,7 @@ from orchestrator.domain.review_contracts import EpicReviewSpec
 from orchestrator.domain.teamplayer import LocalBoardBinding
 from orchestrator.domain.worker_contracts import canonical_json
 from orchestrator.event_log import EventLog
+from orchestrator.mcp.contracts import ToolResponse
 from orchestrator.mcp.server import serve_stdio
 from orchestrator.persistence.store import StateStore
 
@@ -317,7 +318,13 @@ class PerRequestRuntime:
 
     async def call_async(self, operation, arguments):
         async with composition(self.path) as env:
-            service = scoped_service(env, self.role, self.cwd, self.parent_pid)
+            try:
+                service = scoped_service(env, self.role, self.cwd, self.parent_pid)
+            except EpicStartError as error:
+                if str(error) != "INTEGRATION_CONNECTION_NOT_REGISTERED":
+                    raise
+                return ToolResponse(ok=False, code=str(error),
+                                    message="wait for the original startup ACK to be registered")
             return await service.call_async(operation, arguments)
 
 
