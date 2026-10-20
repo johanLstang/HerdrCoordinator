@@ -1018,7 +1018,15 @@
     "development_task_version": 25,
     "reviewed_task": "7bd9c19e2c6813851510aee21f7567b49f9f63d3",
     "development_merge": "21b60d748388aac89bee6e03b92bb2ad07df34cc",
-    "development_epic": "Active",
-    "pending": "E10 final review, PR/main merge and post-verification"
+    "development_epic": "Done",
+    "pending": null,
+    "epic_status_version": 13,
+    "epic_description_version": 14,
+    "development_main_merge": "55563d24b8a4f5fa7b7e8a0c32628eadf608d9b6",
+    "pr": 10,
+    "post_main": {
+      "passed": 31,
+      "seconds": 129.6
+    }
   }
 }

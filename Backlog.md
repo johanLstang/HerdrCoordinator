@@ -1703,9 +1703,9 @@ Ny isolerad r5/run `2af2b927-c6a3-4b44-a9b8-b1ae8bc8e5c1` har F34 REGISTERED med
 
 ## Epic E-10 Slutgranska integrera och välj nästa epic med Coordinator
 
-**Fas:** 10. **Prioritet:** P1. **Kanban-status:** Active. **TeamPlayer Epic-ID:** `559a4c95-3282-4b4b-a30f-97f9d0dbbaea`.
+**Fas:** 10. **Prioritet:** P1. **Kanban-status:** Done. **TeamPlayer Epic-ID:** `559a4c95-3282-4b4b-a30f-97f9d0dbbaea`.
 
-**Körbar:** Ja för F41:s förberedelse och verifiering från verifierad E09/main och F38–F40 Done på E10. Autonom produktstart kräver fortfarande faktisk positiv D02/F17-runtimeverifiering. **Beroende:** E-09 Done på main.
+**Körbar:** Nej — verifierad och Done på main genom PR10/merge55563d2. **Beroende:** E-09 Done på main.
 
 **Källa:** A §§4.1, 25–27, 31, 44, 47–48, 50; W §§5–6, 30–34, 37–40.
 
@@ -1741,6 +1741,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Efter F40 2026-10-20:** F38–F40 är granskade, no-ff-integrerade och efterverifierade på epic-branchen. F40 granskad44cb0ef/mergef4d6621/35 eftertester PASS1263.82s samt verklig native mainleverans6aab460/sluttest/stopp/board Done och identisk repeat. E10 kvar Active2/3, inte Done: F41 och samlad A3-/mainintegration återstår. Native nästa claim nekas korrekt utan betrodd generell säkerhetsgrind. [F40-slutunderlag](docs/reviews/F-40-final.md). Ingen ändrad implementationsordning.
 
 **Efter F41 2026-10-20:** Alla fyra tasks är granskade, integrerade till epic och verifierade. F41 task7bd9c19/no-ff21b60d7 har sex eftertester och25 samlade runtime/migrationsfall PASS samt verkligt R18-flöde genom två leveranser, samma-session-korrigeringar, aktiva säkerhetsgrindar och fysiska stopp. E10:s egna A1–A3 är3/3, men epicen behåller **Active** tills samlad slutreview/PR/mainmerge/slutverifiering. [F41-underlag](docs/reviews/F-41-final.md).
+
+**Samlad mainleverans 2026-10-20:** Coordinator slutgranskade epic8aa1e9d mot mainb6ceb995. [PR10](https://github.com/johanLstang/HerdrCoordinator/pull/10) är faktiskt MERGED; GitAdapter under common-dir flock gav no-ff55563d24b8a4f5fa7b7e8a0c32628eadf608d9b6 med exakta parents/identiskt granskat träd. På faktisk main:31 sluttester PASS129.60s/exit0, ruff/build/READMECLI samt91 nativefiler/wheel78 moduler/sex policies byteidentiska PASS. Epicacceptans3/3, alla F38–F41 Done; TeamPlayer Done13 och textsynk/återläsning Done14. Inga utvecklingsworktrees adopterade, ingen merge upprepad efter avstämning. [Slutreview och maskinunderlag](docs/reviews/E-10-final.md), [JUnit](docs/reviews/E-10-post-main.xml). E10 är nu **Done** och E11/F42 är nästa beroendemässigt körbara steg.
 
 ### Task F-38 Välj och claima nästa epic med Coordinator
 
@@ -1943,13 +1945,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Verifiering:** Senaste berörda grupper:56 taskvals-/beroendefall PASS219.55s, fyra kompletta tvåleveransvarianter PASS371.07s och35 scheduler-/kontroll-/kompositionsfall PASS414.40s. Tidigare samma oförändrade övriga moduler:68 start-/aktiveringsfall PASS42.15s,94 gräns-/MCP-/brokerfall PASS456.42s plus två separat körda riktiga kernelprov PASS3.89s. Överlappande historiska grupper summeras inte. Ruff/build/READMECLI och exakt wheel78 moduler/sex policies passerar. Nativeversion0.162.1 på Linux; inga globala Codexinställningar ändrade. Förlorad initial rootstart gav noll claims/tasks, stoppades fysiskt utan resend och bevarades före ny registrering; observer-restart efter transient SQLite-läsfel påverkar inte produktjournalerna. [Historik](docs/coordinator/F-41-history.md).
 
-**Verifierad kodleverans 2026-10-20:** Bootstrap Integration granskade exakt task7bd9c19 mot E10bas68d8249/mainb6ceb995 och sparade full aktuell review. GitAdapter under common-dir flock gav no-ff21b60d748388aac89bee6e03b92bb2ad07df34cc, rätt parents/identiskt träd och inga adopterade produktresurser. På faktisk merge: sex eftertester PASS127.50s,25 samlade runtime-/migrationsfall PASS5.58s; ruff/build/READMECLI/wheel78 moduler+sex policies och91 oförändrade nativekällor PASS. F41 Done25/User105, beskrivning synkad26, efter färsk CAS/återläsning; kriterier3/3. [Slutreview/leverans](docs/reviews/F-41-final.md), [maskinunderlag](docs/reviews/F-41-final.json), [eftertest](docs/reviews/F-41-post.xml). E10 kvar Active3/3 inför egen samlad PR/mainintegration/slutverifiering; F42 väljs först efter detta.
+**Verifierad kodleverans 2026-10-20:** Bootstrap Integration granskade exakt task7bd9c19 mot E10bas68d8249/mainb6ceb995 och sparade full aktuell review. GitAdapter under common-dir flock gav no-ff21b60d748388aac89bee6e03b92bb2ad07df34cc, rätt parents/identiskt träd och inga adopterade produktresurser. På faktisk merge: sex eftertester PASS127.50s,25 samlade runtime-/migrationsfall PASS5.58s; ruff/build/READMECLI/wheel78 moduler+sex policies och91 oförändrade nativekällor PASS. F41 Done25/User105, beskrivning synkad26, efter färsk CAS/återläsning; kriterier3/3. [Slutreview/leverans](docs/reviews/F-41-final.md), [maskinunderlag](docs/reviews/F-41-final.json), [eftertest](docs/reviews/F-41-post.xml). E10 är därefter samlat verifierad och Done14 genom PR10/main55563d2; F42 är nästa kandidat.
 
 ## Epic E-11 Återhämta körningar efter avbrott och omstart
 
 **Fas:** 11. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `c1a21c17-3fcf-4f15-800d-c69f61d07df8`.
 
-**Körbar:** Nej — E-10 Done på main; externa villkor anges per task. **Beroende:** E-10 Done på main.
+**Körbar:** Ja — E-10 Done14/PR10/main55563d2 är verifierad; externa villkor anges per task. **Beroende:** E-10 Done på main.
 
 **Källa:** A §§11–14, 28, 45; W §§17–18, 23–25, 35–40.
 
@@ -1982,7 +1984,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `995ac9d9-31d6-4e87-ba5b-d8524fb2b298`.
 
-**Körbar:** Nej — invänta E-10 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Ja — E10 är verifierad och Done på main; kontrollera aktuell tilldelning/branch före start.
 
 **Källa:** A §§11–14, 28, 45; W §§35–40. **Berör:** Recoveryservice, runtimeinventering, statusrapport.
 
@@ -2305,13 +2307,13 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 44 | F-35 | Task/feature | Låt Integration Agent styra tasks genom verktyg | E-09 | 9 | 7f990cb9-be35-485f-a9bc-a3ff468de448 | P1 | Done | Nej | 3/3 | E-08, F-34, X-01, X-02 | Done26/User105; native3 tasks/max2/review-fix/Attention-samma-SID/refill verifierade. Bootstrap review cc0252a, no-ff caefaff2, source39/post39 PASS samt gates. E09 Active0/3; F36 nästa. |
 | 45 | F-36 | Task/feature | Verifiera epicen och lämna komplett reviewunderlag | E-09 | 9 | e8e489aa-0235-436a-adc0-4c61703dab9e | P0 | Done | Nej | 3/3 | E-08, F-35 | Done8/User105; APPROVED0f67b82/full14-file diff5ec8e62b; no-ff93a6e6d/source104/post14/gates PASS. E09 Active0/3; F37 nästa. |
 | 46 | F-37 | Task/feature | Verifiera en epic styrd av Integration Agent | E-09 | 9 | b8e3bd6d-2287-447a-9f48-bb7863101cd6 | P1 | Done | Nej | 3/3 | E-08, F-36, X-01, X-02 | Done12/User105; fullreview98a6ed16/diff912ad99d, no-ff73bca342; native3 DONE/max2/samma-SID-input-fix/F36 EPIC_READY och efterkontroller PASS. |
-| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Active | Ja | 3/3 | E-09 Done på main | Active; F38–F41 Done och tre egna kriterier verifierade. Samlad slutreview, PR/main och slutverifiering återstår. |
+| 47 | E-10 | Epic | Slutgranska integrera och välj nästa epic med Coordinator | — | 10 | 559a4c95-3282-4b4b-a30f-97f9d0dbbaea | P1 | Done | Nej | 3/3 | E-09 Done på main | PR10/merge55563d2; main31 PASS129.60s, ruff/build/CLI/91pins/wheel PASS. TeamPlayer Done14/synkad, kriterier3/3. |
 | 48 | F-38 | Task/feature | Välj och claima nästa epic med Coordinator | E-10 | 10 | 64b97b6e-2251-4964-9b67-f67d709de9bf | P0 | Done | Nej | 3/3 | E-09, X-01, X-02 | Granskad9fc0c830; mergee02a84db; post121 PASS; native WAIT/stopp. |
 | 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Done | Nej | 3/3 | E-09, F-38, X-02 | Granskad04fe7939; mergea388e6b4; post100 PASS; faktiskt native före/efter/stopp. |
 | 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Done | Ja | 3/3 | E-09, F-39 | Granskad44cb0ef/no-ff f4d6621;35 eftertester PASS1263.82s. Native6aab460/repeat/stopp/test/Done verifierade; generell gate kvar inför F41. |
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Done | Nej | 3/3 | E-09, F-40, X-01, X-02 | Granskad7bd9c19/no-ff21b60d7; post6 PASS127.50s, runtime/migration25 PASS5.58s. R18 två nativeleveranser/fem Done; alla agenter STOPPED. |
-| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Nej | 0/3 | E-10 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
-| 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Nej | 0/3 | E-10 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Planned | Ja | 0/3 | E-10 Done på main | E10 Done14/PR10/main55563d2 verifierad; F42 är första kandidaten. |
+| 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Planned | Ja | 0/3 | E-10 | E10 Done14 på main; läs F42-underlag och verifiera aktuell ägare före plockning. |
 | 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Planned | Nej | 0/3 | E-10, F-42, X-01, X-02 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Planned | Nej | 0/3 | E-10, F-43 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |

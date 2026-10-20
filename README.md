@@ -439,8 +439,8 @@ kontroll och beständig återhämtning efter okänt Git-svar. Detta aktiverar in
 autonomi ensamt. Se [kontrakt, recovery och det konkreta provets grindar](docs/coordinator/F-41-execution.md).
 F41:s verkliga nativeacceptans är verifierad genom två fullständiga provepics;
 se [slutprov och aktuella kvitton](docs/coordinator/F-41-native.md).
-F41 är granskad, Task→E10-integrerad och efterverifierad;
-E10:s samlade PR/mainintegration återstår.
+F41 och E10 är granskade, mainintegrerade och slutverifierade genom PR10/merge55563d2.
+Se [E10:s slutleverans](docs/reviews/E-10-final.md); recovery/härdning fortsätter i E11/E12.
 
 Det separata F41-provet väljer också `activate_registered=True` i `EpicStartService`
 och `ack_wait_seconds=5` i dess registrerade scheduler/startkomposition. Efter exakt

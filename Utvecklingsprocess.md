@@ -16,7 +16,7 @@ Processen gäller när projektets egna features byggs. Produkten ska enligt [ark
 | F-01 task-ID | `9bc95f85-f05d-4842-b517-c1f8132c49ab` |
 | E-01 epic-ID | `0da5c7c4-6e29-475e-aeb6-ce887f3864db` |
 
-Boarden innehåller 12 epics och 50 tasks. Använd lokala E-/F-ID:n i dokumentationen och verifierade UUID:n i MCP-anrop. Epics är organiserande boardobjekt med status/version men utan eget utförarfält. Coordinator håller deras status i TeamPlayer och backloggen överens med verkligt arbete och leveransunderlag.
+Produktbackloggen innehåller 12 epics och 50 tasks. Avgränsade prov kan ha ytterligare tydligt märkta boardobjekt; utvecklingsordning och identiteter följer alltid backloggens egna UUID:n. Använd lokala E-/F-ID:n i dokumentationen och verifierade UUID:n i MCP-anrop. Epics är organiserande boardobjekt med status/version men utan eget utförarfält. Coordinator håller deras status i TeamPlayer och backloggen överens med verkligt arbete och leveransunderlag.
 
 ## Epicstatus: Planned, Active och Done
 
