@@ -250,6 +250,16 @@ class TeamPlayerEvidence:
             "event_id": event.id,
             "event_hash": digest(canonical_json(event.model_dump(mode="json"))),
         }
+        from orchestrator.application.session_recovery_record import task_record
+
+        recovery = task_record(self.store, task)
+        if recovery is not None:
+            proof["recovery_revision"] = recovery.result["revision"]
+            if recovery.result["stage"] == "ATTENTION":
+                require(task.completed_at is None)
+                proof.update(recovery_id=recovery.id,
+                             recovery_hash=recovery.result["observation_hash"])
+                return "NeedsInput", proof, recovery.result["reason"]
         phase = task.internal_status
         reason = ""
         inputs = self.operations(task, "task_resume")

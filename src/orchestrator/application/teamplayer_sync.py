@@ -212,6 +212,8 @@ class TeamPlayerSyncService:
         if "input_id" in proof:
             event_key["input_id"] = proof["input_id"]
             event_key["input_hash"] = proof["input_hash"]
+        if "recovery_revision" in proof:
+            event_key["recovery_revision"] = proof["recovery_revision"]
         key = digest(canonical_json(event_key))
         request = {
             "target_id": identity,
@@ -360,6 +362,17 @@ class TeamPlayerSyncService:
                         }[desired]
                         if "resume_id" in source[1] and desired == "InProgress":
                             allowed |= {"NeedsInput", "Blocked"}
+                        if "recovery_revision" in source[1] and desired == "InProgress":
+                            # Clear only our own last confirmed Attention overlay.
+                            # A later manual version is a new decision, not recovery authority.
+                            mirrored = [o for o in self.store.get_operations(
+                                run.epic_run_id, kind=self.KIND
+                            ) if o.task_run_id == run.id and o.status == "SUCCEEDED"
+                                and o.result["intent"]["proof"].get("recovery_id")
+                                and o.result.get("external_version") == current["version"]
+                                and self._has_block(current["description"], o)]
+                            if len(mirrored) == 1:
+                                allowed |= {"NeedsInput", "Blocked"}
                         if current["status"] not in allowed:
                             raise TeamPlayerError("TEAMPLAYER_MANUAL_STATUS_DIVERGED")
                     if "status_attempt" not in op.result or op.result["status_attempt"].get(

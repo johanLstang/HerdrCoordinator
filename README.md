@@ -505,3 +505,14 @@ ursprungliga registreringar. Integration får endast sin epics resursidentiteter
 i MCP-rapporten. Ingen schemaändring eller adoption av manuella worktrees ingår.
 F43/F44 levererar effektfull återanslutning och återställning.
 Se [kontrakt, komposition och verifiering](docs/recovery/F-42-startup.md).
+
+### E11/F43: återanslutning och övervakning
+
+`SessionRecoveryService` komponerar ursprungliga skyddade Coordinator-/Integration-
+registreringar med F42:s färska avstämning. En `poll()` återkopplar samma verifierade
+sessioner och återställer native övervakning. Parkerat arbete utan svar förblir
+parkerat; sparat F32-input fortsätter med originalnyckel och atomär slotkontroll.
+Teknisk Attention bevarar affärsfas, session och reservation och kan speglas till
+TeamPlayer med verifierad journal. Ett senare manuellt boardbeslut skrivs inte över.
+Se [komposition, förvillkor och verifieringsläge](docs/recovery/F-43-sessions.md).
+Nativeprov och leveransreview återstår innan F43 kan bli Done.

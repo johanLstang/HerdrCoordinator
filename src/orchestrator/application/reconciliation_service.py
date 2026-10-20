@@ -114,7 +114,7 @@ class IntegrationObserver:
         if self.view is not None:
             # Verify the additive plan while observing its original registration,
             # not a made-up runtime for the effective review/task catalogue.
-            self.view.connection_principal(self.view.principal)
+            self.view.verify_membership()
         s = self.startup
         op = s.store.get_operation(run.project_id, s.KIND, run.id)
         if op is None or op.status != "SUCCEEDED" or op.result.get("stage") != "REGISTERED":
@@ -341,6 +341,16 @@ class ReconciliationService:
             expected = (
                 run.kanban_status if task else ("Planned" if state == "PLANNED" else "Active")
             )
+            if task:
+                from orchestrator.application.session_recovery_record import task_record
+
+                try:
+                    recovery = task_record(self.store, run)
+                    if recovery is not None and recovery.result["stage"] == "ATTENTION":
+                        expected = "Attention"
+                except Exception:
+                    self._issue(row, "DRIFT", "RECOVERY_OBSERVATION_CHANGED",
+                                "REPEAT_RECOVERY_VERIFICATION")
             if native.kanban != expected:
                 self._issue(row, "RESUMABLE", "BOARD_STATE_MISMATCH", "RECONCILE_ORIGINAL_SYNC")
 

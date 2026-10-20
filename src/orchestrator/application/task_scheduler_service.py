@@ -558,6 +558,14 @@ class TaskSchedulerService:
         self._record(actor, task, phase, blocker_id=result["blocker_id"], reason=result["reason"])
 
     async def _advance(self, actor, task):
+        from orchestrator.application.session_recovery_record import task_record
+
+        try:
+            recovery = task_record(self.store, task)
+            if recovery is not None and recovery.result["stage"] == "ATTENTION":
+                return False
+        except Exception:
+            return False  # A corrupt/stale hold requires operator recovery first.
         op = self._record(actor, task)
         if op.result["phase"] == "PAUSED":
             return False

@@ -2008,9 +2008,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-43 Återuppta verifierade sessioner och parkerade tasks
 
-**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `bb3488c7-5c64-48ac-b105-72036fda275e`.
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `bb3488c7-5c64-48ac-b105-72036fda275e`.
 
-**Körbar:** Nästa kandidat — F42 Done9 och verifierad i E11; kontrollera aktuella X-01/X-02, tilldelning och branch före plockning.
+**Körbar:** Ja — InProgress3/User105 återläst; F42 Done9 i E11 och E10 Done14 på main. Worker arbetar i `task/e11-f43` från E11 `a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a`. X01 Herdr0.9.3/Codex0.162.1 och X02 TeamPlayer Write verifierade; separat native återanslutningsprov återstår.
 
 **Källa:** A §§7, 23, 28, 45; W §§17–18, 38. **Berör:** Recovery, Herdr/resume, reservationsåterställning.
 
@@ -2019,6 +2019,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Arbetsinstruktion för Codex:** Återanslut verifierade Coordinator-, Integration- och Worker-sessioner och återställ övervakning. Bevara parkerade tasks och sparade svar; använd samma slotkontroll vid resume. Hantera saknad anslutning separat från förlorad sessionsdata.
 
 **Resultat och kontrakt:** Kan runtime återuppta beständig Codex-session används samma sessionidentitet. Annars krävs Attention med explicit åtgärd. Ingen ny Worker tilldelas förrän ägarskap/inaktivitet är fastställt. Parkerat arbete återupptas bara med nödvändig input och ledig slot.
+
+**Förtydligat kontrakt:** [F43 återanslutning och övervakning](docs/recovery/F-43-sessions.md). Betrodd operatörskomposition återkopplar originalregistreringar utan startfabrik. Varje övervakningspoll gör färsk avstämning; sparat övervakningsläge är ingen behörighet. Tekniskt återhämtningshinder ger beständig Attention med konkret operatörsåtgärd, bevarad affärsfas och slot samt separat verifierad TeamPlayer-synk. Parkerade tasks utan svar stannar parkerade. Ett sparat F32-beslut återupptas med originalnyckel och befintlig slotkontroll; okänt promptsvar observeras utan omsändning. Generell återställning av halvfärdiga starter/merge/synk hör till F44.
 
 **Acceptans**
 
@@ -2316,7 +2318,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Done | Nej | 3/3 | E-09, F-40, X-01, X-02 | Granskad7bd9c19/no-ff21b60d7; post6 PASS127.50s, runtime/migration25 PASS5.58s. R18 två nativeleveranser/fem Done; alla agenter STOPPED. |
 | 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Active | Ja | 0/3 | E-10 Done på main | E11 Active10; F42Done9 med32 eftertester; F43–F45 återstår. |
 | 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Done | Klar | 3/3 | E-10 | Done9/User105; granskad94f023d→E11 cf37091,32 eftertester/Ruff/build/CLI/wheel79+sex policies/86 pins PASS. F43 nästa. |
-| 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Planned | Nej | 0/3 | E-10, F-42, X-01, X-02 | F42 Done9/E11 cf37091. Kontrollera X01/X02, get_me/owner, färsk board och rätt taskbranch. |
+| 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Active | Ja | 0/3 | E-10, F-42, X-01, X-02 | InProgress2/User105; task/e11-f43 från E11 a07dfc6. Implementera originalsession/övervakning och avgränsat verkligt reconnectprov. |
 | 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Planned | Nej | 0/3 | E-10, F-43 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 57 | E-12 | Epic | Härda orchestrering och gör drift spårbar | — | 12 | be200a7c-4dad-47a1-a785-e25e84903124 | P0 | Planned | Nej | 0/3 | E-11 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |

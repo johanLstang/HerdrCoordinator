@@ -1039,6 +1039,12 @@ F43 återansluter och F44 återställer sidoeffekter med originalnycklar. Se
 
 ---
 
+## F43: återanslutning och teknisk Attention
+
+Den betrodda operatörskompositionen återkopplar originalregistreringarna och återställer övervakning enligt [F43-kontraktet](docs/recovery/F-43-sessions.md). Tekniskt återhämtningshinder lagras separat från TaskRun-affärsfasen: Attention kräver åtgärd men bevisar varken inaktivitet eller slotrelease. TeamPlayer kan spegla NeedsInput från denna verifierade journal; återställd färsk verifiering skapar en ny synkrevision. Varje poll återvaliderar resurser och originalägare. Journalen är inget återanvändbart start- eller resume-godkännande.
+
+---
+
 # 29. Locks
 
 Systemet bör ha logiska locks.
