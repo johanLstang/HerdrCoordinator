@@ -25,10 +25,35 @@ Integration-observatören stödjer också den verifierade additiva korrigeringsp
 
 CLI utan registrerade TeamPlayer/runtimeobservatörer kan inte aktivera automatisk scheduling. `--check` förblir ren konfigurationsvalidering. Manuell utvecklingsbootstrap registreras inte som en produktkörning.
 
-## Verifiering
+## Verifiering och leveransläge
 
-Pågår inför slutreview och faktisk Task → E11-integration. 23 riktade prov passerade före den sista explicita boardbindningen; dess två raceprov och berörd regression körs nu. Omfattning: riktiga temporära Git/SQLite-resurser med uttryckligen simulerad Herdr/Codex/TeamPlayer, återöppnad databas, ändrad HEAD/saknad worktree/falsk Done, timeout och samtidiga stateändringar. F42 gör inget nytt verkligt native- eller maskinomstartsanspråk; F43/F45 verifierar dessa.
+Funktionell källcommit: `e81048d027dc941a94b3dc6f077f6531dfdb7c81`.
+Worker-resultatet är READY_FOR_REVIEW; tasken är fortfarande Testing/Active
+före faktisk Task → E11-merge och eftertester. Epic E11 är Active, egenacceptans0/3.
 
+- Slutlig observations-/claimgrupp: **30 PASS93.72s/exit0**, inklusive det tidigare
+  fallerande leveransfallet, explicit saknad/återkopplad observatör och stoppad Integration.
+- Registry-/Coordinator-/leveransgrupp: **72 PASS220.96s/exit0** efter registerrättningen.
+  Gruppen föregår en snäv typvaliderings- och rapporttextjustering, som ingår i de slutliga30.
+- Runtime/slots/persistens/READMECLI: **69 PASS71.68s/exit0**; de fyra berörda
+  kärnmodulerna är byteidentiska med den körda versionen.
+- Grupperna överlappar: **142 unika testfall**, inte summan171.
+- Tidigare bred granskning på `db1a5f8`:99 PASS/1 FAIL. Startfabrik i läsning var
+  ett blockerande fynd och är rättat; den körningen redovisas som historik.
+- Ruff, build, READMECLI,216 lokala dokumentlänkar och wheel79 moduler/sex
+  oförändrade policies verifierade. Schema3 behålls utan migration.
+
+F-42.A1 styrks av återöppnad SQLite med samma ägda worktree/branch/session/state,
+F-42.A2 av faktisk saknad worktree/ändrad HEAD/återställd äldre broker-tip/falsk Done,
+och F-42.A3 av otillgängliga Herdr-/TeamPlayer-adaptrar som stoppar nya claims
+utan Git-/run-/slot-/sessionsändringar. Query_only-läge, samtidiga SQLite/Git/board-
+ändringar, boardbyte efter val, scopeprojektion och Git-filterprov ingår.
+
+Git/SQLite/MCP SDK används faktiskt i temporära repositories. Herdr/Codex/
+TeamPlayer-peers är uttryckligen kontrollerade testadaptrar; F42 gör inget nytt
+native- eller maskinomstartsanspråk. F43/F45 verifierar dessa senare. Inga F41-
+provsessioner återstartas eller adopteras. Se [hashar och körtider](F-42-verification.json)
+och [slutgruppens råa JUnit](../reviews/F-42-final-reconciliation.xml).
 
 ### Avstämd fortsättning efter epicleverans
 
