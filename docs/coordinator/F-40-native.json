@@ -1,19 +1,19 @@
 {
   "version": 1,
-  "stage": "CURRENT_APPROVED_REVIEW_AWAITING_SEPARATE_USER_MAIN_APPROVAL",
+  "stage": "NATIVE_DELIVERY_VERIFIED_AND_CLOSED",
   "source_checkpoint": "c6c7822980abdce66a599534081c4287142fbd99",
   "config_sha256": "f59484b22ffc7fd885162a17f67cbc417f9fd55e889375364c9a27faa686f46f",
   "fixture": "/tmp/herdr-f40-r1-fixture-20261015/repo",
-  "fixture_main": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+  "fixture_main": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
   "server": "hc-f40-r1-20261015",
   "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
-  "coordinator_status": "ACTIVE",
+  "coordinator_status": "STOPPED",
   "coordinator_agent_id": "hc-c-e4089d995c8f4dac88f4a08a",
   "coordinator_session_id": "01a143de-70c8-71d3-9f24-11c5278e7517",
   "pane_id": "w1:p1",
   "epic_runs": 1,
   "task_runs": 1,
-  "native_main_merge": false,
+  "native_main_merge": true,
   "development_task_merge": false,
   "autonomy_gate": false,
   "external_epics": [
@@ -24,11 +24,12 @@
     "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
     "07c3075f-b694-4f86-9b51-f9fc3edf8035"
   ],
-  "observed_at": "2026-10-16T09:03:31.426309+00:00",
+  "observed_at": "2026-10-20T11:23:49.087440+00:00",
   "own_server": {
     "pid": 1615840,
     "process_start": "155220692",
-    "running": true
+    "running": false,
+    "pid_absent": true
   },
   "regression": {
     "verified_cases": 233,
@@ -38,16 +39,15 @@
   },
   "authorization_received": true,
   "development_board": {
-    "status": "NeedsApproval",
-    "local": "Attention",
-    "acceptance": "0/3",
-    "version": 13
+    "status": "Testing",
+    "local": "Active",
+    "acceptance": "0/3"
   },
   "integration": {
     "run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
     "agent": "hc-264a2a0077464da7aaea489f",
     "session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
-    "stage": "EPIC_APPROVED_PENDING_MAIN_AUTHORIZATION",
+    "stage": "STOPPED_AFTER_VERIFIED_DELIVERY",
     "attachment_id": "091cba2a-ee61-424e-a2b6-644ccded11f9"
   },
   "authorization": {
@@ -100,13 +100,13 @@
     "current": true,
     "proof": "F-40-r1-main-review.json"
   },
-  "separate_main_authorization_received": false,
+  "separate_main_authorization_received": true,
   "board_readback": {
     "observed_at": "2026-10-16T09:05:01.467633+00:00",
     "development_task": {
       "id": "4073e26d-b095-47e3-99a6-7704f757f485",
-      "status": "NeedsApproval",
-      "version": 13,
+      "status": "Testing",
+      "version": 15,
       "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee",
       "description_exact_backlog": true
     },
@@ -130,8 +130,8 @@
     "native_epics": [
       {
         "id": "9213a12d-4403-47cf-8669-a438bd51bb6b",
-        "status": "InProgress",
-        "version": 3
+        "status": "Done",
+        "version": 4
       },
       {
         "id": "c3602afc-a227-4428-9279-15fd573de367",
@@ -139,5 +139,6 @@
         "version": 2
       }
     ]
-  }
+  },
+  "final_native_proof": "F-40-native-final.json"
 }

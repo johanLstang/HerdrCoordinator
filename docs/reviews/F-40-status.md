@@ -1,7 +1,7 @@
-# F40 verifierad kod och native review, väntande mainbeslut
+# F40 verifierad kod och faktisk nativeleverans, utvecklingsintegration återstår
 
 Kodcheckpoint bb452da; testorakel/metadata c6c7822.83 produkt-/policy-/konfigurations-
-bindningar är byte-identiska. F40 är **NeedsApproval / Attention0/3**,
+bindningar är byte-identiska. F40 är **Testing / Active0/3**,
 User105/blitterbot@gmail.com; backlogg och TeamPlayer är återlästa/synkroniserade.
 E10 är fortsatt Active10/2 av3. F39 Done9 är integrerad och efterverifierad.
 
@@ -34,20 +34,18 @@ Lint, build, READMECLI-check, exakt wheel74moduler/sexpolicies och isolerad
 wheelimport/policy passerade. Factual stdio-catalog: Root6, Integration16
 (12 control +4 guardade befintliga legacy/statusposter), Worker0.
 
+## Faktisk native slutleverans
+
+[Hela F40-r1](../coordinator/F-40-native.md) är verifierat: en faktisk mainmerge6aab460,
+ursprunglig Integration STOPPED, sluttest exit0, provepic Done4 och två identiska
+native DONE/RELEASED-kvitton utan dubbla operationer. Nästa epic nekades korrekt av
+saknad runtimegate. Alla egna runtimes/server fysiskt stoppade; refs/history bevarade.
+[Maskinkvitton](../coordinator/F-40-native-final.json). Alla83 produkt-/55 testpins
+är oförändrade. Mapp-/verktygs- och separat maingodkännande är genomförda.
+
 ## Konkret kvarvarande steg
 
-[Det verkliga F40-r1-provet](../coordinator/F-40-native.md) har levererat provtasken
-via native Worker/Integration: riktig commit, review, no-ff Task→Epic, eftertest,
-fysisk Worker STOPPED och slotrelease/Done. Samlad verifiering passerade. Samma
-Coordinator läste3/3 chunks och registrerade aktuell EPIC_APPROVED39246d45 för
-source6033883 mot oförändrad mainb4919eb. Alla83 produkt-/55 verifieringsbindningar
-är oförändrade.
-
-[Hela diffen och konkreta mainbeslutet](../coordinator/F-40-r1-main-review.md)
-är förberett och separat användargodkännande efterfrågat enligt F40-kontrakt9/
-D02/F17. Tidigare mapp-/verktygsgodkännande är genomfört; ingen mainpermit,
-mainmerge eller utvecklingsmerge/Done finns. Samma root/Integration/server bevaras.
-
-Efter faktiskt godkännande återstår native F40-leverans/stopp/sluttest/synk och
-negativ fortsättningsgrind, därefter utvecklingsreview/Task→E10/eftertest före Done.
-E10 förblir Active; generell autonomigrind består inför F41.
+Worker lämnar källbunden READY_FOR_REVIEW; bootstrap Integration ska granska exakt
+aktuell kandidat mot E10/main, spara review, no-ff-integrera genom GitAdapter och
+köra relevanta eftertester. Först därefter F40 Done/3 av3 och synk. E10 förblir
+Active2/3 inför F41:s fulla scenario och faktiska runtime-säkerhetsgrind.

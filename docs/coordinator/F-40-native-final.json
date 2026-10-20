@@ -1,0 +1,383 @@
+{
+  "version": 1,
+  "stage": "NATIVE_DELIVERY_VERIFIED",
+  "observed_at": "2026-10-20T11:22:28.668431+00:00",
+  "coordinator_run": {
+    "id": "95b20746-e85a-4028-8e2e-f642a486beab",
+    "project_id": "f40-probe-r1",
+    "actor_id": "fd9d51fd-14ea-4fa7-937f-11f87cade76a",
+    "branch": "main",
+    "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/repo",
+    "initial_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+    "configuration_hash": "6947958053e012e9f4774cf4658ec2cea78d8d88e1d9197a77a1f93d8b8bb371",
+    "status": "ACTIVE",
+    "coordinator_agent_id": "hc-c-e4089d995c8f4dac88f4a08a",
+    "herdr_workspace_id": "w1",
+    "herdr_server_session": "hc-f40-r1-20261015",
+    "herdr_tab_id": "w1:t1",
+    "herdr_pane_id": "w1:p1",
+    "herdr_terminal_id": "term_65de39e830a8c1",
+    "codex_session_id": "01a143de-70c8-71d3-9f24-11c5278e7517",
+    "started_at": "2026-10-15T16:34:18.564505Z",
+    "completed_at": null
+  },
+  "delivery": {
+    "id": "f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+    "project_id": "f40-probe-r1",
+    "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+    "kind": "coordinator_epic_delivery",
+    "idempotency_key": "f40-r1-delivery",
+    "status": "SUCCEEDED",
+    "result": {
+      "stage": "RELEASED",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "review_id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+      "configuration_hash": "0721a808f163075f38687e27048ea9901a75fbdf9020bff13ec29ce1161b908c",
+      "parent_registration_hash": "48d9f03d1495d5fdffe443a43d79a72b10675edd68cfef2a208f2e846628f1b6",
+      "authorization": {
+        "kind": "bounded_operator_probe",
+        "operation_id": "8b8dba76-446e-4853-88ba-e791b06101b1",
+        "evidence_hash": "7458a987559ac7951b7163494d2ae950f83b2798bc46b2f8ce8f0bb2b1fe6a08"
+      },
+      "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+      "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "membership_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "merge_key": "cd-merge-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+      "stop_key": "cd-stop-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+      "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+      "merge_operation_id": "cd108775-f34f-4d31-b012-ae69d471ed48",
+      "stop_operation_id": "6d27388a-6c72-4f85-86b4-cde7d9aa6cc7",
+      "final_verification_id": "740c15df-0ef0-41bc-9546-b2046a87babf",
+      "final_verification_key": "cd-final-90d2599d49524db4a105a8889fb010a84fb9998eaa400448c17a57c49f9d3ce4",
+      "attention": null,
+      "sync_operation_id": "6ed994ff-92e2-4a7c-adee-357a6fd2f412",
+      "released_claim_id": null
+    },
+    "error_code": null,
+    "created_at": "2026-10-20T11:20:52.776367Z",
+    "updated_at": "2026-10-20T11:21:02.649715Z"
+  },
+  "continuation": {
+    "id": "e58b2182-7aae-4c21-9f06-91f64e6b5e10",
+    "project_id": "f40-probe-r1",
+    "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+    "kind": "coordinator_epic_continuation",
+    "idempotency_key": "f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+    "status": "SUCCEEDED",
+    "result": {
+      "stage": "WAIT",
+      "delivery_id": "f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+      "claim_key": "after-delivery-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+      "outcome": {
+        "status": "WAIT",
+        "reason": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+        "blockers": []
+      }
+    },
+    "error_code": null,
+    "created_at": "2026-10-20T11:21:03.472391Z",
+    "updated_at": "2026-10-20T11:21:22.124086Z"
+  },
+  "actual_calls": [
+    {
+      "id": "exec-3acfddbe-e18e-459a-a419-9816635f27ec",
+      "arguments": {
+        "project_id": "f40-probe-r1",
+        "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+        "request_key": "f40-r1-delivery",
+        "verification_key": "f40-r1-final-v1"
+      },
+      "result": {
+        "ok": true,
+        "code": "OK",
+        "message": "verified Coordinator delivery",
+        "data": {
+          "status": "DONE",
+          "delivery_id": "f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "stage": "RELEASED",
+          "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+          "review_id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+          "configuration_hash": "0721a808f163075f38687e27048ea9901a75fbdf9020bff13ec29ce1161b908c",
+          "parent_registration_hash": "48d9f03d1495d5fdffe443a43d79a72b10675edd68cfef2a208f2e846628f1b6",
+          "authorization": {
+            "kind": "bounded_operator_probe",
+            "operation_id": "8b8dba76-446e-4853-88ba-e791b06101b1",
+            "evidence_hash": "7458a987559ac7951b7163494d2ae950f83b2798bc46b2f8ce8f0bb2b1fe6a08"
+          },
+          "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+          "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+          "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+          "membership_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "merge_key": "cd-merge-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "stop_key": "cd-stop-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+          "merge_operation_id": "cd108775-f34f-4d31-b012-ae69d471ed48",
+          "stop_operation_id": "6d27388a-6c72-4f85-86b4-cde7d9aa6cc7",
+          "final_verification_id": "740c15df-0ef0-41bc-9546-b2046a87babf",
+          "final_verification_key": "cd-final-90d2599d49524db4a105a8889fb010a84fb9998eaa400448c17a57c49f9d3ce4",
+          "attention": null,
+          "sync_operation_id": "6ed994ff-92e2-4a7c-adee-357a6fd2f412",
+          "released_claim_id": null,
+          "continuation": {
+            "status": "WAIT",
+            "reason": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+            "blockers": []
+          }
+        }
+      }
+    },
+    {
+      "id": "exec-a522ba8e-9821-4f6b-b5af-a7155bd424a6",
+      "arguments": {
+        "project_id": "f40-probe-r1",
+        "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+        "request_key": "f40-r1-delivery",
+        "verification_key": "f40-r1-final-v1"
+      },
+      "result": {
+        "ok": true,
+        "code": "OK",
+        "message": "verified Coordinator delivery",
+        "data": {
+          "status": "DONE",
+          "delivery_id": "f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "stage": "RELEASED",
+          "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+          "review_id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+          "configuration_hash": "0721a808f163075f38687e27048ea9901a75fbdf9020bff13ec29ce1161b908c",
+          "parent_registration_hash": "48d9f03d1495d5fdffe443a43d79a72b10675edd68cfef2a208f2e846628f1b6",
+          "authorization": {
+            "kind": "bounded_operator_probe",
+            "operation_id": "8b8dba76-446e-4853-88ba-e791b06101b1",
+            "evidence_hash": "7458a987559ac7951b7163494d2ae950f83b2798bc46b2f8ce8f0bb2b1fe6a08"
+          },
+          "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+          "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+          "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+          "membership_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "merge_key": "cd-merge-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "stop_key": "cd-stop-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+          "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+          "merge_operation_id": "cd108775-f34f-4d31-b012-ae69d471ed48",
+          "stop_operation_id": "6d27388a-6c72-4f85-86b4-cde7d9aa6cc7",
+          "final_verification_id": "740c15df-0ef0-41bc-9546-b2046a87babf",
+          "final_verification_key": "cd-final-90d2599d49524db4a105a8889fb010a84fb9998eaa400448c17a57c49f9d3ce4",
+          "attention": null,
+          "sync_operation_id": "6ed994ff-92e2-4a7c-adee-357a6fd2f412",
+          "released_claim_id": null,
+          "continuation": {
+            "status": "WAIT",
+            "reason": "RUNTIME_SECURITY_GATE_UNVERIFIED",
+            "blockers": []
+          }
+        }
+      }
+    }
+  ],
+  "merge": {
+    "id": "cd108775-f34f-4d31-b012-ae69d471ed48",
+    "project_id": "f40-probe-r1",
+    "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+    "task_run_id": null,
+    "kind": "merge_epic_to_main",
+    "idempotency_key": "cd-merge-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+    "status": "SUCCEEDED",
+    "result": {
+      "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "manifest_hash": "0c7516b60a3ded402f0a0217747974a256ad2528794f760f2eb002c7fdfef68f",
+      "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+      "requires_reconciliation": false
+    },
+    "error_code": null,
+    "created_at": "2026-10-20T11:20:54.246858Z",
+    "updated_at": "2026-10-20T11:20:54.466884Z"
+  },
+  "final_verification": {
+    "id": "740c15df-0ef0-41bc-9546-b2046a87babf",
+    "project_id": "f40-probe-r1",
+    "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+    "task_run_id": null,
+    "kind": "verify_main_merge",
+    "idempotency_key": "cd-final-90d2599d49524db4a105a8889fb010a84fb9998eaa400448c17a57c49f9d3ce4",
+    "status": "SUCCEEDED",
+    "result": {
+      "merge_key": "cd-merge-f1f6c56b-cd31-4bd3-abe7-53dc2771647a",
+      "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+      "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "target_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+      "command_hash": "4d23f4e767d1fc1ef865322447ec401b9eb4d69a5927545d8012659afbc9a68c",
+      "manifest_hash": "0c7516b60a3ded402f0a0217747974a256ad2528794f760f2eb002c7fdfef68f",
+      "exit_code": 0
+    },
+    "error_code": null,
+    "created_at": "2026-10-20T11:20:57.696215Z",
+    "updated_at": "2026-10-20T11:20:58.026610Z"
+  },
+  "parent_stop": {
+    "status": "STOPPED",
+    "session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
+    "run": {
+      "id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "project_id": "f40-probe-r1",
+      "epic_id": "f40-epic-r1",
+      "branch": "feature/epic-f40-epic-r1",
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/epic-f40-epic-r1",
+      "status": "DONE",
+      "integration_agent_id": "hc-264a2a0077464da7aaea489f",
+      "herdr_workspace_id": "w2",
+      "herdr_server_session": "hc-f40-r1-20261015",
+      "herdr_tab_id": "w2:t1",
+      "herdr_pane_id": "w2:p1",
+      "herdr_terminal_id": "term_65df12051feda2",
+      "codex_session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
+      "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "current_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "approved_source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "merge_commit": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+      "started_at": "2026-10-16T08:41:08.113246Z",
+      "completed_at": "2026-10-20T11:20:59.523803Z"
+    }
+  },
+  "worker_stop": {
+    "status": "STOPPED",
+    "session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+    "run": {
+      "id": "fe294276-3943-442a-b76e-474b0f3ef791",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_id": "f40-seed-r1",
+      "branch": "task/f40-epic-r1-f40-seed-r1",
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+      "resume_state": null,
+      "internal_status": "DONE",
+      "kanban_status": "Done",
+      "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+      "worker_slot": null,
+      "herdr_workspace_id": "w3",
+      "herdr_server_session": "hc-f40-r1-20261015",
+      "herdr_tab_id": "w3:t1",
+      "herdr_pane_id": "w3:p1",
+      "herdr_terminal_id": "term_65df12d4106043",
+      "codex_session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+      "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "current_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "started_at": "2026-10-16T08:44:37.352884Z",
+      "completed_at": "2026-10-16T08:55:09.967602Z"
+    }
+  },
+  "main": "6aab460d228be40a8a0aed36ba9cdfe55d11ac44",
+  "parents": [
+    "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+    "6033883834da04f296d29beeaa9fca960fdbfc8a"
+  ],
+  "board": [
+    {
+      "id": "9213a12d-4403-47cf-8669-a438bd51bb6b",
+      "status": "Done",
+      "version": 4
+    },
+    {
+      "id": "c3602afc-a227-4428-9279-15fd573de367",
+      "status": "Pending",
+      "version": 2
+    },
+    {
+      "id": "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
+      "status": "Done",
+      "version": 9
+    },
+    {
+      "id": "07c3075f-b694-4f86-9b51-f9fc3edf8035",
+      "status": "Pending",
+      "version": 1
+    }
+  ],
+  "pins_unchanged": {
+    "product_pins": 83,
+    "verification_pins": 55
+  },
+  "runtime_gate": false,
+  "release_is_manual_attachment": true,
+  "server_preserved": false,
+  "closure": {
+    "coordinator_run": {
+      "id": "95b20746-e85a-4028-8e2e-f642a486beab",
+      "project_id": "f40-probe-r1",
+      "actor_id": "fd9d51fd-14ea-4fa7-937f-11f87cade76a",
+      "branch": "main",
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/repo",
+      "initial_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "configuration_hash": "6947958053e012e9f4774cf4658ec2cea78d8d88e1d9197a77a1f93d8b8bb371",
+      "status": "STOPPED",
+      "coordinator_agent_id": "hc-c-e4089d995c8f4dac88f4a08a",
+      "herdr_workspace_id": "w1",
+      "herdr_server_session": "hc-f40-r1-20261015",
+      "herdr_tab_id": "w1:t1",
+      "herdr_pane_id": "w1:p1",
+      "herdr_terminal_id": "term_65de39e830a8c1",
+      "codex_session_id": "01a143de-70c8-71d3-9f24-11c5278e7517",
+      "started_at": "2026-10-15T16:34:18.564505Z",
+      "completed_at": "2026-10-20T11:23:28.268406Z"
+    },
+    "coordinator_stop": {
+      "id": "f4a4809c-3298-4cb8-a483-465bc7c747e8",
+      "project_id": "f40-probe-r1",
+      "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+      "kind": "coordinator_stop",
+      "idempotency_key": "f39-r1-coordinator-stop",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "STOPPED",
+        "process_proof": {
+          "identities": [
+            {
+              "pid": 1630093,
+              "start_time": "155223559"
+            },
+            {
+              "pid": 1630179,
+              "start_time": "155223577"
+            },
+            {
+              "pid": 2180182,
+              "start_time": "161019114"
+            },
+            {
+              "pid": 2229225,
+              "start_time": "161121079"
+            }
+          ],
+          "groups": [
+            1630093,
+            2180182,
+            2229225
+          ]
+        },
+        "start_operation_id": "7e42edd3-a057-4809-bce9-00b0e83bf5d3",
+        "inactive": true
+      },
+      "error_code": null,
+      "created_at": "2026-10-20T11:23:00.680464Z",
+      "updated_at": "2026-10-20T11:23:28.268878Z"
+    },
+    "server": {
+      "stage": "STOPPED",
+      "pid": 1615840,
+      "process_start": "155220692",
+      "server": "hc-f40-r1-20261015",
+      "agents": [],
+      "created_at": "2026-10-20T11:23:49.087440+00:00",
+      "exit_code": 0,
+      "pid_absent": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    "note": "Original root stop returned unconfirmed while processes exited. Read back EXIT_PENDING, reconciled same F13 key and actual inactive processes; no replacement runtime or new stop intent. An observer-only print of CoordinatorRun.result failed after its real STOPPED receipt had already been saved."
+  }
+}

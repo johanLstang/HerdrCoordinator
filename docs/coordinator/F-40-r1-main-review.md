@@ -1,4 +1,8 @@
-# F40-r1: granskad provleverans väntar på separat mainbeslut
+# F40-r1: granskningsunderlag för separat mainbeslut
+
+**Historiskt beslutunderlag:** godkänt av användaren2026-10-20. Leveransen är nu
+verifierad i [slutkvittona](F-40-native-final.json). Nedan bevaras exakt det underlag
+som presenterades före tillstånd och merge.
 
 ## Det konkreta beslutet
 
