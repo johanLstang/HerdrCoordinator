@@ -512,3 +512,32 @@ def test_two_reserved_slots_preserve_input_without_third_native_worker(setup):
         s.store.get_operation("p", s.KIND, d["input_id"]).result["decision"]["answer"]
         == d["answer"]
     )
+
+
+def test_optional_wait_confirms_delayed_input_ack_in_original_session_without_resend(
+    setup, monkeypatch,
+):
+    s, actor, worker, _, h, history, _, decision = setup
+    s.ack_wait_seconds = 5
+    h.prompt = lambda name, text, **kwargs: h.sent.append(text)
+    original = s.store.get_task(worker.task_run_id)
+    sleeps = []
+
+    async def delayed_ack(seconds):
+        sleeps.append(seconds)
+        assert not s.store.db.in_transaction
+        assert s.store.get_task(worker.task_run_id).internal_status == TaskState.PARKED
+        history.reply(h.sent[-1], turn_id="delayed-input-ack")
+
+    monkeypatch.setattr("orchestrator.application.ack_observation.async_sleep", delayed_ack)
+    sent = len(h.sent)
+    result = call(s, actor, worker, decision)
+    assert result["stage"] == "ACTIVE_AND_SYNCED" and len(sleeps) == h.resumes == 1
+    current = s.store.get_task(worker.task_run_id)
+    assert current.internal_status == TaskState.WORKING
+    assert (current.codex_session_id, current.branch, current.worktree_path) == (
+        original.codex_session_id, original.branch, original.worktree_path,
+    )
+    assert len(h.sent) == sent + 1
+    assert call(s, actor, worker, decision) == result and h.resumes == 1
+    assert len(h.sent) == sent + 1

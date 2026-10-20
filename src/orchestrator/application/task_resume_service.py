@@ -7,6 +7,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 
 from orchestrator.adapters.herdr import HerdrError
+from orchestrator.application.ack_observation import observe_bounded_async, validate_wait
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.runtime_lifecycle_service import LifecycleError
 from orchestrator.application.state_service import StateService
@@ -25,7 +26,8 @@ class ResumeError(RuntimeError):
 class TaskResumeService:
     KIND = "task_resume"
 
-    def __init__(self, attention):
+    def __init__(self, attention, *, ack_wait_seconds=0):
+        self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.attention = attention
         self.settings, self.store, self.sync = attention.settings, attention.store, attention.sync
         self.lifecycle, self.git = attention.lifecycle, attention.git
@@ -206,7 +208,12 @@ class TaskResumeService:
         with self.attention._lock(task.id):
             op = self._saved(actor, self._scope(actor, run_id), parsed)
             try:
-                return await self._drive(actor, run_id, op)
+                return await observe_bounded_async(
+                    lambda: self._drive(actor, run_id, self.store.get_operation(
+                        task.project_id, self.KIND, parsed.input_id,
+                    )), self.ack_wait_seconds,
+                    pending=lambda result: result["stage"] == "DISPATCH_REQUESTED",
+                )
             except ResumeError as error:
                 self._save(op, error=str(error))
                 raise

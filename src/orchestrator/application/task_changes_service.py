@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from orchestrator.adapters.codex import CodexError
 from orchestrator.adapters.git import GitError
 from orchestrator.adapters.herdr import HerdrError
+from orchestrator.application.ack_observation import observe_bounded, validate_wait
 from orchestrator.application.git_integration_service import IntegrationError
 from orchestrator.application.git_review_service import GitReviewError
 from orchestrator.application.runtime_assignment_service import (
@@ -35,7 +36,8 @@ class TaskChangesError(RuntimeError):
 class TaskChangesService:
     KIND = "task_request_changes"
 
-    def __init__(self, settings, store, herdr, codex=None):
+    def __init__(self, settings, store, herdr, codex=None, *, ack_wait_seconds=0):
+        self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.settings, self.store = settings, store
         self.contexts = TaskReviewService(settings, store)
         self.integration = self.contexts.integration
@@ -278,7 +280,10 @@ class TaskChangesService:
                     except HerdrError:
                         transport = "UNKNOWN"
                     self._checkpoint(op, transport=transport)
-            return self.observe(actor, run_id, key=key)
+            return observe_bounded(
+                lambda: self.observe(actor, run_id, key=key), self.ack_wait_seconds,
+                pending=lambda result: result["status"] == "WAITING",
+            )
         except TaskChangesError:
             raise
         except (ValidationError, KeyError, TypeError, ValueError):

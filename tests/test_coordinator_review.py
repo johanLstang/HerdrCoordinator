@@ -272,7 +272,9 @@ def rejection(context_id):
                                         acceptance_criteria=["Native receipt"])])
 
 
-def test_reject_create_same_session_correct_and_approve_preserves_history(review_setup):
+def test_reject_create_same_session_correct_and_approve_preserves_history(
+    review_setup, monkeypatch,
+):
     f = review_setup
 
     async def run():
@@ -303,7 +305,37 @@ def test_reject_create_same_session_correct_and_approve_preserves_history(review
         assert repeated == response
         assert len(f.creates) == 1
         corrective = response["tasks"][0]
+        # Actual effective F39 plan: force a known startup pause, then recover
+        # through only the registered read response and original guarded API.
+        control = f.subject.context()[0]
+        registered = control.scheduler.selection.specs[corrective["native_task_id"]]
+        original_start = control.scheduler.start.start
+
+        def not_ready(*args, **kwargs):
+            from orchestrator.application.task_start_service import TaskStartError
+
+            raise TaskStartError("RUNTIME_NOT_IDLE")
+
+        monkeypatch.setattr(control.scheduler.start, "start", not_ready)
+        runtime = control.runtime(control.delegate.log)
+        paused = await runtime.call_async("task_start", dict(
+            project_id="p", epic_run_id="e", task=registered,
+        ))
+        assert not paused.ok
+        retained = task(control, corrective["local_task_id"])
+        row = next(r for r in paused.data["overview"]["tasks"]
+                   if r["task_run_id"] == retained.id)
+        assert row["task_spec"] == registered
+        assert task(control, "F-01") == original
+        monkeypatch.setattr(control.scheduler.start, "start", original_start)
+        starts = f.sessions.starts
+        recovered = await runtime.call_async("task_start", dict(
+            project_id="p", epic_run_id="e", task=row["task_spec"],
+        ))
+        assert recovered.ok and task(control, corrective["local_task_id"]).id == retained.id
+        assert f.sessions.starts == starts + 1
         control = await deliver_one(f, corrective["native_task_id"], corrective["local_task_id"])
+        assert f.sessions.starts == starts + 1
         receipt2 = await control.epic_completion.complete(f.integration, "e", key="corrected")
         assert receipt2.status == "SUCCEEDED", receipt2
         summary2, document2 = await read_context(f, "review-after")

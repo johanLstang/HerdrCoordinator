@@ -1,0 +1,29 @@
+{
+  "version": 7,
+  "scope": "Standalone harmless capability audit only, not actual native launch or full runtime gate. Older retries used stale parent PID and are diagnostic only; this run uses the current live subprocess parent.",
+  "observed_at": "2026-10-20T11:42:16.336699+00:00",
+  "argv": [
+    "codex",
+    "sandbox",
+    "-P",
+    "herdr-f41-audit",
+    "-c",
+    "permissions.herdr-f41-audit.filesystem={\":root\"=\"deny\",\":minimal\"=\"read\",\":workspace_roots\"={\".\"=\"write\",\".git\"=\"read\",\".codex\"=\"read\",\".agents\"=\"read\",\".aws\"=\"read\"},\"/tmp/herdr-f41-capability-20261020-a5cj8ba8/sandbox-tools\"=\"read\",\"/home/stang/.local/node-v24.18.0-linux-arm64/lib/node_modules/@openai/codex/node_modules/@openai/codex-linux-arm64/vendor/aarch64-unknown-linux-musl/bin/codex\"=\"read\"}",
+    "-c",
+    "permissions.herdr-f41-audit.network.enabled=false",
+    "-c",
+    "shell_environment_policy.set.PATH=\"/tmp/herdr-f41-capability-20261020-a5cj8ba8/sandbox-tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"",
+    "-C",
+    "/tmp/herdr-f41-capability-20261020-a5cj8ba8/work",
+    "python3",
+    "probe.py"
+  ],
+  "path_prefix": "/tmp/herdr-f41-capability-20261020-a5cj8ba8/sandbox-tools",
+  "exit_code": 0,
+  "stdout": "{\"own_write\": true, \"outside_read_errno\": 2, \"protected_state_read_errno\": 2, \"own_git_write_errno\": 30, \"network_bind_errno\": 1, \"host_socket_connect_errno\": 1, \"actual_live_parent_errno\": 3}\n",
+  "stderr": "",
+  "sentinel_preserved": true,
+  "protected_fake_state_preserved": true,
+  "own_git_marker_preserved": true,
+  "operator_pid_was_live_during_child": 3631003
+}

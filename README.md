@@ -424,3 +424,58 @@ bevarar verifierade korrigeringars beroendebevis.
 Se [komposition, säkerhetsgrind och recovery](docs/coordinator/F-40-delivery.md).
 Generell autonomi kräver fortsatt positiv D02/F17-grind; ett separat avgränsat
 manuellt provgodkännande gäller endast sitt konkreta granskningsunderlag.
+
+## Restriktiva sessionsprofiler och Worker-commit (F41)
+
+Valfri intern `CodexExecutionPolicy` binder en session till explicit begränsad
+Linuxprofil, fryst nativebinär och exakt startargv. Worker skriver egen arbetsyta
+och använder en separat registrerad commitservice för egen branch; gemensam
+Git-metadata är skrivskyddad i shell. Coordinator/Integration har läsprofiler och
+sina befintliga rolltjänster. Standardstart utan profilen behåller tidigare beteende.
+
+Det egna MCP-gränssnittet accepterar endast `worker_workspace()` och
+`worker_commit(request_key, message)`, med faktisk task/runtime/slot/PID/SID-
+kontroll och beständig återhämtning efter okänt Git-svar. Detta aktiverar inte
+autonomi ensamt. Se [kontrakt, recovery och det konkreta provets grindar](docs/coordinator/F-41-execution.md).
+F41:s verkliga nativeacceptans är verifierad genom två fullständiga provepics;
+se [slutprov och aktuella kvitton](docs/coordinator/F-41-native.md).
+Utvecklingens Task→E10 och E10:s samlade mainintegration återstår.
+
+Det separata F41-provet väljer också `activate_registered=True` i `EpicStartService`
+och `ack_wait_seconds=5` i dess registrerade scheduler/startkomposition. Efter exakt
+native start-ACK levererar tjänsten en fast, journalförd aktivering till samma
+Integration. Okänt transportsvar observeras utan blind omsändning; claim väntar på
+faktisk leverans. Worker-start, korrigering och input-resume kan kort observera
+samma strikta ACK innan kontrollen lämnas tillbaka till modellen. Standardvärdena
+är av respektive noll; befintliga runtimeintentioner skrivs inte om. Ingen av
+inställningarna ger rätt att committa, granska eller mergea utan ordinarie bevis.
+
+Vid skyddat startåterförsök ger `integration_overview` den egna radens `task_spec`
+för CLAIMED/STARTING. Integration kopierar det exakta registrerade värdet; ändrad
+spec nekas fortfarande. Nya assignmentintentioner börjar i `PREPARED` fram till
+dispatchmarkeringen. Bara bevisat osänd förberedelse får pröva readiness igen;
+`DISPATCH_REQUESTED` och äldre okända resultat observeras utan omsändning.
+Originaldeadline och ACK-/runtimekontroller gäller i alla faser.
+
+Nya assignmentintentioner använder internt dispatchprotokoll2: en fast högst300s
+förberedelsefrist och ännu ingen ACK-deadline i PREPARED. Första ACK-fristen
+(högst45s) skapas en gång vid den enda dispatchmarkeringen. Transient ej-idle
+förberedelse ger WAITING utan send. Äldre sparade protokoll, utgångna frister och
+okända transportutfall återaktiveras inte.
+
+Integration-start kan avstämma ett senare observerat ACK även efter ACK_TIMEOUT
+endast när samma korrelerade native item/turn bevisas levererat inom den
+oförändrade originalfristen. Odaterade eller faktiskt sena svar godtas inte.
+Gamla lyckade kvittensformat bevaras och ingen prompt skickas om.
+
+Integration-startens sista native-/HEAD-kontroll sker före beständig send-intention.
+Känt osänd `RUNTIME_READY` kan återförsökas inom en fast 300s förberedelsefrist,
+satt en gång efter runtime-start. Därefter skapas första ACK-fristen vid den enda
+send-markeringen. Okända gamla send-utfall eller utgångna frister omsänds inte.
+
+`TaskSelectionService.dependency_specs` är en separat valfri operatörskatalog
+för läsande beviskontroll av andra redan levererade epics. Den kan inte leverera
+saknad spec för en ny aktuell task. Tidigare tasks verifieras med sin egen
+registrerade leverans-/reviewkontext, aktuella board och verkliga Git-/stoppbevis.
+En icke-tom katalog ingår i scheduleridentiteten; tom standard ändrar inget äldre
+konfigurationshash.

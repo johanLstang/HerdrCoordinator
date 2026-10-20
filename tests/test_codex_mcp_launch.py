@@ -54,6 +54,7 @@ def test_model_has_no_credentials_env_or_role_schema_and_is_frozen():
     launch = CodexMCPLaunch(command=sys.executable, args=("host.py",))
     assert set(CodexMCPLaunch.model_fields) == {
         "command", "args", "disabled_servers", "disabled_plugins",
+        "auto_approved_tools",
     }
     with pytest.raises(ValidationError):
         launch.args = ("replacement.py",)

@@ -34,6 +34,8 @@ from orchestrator.mcp.contracts import (
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
+    WorkerCommitRequest,
+    WorkerWorkspaceRequest,
 )
 
 
@@ -55,6 +57,18 @@ def create_server(service: RuntimeService) -> Server:
             ),
         ]
     ]
+
+    if service.worker_commit is not None:
+        tools = [Tool(
+            name=name, description=description, input_schema=model.model_json_schema(),
+            output_schema=ToolResponse.model_json_schema(),
+            annotations=ToolAnnotations(read_only_hint=readonly, destructive_hint=False),
+        ) for name, description, model, readonly in [
+            ("worker_workspace", "Read own registered branch, commit and clean state.",
+             WorkerWorkspaceRequest, True),
+            ("worker_commit", "Commit own task bytes through the restricted registered broker.",
+             WorkerCommitRequest, False),
+        ]]
 
     if service.integration_control is not None:
         tools.append(

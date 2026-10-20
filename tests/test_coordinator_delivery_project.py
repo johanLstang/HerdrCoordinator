@@ -200,24 +200,39 @@ def project(epic_setup):  # noqa: F811
     parent = parents[run_id]
 
     def factory(view):
+        policy = next(p for p in policies if p.original.epic_id == view.spec.epic_id)
         specs = {identity: entry.task.model_dump(mode="json") for identity, entry in zip(
             view.native_task_ids, view.spec.tasks, strict=True,
         )}
         all_scopes = {identity: tuple(s.plan.current()[0].tasks[i].task.task_id
                                     for i in range(len(s.plan.current()[0].tasks)))
                       for identity, s in subjects.items()}
+        previous = {identity: s for identity, s in subjects.items()
+                    if identity != view.principal.epic_run_id
+                    and initial.store.get_epic(identity).status == EpicState.DONE}
+        prior_specs = {}
+        for subject in previous.values():
+            prior, native_ids, _ = subject.plan.current()
+            prior_specs.update({identity: entry.task.model_dump(mode="json")
+                                for identity, entry in zip(native_ids, prior.tasks, strict=True)})
         selection = TaskSelectionService(
-            parent.settings, initial.store, reader(adapter, bindings=bindings()), specs=specs,
-            task_order=tuple(specs), epic_prerequisites={view.spec.epic_id: ()},
+            view.settings, initial.store, reader(adapter, bindings=bindings()), specs=specs,
+            task_order=tuple(specs), dependency_specs=prior_specs,
+            epic_prerequisites={view.spec.epic_id: tuple(
+                p.native_epic_id for p in policies
+                if p.original.epic_id in view.spec.dependencies)},
+            delivery_contexts={identity: s.original_start.settings
+                               for identity, s in previous.items()},
+            scopes={identity: all_scopes[identity] for identity in previous},
             codex=peers, processes=peers,
         )
-        sync = TeamPlayerSyncService(parent.settings, initial.store, adapter, project_id="p",
+        sync = TeamPlayerSyncService(view.settings, initial.store, adapter, project_id="p",
                                     external_project_id=P, user_id=U, scopes=all_scopes,
                                     codex=peers, processes=peers)
-        scheduler = TaskSchedulerService(parent.settings, initial.store, selection, sync, peers,
+        scheduler = TaskSchedulerService(view.settings, initial.store, selection, sync, peers,
                                          peers, processes=peers, review_provider=None,
                                          registration=view)
-        completion = EpicCompletionService(view, scheduler, completion_for(policies[0], view.spec))
+        completion = EpicCompletionService(view, scheduler, completion_for(policy, view.spec))
         return IntegrationControlService(view, scheduler, log, epic_completion=completion)
 
     subject = CoordinatorReviewSubject(runtime, parent, policies[0], factory,
@@ -230,7 +245,7 @@ def project(epic_setup):  # noqa: F811
                         integration=parent.principal, policy=policies[0], sessions=peers)
     yield SimpleNamespace(f=f, claims=claims, delivery=delivery, board=board,
                           parents=parents, bindings=bindings, adapter=adapter,
-                          policies=policies, root=root, first_claim=first_claim)
+                          policies=policies, subjects=subjects, root=root, first_claim=first_claim)
 
 
 @pytest.mark.parametrize("corrected", [False, True])
@@ -314,12 +329,41 @@ def test_release_real_claim_and_start_dependent_epic_from_new_main(
         # changing the original root's capability/configuration hash.
         second_subject = CoordinatorReviewSubject(
             service.runtime, p.parents[second.id], p.policies[1],
-            lambda view: pytest.fail("No second handoff requested in this test"),
+            f.subject.factory,
             TeamPlayerCorrectionCreator(p.adapter, project_id=P, epic_id=E2, user_id=U),
         )
         expanded = CoordinatorReviewService(service.runtime,
             {run_id: f.subject, second.id: second_subject}, policies=p.policies)
         assert expanded.configuration_hash == f.review.configuration_hash
+        p.subjects[second.id] = second_subject
+        second_delivery = CoordinatorDeliveryService(expanded, p.claims)
+        second_fixture = SimpleNamespace(
+            review=expanded, subject=second_subject, coordinator=f.coordinator,
+            integration=p.parents[second.id].principal, policy=p.policies[1], sessions=f.sessions,
+        )
+        next_control = second_subject.context()[0]
+        advice = await next_control.scheduler.selection.get_next(
+            second_fixture.integration, second.id,
+        )
+        assert advice["candidates"] == [T2], advice
+        next_control = await deliver_one(second_fixture, T2, "F-02")
+        assert len(service.store.get_tasks(second.id)) == 1
+        await next_control.epic_completion.complete(
+            second_fixture.integration, second.id, key="second-complete",
+        )
+        next_summary, _ = await read_context(second_fixture, "second-final")
+        await expanded.submit(f.coordinator, "p", second.id, "second-approve",
+            ApprovalDecision(version=1, result="APPROVED",
+                context_id=next_summary["context_id"], summary="Verified second actual delivery",
+                verified_criteria=p.policies[1].original.acceptance_criteria))
+        final = await second_delivery.deliver(
+            f.coordinator, "p", second.id, "second-deliver", "second-verify",
+        )
+        assert final["status"] == "DONE", final
+        assert service.store.get_epic(second.id).status == EpicState.DONE
+        assert len(service.store.get_operations(second.id, kind="merge_epic_to_main")) == 1
+        assert p.parents[second.id].lifecycle.reconnect_epic(
+            f.coordinator, second.id)["status"] == "STOPPED"
         service.runtime.connection_principal(f.coordinator)
 
     asyncio.run(run())

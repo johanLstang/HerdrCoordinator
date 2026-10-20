@@ -9,6 +9,7 @@ from copy import deepcopy
 from pydantic import ValidationError
 
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
+from orchestrator.application.ack_observation import validate_wait
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.task_approval_service import TaskApprovalError, TaskApprovalService
 from orchestrator.application.task_attention_service import AttentionError, TaskAttentionService
@@ -47,7 +48,9 @@ class TaskSchedulerService:
         review_provider=None,
         timeout_seconds=45,
         registration=None,
+        ack_wait_seconds=0,
     ):
+        self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.settings, self.store, self.selection, self.sync = settings, store, selection, sync
         if (
             settings != selection.settings
@@ -86,21 +89,30 @@ class TaskSchedulerService:
             "sandbox": herdr.sandbox,
             "timeout_seconds": timeout_seconds,
         }
+        if ack_wait_seconds:
+            configuration["ack_wait_seconds"] = ack_wait_seconds
+        if selection.dependency_specs:
+            configuration["dependency_specs"] = {
+                k: LocalTaskSpec.model_validate(v).model_dump(mode="json")
+                for k, v in selection.dependency_specs.items()
+            }
         self.scheduler_id = (registration.scheduler_identity(configuration)
                              if registration is not None else digest(canonical_json(configuration)))
         self._board = None
         self.start = TaskStartService(
-            settings, store, herdr, codex, processes=processes, claim_guard=self._claim_guard
+            settings, store, herdr, codex, processes=processes, claim_guard=self._claim_guard,
+            ack_wait_seconds=ack_wait_seconds
         )
         self.reports = WorkerReportService(settings, store, herdr, codex)
         self.review = TaskReviewService(settings, store)
         self.approval = TaskApprovalService(settings, store)
-        self.changes = TaskChangesService(settings, store, herdr, codex)
+        self.changes = TaskChangesService(settings, store, herdr, codex,
+                                          ack_wait_seconds=ack_wait_seconds)
         self.merge = TaskMergeService(settings, store, herdr, codex, processes=processes)
         self.attention = TaskAttentionService(
             settings, store, sync, herdr, codex, processes=processes
         )
-        self.resume = TaskResumeService(self.attention)
+        self.resume = TaskResumeService(self.attention, ack_wait_seconds=ack_wait_seconds)
 
     def _scope(self, actor, epic_run_id):
         if self.registration is not None:
