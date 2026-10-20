@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "at": "2026-10-20T19:04:11.532337+00:00",
+  "path": "/home/stang/.local/state/herdr-coordinator/evidence/F-41/herdr-f41-r18-20261020-complete-stopped.tar.gz",
+  "sha256": "a05bff228f6a3e6051855ae1740fe7cfa1fb2a4edbdaa58a663fab14e7ae6f34",
+  "bytes": 905411,
+  "native_final_artifact": "docs/coordinator/F-41-native-final.json",
+  "native_final_sha256": "b21f35002b4a3b75bcd0f9520c647260cc2d57fd6c47bd7b25cc7c9169b92d32",
+  "config": "config-root2.json",
+  "source_files": 91,
+  "all_native_agents_absent": true,
+  "copies_only": true,
+  "original_paths_refs_state_unchanged": true,
+  "retention": "Private forensic copy, not relocated/adopted registered resources; preserve original paths and journals."
+}

@@ -1,0 +1,1287 @@
+{
+  "version": 1,
+  "at": "2026-10-20T19:01:43.819197+00:00",
+  "source_checkpoint": "eae85f1779a602ddbfaa74a4a314d9f9bacee12d",
+  "config": "/tmp/herdr-f41-r18-20261020/config-root2.json",
+  "boundary_hash": "f153123332e92ac95f30c77c564e7f97b49efbfcd73c5f2a90fb978b632a5709",
+  "source_pins": {
+    "src/orchestrator/event_log.py": "d50ae2945a1f4529e1271abdc74995eb7b57f22237352983301b21d0254d9967",
+    "src/orchestrator/cli.py": "e4fdfed7c7096f19a10c2c59ed8299029d40a2dc38f2f76d60854697113d2c30",
+    "src/orchestrator/__init__.py": "b9a288f7c8d33390b639b0a88c7782aa470251e15250bae48e58f3c2719164af",
+    "src/orchestrator/config.py": "f0b6517b96834beb3ab3bfb8da4edc02a83d6c3722d4f7f2dfa58bfb60624bf2",
+    "src/orchestrator/__main__.py": "c80853943cd5ee3a8dec1e4a2abf8c176f157cbc996c33a560aec46272bf0bb8",
+    "src/orchestrator/mcp/principal.py": "17bdb0a85f997c242a2e115e5c1c63dba0425a2c626b665fe4121705e41a1ec9",
+    "src/orchestrator/mcp/contracts.py": "118571d740ddb297037a628b06042573d6b7ce72a512fcfd2dbcd284139bf63a",
+    "src/orchestrator/mcp/server.py": "be338387fd5951b685f698d06e9412496386384d5ddd3a2ee52728fcd35f8049",
+    "src/orchestrator/mcp/__init__.py": "bef622bd46f0d75d74d7febe20b64d59813a7cbe8822f9f1153c3849a8bc8075",
+    "src/orchestrator/adapters/git.py": "15e3932cdb0fb7c05a4f509cbd2ac45735d5d1b1bf0ed53c7dfcda0177e766bb",
+    "src/orchestrator/adapters/processes.py": "682cebef3d2288c948fcfbfcc0f0d1bc2f304a7db7f10219bff7607485dc0f32",
+    "src/orchestrator/adapters/teamplayer_correction.py": "afe1bdeb231b03d3e7cccba332a5f6e075f8fa68542864b8d42b641a061a99b4",
+    "src/orchestrator/adapters/__init__.py": "54302bd9cd006611636f4179b4dbf546e759b65f6b39e331d7322c9e7e293854",
+    "src/orchestrator/adapters/codex.py": "26720918af681f4a81be78ec7fa3d5603c23f64088e5f9acdfd50e8a4dbbf6e4",
+    "src/orchestrator/adapters/teamplayer_mcp.py": "c9ca572c6144fe69c8bdb22d22fb22bbcb6364707e399406b4aaf8a926705523",
+    "src/orchestrator/adapters/herdr.py": "472b806ccb838201a7af6dea9c72df6ea38e1510fd9174eb4fb3eb4adcc00f38",
+    "src/orchestrator/domain/worker_contracts.py": "486898bec25d1ca423fb7b6bd6c490d1735ef1a9c75aa8098a59574c9524d287",
+    "src/orchestrator/domain/states.py": "68b078994ce6e4e844214c3b2f47b660e33c7b544103e81e9bf3aecab72599cc",
+    "src/orchestrator/domain/attention.py": "c59e93051a1eda1b720758f0e4d088df4e53cfea6b71bb8ddd448d4f442b5a38",
+    "src/orchestrator/domain/coordinator_contracts.py": "3de7fa1e11fc8a7bb81dc44381def0e9d86a4994a208ca7e16c78170eb74cc27",
+    "src/orchestrator/domain/review_contracts.py": "18bfffe6d62e1b3f307cb1858bfa55791e6653639e034ea8183927379d9a88de",
+    "src/orchestrator/domain/codex_execution.py": "4337c8b471a74019c3d3bbb6ecf9ec7fdf0cccb8bc933e6a9b52a80bb91ae996",
+    "src/orchestrator/domain/teamplayer.py": "6e19018bd712029e44a9244dcd4478675b74f44620ef8e954c96c186f929418e",
+    "src/orchestrator/domain/coordinator.py": "16c7bbfbab1e980e4f8b2bc0861ae9116e3f5d3439438cbf920dfdb4d8b08227",
+    "src/orchestrator/domain/coordinator_review.py": "ffc1472093f2b87b76fb80e3a5c8660a002ae9cff6b17d48f996a75fd20b8851",
+    "src/orchestrator/domain/__init__.py": "3b79510c763d64599f6e554cafa658e3feffea3d8ca88f56e35a0e60b681dbe8",
+    "src/orchestrator/domain/git_facts.py": "c2a6150f7c452a49ccd17b85f859cd67bd3b2de521d530e3ab084c12ced8194a",
+    "src/orchestrator/domain/integration_contracts.py": "13be526d4377bffd1af73f900d733e9a4bb0b2947a87dba3ba93150ebec906fd",
+    "src/orchestrator/domain/epic_completion.py": "2e433d93d747d8d43d4c58f5da08f0f72bd823995ac3e14eff851c390d3f53ba",
+    "src/orchestrator/domain/policy.py": "9794f58e3c999cdbe2895c6356a605814c2efe3788e1762922c16afd7c46c92b",
+    "src/orchestrator/domain/models.py": "1581b21c7f0f08e5cafad865a0939a756e103786b28e1cbaf197e05d99b6827b",
+    "src/orchestrator/domain/codex_mcp_launch.py": "274c0065c9d15a87d958ae80484c5112583e5642adcf3f50b329a31a54be965a",
+    "src/orchestrator/application/integration_control_service.py": "2f1f73c906b40408af574d74f9a25aba743169a9372256dd9f8a5b7d4c93cd5a",
+    "src/orchestrator/application/review_prompt.py": "1df619a7fe1f6e2a3b4c81e369690b63b8c487e5b4253145fa8d77b86a3e2e88",
+    "src/orchestrator/application/epic_start_service.py": "a44f7048c0aadf428cff091718fb21de3e00a1dac90f144489ebb8c72d15fb6e",
+    "src/orchestrator/application/task_cleanup_service.py": "5476db5f55f1b4c95c1bbd17cce3c736bb068db05a73d10b290b0cc2abaf88cd",
+    "src/orchestrator/application/epic_completion_service.py": "080e5247bf07956020806d9ff730d4726017b529c3b749987728368609f35086",
+    "src/orchestrator/application/task_selection_service.py": "465985b93521631bec391feff9b82448e02b7358499c952181b83addddbb614a",
+    "src/orchestrator/application/worker_report.py": "c788e98914633054ca124103221841a4a3c156334c17a7e171d5aac30db2570e",
+    "src/orchestrator/application/task_start_service.py": "0fc0becb1e76b84a2f90bb8eb60c4d9adb19be8d40f4b30d06e9109de0eebd67",
+    "src/orchestrator/application/state_service.py": "c65efe7fa0add6228331bcfaf01d1ad131759dacbfedb594e91aa9c9166793ae",
+    "src/orchestrator/application/task_delivery_evidence.py": "b45be8ab7b2971a2f3d7b60e79b5d319467b96f6520fa3b99439740f986fd42b",
+    "src/orchestrator/application/runtime_start_service.py": "e63126e6f11105078ff9be3c66547cc95d84217e3e02a0ab2dc8227766c0c4fd",
+    "src/orchestrator/application/runtime_lifecycle_service.py": "504ee206e04ce92682abae4363fec3ba2cfa02708106c9b084579b4abbbee6d5",
+    "src/orchestrator/application/git_review_service.py": "f7f5cb57a154f90f90eec00d464d5b97811c688e75df4a1155f25643991c8a39",
+    "src/orchestrator/application/coordinator_runtime_service.py": "58ee71e20e27cd46867594865646c023e2a3664f50384d95ff6305b119bbdc6d",
+    "src/orchestrator/application/worker_report_service.py": "38c5695e561715b5a94fea3862e33e372525e88b02dccd964b8dae8272f40182",
+    "src/orchestrator/application/task_review_service.py": "021306a6d84f033d2653d82f668dd7156a5939446353880214eb06a52c48edc9",
+    "src/orchestrator/application/runtime_service.py": "680bca8faef1340677f1877ef394ed637c6cb6d519e32a81b1a8103b71b67aea",
+    "src/orchestrator/application/worker_prompt.py": "7817faca597b319dacfa0c19be01897c5140a6b32b700b2bb969c730dc34d54c",
+    "src/orchestrator/application/coordinator_correction_service.py": "adb76e7c46592a90e0751fea761da3efa380e99c8bdb4b440dd795c8a8a48731",
+    "src/orchestrator/application/coordinator_control_service.py": "5e74b270094870d5d15cbe637b2dabcc40094d3df1df6af43f02e5961a6f6f18",
+    "src/orchestrator/application/task_resume_service.py": "f20ad945a6ccba768af869d015c602da2e058ff4f87c5ff4af40e5ebd6274cda",
+    "src/orchestrator/application/epic_integration_service.py": "22cf028892bb095d1c541b124c8151eb382e113f8f9031dcb0ab917ec3535edf",
+    "src/orchestrator/application/epic_correction_plan.py": "37ec9d618b610bbe7c68670e64f2bebf632569825b34527f7fc4c90b61d57479",
+    "src/orchestrator/application/ack_observation.py": "50ae239b74f7231fb8327acca76944f750abfcbad2f11cce773a2422d40d1588",
+    "src/orchestrator/application/task_attention_service.py": "87c44c3a91008eb1b600f346bf82e534b61561c2639310ad61fd8e5594cb73fd",
+    "src/orchestrator/application/teamplayer_evidence.py": "184fd719e95f901f113d7a8caa511787de21cbcfee8b746b9eaccdd00f67fba2",
+    "src/orchestrator/application/teamplayer_reader.py": "4199883d6aed3fe68f1be280d3695c2e500bbed1f8742bc2a2cf66a35c729e8e",
+    "src/orchestrator/application/coordinator_review_service.py": "647d128fbc91bde6b6f77c0e11e2732c33ded01b1298076945a3e4ca0fb9313c",
+    "src/orchestrator/application/task_changes_service.py": "1febe8b1f9ca069f5f77debec4233b33befd067e4317dbf1e9b905e11e0a53b7",
+    "src/orchestrator/application/__init__.py": "40dae748055e6a3acf3a85d0bf91cb1ce9421ac28945ffe6e5827747b91d1b19",
+    "src/orchestrator/application/task_merge_service.py": "3a9db563ff158d9742ca75926a92d8da1bed09723cdc5ccfe3c6bbd87cd6c11f",
+    "src/orchestrator/application/worker_commit_service.py": "f373d8b27e2377a3e71bf35d11a9fedf6e856fa1035b59d91856123e8cacd7f1",
+    "src/orchestrator/application/task_scheduler_service.py": "a306e8429be28d58eae0ae92f7701bdfa6ea50431d48b1ef55aa2a779157485e",
+    "src/orchestrator/application/runtime_assignment_service.py": "21df73b2cf7f257ea259383472591a1786d30066d6f8981c78a78725a5014858",
+    "src/orchestrator/application/git_integration_service.py": "112dc1bd3ba6f48725385cbdab2edbac6e102de399c1517bd52e752617718e76",
+    "src/orchestrator/application/integration_activation_service.py": "15410b325d0890e51c2295677e48c206a36d3ec9e081e78a95414db53fc5996a",
+    "src/orchestrator/application/worktree_service.py": "56dee552e6ef9262a315b6968c723472c547d172d42f5170ae884bec91771081",
+    "src/orchestrator/application/task_resume_intent.py": "eae64910baabc57de465b7d8a8f007e901a9e3aed31faece753814f71c3ead05",
+    "src/orchestrator/application/coordinator_delivery_service.py": "59c50da9924af4b178a6c6414a33916d8b5d536fd4d356189f8e734a0e538676",
+    "src/orchestrator/application/coordinator_review_subject.py": "e449c386883ac69c0af71e299a6ff39119cf71bdef310d633319606b33df20d0",
+    "src/orchestrator/application/task_approval_service.py": "270f7861a7a33e0bd34e5d24266dec93c978de6c778c4b51cd7529bfd6568535",
+    "src/orchestrator/application/teamplayer_sync.py": "5eb9a3da6f6b68b83fd8856e71e3e56d26607e7af4c8f8e6492612399a99fba9",
+    "src/orchestrator/application/worker_slots.py": "7b26ecc01c8a538ea675445f554a09dec69f6c3bb3c353c8d56f5936a16d8428",
+    "src/orchestrator/application/coordinator_claim_service.py": "9002a025c475420f0ad10f2710fce2b5e32bafd36e8e42429ccd494f5428a069",
+    "src/orchestrator/persistence/__init__.py": "f0901e56ad2f99de99e016c2d1aa11aa04207007328fe52b8891b4997f33ed72",
+    "src/orchestrator/persistence/store.py": "1adaa45ebf7571a46cf4b6cb2394c494ee6cb345bd6b67f9b8e673e9be9c72b5",
+    "prompts/worker-v1.md": "cf37c4b75d847d50db855272f6e5099f1b8b1919c366a122f5d6493607c50f61",
+    "prompts/coordinator-delivery-v1.md": "2f1528bb4d3e6ccced650bd3b6a0bf24f9c05b9ed3806f42038e1c7482b62148",
+    "prompts/integration-review-v1.md": "a1186e9902f59ef7bf66a2711c0b025c287e844de9aba61342018d66d5198c94",
+    "prompts/coordinator-v1.md": "7d02271881fe1a0d5cbff0c4c022c06bc54f80be5397a13af6dbe59bb30a76cb",
+    "prompts/coordinator-review-v1.md": "0cf1039d58da0bbfafa94e6c5ace77487231e69260f8b8352280f2c38f36c688",
+    "prompts/AGENTS.md": "b8d3469cf21fdef0263c0e229353ea0825838395c5c35400865d9ad3ac6d3469",
+    "prompts/integration-v1.md": "495f04203c91605493407f259a797b26a92eb7339b0d635dfe04dfc01a6f1ca5",
+    "tests/native_f41_host.py": "2d91565ceb18a1fe7ee621900a2ec5713cdfda408786b26f82085012c646dfd5",
+    "tests/native_f41_probe.py": "8d4f076ff09c1a91404c8d98e935f42e8d23c016c5790ed3ae5fae97f73f62e0",
+    "tests/native_f41_setup.py": "84c66817418c4a6248ccaa859a7beb5c0d4be3477f5e2498f3672d197ab2dd27",
+    "tests/native_f41_gate.py": "89c7035959b2d6f801921cede0a30be11c9833c5f357d8fd57ace87f47c5e3a5",
+    "tests/native_f37_host.py": "c9469aa994e4733d86cefaa1e79bbd4d7cfa530543fb2293003a54f207a06caf",
+    "tests/native_f37_probe.py": "6d5a0fe201b77e18d44d7f02053c7e3880058809e9c3ed4d87ea93dac5c6a2dc"
+  },
+  "main": "e685602d8ea11610035ed25dee853a5c035b9d15",
+  "coordinator": {
+    "id": "884cb072-ff6b-499f-a509-fe050f3dd8d7",
+    "project_id": "f41-r1-8",
+    "actor_id": "f41-r1-coordinator",
+    "branch": "main",
+    "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/repo",
+    "initial_commit": "2631592730a89380712222e2538bc9cbb1780094",
+    "configuration_hash": "ec73ca1458b368e73ea83de853774b12f8a2c148ea21bd3ac7eb91b8a043039e",
+    "status": "STOPPED",
+    "coordinator_agent_id": "hc-c-4fa981fb17184caba3c19265",
+    "herdr_workspace_id": "w1H",
+    "herdr_server_session": "hc-f41-r1-20261020",
+    "herdr_tab_id": "w1H:t1",
+    "herdr_pane_id": "w1H:p1",
+    "herdr_terminal_id": "term_65e49b08a9cb531",
+    "codex_session_id": "01a15a8b-75ec-7381-b0a4-69ed1a1320d1",
+    "started_at": "2026-10-20T18:20:47.710393Z",
+    "completed_at": "2026-10-20T18:58:14.863983Z"
+  },
+  "coordinator_stop": {
+    "id": "a61f3738-ad2a-4571-8871-9cb400b5748e",
+    "kind": "coordinator_stop",
+    "key": "f41-r1-final-root-stop",
+    "status": "SUCCEEDED",
+    "created_at": "2026-10-20T18:57:20.803043+00:00",
+    "updated_at": "2026-10-20T18:58:14.864483+00:00",
+    "error_code": null,
+    "result": {
+      "stage": "STOPPED"
+    }
+  },
+  "epics": [
+    {
+      "run": {
+        "id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "project_id": "f41-r1-8",
+        "epic_id": "F41R18",
+        "branch": "feature/epic-f41r18",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/epic-f41r18",
+        "status": "DONE",
+        "integration_agent_id": "hc-4ab4a41eab134c3091d77203",
+        "herdr_workspace_id": "w1J",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1J:t1",
+        "herdr_pane_id": "w1J:p1",
+        "herdr_terminal_id": "term_65e49b81c290332",
+        "codex_session_id": "01a15a8d-60c7-7b01-b96b-ea3c5fca5bc4",
+        "base_commit": "2631592730a89380712222e2538bc9cbb1780094",
+        "current_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+        "approved_source_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+        "approved_target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+        "merge_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "started_at": "2026-10-20T18:22:52.083163Z",
+        "completed_at": "2026-10-20T18:48:36.680214Z"
+      },
+      "delivery": {
+        "id": "55a73bf2-b390-43f9-8f67-bbe1731f8b43",
+        "kind": "coordinator_epic_delivery",
+        "key": "f41r18-deliver-v1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:48:26.696653+00:00",
+        "updated_at": "2026-10-20T18:48:41.778943+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "RELEASED",
+          "source_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+          "target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+          "merge_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "merge_operation_id": "fe6c408e-ff3f-4c70-b67e-e30e9e9215fa",
+          "review_id": "b743ed32-a45b-4d21-be2a-195469080932",
+          "context_id": "e2b713a6094493ba705575ee0ccfe152c862107a459c440799bbc2641d408bb6",
+          "final_verification_id": "c955d6ac-1cc6-49f7-9cf4-948a1ccd14aa",
+          "stop_operation_id": "42f33d15-8e6e-4188-b85c-30deeb081196",
+          "sync_operation_id": "d44af6cd-6a9b-4567-bce8-11abcea24836",
+          "released_claim_id": "ed494ee9-c5ce-4ff0-8d28-fe8934e359c6",
+          "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72"
+        }
+      },
+      "merge_parents": [
+        "2631592730a89380712222e2538bc9cbb1780094",
+        "04ab78f3b59322e29241ae318b76cc10e3c2e4fd"
+      ],
+      "final_test": {
+        "id": "c955d6ac-1cc6-49f7-9cf4-948a1ccd14aa",
+        "kind": "verify_main_merge",
+        "key": "cd-final-b61c54c483d026fbee1082810ec44bab85fd6ecd6531fb98937859ecbf1945e1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:48:35.187937+00:00",
+        "updated_at": "2026-10-20T18:48:35.493212+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+          "target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "merge_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "command_hash": "278bc27829c0a81f6c6aeaee90bcfbd2fcdfa73e5bb1ba2758f4f0f53301a113",
+          "manifest_hash": "2138a161b94e932b1ff9a48e953b7fe0558e6e6224f00d35438dff3570ef7064",
+          "exit_code": 0
+        }
+      },
+      "startup": {
+        "id": "8f85a70c-9905-4727-8533-fd57a36fa01b",
+        "kind": "epic_start",
+        "key": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:22:53.367720+00:00",
+        "updated_at": "2026-10-20T18:23:27.462816+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "REGISTERED",
+          "deadline": "2026-10-20T18:23:45.730943+00:00",
+          "preparation_deadline": "2026-10-20T18:27:59.935020+00:00",
+          "late_observation_verified": false,
+          "ack": {
+            "turn_id": "01a15a8d-702c-7561-aa90-46f6ec9b1ccc",
+            "item_id": "msg_044316b48e816c5e016ad7b18806208191bb7d4856e060613e",
+            "message_hash": "5ab5722d1240c68788d029d70d3de35f4a6e5e8ea3267fb0b1eb3da1db114c92",
+            "native_observed_at": "2026-10-20T18:23:06.172000+00:00",
+            "session_id": "01a15a8d-60c7-7b01-b96b-ea3c5fca5bc4"
+          }
+        }
+      },
+      "activation": {
+        "id": "c263caab-67e3-4770-950e-8312602583d8",
+        "kind": "integration_activate",
+        "key": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:23:29.851134+00:00",
+        "updated_at": "2026-10-20T18:23:33.688203+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DELIVERED",
+          "delivery": {
+            "session_id": "01a15a8d-60c7-7b01-b96b-ea3c5fca5bc4",
+            "turn_id": "01a15a8d-e494-7260-9bee-f37155757878",
+            "item_id": "01a15a8d-e4f1-74a3-b7cf-fbac292a80bd",
+            "message_hash": "cb8fb43f0c17847495d3f64b80450d398cf5d9edc4bf28dbbb0634e1f907a796"
+          }
+        }
+      },
+      "physical_status": "STOPPED"
+    },
+    {
+      "run": {
+        "id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+        "project_id": "f41-r1-8",
+        "epic_id": "F41NEXT18",
+        "branch": "feature/epic-f41next18",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/epic-f41next18",
+        "status": "DONE",
+        "integration_agent_id": "hc-04941fc8dcbc4e3a8d539923",
+        "herdr_workspace_id": "w1Q",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1Q:t1",
+        "herdr_pane_id": "w1Q:p1",
+        "herdr_terminal_id": "term_65e4a155facba37",
+        "codex_session_id": "01a15aa5-4727-7e23-9a29-95addd350b98",
+        "base_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "current_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+        "approved_source_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+        "approved_target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "merge_commit": "e685602d8ea11610035ed25dee853a5c035b9d15",
+        "started_at": "2026-10-20T18:48:56.526845Z",
+        "completed_at": "2026-10-20T18:56:43.037965Z"
+      },
+      "delivery": {
+        "id": "4c436294-9f31-439c-93fb-b48e4cb6a1f0",
+        "kind": "coordinator_epic_delivery",
+        "key": "f41next18-deliver-v1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:56:33.383964+00:00",
+        "updated_at": "2026-10-20T18:56:47.357154+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "RELEASED",
+          "source_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+          "target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "merge_commit": "e685602d8ea11610035ed25dee853a5c035b9d15",
+          "merge_operation_id": "b417d9c6-b02a-4c0d-9d39-b800de08c05c",
+          "review_id": "26feaaf5-e527-4000-9049-0008493adfb3",
+          "context_id": "ad18660d2d1b959f604b16000e784559a8167c42208800221a4051a89fda1459",
+          "final_verification_id": "b0ff3846-5abc-4d12-ab92-79cf4cb6748d",
+          "stop_operation_id": "109b7104-8ca7-49fd-9566-5be54ea5dcbd",
+          "sync_operation_id": "80e99868-d7ad-49de-852f-2901a598bacf",
+          "released_claim_id": "cdd884eb-bd48-47f9-b88c-9fd23d61516a",
+          "epic_run_id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757"
+        }
+      },
+      "merge_parents": [
+        "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "0c1faac1d52714f2008462c58fe31abc4b0aa028"
+      ],
+      "final_test": {
+        "id": "b0ff3846-5abc-4d12-ab92-79cf4cb6748d",
+        "kind": "verify_main_merge",
+        "key": "cd-final-3b9ea94c91c4b75d286e34b17ea9e6cfa7197b17e138c3980fa97e5c2de86326",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:56:41.674725+00:00",
+        "updated_at": "2026-10-20T18:56:41.908482+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+          "target_commit": "e685602d8ea11610035ed25dee853a5c035b9d15",
+          "merge_commit": "e685602d8ea11610035ed25dee853a5c035b9d15",
+          "command_hash": "c69238f0ffaee5001628ed5213936a812ddc02912288694b790eecf425bf9bf2",
+          "manifest_hash": "980f360bd8a66297ec9091e1c383159e4fdd381fb5aa66430f922f2031ee148c",
+          "exit_code": 0
+        }
+      },
+      "startup": {
+        "id": "c5310a40-99a1-4a02-b843-f03c80b09a7d",
+        "kind": "epic_start",
+        "key": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:48:57.750983+00:00",
+        "updated_at": "2026-10-20T18:50:06.279293+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "REGISTERED",
+          "deadline": "2026-10-20T18:50:14.934343+00:00",
+          "preparation_deadline": "2026-10-20T18:54:03.721668+00:00",
+          "late_observation_verified": false,
+          "ack": {
+            "turn_id": "01a15aa5-affb-7eb1-b151-89253da5660b",
+            "item_id": "msg_053245605ae43c73016ad7b7bc854c819197c64f538e2a9f46",
+            "message_hash": "e0a90232aa674c834d43b2fede709e271227f538beeea0bbfea6f584ca9493c7",
+            "native_observed_at": "2026-10-20T18:49:34.640000+00:00",
+            "session_id": "01a15aa5-4727-7e23-9a29-95addd350b98"
+          }
+        }
+      },
+      "activation": {
+        "id": "1fbde6eb-fed0-457f-b80c-23d87e1c4afa",
+        "kind": "integration_activate",
+        "key": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:50:08.461501+00:00",
+        "updated_at": "2026-10-20T18:50:12.529696+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DELIVERED",
+          "delivery": {
+            "session_id": "01a15aa5-4727-7e23-9a29-95addd350b98",
+            "turn_id": "01a15aa6-48c7-7e60-aba3-131b3b4322f8",
+            "item_id": "01a15aa6-4982-7d83-96ac-6f7e91ae450f",
+            "message_hash": "ab1e4e6b807b8bee07eead1320fd4c3425240c9985a5b859dff01d9628cac791"
+          }
+        }
+      },
+      "physical_status": "STOPPED"
+    }
+  ],
+  "tasks": [
+    {
+      "run": {
+        "id": "b9ebba4b-44aa-46e8-9d7c-92780344d513",
+        "project_id": "f41-r1-8",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "task_id": "A",
+        "branch": "task/f41r18-a",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/task-f41r18-a",
+        "resume_state": null,
+        "internal_status": "DONE",
+        "kanban_status": "Done",
+        "worker_agent_id": "hc-b2388e20096f473995c5407f",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1K",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1K:t1",
+        "herdr_pane_id": "w1K:p1",
+        "herdr_terminal_id": "term_65e49bc657f8033",
+        "codex_session_id": "01a15a8e-8208-73f2-9994-ea2557c7dd37",
+        "base_commit": "2631592730a89380712222e2538bc9cbb1780094",
+        "current_commit": "a87c67b7b8b6f765bc2599fb0055b91fffd180e0",
+        "approved_source_commit": "a87c67b7b8b6f765bc2599fb0055b91fffd180e0",
+        "approved_target_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+        "merge_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+        "started_at": "2026-10-20T18:23:51.299735Z",
+        "completed_at": "2026-10-20T18:30:41.644656Z"
+      },
+      "delivery": {
+        "id": "fcc470ba-1f3f-434e-ace6-5d3b03c79aba",
+        "kind": "task_merge",
+        "key": "f41r18-A-merge-2",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:30:33.548352+00:00",
+        "updated_at": "2026-10-20T18:30:41.646089+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DONE",
+          "source_commit": "a87c67b7b8b6f765bc2599fb0055b91fffd180e0",
+          "target_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+          "merge_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+          "merge_operation_id": "2659cd85-9ddb-4d7a-9954-b9319aac9fd5",
+          "test_id": "2c81856a-93c4-4da4-a010-6b7d3d23a879",
+          "test_key": "fcc470ba-1f3f-434e-ace6-5d3b03c79aba:f41r18-A-merge-verify-2",
+          "stop_id": "13ee4e67-5501-45dc-8e39-80fd8609796a",
+          "review_id": "21cbe5af-cf89-4dea-b527-77fde64907ca",
+          "context_id": "333edf802d5f06f53f66dd2a20528f175f3d0d32416eaa2e02de498535f216eb",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd"
+        }
+      },
+      "merge_parents": [
+        "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+        "a87c67b7b8b6f765bc2599fb0055b91fffd180e0"
+      ],
+      "post_test": {
+        "id": "2c81856a-93c4-4da4-a010-6b7d3d23a879",
+        "kind": "task_delivery_test",
+        "key": "fcc470ba-1f3f-434e-ace6-5d3b03c79aba:f41r18-A-merge-verify-2",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:30:37.313252+00:00",
+        "updated_at": "2026-10-20T18:30:37.579447+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "a87c67b7b8b6f765bc2599fb0055b91fffd180e0",
+          "target_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+          "merge_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd",
+          "exit_code": 0
+        }
+      },
+      "changes": [
+        {
+          "id": "5554771d-f70f-46f7-a447-0a527fadb5f2",
+          "kind": "task_request_changes",
+          "key": "f41r18-A-nfc-correction-1",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:27:47.089096+00:00",
+          "updated_at": "2026-10-20T18:27:56.838189+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "CONFIRMED",
+            "review_id": "5554771d-f70f-46f7-a447-0a527fadb5f2",
+            "session_id": "01a15a8e-8208-73f2-9994-ea2557c7dd37",
+            "task_commit": "03a01244682f0c4f663f4cc335634fd463985ccd",
+            "epic_commit": "2631592730a89380712222e2538bc9cbb1780094",
+            "review_number": 1,
+            "deadline": "2026-10-20T18:28:34.666230+00:00",
+            "ack": {
+              "turn_id": "01a15a91-db60-7292-a2b7-c1eb139bcee2",
+              "item_id": "msg_07ce2a8523053147016ad7b2a88980819184852ee5fc043522",
+              "message_hash": "9cccf601780b528f8e2489f862ba6e8677c096bd7a117566c80845b6e2a59d41",
+              "native_observed_at": "2026-10-20T18:27:54.949000+00:00",
+              "session_id": "01a15a8e-8208-73f2-9994-ea2557c7dd37",
+              "correlation_id": "bd43e6a1-4844-4f84-95c4-93995f7ef458"
+            }
+          }
+        }
+      ],
+      "approvals": [
+        {
+          "id": "21cbe5af-cf89-4dea-b527-77fde64907ca",
+          "kind": "task_approve",
+          "key": "f41r18-A-approve-2",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:30:13.501797+00:00",
+          "updated_at": "2026-10-20T18:30:14.024588+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "APPROVED",
+            "review_id": "21cbe5af-cf89-4dea-b527-77fde64907ca",
+            "context_id": "333edf802d5f06f53f66dd2a20528f175f3d0d32416eaa2e02de498535f216eb",
+            "task_commit": "a87c67b7b8b6f765bc2599fb0055b91fffd180e0",
+            "epic_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+            "review_number": 2,
+            "verification_id": "6d6a9eec-dabd-48b4-b54f-cf0113fd3f98"
+          }
+        }
+      ],
+      "physical_status": "STOPPED"
+    },
+    {
+      "run": {
+        "id": "2971f684-80b9-415a-b011-b9fb2f9758fc",
+        "project_id": "f41-r1-8",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "task_id": "B",
+        "branch": "task/f41r18-b",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/task-f41r18-b",
+        "resume_state": null,
+        "internal_status": "DONE",
+        "kanban_status": "Done",
+        "worker_agent_id": "hc-5940c13964b54b38927634a0",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1M",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1M:t1",
+        "herdr_pane_id": "w1M:p1",
+        "herdr_terminal_id": "term_65e49bdc5811134",
+        "codex_session_id": "01a15a8e-dacf-79f1-85aa-c2bb2a88b7d5",
+        "base_commit": "2631592730a89380712222e2538bc9cbb1780094",
+        "current_commit": "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706",
+        "approved_source_commit": "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706",
+        "approved_target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+        "merge_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+        "started_at": "2026-10-20T18:24:13.166505Z",
+        "completed_at": "2026-10-20T18:28:54.604187Z"
+      },
+      "delivery": {
+        "id": "07644770-fff1-495f-869b-80ed48f1ff0b",
+        "kind": "task_merge",
+        "key": "f41r18-B-merge-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:28:47.346223+00:00",
+        "updated_at": "2026-10-20T18:28:54.605786+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DONE",
+          "source_commit": "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706",
+          "target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+          "merge_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+          "merge_operation_id": "f2aa136c-8acd-41f6-8248-4c58db65ad48",
+          "test_id": "99112fe7-a01e-45b4-bfd1-1f9063614877",
+          "test_key": "07644770-fff1-495f-869b-80ed48f1ff0b:f41r18-B-merge-verify-1",
+          "stop_id": "d9918563-a3db-4b67-8e42-d537f04c2e11",
+          "review_id": "21346c7c-50d1-43ad-9ded-f56c02732acb",
+          "context_id": "777e57255d893c3c787c1c5711d6df559ce796fdc02e01993baed573f6423662",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd"
+        }
+      },
+      "merge_parents": [
+        "2631592730a89380712222e2538bc9cbb1780094",
+        "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706"
+      ],
+      "post_test": {
+        "id": "99112fe7-a01e-45b4-bfd1-1f9063614877",
+        "kind": "task_delivery_test",
+        "key": "07644770-fff1-495f-869b-80ed48f1ff0b:f41r18-B-merge-verify-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:28:50.584358+00:00",
+        "updated_at": "2026-10-20T18:28:50.868092+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706",
+          "target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+          "merge_commit": "8d5b020f53a9b53ce7d1b8d44e61f342b1375586",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd",
+          "exit_code": 0
+        }
+      },
+      "changes": [],
+      "approvals": [
+        {
+          "id": "21346c7c-50d1-43ad-9ded-f56c02732acb",
+          "kind": "task_approve",
+          "key": "f41r18-B-approve-1",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:28:21.860110+00:00",
+          "updated_at": "2026-10-20T18:28:27.539942+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "APPROVED",
+            "review_id": "21346c7c-50d1-43ad-9ded-f56c02732acb",
+            "context_id": "777e57255d893c3c787c1c5711d6df559ce796fdc02e01993baed573f6423662",
+            "task_commit": "ed466c6c916fc5eacd48c0e7aa55d1f04a33d706",
+            "epic_commit": "2631592730a89380712222e2538bc9cbb1780094",
+            "review_number": 1,
+            "verification_id": "c113588e-ba88-4762-b186-c76ce15321f0"
+          }
+        }
+      ],
+      "physical_status": "STOPPED"
+    },
+    {
+      "run": {
+        "id": "3eb25bbd-2d6c-4e4e-9ccf-a87c46e9db98",
+        "project_id": "f41-r1-8",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "task_id": "C",
+        "branch": "task/f41r18-c",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/task-f41r18-c",
+        "resume_state": null,
+        "internal_status": "DONE",
+        "kanban_status": "Done",
+        "worker_agent_id": "hc-f4a080cc0c5f447fb936a881",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1N",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1N:t1",
+        "herdr_pane_id": "w1N:p1",
+        "herdr_terminal_id": "term_65e49d66ffca735",
+        "codex_session_id": "01a15a95-2de5-7b60-8b02-982a2f08d6b9",
+        "base_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+        "current_commit": "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc",
+        "approved_source_commit": "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc",
+        "approved_target_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+        "merge_commit": "9ede254626f194dc1c24253a94af534576667787",
+        "started_at": "2026-10-20T18:31:00.890000Z",
+        "completed_at": "2026-10-20T18:33:46.658865Z"
+      },
+      "delivery": {
+        "id": "2a154188-6966-4f4c-a827-085d77956e6c",
+        "kind": "task_merge",
+        "key": "f41r18-C-merge-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:33:38.181504+00:00",
+        "updated_at": "2026-10-20T18:33:46.659364+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DONE",
+          "source_commit": "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc",
+          "target_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+          "merge_commit": "9ede254626f194dc1c24253a94af534576667787",
+          "merge_operation_id": "febe2b43-7a5b-484c-8c7b-01c098fd5072",
+          "test_id": "1ea254c1-d81b-4766-82fa-b34e646a3d55",
+          "test_key": "2a154188-6966-4f4c-a827-085d77956e6c:f41r18-C-merge-verify-1",
+          "stop_id": "bbe8f17e-ff7b-4b09-a2ae-7158a9b5d9c2",
+          "review_id": "f306e8c5-650f-42ea-87ff-7db5e0fc4a2b",
+          "context_id": "65d517c59d46ef0739f9f5f2f737348f29c153dca2dc411efc6c0ae17c78f454",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd"
+        }
+      },
+      "merge_parents": [
+        "ef759072e668607170038ebfbf574f44b673c94f",
+        "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc"
+      ],
+      "post_test": {
+        "id": "1ea254c1-d81b-4766-82fa-b34e646a3d55",
+        "kind": "task_delivery_test",
+        "key": "2a154188-6966-4f4c-a827-085d77956e6c:f41r18-C-merge-verify-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:33:42.662882+00:00",
+        "updated_at": "2026-10-20T18:33:42.926242+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc",
+          "target_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+          "merge_commit": "9ede254626f194dc1c24253a94af534576667787",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd",
+          "exit_code": 0
+        }
+      },
+      "changes": [],
+      "approvals": [
+        {
+          "id": "f306e8c5-650f-42ea-87ff-7db5e0fc4a2b",
+          "kind": "task_approve",
+          "key": "f41r18-C-approve-1",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:33:16.001709+00:00",
+          "updated_at": "2026-10-20T18:33:16.535857+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "APPROVED",
+            "review_id": "f306e8c5-650f-42ea-87ff-7db5e0fc4a2b",
+            "context_id": "65d517c59d46ef0739f9f5f2f737348f29c153dca2dc411efc6c0ae17c78f454",
+            "task_commit": "5eaa059fd8133313fd5cd3eb5cefb40a6c8356dc",
+            "epic_commit": "ef759072e668607170038ebfbf574f44b673c94f",
+            "review_number": 1,
+            "verification_id": "160218fc-a62c-4455-bc8a-abb651b79653"
+          }
+        }
+      ],
+      "physical_status": "STOPPED"
+    },
+    {
+      "run": {
+        "id": "a2b882d7-c396-453e-a1c2-d99199eeeabe",
+        "project_id": "f41-r1-8",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+        "task_id": "PUBLIC-r1",
+        "branch": "task/f41r18-public-r1",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/task-f41r18-public-r1",
+        "resume_state": null,
+        "internal_status": "DONE",
+        "kanban_status": "Done",
+        "worker_agent_id": "hc-f304c4491bda4e45ab6ff555",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1P",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1P:t1",
+        "herdr_pane_id": "w1P:p1",
+        "herdr_terminal_id": "term_65e49f0bd2cab36",
+        "codex_session_id": "01a15a9b-e500-7211-a307-03e981636867",
+        "base_commit": "9ede254626f194dc1c24253a94af534576667787",
+        "current_commit": "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6",
+        "approved_source_commit": "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6",
+        "approved_target_commit": "9ede254626f194dc1c24253a94af534576667787",
+        "merge_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+        "started_at": "2026-10-20T18:38:29.419506Z",
+        "completed_at": "2026-10-20T18:42:46.844014Z"
+      },
+      "delivery": {
+        "id": "70c64609-1a88-4164-ae17-21a544011d27",
+        "kind": "task_merge",
+        "key": "f41r18-public-r1-merge-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:42:37.767499+00:00",
+        "updated_at": "2026-10-20T18:42:46.844409+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DONE",
+          "source_commit": "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6",
+          "target_commit": "9ede254626f194dc1c24253a94af534576667787",
+          "merge_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+          "merge_operation_id": "02c44cc1-f850-424c-9243-9ed9a40a5c7b",
+          "test_id": "de082c09-adca-4ddd-9254-c16c9d1be6c0",
+          "test_key": "70c64609-1a88-4164-ae17-21a544011d27:f41r18-public-r1-merge-verify-1",
+          "stop_id": "d84d91d1-5f69-4dcd-91ad-17f17f65c4d5",
+          "review_id": "f9284b6e-1c28-4c80-9b42-b4418c666232",
+          "context_id": "4d2fd5a2c46f54cf24af7310ed3041675fe717ddc759e5839d9539ffefea504a",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd"
+        }
+      },
+      "merge_parents": [
+        "9ede254626f194dc1c24253a94af534576667787",
+        "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6"
+      ],
+      "post_test": {
+        "id": "de082c09-adca-4ddd-9254-c16c9d1be6c0",
+        "kind": "task_delivery_test",
+        "key": "70c64609-1a88-4164-ae17-21a544011d27:f41r18-public-r1-merge-verify-1",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:42:43.132558+00:00",
+        "updated_at": "2026-10-20T18:42:43.479651+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6",
+          "target_commit": "9ede254626f194dc1c24253a94af534576667787",
+          "merge_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+          "command_hash": "03fb62c80f8172a5ad99a39017f272a6fe0768f92f01eba53105fcd17259c6fd",
+          "exit_code": 0
+        }
+      },
+      "changes": [],
+      "approvals": [
+        {
+          "id": "f9284b6e-1c28-4c80-9b42-b4418c666232",
+          "kind": "task_approve",
+          "key": "f41r18-public-r1-approve-1",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:42:18.518755+00:00",
+          "updated_at": "2026-10-20T18:42:19.205945+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "APPROVED",
+            "review_id": "f9284b6e-1c28-4c80-9b42-b4418c666232",
+            "context_id": "4d2fd5a2c46f54cf24af7310ed3041675fe717ddc759e5839d9539ffefea504a",
+            "task_commit": "87c4c6e4038ee46e054bc67b6b7b4cc64df5a9f6",
+            "epic_commit": "9ede254626f194dc1c24253a94af534576667787",
+            "review_number": 1,
+            "verification_id": "dd5e3317-8048-40e5-a9a4-19739f0d2fca"
+          }
+        }
+      ],
+      "physical_status": "STOPPED"
+    },
+    {
+      "run": {
+        "id": "902a6613-4fee-4b12-9e88-99d39d452e5a",
+        "project_id": "f41-r1-8",
+        "epic_run_id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+        "task_id": "D",
+        "branch": "task/f41next18-d",
+        "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/task-f41next18-d",
+        "resume_state": null,
+        "internal_status": "DONE",
+        "kanban_status": "Done",
+        "worker_agent_id": "hc-dfb25d45bba14bdda9f97ad3",
+        "worker_slot": null,
+        "herdr_workspace_id": "w1R",
+        "herdr_server_session": "hc-f41-r1-20261020",
+        "herdr_tab_id": "w1R:t1",
+        "herdr_pane_id": "w1R:p1",
+        "herdr_terminal_id": "term_65e4a1c14c0d038",
+        "codex_session_id": "01a15aa6-fd5c-77e1-ba71-9e71a682c663",
+        "base_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "current_commit": "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90",
+        "approved_source_commit": "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90",
+        "approved_target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "merge_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+        "started_at": "2026-10-20T18:50:35.686246Z",
+        "completed_at": "2026-10-20T18:53:53.198817Z"
+      },
+      "delivery": {
+        "id": "cd442277-eaa3-48f2-87bc-03cb30230543",
+        "kind": "task_merge",
+        "key": "merge-D-9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:53:43.805328+00:00",
+        "updated_at": "2026-10-20T18:53:53.199282+00:00",
+        "error_code": null,
+        "result": {
+          "stage": "DONE",
+          "source_commit": "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90",
+          "target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "merge_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+          "merge_operation_id": "3cf42a94-0b46-4169-ad1b-3c4a17558a13",
+          "test_id": "099a0d29-766a-46e4-8222-5e7a4bdef437",
+          "test_key": "cd442277-eaa3-48f2-87bc-03cb30230543:merge-verify-D-9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+          "stop_id": "8f65ec76-8b47-4b07-b7b2-dcb7096ee51b",
+          "review_id": "83369607-cba8-48f0-bd21-16c1407e6a51",
+          "context_id": "9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+          "command_hash": "893ae993c0b3364b784e2a3736ab1fa8accce405efeb932697088d48f9427788"
+        }
+      },
+      "merge_parents": [
+        "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+        "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90"
+      ],
+      "post_test": {
+        "id": "099a0d29-766a-46e4-8222-5e7a4bdef437",
+        "kind": "task_delivery_test",
+        "key": "cd442277-eaa3-48f2-87bc-03cb30230543:merge-verify-D-9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+        "status": "SUCCEEDED",
+        "created_at": "2026-10-20T18:53:47.803821+00:00",
+        "updated_at": "2026-10-20T18:53:48.170353+00:00",
+        "error_code": null,
+        "result": {
+          "source_commit": "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90",
+          "target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+          "merge_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+          "command_hash": "893ae993c0b3364b784e2a3736ab1fa8accce405efeb932697088d48f9427788",
+          "exit_code": 0
+        }
+      },
+      "changes": [],
+      "approvals": [
+        {
+          "id": "83369607-cba8-48f0-bd21-16c1407e6a51",
+          "kind": "task_approve",
+          "key": "approve-D-9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+          "status": "SUCCEEDED",
+          "created_at": "2026-10-20T18:53:22.207460+00:00",
+          "updated_at": "2026-10-20T18:53:22.976907+00:00",
+          "error_code": null,
+          "result": {
+            "stage": "APPROVED",
+            "review_id": "83369607-cba8-48f0-bd21-16c1407e6a51",
+            "context_id": "9c3b87ec6d19a60693ce3255c585aed940d71f82c665361ff18b6bf967dfc330",
+            "task_commit": "ed6d7cbee753387e7333e4ca06f47dbaf4a2cf90",
+            "epic_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+            "review_number": 1,
+            "verification_id": "71acbe54-c620-41fe-9712-0abc02bc8cec"
+          }
+        }
+      ],
+      "physical_status": "STOPPED"
+    }
+  ],
+  "contexts": [
+    {
+      "context_id": "b89647a66e051d0aaf169afcf9b248f3af0af9254a5e7d2e50d5e96f143b84fd",
+      "source_commit": "9ede254626f194dc1c24253a94af534576667787",
+      "target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+      "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+      "chunk_count": 6,
+      "read_receipt_ids": [
+        "0bd8f93b-8131-4752-aeb2-d44c6673d859",
+        "d35f74e3-dda6-4f46-90b3-405dc84d3e2b",
+        "f73f9750-7c70-4f9d-b586-5ba84c16208f",
+        "7056f075-dde1-4429-b05c-4a5be4782d61",
+        "2bbb11a1-9c86-42ae-8b6c-d35027166e51",
+        "27a2e750-d927-4e79-8305-f7cea0c20439"
+      ],
+      "independent_status": "FAILED",
+      "independent_exit_code": 1,
+      "independent_id": "92765da8-accb-40ba-8669-20051c21d8ff"
+    },
+    {
+      "context_id": "e2b713a6094493ba705575ee0ccfe152c862107a459c440799bbc2641d408bb6",
+      "source_commit": "04ab78f3b59322e29241ae318b76cc10e3c2e4fd",
+      "target_commit": "2631592730a89380712222e2538bc9cbb1780094",
+      "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+      "chunk_count": 8,
+      "read_receipt_ids": [
+        "62d3a45a-a043-4479-a13f-3e095a5a6484",
+        "04d1d777-4741-4caf-a267-07ac39d90b35",
+        "02e0f0d7-e0f9-4417-a898-3e79a7ac330e",
+        "ed5a53e7-e606-456a-90fd-3ce78632d176",
+        "afdc4550-b9bd-4c21-af41-2ae8d8dd2ebf",
+        "be67cc67-1f70-4f61-a81b-988268dd18c0",
+        "d48660f9-c595-4b04-8dba-99a4f179416f",
+        "2c085449-2599-4dcb-8d00-6aeeac303195"
+      ],
+      "independent_status": "SUCCEEDED",
+      "independent_exit_code": 0,
+      "independent_id": "58b1a143-779d-4ae4-a08e-251628f5ad41"
+    },
+    {
+      "context_id": "ad18660d2d1b959f604b16000e784559a8167c42208800221a4051a89fda1459",
+      "source_commit": "0c1faac1d52714f2008462c58fe31abc4b0aa028",
+      "target_commit": "1ddaa78c7b867de89d7c322debfbf2385abf5571",
+      "epic_run_id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+      "chunk_count": 3,
+      "read_receipt_ids": [
+        "04109011-e920-45b3-bac8-3a4e5c88b6e0",
+        "1b6df821-cc3e-4a84-90b0-cfafcee8c1c2",
+        "9dd0342c-8d99-47f3-bfdf-0666f83a19e2"
+      ],
+      "independent_status": "SUCCEEDED",
+      "independent_exit_code": 0,
+      "independent_id": "dc2ac1ad-fed8-445d-8b10-8d443a4a4d81"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "a1e796e3-2be5-4aba-812d-62d2949bd322",
+      "kind": "coordinator_epic_review",
+      "key": "f41r18-review-changes-public-api-v1",
+      "status": "SUCCEEDED",
+      "created_at": "2026-10-20T18:37:49.292077+00:00",
+      "updated_at": "2026-10-20T18:37:52.050979+00:00",
+      "error_code": null,
+      "result": {
+        "stage": "EPIC_CHANGES_REQUESTED",
+        "context_id": "b89647a66e051d0aaf169afcf9b248f3af0af9254a5e7d2e50d5e96f143b84fd",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72"
+      },
+      "decision": {
+        "version": 1,
+        "result": "CHANGES_REQUESTED",
+        "context_id": "b89647a66e051d0aaf169afcf9b248f3af0af9254a5e7d2e50d5e96f143b84fd",
+        "issues": [
+          {
+            "number": 1,
+            "problem": "At epic commit 9ede254626f194dc1c24253a94af534576667787 the complete main/epic diff contains labels.py, totals.py and caption.py but no api.py. Task C explicitly leaves that aggregate criterion unimplemented, and current independent epic verification is FAILED with TEST_FAILED and exit code 1. The required public exports are absent.",
+            "requested_change": "Use the registered public-api correction to add api.py exporting normalize_label, even_total and caption, with real public API tests exercising the reviewed functions and validation. Preserve earlier Done implementations and delivery evidence, then obtain a fresh aggregate handoff and independent verification.",
+            "acceptance_criteria": [
+              "Public api.py exports normalize_label, even_total and caption"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "b743ed32-a45b-4d21-be2a-195469080932",
+      "kind": "coordinator_epic_review",
+      "key": "f41r18-review-approve-corrected-v1",
+      "status": "SUCCEEDED",
+      "created_at": "2026-10-20T18:47:56.468142+00:00",
+      "updated_at": "2026-10-20T18:47:59.338509+00:00",
+      "error_code": null,
+      "result": {
+        "stage": "EPIC_APPROVED",
+        "context_id": "e2b713a6094493ba705575ee0ccfe152c862107a459c440799bbc2641d408bb6",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72"
+      },
+      "decision": {
+        "version": 1,
+        "result": "APPROVED",
+        "context_id": "e2b713a6094493ba705575ee0ccfe152c862107a459c440799bbc2641d408bb6",
+        "summary": "Read all eight chunks of the current review for 04ab78f3b59322e29241ae318b76cc10e3c2e4fd against main 2631592730a89380712222e2538bc9cbb1780094, including full diff, effective plan, all four task results and limitations. labels validates and NFC-normalizes, totals rejects invalid containers/elements and bool while summing even integers, and caption composes both with exact formatting. README and tests establish decomposed A-ring input producing Åsa: 4. api.py directly exports all three reviewed functions; PUBLIC-r1 adds real public-import behavior and validation tests while preserving A-C. All task delivery tests, aggregate build/test/acceptance and current independent verification 58b1a143-779d-4ae4-a08e-251628f5ad41 succeeded with exit 0. The stated baseline coverage limitation is addressed by full code review, public API tests and current independent verification.",
+        "verified_criteria": [
+          "Unicode labels and validated even totals work together",
+          "Caption and README example produce 'Åsa: 4'",
+          "Public api.py exports normalize_label, even_total and caption"
+        ]
+      }
+    },
+    {
+      "id": "26feaaf5-e527-4000-9049-0008493adfb3",
+      "kind": "coordinator_epic_review",
+      "key": "f41next18-review-approve-v1",
+      "status": "SUCCEEDED",
+      "created_at": "2026-10-20T18:56:10.472240+00:00",
+      "updated_at": "2026-10-20T18:56:12.916228+00:00",
+      "error_code": null,
+      "result": {
+        "stage": "EPIC_APPROVED",
+        "context_id": "ad18660d2d1b959f604b16000e784559a8167c42208800221a4051a89fda1459",
+        "epic_run_id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757"
+      },
+      "decision": {
+        "version": 1,
+        "result": "APPROVED",
+        "context_id": "ad18660d2d1b959f604b16000e784559a8167c42208800221a4051a89fda1459",
+        "summary": "Read all three chunks of the complete current review at 0c1faac1d52714f2008462c58fe31abc4b0aa028 against delivered main 1ddaa78c7b867de89d7c322debfbf2385abf5571. The complete diff adds only report.py and tests/test_report.py. report imports caption from the previous delivered api and returns 'Report '+caption(name,values). The exact decomposed A-ring acceptance example produces Report Åsa: 4; tests also verify zero/negative totals and propagated input validation. Task D delivery testing and aggregate build/test/acceptance succeeded with exit 0. Current independent verification dc2ac1ad-fed8-445d-8b10-8d443a4a4d81 succeeded with exit 0 against the exact source and delivered main. No known limitations are recorded.",
+        "verified_criteria": [
+          "report(' Åsa ',[2,3,4,-2]) equals 'Report Åsa: 4'"
+        ]
+      }
+    }
+  ],
+  "corrections": [
+    {
+      "id": "d6fa60a4-40e8-4ef1-a6eb-2f1540144fdb",
+      "kind": "coordinator_epic_correction",
+      "key": "a1e796e3-2be5-4aba-812d-62d2949bd322:1",
+      "status": "SUCCEEDED",
+      "created_at": "2026-10-20T18:37:54.555878+00:00",
+      "updated_at": "2026-10-20T18:38:05.458191+00:00",
+      "error_code": null,
+      "result": {
+        "stage": "DISPATCHED",
+        "native_task_id": "78d81860-a955-485b-82af-aa7075957ed4",
+        "dispatch_session_id": "01a15a8d-60c7-7b01-b96b-ea3c5fca5bc4",
+        "dispatch_turn": "01a15a9b-39ca-7821-bc18-e5fae28d3381",
+        "dispatch_item": "01a15a9b-3a45-76c1-9c37-6588cb04d80f",
+        "dispatch_hash": "4d41f48a992be5cfc60254102cc868c06a030d7db680566ffa2154fd79bfd804",
+        "epic_run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72"
+      }
+    }
+  ],
+  "native_tools": [
+    {
+      "run_id": "884cb072-ff6b-499f-a509-fe050f3dd8d7",
+      "sid": "01a15a8b-75ec-7381-b0a4-69ed1a1320d1",
+      "thread_sha256": "7c42945cd52a2ee11b793f3cbc982e2f15aa3a31c92e19557c36923cd4a5b207",
+      "tools": {
+        "coordinator_overview": 7,
+        "epic_claim_next": 2,
+        "coordinator_review_context": 25,
+        "coordinator_review_read": 21,
+        "coordinator_review_submit": 3,
+        "coordinator_epic_deliver": 4
+      },
+      "command_count": 0,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "b5736a6d-aa7e-4613-aaca-9e1f6fe7be72",
+      "sid": "01a15a8d-60c7-7b01-b96b-ea3c5fca5bc4",
+      "thread_sha256": "ff405edac7496bffa534359a7b6f92dc225bb8a6aeb5f8db97eafdbe9ed4e4f1",
+      "tools": {
+        "integration_overview": 6,
+        "task_schedule": 7,
+        "task_start": 4,
+        "task_review_request": 5,
+        "task_request_changes": 1,
+        "task_approve": 4,
+        "task_merge": 4,
+        "epic_complete": 2
+      },
+      "command_count": 0,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "c56e4d4e-ff6c-4a7b-89f7-3dc2d70af757",
+      "sid": "01a15aa5-4727-7e23-9a29-95addd350b98",
+      "thread_sha256": "1d29c5b825390c0bda81ae4aedac5496d81cc54e8619e67721a5994e2cae6742",
+      "tools": {
+        "integration_overview": 2,
+        "task_schedule": 3,
+        "task_start": 1,
+        "task_review_request": 1,
+        "task_approve": 1,
+        "task_merge": 1,
+        "epic_complete": 1
+      },
+      "command_count": 2,
+      "non_worker_commands": [
+        {
+          "command": "/bin/bash -lc 'cat AGENTS.md'",
+          "cwd": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/epic-f41next18",
+          "status": "completed",
+          "exitCode": 0
+        },
+        {
+          "command": "/bin/bash -lc 'cat README.md'",
+          "cwd": "/tmp/herdr-f41-r18-20261020/fixture/worktrees/f41-r1-8/epic-f41next18",
+          "status": "completed",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "run_id": "2971f684-80b9-415a-b011-b9fb2f9758fc",
+      "sid": "01a15a8e-dacf-79f1-85aa-c2bb2a88b7d5",
+      "thread_sha256": "b40923b879eefba443b1a7777e714fa7091748a7fd33fac4368ee6b18895ecbe",
+      "tools": {
+        "worker_workspace": 2,
+        "worker_commit": 1
+      },
+      "command_count": 3,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "3eb25bbd-2d6c-4e4e-9ccf-a87c46e9db98",
+      "sid": "01a15a95-2de5-7b60-8b02-982a2f08d6b9",
+      "thread_sha256": "da087e50987fda0b909a216840af7bdd0841c389b0f022d22cecfbe7b8592b9a",
+      "tools": {
+        "worker_workspace": 3,
+        "worker_commit": 1
+      },
+      "command_count": 5,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "902a6613-4fee-4b12-9e88-99d39d452e5a",
+      "sid": "01a15aa6-fd5c-77e1-ba71-9e71a682c663",
+      "thread_sha256": "70bb3326f397639384a5970644e6f6ae9c205d94b6254f651c6b0f06d3edfe63",
+      "tools": {
+        "worker_workspace": 2,
+        "worker_commit": 1
+      },
+      "command_count": 3,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "a2b882d7-c396-453e-a1c2-d99199eeeabe",
+      "sid": "01a15a9b-e500-7211-a307-03e981636867",
+      "thread_sha256": "063d23973abc7c87b9932d553cb847011fe8306a0f8319f3ca53b117402ac279",
+      "tools": {
+        "worker_workspace": 4,
+        "worker_commit": 6
+      },
+      "command_count": 4,
+      "non_worker_commands": []
+    },
+    {
+      "run_id": "b9ebba4b-44aa-46e8-9d7c-92780344d513",
+      "sid": "01a15a8e-8208-73f2-9994-ea2557c7dd37",
+      "thread_sha256": "7251a5e2fb5fab0b798a4b86afb2f22e1fcb6a986f2ddedd99e69d6ea336ef8d",
+      "tools": {
+        "worker_workspace": 4,
+        "worker_commit": 2
+      },
+      "command_count": 8,
+      "non_worker_commands": []
+    }
+  ],
+  "timeline": {
+    "sha256": "8fa1e8b017859012b18ff2a0c20c876155b1f18fcef962a8a7636287a6014827",
+    "samples": 673,
+    "maximum_worker_slots": 2,
+    "two_reserved_samples": 58,
+    "maximum_unfinished_epics": 1,
+    "observer_note": "Observer restarted after transient SQLite read error; core operation journals and native threads remain authoritative. Two reserved runtimes include waiting/review; no claim of two simultaneously computing native turns from R18."
+  },
+  "actual_concurrent_working_prior_proof": {
+    "path": "/tmp/herdr-f41-r16-20261020/actual-two-workers.json",
+    "qualification": "Earlier R16 native proof. Current R18 capacity/role/Done evidence is above; this earlier working overlap is not represented as current source acceptance."
+  },
+  "gate_receipt": {
+    "version": 1,
+    "boundary_hash": "f153123332e92ac95f30c77c564e7f97b49efbfcd73c5f2a90fb978b632a5709",
+    "configuration_hash": "ec73ca1458b368e73ea83de853774b12f8a2c148ea21bd3ac7eb91b8a043039e",
+    "main_commit": "e685602d8ea11610035ed25dee853a5c035b9d15",
+    "preflight": {
+      "task_run_id": "8ea65e34-843a-4f40-b9e2-07f7ad0ed782",
+      "session_id": "01a15a85-0792-7072-9eef-d7eba7a44c99",
+      "commit": "c6ded6cc67c5a22332d2defcd02c8f1ee39f1ca5",
+      "operation_id": "5467a3d3-48ee-4c83-a7f0-3b385b3a087c",
+      "thread_sha256": "a8a7fa5cc16dfc843f6533159494a5fccab0ccd8534ab8cc5d527d935ef2b165"
+    },
+    "measurements": {
+      "worker": {
+        "git": 30,
+        "host_network": 1,
+        "network": 1,
+        "outside": 2,
+        "own": true,
+        "parent": 3,
+        "socket": 1,
+        "state": 2
+      },
+      "coordinator": {
+        "git": 30,
+        "host_network": 1,
+        "network": 1,
+        "outside": 2,
+        "own": 30,
+        "parent": 3,
+        "socket": 1,
+        "state": 2
+      },
+      "integration": {
+        "git": 30,
+        "host_network": 1,
+        "network": 1,
+        "outside": 2,
+        "own": 30,
+        "parent": 3,
+        "socket": 1,
+        "state": 2
+      },
+      "test_process": {
+        "git": 30,
+        "host_network": 111,
+        "network": true,
+        "outside": 2,
+        "own": 30,
+        "parent": 3,
+        "socket": 2,
+        "state": 2
+      }
+    },
+    "measured_at": "2026-10-20T18:57:10.492844+00:00"
+  },
+  "initial_unverified_root": {
+    "at": "2026-10-20T18:20:35.651541+00:00",
+    "old_run": {
+      "id": "dbe480d4-caf1-4268-a667-def9d6b87386",
+      "project_id": "f41-r1-8",
+      "actor_id": "f41-r1-coordinator",
+      "branch": "main",
+      "worktree_path": "/tmp/herdr-f41-r18-20261020/fixture/repo",
+      "initial_commit": "2631592730a89380712222e2538bc9cbb1780094",
+      "configuration_hash": "27713829b0cc266137b78301ab48680b433a5dcfb321044c3eb67b23ea062308",
+      "status": "STOPPED",
+      "coordinator_agent_id": "hc-c-c39af83e94fe410b9f76329d",
+      "herdr_workspace_id": "w1G",
+      "herdr_server_session": "hc-f41-r1-20261020",
+      "herdr_tab_id": "w1G:t1",
+      "herdr_pane_id": "w1G:p1",
+      "herdr_terminal_id": "term_65e4999ab104730",
+      "codex_session_id": null,
+      "started_at": "2026-10-20T18:14:23.945911Z",
+      "completed_at": "2026-10-20T18:19:48.043745Z"
+    },
+    "original_config": "/tmp/herdr-f41-r18-20261020/config.json",
+    "new_config": "/tmp/herdr-f41-r18-20261020/config-root2.json",
+    "new_run": "884cb072-ff6b-499f-a509-fe050f3dd8d7",
+    "reason": "Original unknown startup retained without resend. Physical STOPPED verified. No epic/task runs or claims exist. Fresh explicit operator registration in same approved fixture and unchanged source/profiles; original preflight proof remains actual and stopped."
+  },
+  "audit_db_changes": 0,
+  "teamplayer_fresh_readback": {
+    "authenticated": {
+      "userId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+      "displayName": "blitterbot@gmail.com",
+      "email": "blitterbot@gmail.com"
+    },
+    "project": {
+      "projectId": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+      "name": "HerdrCoordinator",
+      "access": "Write"
+    },
+    "tasks": [
+      {
+        "taskId": "bd891dc4-9f70-438f-8d1c-7223fe81fe0b",
+        "status": "Done",
+        "version": 11,
+        "executionOwnerKind": "User",
+        "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+        "epicId": "0b127e16-a084-4739-9628-46412cec6400"
+      },
+      {
+        "taskId": "f1ecc033-58a6-4b28-bbb6-66eafe8eebac",
+        "status": "Done",
+        "version": 9,
+        "executionOwnerKind": "User",
+        "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+        "epicId": "0b127e16-a084-4739-9628-46412cec6400"
+      },
+      {
+        "taskId": "f3e91814-f532-450c-948a-4d38835fe3e1",
+        "status": "Done",
+        "version": 9,
+        "executionOwnerKind": "User",
+        "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+        "epicId": "0b127e16-a084-4739-9628-46412cec6400"
+      },
+      {
+        "taskId": "416ad91d-d3df-45db-bdcc-6fe720131fd0",
+        "status": "Done",
+        "version": 9,
+        "executionOwnerKind": "User",
+        "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+        "epicId": "f333bdb8-4b98-494d-8786-690dc782ead5"
+      },
+      {
+        "taskId": "78d81860-a955-485b-82af-aa7075957ed4",
+        "status": "Done",
+        "version": 9,
+        "executionOwnerKind": "User",
+        "responsibleUserId": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+        "epicId": "0b127e16-a084-4739-9628-46412cec6400"
+      }
+    ],
+    "epics": [
+      {
+        "id": "0b127e16-a084-4739-9628-46412cec6400",
+        "status": "Done",
+        "version": 7
+      },
+      {
+        "id": "f333bdb8-4b98-494d-8786-690dc782ead5",
+        "status": "Done",
+        "version": 4
+      }
+    ]
+  },
+  "teamplayer_fresh_readback_at": "2026-10-20T19:04:11.035627+00:00",
+  "native_epic_mapping": {
+    "0b127e16-a084-4739-9628-46412cec6400": "F41R18",
+    "f333bdb8-4b98-494d-8786-690dc782ead5": "F41NEXT18"
+  },
+  "native_task_mapping": {
+    "bd891dc4-9f70-438f-8d1c-7223fe81fe0b": "A",
+    "f1ecc033-58a6-4b28-bbb6-66eafe8eebac": "B",
+    "f3e91814-f532-450c-948a-4d38835fe3e1": "C",
+    "416ad91d-d3df-45db-bdcc-6fe720131fd0": "D",
+    "78d81860-a955-485b-82af-aa7075957ed4": "PUBLIC-r1"
+  },
+  "native_archive_manifest": "docs/coordinator/F-41-native-archive.json"
+}

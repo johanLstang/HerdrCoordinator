@@ -1,7 +1,8 @@
 # F41: begränsad körmiljö och eget commitverktyg
 
-Status 2026-10-20: implementation/provförberedelse, **ingen nativeacceptans ännu**.
-F41.A1–A3 står kvar som ej verifierade. Se [förkontraktet](F-41-runtime-plan.md).
+Status 2026-10-20: **F41.A1–A3 verifierade i det riktiga R18-provet**.
+Källreview/Task → E10/eftertest och E10:s PR/mainintegration återstår.
+Se [slutprov och kvitton](F-41-native.md) samt [förkontraktet](F-41-runtime-plan.md).
 
 ## Valfritt sessionskontrakt
 
@@ -138,9 +139,9 @@ Privata JSON-värden/headers ska inte kopieras till Git eller rapportutskrifter.
 
 ## Kvarvarande leveransgrind
 
-Det konkreta nativeprovet, faktisk tidslinje, full featureacceptans, aktuell
-Task→E10-review/merge/eftertest och E10:s samlade mainintegration återstår.
-Förberedelse eller passerade enhetstester ger inte F41 Done eller E10 Done.
+Nativeprov, tidslinje och featureacceptans är verifierade i R18. Aktuell
+Task→E10-review/merge/eftertest och E10:s samlade PR/mainintegration återstår.
+Nativeacceptans ensam ger inte utvecklingstasken F41 Done eller E10 Done.
 
 
 ## Nativeupptäckta återförsökskontrakt
@@ -177,7 +178,7 @@ i PREPARED. Transient ej-idle ger WAITING för befintlig observationsloop. Förs
 vid den enda DISPATCH_REQUESTED sätts ACK-deadline till nu+ursprunglig timeout,
 högst45s. Ingen frist förlängs. Version1 och äldre skickade/okända intentioner
 behåller sin semantik och omsänds inte. Detta kräver ingen schemamigration eller
-ny modell-/MCP-rättighet. Full ny nativeacceptans återstår.
+ny modell-/MCP-rättighet. Vid denna historiska kontrollpunkt återstod ny nativeacceptans; R18 är nu verifierad, se [slutprovet](F-41-native.md).
 
 
 ## Integration-ACK som observeras senare
