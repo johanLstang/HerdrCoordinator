@@ -65,7 +65,9 @@ def start_preflight(c, path):
                     "not a development worktree or TeamPlayer implementation task.",
                     ["answer() returns42 and real unittest passes; own broker commit exists"],
                     ["answer.py", "tests/test_answer.py"])["task"]
-        result = TaskStartService(settings, store, native).start(integration, epic.id, spec)
+        result = TaskStartService(settings, store, native, ack_wait_seconds=5).start(
+            integration, epic.id, spec,
+        )
         save(Path(c["root"]) / "start.json", result)
         print(json.dumps(dict(status=result["status"], task_run_id=result["task"]["id"])))
 

@@ -438,3 +438,12 @@ Det egna MCP-gränssnittet accepterar endast `worker_workspace()` och
 kontroll och beständig återhämtning efter okänt Git-svar. Detta aktiverar inte
 autonomi ensamt. Se [kontrakt, recovery och det konkreta provets grindar](docs/coordinator/F-41-execution.md).
 F41:s verkliga nativeacceptans och E10:s mainintegration återstår.
+
+Det separata F41-provet väljer också `activate_registered=True` i `EpicStartService`
+och `ack_wait_seconds=5` i dess registrerade scheduler/startkomposition. Efter exakt
+native start-ACK levererar tjänsten en fast, journalförd aktivering till samma
+Integration. Okänt transportsvar observeras utan blind omsändning; claim väntar på
+faktisk leverans. Worker-start, korrigering och input-resume kan kort observera
+samma strikta ACK innan kontrollen lämnas tillbaka till modellen. Standardvärdena
+är av respektive noll; befintliga runtimeintentioner skrivs inte om. Ingen av
+inställningarna ger rätt att committa, granska eller mergea utan ordinarie bevis.

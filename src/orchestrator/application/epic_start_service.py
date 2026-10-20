@@ -48,8 +48,11 @@ class EpicStartService:
 
     def __init__(
         self, settings, store, herdr, spec, integration_principal, codex=None,
-        *, processes=None, sync=None, external_epic_id=None,
+        *, processes=None, sync=None, external_epic_id=None, activate_registered=False,
     ):
+        if type(activate_registered) is not bool:
+            raise EpicStartError("EPIC_START_CONFIGURATION_INVALID")
+        self.activate_registered = activate_registered
         self.spec = EpicIntegrationSpec.model_validate(spec)
         if (
             integration_principal.role != Role.INTEGRATION
@@ -79,6 +82,10 @@ class EpicStartService:
             policy_hash=digest(self.policy),
             external_epic_id=external_epic_id,
         )
+        if activate_registered:
+            from orchestrator.application.integration_activation_service import ACTIVATION_POLICY
+
+            self.configuration["activation_policy_hash"] = digest(ACTIVATION_POLICY)
         if getattr(herdr, "mcp_fingerprint", None) is not None:
             self.configuration["mcp_configuration"] = herdr.mcp_fingerprint
 
@@ -249,7 +256,18 @@ class EpicStartService:
             raise EpicStartError("INTEGRATION_ACK_TIMEOUT")
         if op.result["stage"] == "RUNTIME_READY":
             op = self._dispatch(actor, op)
-        return self._observe(actor, op)
+        outcome = self._observe(actor, op)
+        if self.activate_registered and outcome["stage"] == "REGISTERED":
+            from orchestrator.application.integration_activation_service import (
+                IntegrationActivationService,
+            )
+
+            outcome["activation"] = IntegrationActivationService(
+                self
+            ).dispatch_under_start_lock(actor)
+            if outcome["activation"]["status"] != "DELIVERED":
+                outcome["stage"] = "ACTIVATION_PENDING"
+        return outcome
 
     def _dispatch(self, actor, op):
         epic, start, facts = self._native(actor, op)

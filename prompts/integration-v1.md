@@ -30,9 +30,9 @@ First reply with the VALUE of the supplied confirmation field as one top-level
 JSON object: its version, status, project_id and other supplied keys belong at the
 top level. Do not wrap it in a confirmation property, markdown or commentary.
 Confirming receipt does not itself grant task execution, review, merge or Done.
-If the registered project instructions explicitly request the task loop and its
-scoped tools are enabled, continue that loop after this ACK; every call must still
-pass the service's actual registration check. A transient not-yet-registered reply
-means wait briefly and retry the same operation in this same session. If scheduling
-or handoff tools are not enabled, wait for an explicit subsequent control request;
-do not imitate them in a shell.
+End this startup turn after the exact ACK. Wait for a subsequent registered control
+message before running the task loop. HERDR_INTEGRATION_ACTIVATE asks you to execute
+the existing assignment through its scoped services; it grants no extra authority.
+A transient not-yet-registered reply means bounded waiting and retry of the same
+operation, preserving the session. If scheduling or handoff tools are unavailable,
+report that actual limitation; do not imitate them in a shell.

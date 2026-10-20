@@ -404,3 +404,26 @@ def test_concurrent_identical_requests_register_and_send_once(setup):
     assert len({answer["operation_id"] for answer in answers}) == 1
     assert len(h.sent) == 2 and len(s.store.get_reviews(w.task_run_id)) == 1
     assert s.store.get_task(w.task_run_id).internal_status == TaskState.WORKING
+
+
+def test_optional_wait_observes_delayed_exact_correction_ack_without_another_dispatch(
+    setup, monkeypatch,
+):
+    s, actor, worker, decision, h, history, _ = setup
+    s.ack_wait_seconds = 5
+    h.prompt = lambda name, text, **kwargs: h.sent.append(text)
+    sleeps = []
+
+    def delayed_ack(seconds):
+        sleeps.append(seconds)
+        assert not s.store.db.in_transaction
+        assert s.store.get_task(worker.task_run_id).internal_status == TaskState.CHANGES_REQUESTED
+        history.reply(h.sent[-1], turn_id="delayed-correction-ack")
+
+    monkeypatch.setattr("orchestrator.application.ack_observation.sleep", delayed_ack)
+    sent = len(h.sent)
+    result = s.request(actor, worker.task_run_id, decision, key="delayed-fix")
+    assert result["status"] == "CONFIRMED" and len(sleeps) == 1 and len(h.sent) == sent + 1
+    assert s.store.get_task(worker.task_run_id).internal_status == TaskState.WORKING
+    assert s.request(actor, worker.task_run_id, decision, key="delayed-fix")["status"] == "EXISTING"
+    assert len(h.sent) == sent + 1

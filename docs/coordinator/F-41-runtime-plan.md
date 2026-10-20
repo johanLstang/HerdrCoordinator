@@ -143,3 +143,23 @@ Verifiera defaultkompatibilitet, faktisk registrering före effekt, replays,
 förlorat svar före/efter leverans och drift. Frys sedan den nya kompositionen och
 kör en ny samlad riktig tvåepics-körning utan manuell Integration-aktivering,
 scheduling eller merge. Tidigare diagnosbevis redovisas separat.
+
+
+## Nativeupptäckt: bekräfta Worker-ACK innan nästa långsamma modellsteg
+
+Diagnosen visade verkligt A/B Done och två samtidiga Workers. C:s README-/testfix
+fanns med 23 godkända tester, men både korrigering och samma-session-resume kunde
+lämna ACK obekräftad medan modellen redan försökte committa. Brokern nekade korrekt;
+ingen commit eller WORKING får fabriceras. Original-SID, dirty filer och beslut
+bevaras; diagnosen stoppas med verkliga livscykelkvitten före ändrad fryst kod.
+
+Komplettera befintlig start-, korrigerings- och input-resumetjänst med valfri betrodd
+ACK-observation, högst fem sekunder. Standard är noll extra väntan. F41 väljer fem
+sekunder före registrering och binder valet till konfiguration/källhash. Återläs
+samma faktiska korrelerade native ACK med befintlig verifiering; inga nya prompts,
+slots, inputs eller SID, ingen ändrad deadline eller tolerans för fel ACK. Ingen
+transaktion hålls under väntan. Saknat bevis ger samma Pending/WAITING/hinder.
+Worker-policy förtydligar att ett bekräftelsefönster kan kräva kort bounded retry
+med samma commitnyckel och bevarat arbete; det är ingen extern input i sig. Brokerns
+WORKING-, verkliga ACK-, PID- och scopevillkor består. Tester ska visa fördröjd ACK,
+frånvarande/fel ACK, en enda dispatch och oförändrad standard/recovery.

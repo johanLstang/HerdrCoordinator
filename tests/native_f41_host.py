@@ -186,6 +186,7 @@ async def composition(config_path):
                         child, store, integration_herdr, spec,
                         integration_actor(spec.project_id, run_id), codex,
                         sync=startup_sync, external_epic_id=configured.native_epic_id,
+                        activate_registered=True,
                     )
                 return parents[run_id]
 
@@ -206,7 +207,7 @@ async def composition(config_path):
                 )
                 scheduler = TaskSchedulerService(view.settings, store, selection,
                                                   sync(view.settings), workers, codex,
-                                                  registration=view)
+                                                  registration=view, ack_wait_seconds=5)
                 completion = EpicCompletionService(
                     view, scheduler, completion_for(policy, view.spec),
                 )
