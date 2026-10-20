@@ -349,7 +349,7 @@ def test_retry_observes_native_ack_while_worker_is_busy_instead_of_restarting(se
     assert s.start(actor, actor.epic_run_id, spec)["status"] == "WAITING"
     h.session_id, h.status = SID, "processing"
     history.reply(h.sent[0])
-    assert s.start(actor, actor.epic_run_id, spec)["status"] == "EXISTING"
+    assert s.start(actor, actor.epic_run_id, spec)["status"] == "CONFIRMED"
     assert len(h.sent) == h.starts == 1
 
 
@@ -367,7 +367,7 @@ def test_lost_parent_checkpoint_after_verified_ack_reuses_existing_confirmation(
         s.start(actor, actor.epic_run_id, spec)
     assert s.store.get_tasks(actor.epic_run_id)[0].internal_status == TaskState.WORKING
     monkeypatch.setattr(s, "_checkpoint", checkpoint)
-    assert s.start(actor, actor.epic_run_id, spec)["status"] == "EXISTING"
+    assert s.start(actor, actor.epic_run_id, spec)["status"] == "CONFIRMED"
     assert len(h.sent) == h.starts == 1
 
 

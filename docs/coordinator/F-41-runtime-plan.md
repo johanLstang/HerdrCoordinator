@@ -163,3 +163,61 @@ Worker-policy förtydligar att ett bekräftelsefönster kan kräva kort bounded 
 med samma commitnyckel och bevarat arbete; det är ingen extern input i sig. Brokerns
 WORKING-, verkliga ACK-, PID- och scopevillkor består. Tester ska visa fördröjd ACK,
 frånvarande/fel ACK, en enda dispatch och oförändrad standard/recovery.
+
+
+## Nativeupptäckt: exakt registrerad specifikation vid startåterförsök
+
+F41-r1.3 verifierade automatisk aktivering, tre riktiga taskleveranser och korrekt
+same-session NFC-fix med nytt godkännande. Coordinator läste alla sex reviewdelar,
+fick verkligt oberoende API-fel och skapade PUBLIC-r1 till samma Integration.
+Korrigeringens start behövde återförsök efter native startdialog. Varken feedbacken
+(som bara anger ID:n) eller registrerade läsanrop gav den exakta LocalTaskSpec som
+`task_start` kräver. Integration gissade text och nekades korrekt med
+SCHEDULER_TASK_SPEC_CHANGED. Backendens exakthetskrav får inte försvagas.
+
+Operatören läste den befintliga registrerade specifikationen utan DB-mutation och
+skickade den som uttrycklig diagnostisk metadata till samma Integration, utan
+val av task, statusreparation eller review/mergebeslut. Denna manuella datahjälp
+journalförs; dataseten etablerar inte full autonomi. Den fortsätter diagnostiskt
+för att pröva återstående leverans och nästa epic. Ny samlad körning krävs efter
+rättningen nedan. Source/runtimefingerprints och tidigare data förblir oförändrade.
+
+Minsta komplettering före nästa kodändring: befintlig `integration_overview` ska
+för en egen CLAIMED/STARTING-rad där task_start är nästa tillåtna operation också
+returnera `task_spec`: exakt nu registrerad och validerad LocalTaskSpec från
+samma schedulers konfiguration. Unik lokal identitet, projekt och epic måste
+stämma; gissa aldrig innehåll från boardtext, reviewfeedback eller agentargument.
+Fel scope eller okänd/driftad konfiguration får inte exponera ett alternativt
+startunderlag. Integration-policy instruerar modellen att kopiera detta värde
+ordagrant vid skyddat återförsök. Ingen ny verktygscapability eller fri metadata-
+mutation tillkommer; starttjänsten verifierar fortfarande hela specifikationen,
+aktuell board, beroenden, ägare, slot och originalresurser före effekt.
+
+Testa faktisk F39-korrigeringsplan/återförsök med verklig Git/SQLite och kontrollerad
+nativegräns, saknade/främmande identiteter och oförändrad startnekning vid ändrad
+spec. Stoppa/bevara denna diagnos och dess frysta kod innan implementationen;
+frys sedan ny komposition och kör hela autonoma tvåepics-scenariot igen.
+
+
+### Bevara osänt förberedelsesteg separat från okänt transportutfall
+
+Diagnosens PUBLIC-r1 saknade native userMessage/SID och dess ursprungliga
+assignmentdeadline löpte ut. Dispatchintentionen saknar transportkvitto; detta
+bevisar inte var ett avbrott skedde. Den körningen får därför inte omsändas,
+återstämplas eller ges fabricerad ACK. Stoppa den med kända resurser intakta.
+
+Kodgranskningen visar en konkret återförsökslucka att reproducera separat:
+RuntimeAssignment sparar DISPATCH_REQUESTED före en andra readinesskontroll. Om
+just den kontrollen nekar sker ingen transport, men retry behandlar intentionen
+som redan försökt. Inför PREPARED för nya assignmentintentioner. Samma original-
+ID, korrelation, hash, baseline och deadline består. En känd osänd PREPARED får
+återpröva faktiska förvillkor; spara DISPATCH_REQUESTED atomiskt omedelbart före
+den enda transporteffekten. Efter den punkten observeras endast, oavsett förlorat
+svar, avbrott eller saknat transportfält. Äldre DISPATCH_REQUESTED-intentioner
+migreras aldrig bakåt. Timeout/ändrad owner/slot/process/scope ger fortsatt hinder.
+Ingen deadline förlängs och ingen PREPARED kan godkännas som levererad ACK.
+
+Testa ändrad readiness mellan förberedelse och send, en enda dispatch efter
+återhämtning, crash/okänt utfall efter dispatchmarkering, utgången originaldeadline
+och legacyreplay. Detta preciserar robust startup för samma F41-scenario och ger
+ingen ny MCP-rättighet eller lättnad av ACK-/Donevillkor.

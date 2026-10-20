@@ -75,10 +75,12 @@ Efter okänt svar: använd ursprunglig nyckel. En annan nyckel kan inte ersätta
 pågående intention. Ändrade input/HEAD/index/identiteter ger fel och bevarar arbetet;
 inget reset, cleanup eller blind omcommit. Kvitto är inte review, merge eller Done.
 
-## Konkret separat F41-r1
+## Ursprunglig förberedelse: separat F41-r1
 
 Förberett under `/tmp/herdr-f41-r1-20261020`, eget repo och skyddade0600-filer.
-Named server: `hc-f41-r1-20261020`. Server/agentsessioner har **inte startats**.
+Named server: `hc-f41-r1-20261020`. Vid denna ursprungliga förberedelse hade
+server/agentsessioner ännu inte startats. Senare faktiska försök och stopp finns i
+[aktuellt underlag](F-41-native-progress.json).
 Setup gör ingen scheduling, approval eller merge. Nativehosten återbygger scope
 från faktiska F38-claims och registrerade native cwd/PID; utvecklingsworktrees
 adopteras inte. MCP-handshake kan ske före ACK, men varje anrop återvalideras.
@@ -139,3 +141,27 @@ Privata JSON-värden/headers ska inte kopieras till Git eller rapportutskrifter.
 Det konkreta nativeprovet, faktisk tidslinje, full featureacceptans, aktuell
 Task→E10-review/merge/eftertest och E10:s samlade mainintegration återstår.
 Förberedelse eller passerade enhetstester ger inte F41 Done eller E10 Done.
+
+
+## Nativeupptäckta återförsökskontrakt
+
+`integration_overview` lämnar exakt `task_spec` endast för den egna registrerade
+CLAIMED/STARTING-rad som erbjuder task_start. Källa är färsk native boardbindning
+och samma schedulers validerade konfiguration. Saknad, främmande eller tvetydig
+bindning ger inget ersättande underlag. Kopiera det exakta värdet; grundkraven i
+starttjänsten, ägarkontrollen och beroendeverifieringen består.
+
+Nya `dispatch_assignment` börjar i PREPARED. Förvillkor och ursprunglig deadline
+kontrolleras igen före atomisk DISPATCH_REQUESTED, därefter exakt ett transport-
+försök. Förlorat svar eller avbrott efter markeringen återhämtas med observation,
+aldrig blind send. Äldre DISPATCH_REQUESTED utan transportfält är också okända;
+de skrivs inte om till PREPARED. PREPARED kan inte godkännas som native ACK.
+Ingen schemaändring, deadlineförlängning eller efterhandsadoption sker.
+
+R13 visade verklig automatisk Integration-aktivering, två samtidigt arbetande
+Workers, tre granskade/integrerade/stoppade tasks och Coordinatorns fullständiga
+sexdelade review med verkligt API-fel. Korrigeringen återfördes till samma
+Integration, men saknad läsbar exakt spec krävde diagnostisk datahjälp och original-
+assignmentens ACK förblev obekräftad. Samtliga egna runtimes är fysiskt stoppade,
+slots null och91 frysta källfiler bevarade. R13 räknas inte som full autonomi.
+En ny komplett fryst körning krävs efter de beskrivna rättningarna.

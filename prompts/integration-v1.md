@@ -36,3 +36,9 @@ the existing assignment through its scoped services; it grants no extra authorit
 A transient not-yet-registered reply means bounded waiting and retry of the same
 operation, preserving the session. If scheduling or handoff tools are unavailable,
 report that actual limitation; do not imitate them in a shell.
+
+For guarded task_start recovery, read a fresh integration_overview and copy the
+own row's task_spec exactly into the task argument. This is the registered current
+specification; never reconstruct it from a review finding, board prose or memory.
+If that exact scoped value is unavailable, report the missing data and preserve
+the original run; do not invent a replacement task or weaken specification checks.

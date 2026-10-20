@@ -131,7 +131,7 @@ class RuntimeAssignmentService:
                         or op.result["timeout_seconds"] != timeout_seconds
                     ):
                         raise AssignmentError("ASSIGNMENT_INTENT_MISMATCH")
-                    fresh = False
+                    fresh = op.result["stage"] == "PREPARED"
                 else:
                     if run.internal_status != TaskState.STARTING:
                         raise AssignmentError("TASK_NOT_STARTING")
@@ -149,7 +149,7 @@ class RuntimeAssignmentService:
                         kind=self.KIND,
                         idempotency_key=run.id,
                         result={
-                            "stage": "DISPATCH_REQUESTED",
+                            "stage": "PREPARED",
                             "correlation_id": correlation,
                             "instruction_hash": digest(instruction),
                             "prompt_hash": digest(prompt),
@@ -165,21 +165,25 @@ class RuntimeAssignmentService:
                     self.store.add_operation(op)
                     fresh = True
             if fresh:
-                # Intent is durable first. A retry only observes; it never resends.
+                # PREPARED proves no send was attempted. Never move an existing
+                # DISPATCH_REQUESTED (including legacy/unknown outcomes) backward.
                 run, start = self._validate(actor, run_id)
                 if run.internal_status != TaskState.STARTING:
                     raise AssignmentError("TASK_NOT_STARTING")
-                if utc_now() > datetime.fromisoformat(op.result["deadline"]):
-                    return self.observe(actor, run_id)
                 if not self._runtime(run, start)["ready"]:
                     raise AssignmentError("RUNTIME_NOT_IDLE")
-                try:
-                    self.herdr.prompt(
-                        run.worker_agent_id, prompt, timeout_ms=timeout_seconds * 1000
-                    )
-                    self._transport(run, op, None)
-                except HerdrError as e:
-                    self._transport(run, op, e.code)
+                prompt = self._prompt(run, op.result["correlation_id"], instruction)
+                if digest(prompt) != op.result["prompt_hash"]:
+                    raise AssignmentError("ASSIGNMENT_PROMPT_CHANGED")
+                send, op = self._request_dispatch(run, op)
+                if send:
+                    try:
+                        self.herdr.prompt(
+                            run.worker_agent_id, prompt, timeout_ms=timeout_seconds * 1000
+                        )
+                        self._transport(run, op, None)
+                    except HerdrError as e:
+                        self._transport(run, op, e.code)
             return self.observe(actor, run_id)
         except (
             HerdrError,
@@ -195,6 +199,33 @@ class RuntimeAssignmentService:
             raise AssignmentError(
                 e.code if isinstance(e, HerdrError) else "ASSIGNMENT_UNVERIFIED"
             ) from None
+
+    def _request_dispatch(self, run, op):
+        with self.store.transaction():
+            current = self.store.get_operation(run.project_id, self.KIND, run.id)
+            if current is None or current.id != op.id or any(
+                current.result[key] != op.result[key] for key in (
+                    "instruction_hash", "prompt_hash", "correlation_id", "deadline",
+                    "baseline_session_id", "baseline_turns", "start_operation_id",
+                    "timeout_seconds",
+                )
+            ):
+                raise AssignmentError("ASSIGNMENT_CHANGED")
+            if current.result["stage"] != "PREPARED":
+                return False, current
+            expired = current.status != "PENDING" or (
+                utc_now() > datetime.fromisoformat(current.result["deadline"])
+            )
+            updated = current.model_copy(update=dict(
+                result=(current.result if expired else current.result
+                        | dict(stage="DISPATCH_REQUESTED")),
+                status="TIMED_OUT" if expired else "PENDING",
+                error_code="ASSIGNMENT_ACK_TIMEOUT" if expired else None, updated_at=utc_now(),
+            ))
+            self.store.update_operation(updated)
+        if expired:
+            raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT")
+        return True, updated
 
     def _transport(self, run, op, error):
         with self.store.transaction():
@@ -229,6 +260,9 @@ class RuntimeAssignmentService:
             op = self.store.get_operation(run.project_id, self.KIND, run.id)
             if op is None or op.result["start_operation_id"] != start.id:
                 raise AssignmentError("ASSIGNMENT_NOT_FOUND")
+            if op.result["stage"] == "PREPARED":
+                raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT" if op.status == "TIMED_OUT"
+                                      else "ASSIGNMENT_NOT_DISPATCHED")
             if op.status == "SUCCEEDED":
                 return self._confirmed(run, op, start)
             if run.internal_status != TaskState.STARTING:

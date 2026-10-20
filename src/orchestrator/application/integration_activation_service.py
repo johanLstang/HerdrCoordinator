@@ -12,7 +12,7 @@ ACTIVATION_POLICY = (
     "Execute the complete existing epic task loop now, using only its registered services and "
     "the original assignment's order, dependencies, scope and criteria. Use task_schedule and "
     "fresh integration_overview. A PAUSED record is not replayed by another tick: inspect its "
-    "actual reason and allowed_actions, and choose an existing guarded task_start/recovery "
+    "actual reason and next_operations, and choose an existing guarded task_start/recovery "
     "action only when fresh checks permit it. Preserve original tasks, resources and sessions; "
     "never clear state or bypass a denied check. Keep up to two eligible Workers working. "
     "Read complete current review contexts, request concrete corrections to the same Worker, "

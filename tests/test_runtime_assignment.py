@@ -463,3 +463,58 @@ def test_live_interrupted_projection_does_not_accept_foreign_ack(setup):
     h.prompt = prompt
     assert s.dispatch(i, "t1", "fixture")["status"] == "WAITING"
     assert s.store.get_task("t1").internal_status == TaskState.STARTING
+
+
+def test_readiness_loss_before_send_retains_unsent_preparation_and_retries_once(setup):
+    s, actor, h, _ = setup
+    original = s._runtime
+    calls = []
+
+    def readiness(*args):
+        result = original(*args)
+        calls.append(result)
+        return result | {"ready": False} if len(calls) == 2 else result
+
+    s._runtime = readiness
+    with pytest.raises(AssignmentError, match="RUNTIME_NOT_IDLE"):
+        s.dispatch(actor, "t1", "exact fixture")
+    prepared = s.store.get_operation("p", s.KIND, "t1")
+    assert prepared.result["stage"] == "PREPARED" and h.sent == []
+    with pytest.raises(AssignmentError, match="NOT_DISPATCHED"):
+        s.observe(actor, "t1")
+    result = s.dispatch(actor, "t1", "exact fixture")
+    assert result["status"] == "CONFIRMED" and len(h.sent) == 1
+    final = s.store.get_operation("p", s.KIND, "t1")
+    assert final.id == prepared.id
+    for key in ["correlation_id", "deadline", "prompt_hash", "instruction_hash", "baseline_turns"]:
+        assert final.result[key] == prepared.result[key]
+    assert s.dispatch(actor, "t1", "exact fixture") == result and len(h.sent) == 1
+
+
+def test_unsent_preparation_never_extends_expired_original_deadline(setup, monkeypatch):
+    from datetime import datetime
+
+    s, actor, h, _ = setup
+    original = s._runtime
+    count = []
+
+    def readiness(*args):
+        facts = original(*args)
+        count.append(1)
+        return facts | {"ready": False} if len(count) == 2 else facts
+
+    s._runtime = readiness
+    with pytest.raises(AssignmentError, match="RUNTIME_NOT_IDLE"):
+        s.dispatch(actor, "t1", "exact fixture")
+    prepared = s.store.get_operation("p", s.KIND, "t1")
+    deadline = prepared.result["deadline"]
+    monkeypatch.setattr("orchestrator.application.runtime_assignment_service.utc_now",
+                        lambda: datetime.fromisoformat(deadline) + timedelta(seconds=1))
+    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+        s.dispatch(actor, "t1", "exact fixture")
+    expired = s.store.get_operation("p", s.KIND, "t1")
+    assert expired.status == "TIMED_OUT" and expired.result["deadline"] == deadline
+    assert expired.result["stage"] == "PREPARED" and h.sent == []
+    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+        s.observe(actor, "t1")
+    assert s.store.get_task("t1").internal_status == TaskState.STARTING

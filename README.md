@@ -447,3 +447,10 @@ faktisk leverans. Worker-start, korrigering och input-resume kan kort observera
 samma strikta ACK innan kontrollen lämnas tillbaka till modellen. Standardvärdena
 är av respektive noll; befintliga runtimeintentioner skrivs inte om. Ingen av
 inställningarna ger rätt att committa, granska eller mergea utan ordinarie bevis.
+
+Vid skyddat startåterförsök ger `integration_overview` den egna radens `task_spec`
+för CLAIMED/STARTING. Integration kopierar det exakta registrerade värdet; ändrad
+spec nekas fortfarande. Nya assignmentintentioner börjar i `PREPARED` fram till
+dispatchmarkeringen. Bara bevisat osänd förberedelse får pröva readiness igen;
+`DISPATCH_REQUESTED` och äldre okända resultat observeras utan omsändning.
+Originaldeadline och ACK-/runtimekontroller gäller i alla faser.
