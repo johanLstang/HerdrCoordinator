@@ -28,8 +28,11 @@ CLI utan registrerade TeamPlayer/runtimeobservatörer kan inte aktivera automati
 ## Verifiering och leveransläge
 
 Funktionell källcommit: `e81048d027dc941a94b3dc6f077f6531dfdb7c81`.
-Worker-resultatet är READY_FOR_REVIEW; tasken är fortfarande Testing/Active
-före faktisk Task → E11-merge och eftertester. Epic E11 är Active, egenacceptans0/3.
+F42 är Done9/User105 efter godkänd review av94f023d och faktisk no-ff Task → E11
+`cf3709132e33773aa9b0fa4664bfdd588c7ca260`. 32 eftertester PASS199.92s/exit0,
+Ruff/build/READMECLI och wheel79 moduler/sex policies/86 källpins PASS.
+Epic E11 är fortsatt Active10, egenacceptans0/3.
+Se [slutreview och faktisk leverans](../reviews/F-42.md).
 
 - Slutlig observations-/claimgrupp: **30 PASS93.72s/exit0**, inklusive det tidigare
   fallerande leveransfallet, explicit saknad/återkopplad observatör och stoppad Integration.
