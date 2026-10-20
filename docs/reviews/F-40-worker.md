@@ -14,7 +14,7 @@ korrekt beroendebevis och varje följande epics egna reviewkontext.
 
 ## Verifiering
 
--233 unika relevanta fall verifierade över61+1+171 segment; oförändrade83 produkt-/
+- 233 unika relevanta fall verifierade över61+1+171 segment; oförändrade83 produkt-/
 55 verifieringsbindningar, inga233-i-en-körning/fullprojektsuite-påståenden.
 - Lint/build/READMECLI, wheel74moduler/sexpolicies och isolerad import/policy PASS.
 - Verklig native task/review/handoff/current approval/auktoriserad mainleverans/
