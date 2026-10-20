@@ -14,7 +14,7 @@
   "epic_runs": 1,
   "task_runs": 1,
   "native_main_merge": true,
-  "development_task_merge": false,
+  "development_task_merge": true,
   "autonomy_gate": false,
   "external_epics": [
     "9213a12d-4403-47cf-8669-a438bd51bb6b",
@@ -39,9 +39,10 @@
   },
   "authorization_received": true,
   "development_board": {
-    "status": "Testing",
-    "local": "Active",
-    "acceptance": "0/3"
+    "status": "Done",
+    "local": "Done",
+    "version": 18,
+    "acceptance": "3/3"
   },
   "integration": {
     "run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
@@ -105,15 +106,15 @@
     "observed_at": "2026-10-16T09:05:01.467633+00:00",
     "development_task": {
       "id": "4073e26d-b095-47e3-99a6-7704f757f485",
-      "status": "Testing",
-      "version": 15,
+      "status": "Done",
+      "version": 18,
       "owner": "105f26a7-0648-438d-94fd-3260ac3af4ee",
       "description_exact_backlog": true
     },
     "development_epic": {
       "id": "559a4c95-3282-4b4b-a30f-97f9d0dbbaea",
       "status": "InProgress",
-      "version": 10
+      "version": 11
     },
     "native_tasks": [
       {
@@ -140,5 +141,6 @@
       }
     ]
   },
-  "final_native_proof": "F-40-native-final.json"
+  "final_native_proof": "F-40-native-final.json",
+  "development_merge_commit": "f4d6621a913dbf4771b0535b08514b387c98ecda"
 }

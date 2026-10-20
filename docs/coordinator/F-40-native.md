@@ -50,5 +50,6 @@ upprepades. Alla faktiska journaler och slutliga processbevis finns kvar.
 233 unika relevanta utvecklingsfall är verifierade över tre kvalificerade segment,
 [exakta källor/nod-ID:n/kommandon](../reviews/F-40-current.json). Lint/build/READMECLI,
 exakt wheel74moduler/sexpolicies och faktisk stdio-katalog Root6/Integration16/
-Worker0 är verifierade. Utvecklings-F40 kvar Testing/Active före exakt slutreview,
-Task→E10 och eftertest. E10 kvar Active2/3 tills F41/samlad leverans är verifierad.
+Worker0 är verifierade. Utvecklings-F40 är nu Done3/3 efter granskad44cb0ef/no-ff f4d6621 och35
+eftertester PASS1263.82s; [slutunderlag](../reviews/F-40-final.md). E10 kvar
+Active2/3 tills F41/samlad leverans är verifierad.

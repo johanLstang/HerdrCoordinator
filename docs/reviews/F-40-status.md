@@ -1,7 +1,7 @@
-# F40 verifierad kod och faktisk nativeleverans, utvecklingsintegration återstår
+# F40 Done: granskad, integrerad och verifierad
 
 Kodcheckpoint bb452da; testorakel/metadata c6c7822.83 produkt-/policy-/konfigurations-
-bindningar är byte-identiska. F40 är **Testing / Active0/3**,
+bindningar är byte-identiska. F40 är **Done3/3**,
 User105/blitterbot@gmail.com; backlogg och TeamPlayer är återlästa/synkroniserade.
 E10 är fortsatt Active10/2 av3. F39 Done9 är integrerad och efterverifierad.
 
@@ -43,9 +43,10 @@ saknad runtimegate. Alla egna runtimes/server fysiskt stoppade; refs/history bev
 [Maskinkvitton](../coordinator/F-40-native-final.json). Alla83 produkt-/55 testpins
 är oförändrade. Mapp-/verktygs- och separat maingodkännande är genomförda.
 
-## Konkret kvarvarande steg
+## Verifierad utvecklingsleverans
 
-Worker lämnar källbunden READY_FOR_REVIEW; bootstrap Integration ska granska exakt
-aktuell kandidat mot E10/main, spara review, no-ff-integrera genom GitAdapter och
-köra relevanta eftertester. Först därefter F40 Done/3 av3 och synk. E10 förblir
-Active2/3 inför F41:s fulla scenario och faktiska runtime-säkerhetsgrind.
+[Slutreview och faktisk leverans](F-40-final.md): granskad44cb0ef mot E10bas4b4c08a7,
+no-ff f4d6621,35 eftertester PASS1263.82s/exit0 samt lint/build/CLI/wheel/pins PASS.
+F40 är Done3/3 efter färsk TeamPlayer-CAS. Underlag/statusbeskrivningar är synkroniserade
+och återlästa före nästa task. E10 kvar Active2/3 inför F41:s fulla scenario och faktiska
+runtimegrind; dess A3 och mainintegration återstår.
