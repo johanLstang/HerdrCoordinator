@@ -116,12 +116,13 @@ class StateStore:
         return self.connection
 
     @contextmanager
-    def transaction(self) -> Iterator[sqlite3.Connection]:
+    def transaction(self, *, read_only: bool = False) -> Iterator[sqlite3.Connection]:
         db = self.db
         nested = db.in_transaction
         savepoint = "save_" + uuid4().hex
         try:
-            db.execute(f"SAVEPOINT {savepoint}" if nested else "BEGIN IMMEDIATE")
+            db.execute(f"SAVEPOINT {savepoint}" if nested else
+                       "BEGIN" if read_only else "BEGIN IMMEDIATE")
             yield db
             db.execute(f"RELEASE {savepoint}" if nested else "COMMIT")
         except BaseException as exc:
@@ -476,6 +477,30 @@ class StateStore:
             for table, model in (("epic_runs", EpicRun), ("task_runs", TaskRun))
             for row in self.db.execute(f"SELECT payload FROM {table} ORDER BY id")
         ]
+
+    def project_inventory(self, project_id: str) -> dict[str, tuple]:
+        """One local snapshot, including journals of completed runs. No writes/migration."""
+        tables = {
+            "coordinators": ("coordinator_runs", CoordinatorRun),
+            "epics": ("epic_runs", EpicRun),
+            "tasks": ("task_runs", TaskRun),
+            "operations": ("operations", Operation),
+            "project_operations": ("project_operations", ProjectOperation),
+            "references": ("external_references", ExternalReference),
+            "events": ("transition_events", TransitionEvent),
+        }
+        with self.transaction(read_only=True):
+            result = {
+                name: tuple(model.model_validate_json(row[0]) for row in self.db.execute(
+                    f"SELECT payload FROM {table} WHERE project_id=? "
+                    f"ORDER BY {'event_id' if name == 'events' else 'id'}", (project_id,)
+                )) for name, (table, model) in tables.items()
+            }
+            result["reviews"] = tuple(Review.model_validate_json(row[0]) for row in self.db.execute(
+                "SELECT r.payload FROM reviews r JOIN task_runs t ON r.task_run_id=t.id "
+                "WHERE t.project_id=? ORDER BY r.id", (project_id,),
+            ))
+            return result
 
     def get_tasks(self, epic_run_id: str) -> list[TaskRun]:
         return [

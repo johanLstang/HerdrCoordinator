@@ -164,7 +164,7 @@ class RuntimeLifecycleService:
         facts = self._live(run, start)
         if facts:
             if task:
-                self.start._slot(run)
+                self.start._slot(run, read_only=True)
             return {
                 "status": "LIVE",
                 "session_id": facts["session_id"],

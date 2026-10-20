@@ -5,6 +5,7 @@ from pydantic import ValidationError
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.epic_completion_service import EpicCompletionError
 from orchestrator.application.epic_start_service import EpicStartError
+from orchestrator.application.reconciliation_service import integration_report
 from orchestrator.application.runtime_service import RuntimeService
 from orchestrator.application.task_scheduler_service import SchedulerError
 from orchestrator.application.task_start_service import TaskStartError
@@ -83,6 +84,10 @@ class IntegrationControlService:
             or scheduler.review_provider is not None
         ):
             raise IntegrationControlError("INTEGRATION_CONTROL_CONFIGURATION_INVALID")
+        # Legacy internal schedulers may be composed before their F34 connection.
+        # Bind only this already validated owning service, never an MCP argument.
+        if scheduler.recovery_registration is None:
+            scheduler.recovery_registration = epic_start
         # Internal dispatch has no control wrapper; clients receive the guarded runtime below.
         self.delegate = RuntimeService(self.store, self.actor, log, **self._services())
 
@@ -290,6 +295,13 @@ class IntegrationControlService:
     async def overview(self, actor):
         try:
             advice = await self.scheduler.selection.get_next(actor, actor.epic_run_id)
+            reconciliation = await self.scheduler.reconcile(actor, actor.epic_run_id)
+            if not reconciliation["scheduling_allowed"]:
+                advice["candidates"], advice["next_task_id"] = [], None
+                for row in advice["tasks"]:
+                    if row["runnable"]:
+                        row["runnable"] = False
+                        row["blockers"].append(dict(code="STARTUP_RECONCILIATION_REQUIRED"))
         except Exception:
             return {
                 "status": "UNAVAILABLE",
@@ -365,6 +377,7 @@ class IntegrationControlService:
             reserved_workers=reserved,
             available_worker_slots=max(0, self.settings.max_workers - reserved),
             selection=advice,
+            reconciliation=integration_report(reconciliation, epic.id),
             tasks=rows,
             next_allowed_operations=(
                 ["integration_overview", "task_get_next", "task_schedule"]

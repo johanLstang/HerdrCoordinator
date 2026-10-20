@@ -480,3 +480,28 @@ saknad spec för en ny aktuell task. Tidigare tasks verifieras med sin egen
 registrerade leverans-/reviewkontext, aktuella board och verkliga Git-/stoppbevis.
 En icke-tom katalog ingår i scheduleridentiteten; tom standard ändrar inget äldre
 konfigurationshash.
+
+
+### E11/F42: läsande startavstämning
+
+`ReconciliationService` läser projektets SQLite-runs, Worker-reservationer,
+externa referenser och operationsjournaler och jämför dem med faktisk Git,
+ursprungliga Herdr/Codex-registreringar och färsk TeamPlayer-board. Resultatet
+är VERIFIED, RESUMABLE, DRIFT eller UNCERTAIN, med observerade resurser,
+commit-SHA, orsak och nästa tillåtna åtgärd.
+
+Scheduler och Coordinator kör en färsk avstämning före nya reservationer.
+Både SQLite/Git/board och boardögonblicksbilden som användes vid valet måste
+stämma. Ett tidigare rapportobjekt ger ingen startbehörighet. Saknade
+observatörer, okända operationsutfall och otillgängliga tjänster stoppar
+berörd ny scheduling; befintliga operationer kan fortfarande observeras.
+Verifierat parkerade tasks och avstämda passiva inputväntelägen kan lämna
+kapacitet för oberoende tasks.
+
+Avstämningen startar, stoppar och återupptar inga agenter och ändrar inte
+Git, SQLite eller TeamPlayer. Operatorns betrodda komposition kopplar
+`LifecycleObserver`, `IntegrationObserver` och `CoordinatorObserver` till
+ursprungliga registreringar. Integration får endast sin epics resursidentiteter
+i MCP-rapporten. Ingen schemaändring eller adoption av manuella worktrees ingår.
+F43/F44 levererar effektfull återanslutning och återställning.
+Se [kontrakt, komposition och verifiering](docs/recovery/F-42-startup.md).

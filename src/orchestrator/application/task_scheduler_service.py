@@ -10,6 +10,14 @@ from pydantic import ValidationError
 
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
 from orchestrator.application.ack_observation import validate_wait
+from orchestrator.application.reconciliation_service import (
+    IntegrationObserver,
+    LifecycleObserver,
+    ReconciliationError,
+    ReconciliationService,
+    bind_selection,
+    integration_report,
+)
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.task_approval_service import TaskApprovalError, TaskApprovalService
 from orchestrator.application.task_attention_service import AttentionError, TaskAttentionService
@@ -49,6 +57,7 @@ class TaskSchedulerService:
         timeout_seconds=45,
         registration=None,
         ack_wait_seconds=0,
+        reconciliation=None,
     ):
         self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.settings, self.store, self.selection, self.sync = settings, store, selection, sync
@@ -67,6 +76,7 @@ class TaskSchedulerService:
             raise SchedulerError("SCHEDULER_CONFIGURATION_INVALID")
         self.review_provider, self.timeout_seconds = review_provider, timeout_seconds
         self.registration = registration
+        self.recovery_registration = registration
         configuration = {
             "settings": settings.model_dump(mode="json"),
             "specs": {
@@ -113,6 +123,52 @@ class TaskSchedulerService:
             settings, store, sync, herdr, codex, processes=processes
         )
         self.resume = TaskResumeService(self.attention, ack_wait_seconds=ack_wait_seconds)
+        self.reconciliation = reconciliation
+        self.last_reconciliation = None
+
+    async def reconcile(self, actor, epic_run_id):
+        self.last_reconciliation = None
+        if self.registration is not None:
+            self.registration.connection_principal(actor)
+        try:
+            self.selection._scope(actor, epic_run_id)
+        except TaskSelectionError:
+            raise SchedulerError("RECONCILIATION_SCOPE_DENIED") from None
+        if actor.project_id != self.sync.project_id:
+            raise SchedulerError("RECONCILIATION_SCOPE_DENIED")
+        service = self.reconciliation
+        if service is None:
+            def observers(run):
+                if getattr(run, "epic_run_id", None) == epic_run_id:
+                    return LifecycleObserver(self.merge.lifecycle, actor)
+                if run.id == epic_run_id and self.recovery_registration is not None:
+                    return IntegrationObserver(self.recovery_registration)
+                return None
+            service = ReconciliationService(
+                self.settings, self.store, self.selection.reader, project_id=actor.project_id,
+                observers=observers, evidence_contexts=self.selection.delivery_contexts,
+                scopes=self.selection.scopes, codex=self.merge.lifecycle.codex,
+                processes=self.merge.lifecycle.processes,
+            )
+        if service.store is not self.store or service.project_id != actor.project_id or (
+            service.settings != self.settings
+        ):
+            raise SchedulerError("RECONCILIATION_CONFIGURATION_INVALID")
+        self.last_reconciliation = await service.inspect(epic_run_id=epic_run_id)
+        if not service.current(self.last_reconciliation):
+            self.last_reconciliation["scheduling_allowed"] = False
+        return self.last_reconciliation
+
+    async def _reconcile_new(self, actor, epic_run_id):
+        try:
+            report = await self.reconcile(actor, epic_run_id)
+            bind_selection(report, self._board)
+            if not report["scheduling_allowed"]:
+                raise ReconciliationError("STARTUP_RECONCILIATION_REQUIRED")
+        except SchedulerError:
+            raise
+        except Exception:
+            raise SchedulerError("STARTUP_RECONCILIATION_REQUIRED") from None
 
     def _scope(self, actor, epic_run_id):
         if self.registration is not None:
@@ -326,6 +382,12 @@ class TaskSchedulerService:
                 break
             spec = self.selection.specs[identity]
             try:
+                await self._reconcile_new(actor, epic.id)
+            except SchedulerError:
+                # Block fresh claims while still observing already owned work.
+                # Do not let a startup drift starve its original recovery path.
+                return False
+            try:
                 task, _ = self.start.claim(
                     actor, epic.id, spec, timeout_seconds=self.timeout_seconds
                 )
@@ -351,6 +413,7 @@ class TaskSchedulerService:
                     self._record(actor, task, "SYNC_PENDING", resume_phase="OBSERVING")
             except (TeamPlayerError, SchedulerError, TaskStartError) as error:
                 self._pause(actor, self.store.get_task(task.id), str(error))
+        return True
 
     async def start_selected(self, actor, epic_run_id, spec):
         """F35 explicit agent choice, with the same F29 lock and guarded claim pipeline."""
@@ -381,6 +444,8 @@ class TaskSchedulerService:
             if len(configured) != 1 or configured[0] != spec:
                 raise SchedulerError("SCHEDULER_TASK_SPEC_CHANGED")
             # start.claim evaluates the complete current dependency/Git/owner evidence again.
+            if self.store.get_operation(actor.project_id, self.start.KIND, spec.task_id) is None:
+                await self._reconcile_new(actor, epic.id)
             task, _ = self.start.claim(actor, epic.id, spec, timeout_seconds=self.timeout_seconds)
             if owner is None:
                 self.store.add_operation(
@@ -691,7 +756,7 @@ class TaskSchedulerService:
                             },
                         )
                     )
-            await self._fill(actor, epic, started)
+            refill_needed = not await self._fill(actor, epic, started)
             tasks = self.store.get_tasks(epic.id)
             rank = {
                 LocalTaskSpec.model_validate(self.selection.specs[i]).task_id: n
@@ -724,10 +789,14 @@ class TaskSchedulerService:
                     continue
                 if completed:
                     await self._fill(actor, epic, started)
+            if refill_needed:
+                await self._fill(actor, epic, started)
             records = [o for o in self.store.get_operations(epic.id, kind=self.KIND)]
             return {
                 "epic_run_id": epic.id,
                 "started": started,
+                "reconciliation": (integration_report(self.last_reconciliation, epic.id)
+                                   if self.last_reconciliation is not None else None),
                 "tasks": [
                     {
                         "task_run_id": o.task_run_id,
