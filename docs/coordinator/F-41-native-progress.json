@@ -1014,6 +1014,11 @@
     "native_main": "e685602d8ea11610035ed25dee853a5c035b9d15",
     "final_artifact": "docs/coordinator/F-41-native-final.json",
     "archive_manifest": "docs/coordinator/F-41-native-archive.json",
-    "development_integration": "PENDING_EXACT_SOURCE_REVIEW_TASK_TO_E10_POST_TEST"
+    "development_integration": "TASK_DONE_MERGED_POSTVERIFIED",
+    "development_task_version": 25,
+    "reviewed_task": "7bd9c19e2c6813851510aee21f7567b49f9f63d3",
+    "development_merge": "21b60d748388aac89bee6e03b92bb2ad07df34cc",
+    "development_epic": "Active",
+    "pending": "E10 final review, PR/main merge and post-verification"
   }
 }

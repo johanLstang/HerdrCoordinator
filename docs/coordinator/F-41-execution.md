@@ -1,7 +1,7 @@
 # F41: begränsad körmiljö och eget commitverktyg
 
 Status 2026-10-20: **F41.A1–A3 verifierade i det riktiga R18-provet**.
-Källreview/Task → E10/eftertest och E10:s PR/mainintegration återstår.
+F41:s källreview/Task → E10/eftertest är verifierade; E10:s PR/mainintegration återstår.
 Se [slutprov och kvitton](F-41-native.md) samt [förkontraktet](F-41-runtime-plan.md).
 
 ## Valfritt sessionskontrakt
@@ -139,9 +139,9 @@ Privata JSON-värden/headers ska inte kopieras till Git eller rapportutskrifter.
 
 ## Kvarvarande leveransgrind
 
-Nativeprov, tidslinje och featureacceptans är verifierade i R18. Aktuell
-Task→E10-review/merge/eftertest och E10:s samlade PR/mainintegration återstår.
-Nativeacceptans ensam ger inte utvecklingstasken F41 Done eller E10 Done.
+Nativeprov, tidslinje och featureacceptans är verifierade i R18. F41:s egen
+Task→E10-review/merge/eftertest är nu verifierade och tasken är Done.
+E10:s samlade PR/mainintegration och slutverifiering återstår.
 
 
 ## Nativeupptäckta återförsökskontrakt

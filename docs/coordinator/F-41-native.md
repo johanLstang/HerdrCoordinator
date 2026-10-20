@@ -1,6 +1,6 @@
 # F41: verifierat komplett nativeflöde
 
-2026-10-20: **F41.A1–A3 är verifierade.** Två riktiga provepics har levererats genom Herdr/Codex, Git, SQLite och TeamPlayer. Utvecklingstaskens egen källreview, Task → E10 och eftertest återstår innan task Done; E10 behåller Active inför sin PR/mainintegration.
+2026-10-20: **F41.A1–A3 är verifierade.** Två riktiga provepics har levererats genom Herdr/Codex, Git, SQLite och TeamPlayer. Utvecklingstaskens egen källreview, Task → E10 och eftertest är också verifierade; F41 är Done. [Källleverans](../reviews/F-41-final.md). E10 behåller Active inför sin PR/mainintegration.
 
 ## Faktisk leverans
 
