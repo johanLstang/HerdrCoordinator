@@ -44,3 +44,17 @@ Om en första kapacitetsfyllning stoppas av oavstämt befintligt arbete får F29
 fortfarande observera dess ursprungliga Worker-rapport. En avgränsad ny
 kapacitetskontroll efter observationen kör hela grinden igen. F42 accepterar
 inte en okänd HEAD bara för att ett rapportmeddelande finns.
+
+
+### Observatörsregister efter slutreview
+
+Coordinatorns läsning anropar aldrig `integration_factory`. F38 registrerar
+ett processlokalt observationsobjekt efter en faktisk F34-registrering, och
+F40 kopplar sina redan kända `original_start`-kontexter till samma register.
+`register_epic_observer` kontrollerar klass, store, projekt, roll, originalspec,
+extern epicbindning och inställningar; en befintlig konfiguration byts inte ut.
+Detta skapar ingen run, runtime, ägare eller extern resurs. Saknad kontext
+efter processomstart ger UNCERTAIN tills operatörens komposition återkopplar
+originalkontexten. F13 validerar därefter verklig live- eller stoppstatus i
+samma registrering. En bekräftat stoppad Integration behöver ingen startfabrik
+för att observeras.

@@ -119,11 +119,16 @@ class IntegrationObserver:
         op = s.store.get_operation(run.project_id, s.KIND, run.id)
         if op is None or op.status != "SUCCEEDED" or op.result.get("stage") != "REGISTERED":
             raise ReconciliationError("INTEGRATION_REGISTRATION_INCOMPLETE")
-        observed, _, facts = s._native(self.principal, op)
+        observed = s._verify(self.principal, op)
         if observed != run:
             raise ReconciliationError("INTEGRATION_REGISTRATION_CHANGED")
+        result = s.lifecycle._reconnect(self.principal, run.id, False)
         s.codex.read_session(run.codex_session_id, run.worktree_path)
-        return dict(status="LIVE", session_id=facts["session_id"], runtime_status=facts["status"])
+        return dict(
+            status=result["status"],
+            session_id=result["session_id"],
+            runtime_status=result.get("runtime_status"),
+        )
 
 
 class ReconciliationService:
@@ -364,7 +369,14 @@ class ReconciliationService:
             elif result.get("status") == "STOPPED":
                 row["runtime_observation"] = "STOPPED"
                 self._issue(
-                    row, "RESUMABLE", "ORIGINAL_RUNTIME_STOPPED", "RESUME_SAME_SESSION_WITH_SLOT"
+                    row,
+                    "RESUMABLE",
+                    "ORIGINAL_RUNTIME_STOPPED",
+                    "RESUME_SAME_SESSION_WITH_SLOT"
+                    if isinstance(run, TaskRun)
+                    else "RECONCILE_ORIGINAL_EPIC_OPERATION"
+                    if run.status == EpicState.MERGING
+                    else "RECONNECT_ORIGINAL_INTEGRATION",
                 )
             else:
                 raise ValueError

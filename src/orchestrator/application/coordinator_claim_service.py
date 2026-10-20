@@ -41,8 +41,28 @@ class CoordinatorClaimService:
         self.completed_plan = completed_plan
         self.reconciliation = reconciliation
         self.last_reconciliation = None
+        self.epic_observers = {}
         if reader.project_id != self.spec.native_project_id:
             raise CoordinatorError("COORDINATOR_BOARD_CONFIGURATION_INVALID")
+
+    def register_epic_observer(self, startup):
+        """Operator composition only; cache a known context without creating/adopting runs."""
+        if not isinstance(startup, EpicStartService):
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_INVALID")
+        configured = next((e for e in self.spec.epics if e.spec == startup.spec), None)
+        if configured is None or (
+            startup.store is not self.store
+            or startup.principal.project_id != self.spec.project_id
+            or startup.principal.role != Role.INTEGRATION
+            or startup.external_epic_id not in {None, configured.native_epic_id}
+            or startup.settings.model_dump(exclude={"review_context"})
+            != self.settings.model_dump(exclude={"review_context"})
+        ):
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_INVALID")
+        existing = self.epic_observers.get(startup.principal.epic_run_id)
+        if existing is not None and existing.startup.configuration != startup.configuration:
+            raise CoordinatorError("RECONCILIATION_EPIC_CONTEXT_CHANGED")
+        self.epic_observers[startup.principal.epic_run_id] = IntegrationObserver(startup)
 
     async def reconcile(self, *, continuation_key=None):
         self.last_reconciliation = None
@@ -52,10 +72,7 @@ class CoordinatorClaimService:
                 if run.id == self.runtime.run_id:
                     return CoordinatorObserver(self.runtime)
                 if isinstance(run, EpicRun):
-                    configured = next((e for e in self.spec.epics
-                                       if e.spec.epic_id == run.epic_id), None)
-                    if configured is not None:
-                        return IntegrationObserver(self.factory(configured, run.id))
+                    return self.epic_observers.get(run.id)
                 return None
             service = ReconciliationService(
                 self.settings, self.store, self.reader, project_id=self.spec.project_id,
@@ -396,6 +413,7 @@ class CoordinatorClaimService:
             raise CoordinatorError("EPIC_CLAIM_INTEGRATION_CONFIGURATION_INVALID")
         if op.result["stage"] == "REGISTERED":
             service.connection_principal(service.principal)
+            self.register_epic_observer(service)
             return dict(status="REGISTERED", **op.result)
         # Genuine F05 preparation, after the reservation, under the repository lock.
         # This is a product run intended for this actual F34 start, never a bootstrap adoption.
@@ -418,6 +436,7 @@ class CoordinatorClaimService:
             result = current.result | dict(start=outcome)
             if outcome["stage"] == "REGISTERED":
                 service.connection_principal(service.principal)
+                self.register_epic_observer(service)
                 result["stage"] = "REGISTERED"
             current = current.model_copy(update={
                 "result": result, "updated_at": utc_now(),

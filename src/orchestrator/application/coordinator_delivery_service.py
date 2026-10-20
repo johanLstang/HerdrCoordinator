@@ -43,6 +43,8 @@ class CoordinatorDeliveryService:
             "coordinator_delivery"
         ) != self.configuration_hash:
             raise CoordinatorError("COORDINATOR_DELIVERY_CAPABILITY_UNREGISTERED")
+        for subject in review.subjects.values():
+            claims.register_epic_observer(subject.original_start)
 
     def _scope(self, actor, project_id, run_id):
         self.runtime.connection_principal(actor)

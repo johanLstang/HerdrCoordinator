@@ -574,3 +574,70 @@ def test_continuation_key_and_release_label_without_actual_delivery_do_not_autho
         o for o in result["reconciliation"]["operations"] if o["operation_id"] == pending.id
     )
     assert observed["blocks_new_work"] is True
+
+
+def test_known_epic_observation_never_calls_start_factory(claims_setup, monkeypatch):
+    claims, a, _, _, _, _ = claims_setup
+    result = run(claims.claim(a, "p", "actual-start"))
+    assert result["status"] == "REGISTERED"
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("A read-only audit must never invoke the start factory")
+
+    monkeypatch.setattr(claims, "factory", forbidden)
+    before = claims.store.project_inventory("p"), claims.store.db.total_changes
+    report = run(claims.reconcile())
+    assert report["scheduling_allowed"], report
+    assert before == (claims.store.project_inventory("p"), claims.store.db.total_changes)
+
+
+def test_reopened_observer_registry_requires_original_context_without_creating_it(claims_setup):
+    from orchestrator.application.coordinator_claim_service import CoordinatorClaimService
+
+    claims, a, _, _, _, _ = claims_setup
+    result = run(claims.claim(a, "p", "actual-start"))
+    parent = claims.epic_observers[result["epic_run_id"]].startup
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Missing context must give uncertainty, not a factory call")
+
+    reopened = CoordinatorClaimService(claims.runtime, claims.reader, forbidden)
+    before = claims.store.db.total_changes
+    report = run(reopened.reconcile())
+    assert not report["scheduling_allowed"]
+    assert "RUNTIME_OBSERVER_UNAVAILABLE" in codes(report)
+    reopened.register_epic_observer(parent)
+    report = run(reopened.reconcile())
+    assert report["scheduling_allowed"], report
+    assert claims.store.db.total_changes == before
+    assert (
+        row(report, parent.principal.epic_run_id)["session_id"]
+        == parent.store.get_epic(parent.principal.epic_run_id).codex_session_id
+    )
+
+
+def test_confirmed_stopped_integration_is_resumable_without_worker_slot_or_new_agent(control_setup):
+    control, _, a, _, native = control_setup
+    parent = control.epic_start
+    op = control.store.get_operation(a.project_id, parent.KIND, a.epic_run_id)
+    # These peers have simulated PIDs; observe them with their own process adapter.
+    parent.lifecycle.processes = native
+    parent.lifecycle.stop_epic(parent._coordinator(op), a.epic_run_id, key="controlled-epic-stop")
+    before = control.store.project_inventory("p"), control.store.db.total_changes, native.starts
+    report = run(recovery(control, a).inspect(epic_run_id=a.epic_run_id))
+    observed = row(report, a.epic_run_id)
+    assert observed["classification"] == "RESUMABLE"
+    assert observed["runtime_observation"] == "STOPPED" and observed["worker_slot"] is None
+    assert observed["findings"] == [
+        dict(
+            classification="RESUMABLE",
+            code="ORIGINAL_RUNTIME_STOPPED",
+            next_action="RECONNECT_ORIGINAL_INTEGRATION",
+        )
+    ]
+    assert not report["scheduling_allowed"]
+    assert before == (
+        control.store.project_inventory("p"),
+        control.store.db.total_changes,
+        native.starts,
+    )
