@@ -465,7 +465,9 @@ def test_live_interrupted_projection_does_not_accept_foreign_ack(setup):
     assert s.store.get_task("t1").internal_status == TaskState.STARTING
 
 
-def test_readiness_loss_before_send_retains_unsent_preparation_and_retries_once(setup):
+def test_readiness_loss_before_send_has_separate_lease_and_first_ack_clock(setup, monkeypatch):
+    from datetime import datetime
+
     s, actor, h, _ = setup
     original = s._runtime
     calls = []
@@ -476,22 +478,30 @@ def test_readiness_loss_before_send_retains_unsent_preparation_and_retries_once(
         return result | {"ready": False} if len(calls) == 2 else result
 
     s._runtime = readiness
-    with pytest.raises(AssignmentError, match="RUNTIME_NOT_IDLE"):
-        s.dispatch(actor, "t1", "exact fixture")
+    first = s.dispatch(actor, "t1", "exact fixture")
+    assert first["status"] == "WAITING" and first["dispatch_stage"] == "PREPARED"
     prepared = s.store.get_operation("p", s.KIND, "t1")
-    assert prepared.result["stage"] == "PREPARED" and h.sent == []
+    assert prepared.result["deadline"] is None and h.sent == []
     with pytest.raises(AssignmentError, match="NOT_DISPATCHED"):
         s.observe(actor, "t1")
+    # The controller may finish another startup before revisiting this known
+    # unsent task: the original preparation lease survives, no ACK time existed.
+    now = datetime.fromisoformat(prepared.result["preparation_deadline"]) - timedelta(seconds=240)
+    monkeypatch.setattr("orchestrator.application.runtime_assignment_service.utc_now", lambda: now)
     result = s.dispatch(actor, "t1", "exact fixture")
     assert result["status"] == "CONFIRMED" and len(h.sent) == 1
     final = s.store.get_operation("p", s.KIND, "t1")
     assert final.id == prepared.id
-    for key in ["correlation_id", "deadline", "prompt_hash", "instruction_hash", "baseline_turns"]:
+    for key in ["correlation_id", "prompt_hash", "instruction_hash", "baseline_turns",
+                "preparation_deadline"]:
         assert final.result[key] == prepared.result[key]
+    assert datetime.fromisoformat(final.result["deadline"]) == now + timedelta(seconds=45)
     assert s.dispatch(actor, "t1", "exact fixture") == result and len(h.sent) == 1
+    assert s.store.get_operation("p", s.KIND, "t1").result["deadline"] == final.result["deadline"]
 
 
-def test_unsent_preparation_never_extends_expired_original_deadline(setup, monkeypatch):
+@pytest.mark.parametrize("legacy", [False, True])
+def test_unsent_preparation_never_extends_expired_original_lease(setup, monkeypatch, legacy):
     from datetime import datetime
 
     s, actor, h, _ = setup
@@ -504,17 +514,45 @@ def test_unsent_preparation_never_extends_expired_original_deadline(setup, monke
         return facts | {"ready": False} if len(count) == 2 else facts
 
     s._runtime = readiness
-    with pytest.raises(AssignmentError, match="RUNTIME_NOT_IDLE"):
-        s.dispatch(actor, "t1", "exact fixture")
+    assert s.dispatch(actor, "t1", "exact fixture")["dispatch_stage"] == "PREPARED"
     prepared = s.store.get_operation("p", s.KIND, "t1")
-    deadline = prepared.result["deadline"]
+    if legacy:
+        data = {k: v for k, v in prepared.result.items()
+                if k not in {"dispatch_protocol", "preparation_deadline"}}
+        data["deadline"] = (utc_now() + timedelta(seconds=45)).isoformat()
+        prepared = prepared.model_copy(update={"result": data})
+        s.store.update_operation(prepared)
+    key = "deadline" if legacy else "preparation_deadline"
+    deadline = prepared.result[key]
     monkeypatch.setattr("orchestrator.application.runtime_assignment_service.utc_now",
                         lambda: datetime.fromisoformat(deadline) + timedelta(seconds=1))
-    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+    error = "ACK_TIMEOUT" if legacy else "PREPARATION_TIMEOUT"
+    with pytest.raises(AssignmentError, match=error):
         s.dispatch(actor, "t1", "exact fixture")
     expired = s.store.get_operation("p", s.KIND, "t1")
-    assert expired.status == "TIMED_OUT" and expired.result["deadline"] == deadline
+    assert expired.status == "TIMED_OUT" and expired.result[key] == deadline
     assert expired.result["stage"] == "PREPARED" and h.sent == []
-    with pytest.raises(AssignmentError, match="ACK_TIMEOUT"):
+    assert expired.result["deadline"] == prepared.result["deadline"]
+    with pytest.raises(AssignmentError, match=error):
         s.observe(actor, "t1")
     assert s.store.get_task("t1").internal_status == TaskState.STARTING
+
+
+def test_legacy_dispatched_unknown_outcome_is_not_reinterpreted_as_prepared(setup):
+    s, actor, h, _ = setup
+
+    def crash(*args, **kwargs):
+        raise RuntimeError("after dispatch marker; transport outcome unknown")
+
+    h.prompt = crash
+    with pytest.raises(RuntimeError):
+        s.dispatch(actor, "t1", "exact fixture")
+    op = s.store.get_operation("p", s.KIND, "t1")
+    data = {k: v for k, v in op.result.items()
+            if k not in {"dispatch_protocol", "preparation_deadline"}}
+    assert data["stage"] == "DISPATCH_REQUESTED" and data["deadline"]
+    s.store.update_operation(op.model_copy(update={"result": data}))
+    h.prompt = lambda *a, **k: pytest.fail("legacy unknown send must never be repeated")
+    result = s.dispatch(actor, "t1", "exact fixture")
+    assert result["status"] == "WAITING" and h.sent == []
+    assert s.store.get_operation("p", s.KIND, "t1").result == data

@@ -221,3 +221,28 @@ Testa ändrad readiness mellan förberedelse och send, en enda dispatch efter
 återhämtning, crash/okänt utfall efter dispatchmarkering, utgången originaldeadline
 och legacyreplay. Detta preciserar robust startup för samma F41-scenario och ger
 ingen ny MCP-rättighet eller lättnad av ACK-/Donevillkor.
+
+
+## R14: separat förberedelsefrist och första verkliga ACK-deadline
+
+R14 verifierade ny automatisk Integration och exakt specifikationsläsning, men
+A stannade bevisat i PREPARED utan send/SID tills den ursprungliga45s-fristen
+löpte ut. Integration hann först hantera B:s startup. PREPARED gjorde det okända
+fönstret synligt, men en ACK-klocka före någon send mäter fel fas. R14 stoppas och
+bevaras; den utgångna intentionen ändras eller skickas inte om.
+
+Före kod fastställs versionerat protokoll2 för enbart nya assignmentintentioner:
+PREPARED har fast preparation_deadline (högst300s) och ännu ingen ACK-deadline.
+Känd transient ej-idle förberedelse returnerar WAITING/PREPARED för befintlig kort
+betrodd observationsloop; inga externa effekter sker. Blockerad eller ändrad
+runtime/scope avvisas fortsatt. Vid den enda atomiska DISPATCH_REQUESTED sparas
+första deadline=nu+ursprunglig timeout (högst45s). Den börjar en gång och förlängs
+aldrig. Efter markeringen sker enbart observation vid retry. Förberedelsefristen
+förlängs inte heller. Slot-/owner-/beroende-/processkraven gäller i båda faser.
+
+Äldre intentioner utan protokoll2 behåller sina befintliga frister och semantik;
+PREPARED1 med utgången deadline återaktiveras inte. Inga runtimefingerprints eller
+uppmätta försöksdata migreras. Verifiera preparation-timeout utan send, sen men
+inom förberedelsefristen tillåten första send, oförändrad första ACK-deadline vid
+replay, legacytimers och förlorat transportutfall. Frys och verifiera sedan hela
+nativekedjan igen. Ingen ny toolcapability eller användarinput behövs.

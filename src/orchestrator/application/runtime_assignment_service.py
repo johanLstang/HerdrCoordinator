@@ -26,6 +26,7 @@ class AssignmentError(RuntimeError):
 
 class RuntimeAssignmentService:
     KIND = "dispatch_assignment"
+    PREPARATION_SECONDS = 300
 
     def __init__(self, settings, store, herdr, codex=None):
         self.settings, self.store, self.herdr = settings, store, herdr
@@ -150,13 +151,15 @@ class RuntimeAssignmentService:
                         idempotency_key=run.id,
                         result={
                             "stage": "PREPARED",
+                            "dispatch_protocol": 2,
                             "correlation_id": correlation,
                             "instruction_hash": digest(instruction),
                             "prompt_hash": digest(prompt),
                             "timeout_seconds": timeout_seconds,
-                            "deadline": (
-                                utc_now() + timedelta(seconds=timeout_seconds)
+                            "preparation_deadline": (
+                                utc_now() + timedelta(seconds=self.PREPARATION_SECONDS)
                             ).isoformat(),
+                            "deadline": None,
                             "start_operation_id": start.id,
                             "baseline_session_id": sid,
                             "baseline_turns": [t["id"] for t in baseline["turns"]] if sid else [],
@@ -170,8 +173,16 @@ class RuntimeAssignmentService:
                 run, start = self._validate(actor, run_id)
                 if run.internal_status != TaskState.STARTING:
                     raise AssignmentError("TASK_NOT_STARTING")
-                if not self._runtime(run, start)["ready"]:
-                    raise AssignmentError("RUNTIME_NOT_IDLE")
+                if self._preparation_expired(op):
+                    self._request_dispatch(run, op)  # Persist expiry; never send.
+                facts = self._runtime(run, start)
+                if not facts["ready"]:
+                    if facts["status"] == "blocked":
+                        raise AssignmentError("RUNTIME_BLOCKED")
+                    return dict(status="WAITING", dispatch_stage="PREPARED",
+                                runtime_status=facts["status"],
+                                correlation_id=op.result["correlation_id"],
+                                task=run.model_dump(mode="json"))
                 prompt = self._prompt(run, op.result["correlation_id"], instruction)
                 if digest(prompt) != op.result["prompt_hash"]:
                     raise AssignmentError("ASSIGNMENT_PROMPT_CHANGED")
@@ -200,31 +211,56 @@ class RuntimeAssignmentService:
                 e.code if isinstance(e, HerdrError) else "ASSIGNMENT_UNVERIFIED"
             ) from None
 
+    @staticmethod
+    def _preparation_expired(op):
+        protocol = op.result.get("dispatch_protocol", 1)
+        if type(protocol) is not int or protocol not in {1, 2}:
+            raise AssignmentError("ASSIGNMENT_PROTOCOL_UNSUPPORTED")
+        key = "preparation_deadline" if protocol == 2 else "deadline"
+        return op.status != "PENDING" or utc_now() > datetime.fromisoformat(op.result[key])
+
+    @staticmethod
+    def _preparation_timeout(op):
+        return ("ASSIGNMENT_PREPARATION_TIMEOUT" if op.result.get("dispatch_protocol") == 2
+                else "ASSIGNMENT_ACK_TIMEOUT")
+
     def _request_dispatch(self, run, op):
         with self.store.transaction():
             current = self.store.get_operation(run.project_id, self.KIND, run.id)
             if current is None or current.id != op.id or any(
-                current.result[key] != op.result[key] for key in (
-                    "instruction_hash", "prompt_hash", "correlation_id", "deadline",
+                current.result.get(key) != op.result.get(key) for key in (
+                    "instruction_hash", "prompt_hash", "correlation_id",
                     "baseline_session_id", "baseline_turns", "start_operation_id",
-                    "timeout_seconds",
+                    "timeout_seconds", "dispatch_protocol", "preparation_deadline",
                 )
             ):
                 raise AssignmentError("ASSIGNMENT_CHANGED")
             if current.result["stage"] != "PREPARED":
                 return False, current
-            expired = current.status != "PENDING" or (
-                utc_now() > datetime.fromisoformat(current.result["deadline"])
-            )
+            if current.result["deadline"] != op.result["deadline"]:
+                raise AssignmentError("ASSIGNMENT_CHANGED")
+            protocol = current.result.get("dispatch_protocol", 1)
+            if protocol == 2 and current.result["deadline"] is not None:
+                raise AssignmentError("ASSIGNMENT_ACK_TIMER_ALREADY_SET")
+            expired = self._preparation_expired(current)
+            result = current.result
+            if not expired:
+                result = result | dict(stage="DISPATCH_REQUESTED")
+                if protocol == 2:
+                    # First ACK deadline only, at the sole send marker. Neither
+                    # this clock nor the fixed preparation lease is ever renewed.
+                    result["deadline"] = (utc_now() + timedelta(
+                        seconds=current.result["timeout_seconds"],
+                    )).isoformat()
             updated = current.model_copy(update=dict(
-                result=(current.result if expired else current.result
-                        | dict(stage="DISPATCH_REQUESTED")),
-                status="TIMED_OUT" if expired else "PENDING",
-                error_code="ASSIGNMENT_ACK_TIMEOUT" if expired else None, updated_at=utc_now(),
+                result=result, status="TIMED_OUT" if expired else "PENDING",
+                error_code=self._preparation_timeout(current) if expired else None,
+                updated_at=utc_now(),
             ))
-            self.store.update_operation(updated)
+            if current.status != "TIMED_OUT":
+                self.store.update_operation(updated)
         if expired:
-            raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT")
+            raise AssignmentError(self._preparation_timeout(current))
         return True, updated
 
     def _transport(self, run, op, error):
@@ -261,7 +297,7 @@ class RuntimeAssignmentService:
             if op is None or op.result["start_operation_id"] != start.id:
                 raise AssignmentError("ASSIGNMENT_NOT_FOUND")
             if op.result["stage"] == "PREPARED":
-                raise AssignmentError("ASSIGNMENT_ACK_TIMEOUT" if op.status == "TIMED_OUT"
+                raise AssignmentError(self._preparation_timeout(op) if op.status == "TIMED_OUT"
                                       else "ASSIGNMENT_NOT_DISPATCHED")
             if op.status == "SUCCEEDED":
                 return self._confirmed(run, op, start)

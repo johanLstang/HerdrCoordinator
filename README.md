@@ -454,3 +454,9 @@ spec nekas fortfarande. Nya assignmentintentioner börjar i `PREPARED` fram till
 dispatchmarkeringen. Bara bevisat osänd förberedelse får pröva readiness igen;
 `DISPATCH_REQUESTED` och äldre okända resultat observeras utan omsändning.
 Originaldeadline och ACK-/runtimekontroller gäller i alla faser.
+
+Nya assignmentintentioner använder internt dispatchprotokoll2: en fast högst300s
+förberedelsefrist och ännu ingen ACK-deadline i PREPARED. Första ACK-fristen
+(högst45s) skapas en gång vid den enda dispatchmarkeringen. Transient ej-idle
+förberedelse ger WAITING utan send. Äldre sparade protokoll, utgångna frister och
+okända transportutfall återaktiveras inte.

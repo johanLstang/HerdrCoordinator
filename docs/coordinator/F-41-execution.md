@@ -165,3 +165,16 @@ Integration, men saknad läsbar exakt spec krävde diagnostisk datahjälp och or
 assignmentens ACK förblev obekräftad. Samtliga egna runtimes är fysiskt stoppade,
 slots null och91 frysta källfiler bevarade. R13 räknas inte som full autonomi.
 En ny komplett fryst körning krävs efter de beskrivna rättningarna.
+
+
+## Separata tidsfaser för nya assignmentintentioner
+
+R14 bevisade att en osänd PREPARED kunde hinna få sin ACK-frist utgången medan
+Integration hanterade en annan startup. De faktiska R14-fristerna är oförändrade,
+alla egna processer stoppade, slots frigivna och originalkoden bevarad.
+Nya `dispatch_protocol=2` har `preparation_deadline` högst300s och `deadline=null`
+i PREPARED. Transient ej-idle ger WAITING för befintlig observationsloop. Först
+vid den enda DISPATCH_REQUESTED sätts ACK-deadline till nu+ursprunglig timeout,
+högst45s. Ingen frist förlängs. Version1 och äldre skickade/okända intentioner
+behåller sin semantik och omsänds inte. Detta kräver ingen schemamigration eller
+ny modell-/MCP-rättighet. Full ny nativeacceptans återstår.
