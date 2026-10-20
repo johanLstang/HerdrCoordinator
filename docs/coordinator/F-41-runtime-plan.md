@@ -246,3 +246,31 @@ uppmätta försöksdata migreras. Verifiera preparation-timeout utan send, sen m
 inom förberedelsefristen tillåten första send, oförändrad första ACK-deadline vid
 replay, legacytimers och förlorat transportutfall. Frys och verifiera sedan hela
 nativekedjan igen. Ingen ny toolcapability eller användarinput behövs.
+
+
+## R15: bevisat i tid levererad Integration-ACK observeras efter fristen
+
+R15 verifierade hela primära nativeflödet: två samtidiga WORKING Workers,
+same-session taskfix, tre ursprungliga Done, sex lästa första reviewdelar,
+verklig API-korrigering till samma Integration/egen Worker utan metadatahjälp,
+ny åttadelad review med oberoende exit0, faktiskt godkännande och main-merge
+4cb31cbae36412202f3ac6ca1e70e3a758ba183b samt stopp/Done-synk/release.
+Nästa epic skapades från exakt denna main. Dess korrekta ACK har native tidsbevis
+16:40:28.037Z, originaldeadline16:41:07.795091Z. F34 observerade senare och
+nekade med ACK_TIMEOUT trots bevisad leverans i tid. Nästa arbetsloop startade
+inte. Primär Done/main rullas inte tillbaka och ingen merge upprepas.
+
+Före kod fastställs minsta rättning: återanvänd befintlig betrodd native tids-
+verifiering från assignmenttjänsten för exakt korrelerad Integration-ACK. Endast
+faktiskt journal-/appserverbundet item/turn/session/cwd/process och oförändrat
+prompt-/context-/spec-hash accepteras. Om observation sker efter originalfristen
+måste faktisk ACK-tid (eller konservativt avslutad turn) bevisas ligga från
+originaloperationens skapande till samma deadline. Odaterad, för tidig, verkligt
+sen, wrapper-/bool-/felkorrelerad eller process-/scopeändrad ACK nekas.
+
+ACK_TIMEOUT kan återläsas med samma originalintention för sådan verifiering,
+inte omsändas eller förlängas. Registrering/aktivering kräver fortfarande alla
+vanliga fakta. Bevara äldre godkända ACK-kvittensers format; nya tidsbevis får inte
+orsaka falsk drift vid replay. Ingen runtime/config/frist migreras retroaktivt.
+Stoppa/bevara återstående egna R15-runtimes före ändrad fryst kod och verifiera
+rättningen med negativa tids-/roll-/scopefall samt ny hel nativekedja.

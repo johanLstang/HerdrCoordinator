@@ -495,3 +495,70 @@ def test_foreign_connection_principal_cannot_rebind_registration(setup):
     with pytest.raises(EpicStartError, match="CONNECTION_SCOPE_DENIED"):
         s.connection_principal(i.model_copy(update={"epic_run_id": "other"}))
     assert s.store.db.total_changes == changes and len(h.prompts) == 1
+
+
+@pytest.mark.parametrize("timing", ["native", "completed", "undated", "late", "before", "naive"])
+def test_delayed_observer_requires_original_on_time_native_proof(setup, monkeypatch, timing):
+    from datetime import datetime
+
+    s, root, integration, native = setup
+    native.ack = False
+    start(s, root)
+    op = s.store.get_operation("p", s.KIND, "e")
+    deadline = datetime.fromisoformat(op.result["deadline"])
+    monkeypatch.setattr("orchestrator.application.epic_start_service.utc_now",
+                        lambda: deadline + timedelta(seconds=5))
+    with pytest.raises(EpicStartError, match="ACK_TIMEOUT"):
+        start(s, root)
+    native.turns[0]["items"][1]["text"] = canonical_json(op.result["expected_ack"])
+    item = native.turns[0]["items"][1]
+    stamp = op.created_at + timedelta(seconds=2)
+    if timing == "completed":
+        native.turns[0]["completedAt"] = int(stamp.timestamp())
+    elif timing != "undated":
+        if timing == "late":
+            stamp = deadline + timedelta(milliseconds=1)
+        if timing == "before":
+            stamp = op.created_at - timedelta(milliseconds=1)
+        if timing == "naive":
+            stamp = stamp.replace(tzinfo=None)
+        item["nativeObservedAt"] = stamp.isoformat()
+    if timing in {"native", "completed"}:
+        result = start(s, root)
+        assert result["stage"] == "REGISTERED"
+        assert s.connection_principal(integration) == integration
+        saved = s.store.get_operation("p", s.KIND, "e")
+        assert saved.result["late_observation_verified"] is True
+        assert saved.result["deadline"] == op.result["deadline"]
+        assert saved.result["expected_ack"] == op.result["expected_ack"]
+        assert start(s, root) == result
+    else:
+        with pytest.raises(EpicStartError, match="ACK_TIMEOUT"):
+            start(s, root)
+        assert s.store.get_operation("p", s.KIND, "e").status == "PENDING"
+    assert native.starts == len(native.prompts) == 1 and not s.store.get_tasks("e")
+
+
+def test_optional_message_time_does_not_rewrite_legacy_registered_receipt(setup):
+    s, root, integration, native = setup
+    result = start(s, root)
+    op = s.store.get_operation("p", s.KIND, "e")
+    assert "native_observed_at" not in op.result["ack"]
+    native.turns[0]["items"][1]["nativeObservedAt"] = op.created_at.isoformat()
+    changes = s.store.db.total_changes
+    assert start(s, root) == result and s.connection_principal(integration) == integration
+    assert s.store.db.total_changes == changes
+    assert s.store.get_operation("p", s.KIND, "e").result["ack"] == op.result["ack"]
+
+
+def test_registered_status_without_actual_ack_never_establishes_connection(setup):
+    s, root, integration, native = setup
+    native.ack = False
+    start(s, root)
+    op = s.store.get_operation("p", s.KIND, "e")
+    s.store.update_operation(op.model_copy(update={
+        "status": "SUCCEEDED", "result": op.result | dict(stage="REGISTERED", ack=None),
+    }))
+    with pytest.raises(EpicStartError, match="REGISTERED_ACK_CHANGED"):
+        s.connection_principal(integration)
+    assert not s.store.get_tasks("e") and len(native.prompts) == native.starts == 1

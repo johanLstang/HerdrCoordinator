@@ -460,3 +460,8 @@ förberedelsefrist och ännu ingen ACK-deadline i PREPARED. Första ACK-fristen
 (högst45s) skapas en gång vid den enda dispatchmarkeringen. Transient ej-idle
 förberedelse ger WAITING utan send. Äldre sparade protokoll, utgångna frister och
 okända transportutfall återaktiveras inte.
+
+Integration-start kan avstämma ett senare observerat ACK även efter ACK_TIMEOUT
+endast när samma korrelerade native item/turn bevisas levererat inom den
+oförändrade originalfristen. Odaterade eller faktiskt sena svar godtas inte.
+Gamla lyckade kvittensformat bevaras och ingen prompt skickas om.

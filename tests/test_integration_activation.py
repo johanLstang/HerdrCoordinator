@@ -147,3 +147,26 @@ def test_start_keeps_claim_pending_until_actual_delivery_and_never_resends(activ
     final = asyncio.run(p.start(root, "p", "E-34", "e"))
     assert final["stage"] == "REGISTERED" and final["activation"]["status"] == "DELIVERED"
     assert state["calls"] == native.starts == 1
+
+
+def test_delayed_on_time_ack_registers_then_activates_original_session(activation, monkeypatch):
+    from datetime import datetime, timedelta
+
+    p, root, native, _, state = activation
+    native.ack = False
+    assert asyncio.run(p.start(root, "p", "E-34", "e"))["stage"] == "DISPATCH_REQUESTED"
+    op = p.store.get_operation("p", p.KIND, "e")
+    deadline = datetime.fromisoformat(op.result["deadline"])
+    monkeypatch.setattr("orchestrator.application.epic_start_service.utc_now",
+                        lambda: deadline + timedelta(seconds=2))
+    with pytest.raises(EpicStartError, match="ACK_TIMEOUT"):
+        asyncio.run(p.start(root, "p", "E-34", "e"))
+    item = native.turns[0]["items"][1]
+    item["text"] = json.dumps(op.result["expected_ack"])
+    item["nativeObservedAt"] = (op.created_at + timedelta(seconds=1)).isoformat()
+    result = asyncio.run(p.start(root, "p", "E-34", "e"))
+    assert result["stage"] == "REGISTERED" and result["activation"]["status"] == "DELIVERED"
+    assert state["calls"] == native.starts == 1
+    assert p.store.get_operation("p", p.KIND, "e").result["deadline"] == op.result["deadline"]
+    assert asyncio.run(p.start(root, "p", "E-34", "e")) == result
+    assert state["calls"] == 1 and not p.store.get_tasks("e")

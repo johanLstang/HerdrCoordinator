@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from orchestrator.adapters.codex import CodexAdapter
 from orchestrator.adapters.herdr import HerdrError
-from orchestrator.application.runtime_assignment_service import digest
+from orchestrator.application.runtime_assignment_service import RuntimeAssignmentService, digest
 from orchestrator.application.runtime_lifecycle_service import RuntimeLifecycleService
 from orchestrator.application.state_service import StateService
 from orchestrator.application.worktree_service import slug
@@ -252,8 +252,6 @@ class EpicStartService:
                     return self.outcome(self._save(op, error="EPIC_START_SYNC_PENDING"), epic)
             epic = self.runtime.start_epic(actor, epic.id)
             op = self._save(op, stage="RUNTIME_READY")
-        if op.result["stage"] == "ACK_TIMEOUT":
-            raise EpicStartError("INTEGRATION_ACK_TIMEOUT")
         if op.result["stage"] == "RUNTIME_READY":
             op = self._dispatch(actor, op)
         outcome = self._observe(actor, op)
@@ -379,10 +377,13 @@ class EpicStartService:
                     continue
                 # JSON equality alone equates bool/int; require the exact v1 integer too.
                 if type(ack.get("version")) is int and ack == expected:
-                    return dict(
+                    proof = dict(
                         turn_id=turn["id"], item_id=item["id"],
                         message_hash=digest(item["text"]),
                     )
+                    if item.get("nativeObservedAt") is not None:
+                        proof["native_observed_at"] = item["nativeObservedAt"]
+                    return proof
         return None
 
     def _observe(self, actor, op):
@@ -394,6 +395,7 @@ class EpicStartService:
                 epic = current.model_copy(update={"codex_session_id": sid})
                 self.store.update_runtime_metadata(epic)
         expected = self._assignment(epic, op, start)
+        thread = None
         if sid is None:
             proof = None
         else:
@@ -405,10 +407,19 @@ class EpicStartService:
                 raise EpicStartError("INTEGRATION_SESSION_CHANGED")
             proof = self._match(op, thread, expected, facts["status"])
         if op.status == "SUCCEEDED":
-            if proof is None or op.result["ack"] != proof | {"session_id": sid}:
+            current = proof | {"session_id": sid} if proof is not None else None
+            # Existing successful registrations did not persist optional native
+            # message time. Keep their original receipt shape on replay.
+            if current is not None and "native_observed_at" not in op.result["ack"]:
+                current.pop("native_observed_at", None)
+            if proof is None or current != op.result["ack"]:
                 raise EpicStartError("INTEGRATION_REGISTERED_ACK_CHANGED")
             return self.outcome(op, epic)
-        if utc_now() > datetime.fromisoformat(op.result["deadline"]):
+        expired = op.result["stage"] == "ACK_TIMEOUT" or (
+            utc_now() > datetime.fromisoformat(op.result["deadline"])
+        )
+        timely = RuntimeAssignmentService._completed_before_deadline(op, thread, proof)
+        if expired and not timely:
             self._save(op, stage="ACK_TIMEOUT", error="INTEGRATION_ACK_TIMEOUT")
             raise EpicStartError("INTEGRATION_ACK_TIMEOUT")
         if proof is None:
@@ -417,7 +428,7 @@ class EpicStartService:
             self._verify(actor, op)
             op = self._save(op, stage="REGISTERED", status="SUCCEEDED", ack=proof | {
                 "session_id": sid,
-            })
+            }, late_observation_verified=expired and timely)
         return self.outcome(op, epic)
 
     def connection_principal(self, actor):

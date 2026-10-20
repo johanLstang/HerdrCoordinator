@@ -178,3 +178,15 @@ vid den enda DISPATCH_REQUESTED sätts ACK-deadline till nu+ursprunglig timeout,
 högst45s. Ingen frist förlängs. Version1 och äldre skickade/okända intentioner
 behåller sin semantik och omsänds inte. Detta kräver ingen schemamigration eller
 ny modell-/MCP-rättighet. Full ny nativeacceptans återstår.
+
+
+## Integration-ACK som observeras senare
+
+R15:s primära mainleverans är faktiskt Done och bevarad. Nästa epic fick korrekt
+ACK cirka40s före fristen, men F34:s observation skedde senare och nekades.
+Starttjänsten använder nu samma betrodda native tidsbevis som assignmenttjänsten:
+exakt prompt/context/spec, item/turn/session/cwd/process och tid inom original-
+operationens oförändrade frist. ACK_TIMEOUT får avstämmas utan omsändning endast
+med sådant bevis; sena/odaterade/felkorrelerade svar nekas. Legacykvittensformat
+skrivs inte om. R15:s gamla runtime/config/tidsgränser är orörda och återstående
+processer stoppade; ny komplett R16-körning verifierar aktuell fryst kod.
