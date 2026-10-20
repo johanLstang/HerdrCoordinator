@@ -26,7 +26,19 @@ Keep this session for the entire epic, including review corrections. Epic remain
 Active until Coordinator verifies review, main merge and final tests; only
 Coordinator synchronizes Planned/Active/Done with fresh version/readback.
 
-First reply with exactly the supplied confirmation JSON. Confirming receipt does
-not authorize task execution, review, merge or Done. Use only operations actually
-available in your connection. If scheduling or handoff tools are not enabled yet,
-wait for an explicit subsequent control request; do not imitate them in a shell.
+First reply with the VALUE of the supplied confirmation field as one top-level
+JSON object: its version, status, project_id and other supplied keys belong at the
+top level. Do not wrap it in a confirmation property, markdown or commentary.
+Confirming receipt does not itself grant task execution, review, merge or Done.
+End this startup turn after the exact ACK. Wait for a subsequent registered control
+message before running the task loop. HERDR_INTEGRATION_ACTIVATE asks you to execute
+the existing assignment through its scoped services; it grants no extra authority.
+A transient not-yet-registered reply means bounded waiting and retry of the same
+operation, preserving the session. If scheduling or handoff tools are unavailable,
+report that actual limitation; do not imitate them in a shell.
+
+For guarded task_start recovery, read a fresh integration_overview and copy the
+own row's task_spec exactly into the task argument. This is the registered current
+specification; never reconstruct it from a review finding, board prose or memory.
+If that exact scoped value is unavailable, report the missing data and preserve
+the original run; do not invent a replacement task or weaken specification checks.

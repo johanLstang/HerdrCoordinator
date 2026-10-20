@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from orchestrator.adapters.codex import CodexAdapter
 from orchestrator.adapters.herdr import HerdrError
-from orchestrator.application.runtime_assignment_service import digest
+from orchestrator.application.runtime_assignment_service import RuntimeAssignmentService, digest
 from orchestrator.application.runtime_lifecycle_service import RuntimeLifecycleService
 from orchestrator.application.state_service import StateService
 from orchestrator.application.worktree_service import slug
@@ -48,8 +48,11 @@ class EpicStartService:
 
     def __init__(
         self, settings, store, herdr, spec, integration_principal, codex=None,
-        *, processes=None, sync=None, external_epic_id=None,
+        *, processes=None, sync=None, external_epic_id=None, activate_registered=False,
     ):
+        if type(activate_registered) is not bool:
+            raise EpicStartError("EPIC_START_CONFIGURATION_INVALID")
+        self.activate_registered = activate_registered
         self.spec = EpicIntegrationSpec.model_validate(spec)
         if (
             integration_principal.role != Role.INTEGRATION
@@ -79,6 +82,10 @@ class EpicStartService:
             policy_hash=digest(self.policy),
             external_epic_id=external_epic_id,
         )
+        if activate_registered:
+            from orchestrator.application.integration_activation_service import ACTIVATION_POLICY
+
+            self.configuration["activation_policy_hash"] = digest(ACTIVATION_POLICY)
         if getattr(herdr, "mcp_fingerprint", None) is not None:
             self.configuration["mcp_configuration"] = herdr.mcp_fingerprint
 
@@ -244,14 +251,31 @@ class EpicStartService:
                 if result["status"] not in {"SYNCED", "EXISTING"}:
                     return self.outcome(self._save(op, error="EPIC_START_SYNC_PENDING"), epic)
             epic = self.runtime.start_epic(actor, epic.id)
-            op = self._save(op, stage="RUNTIME_READY")
-        if op.result["stage"] == "ACK_TIMEOUT":
-            raise EpicStartError("INTEGRATION_ACK_TIMEOUT")
+            op = self._save(
+                op, stage="RUNTIME_READY",
+                preparation_deadline=(utc_now() + timedelta(seconds=300)).isoformat(),
+            )
         if op.result["stage"] == "RUNTIME_READY":
             op = self._dispatch(actor, op)
-        return self._observe(actor, op)
+        outcome = self._observe(actor, op)
+        if self.activate_registered and outcome["stage"] == "REGISTERED":
+            from orchestrator.application.integration_activation_service import (
+                IntegrationActivationService,
+            )
+
+            outcome["activation"] = IntegrationActivationService(
+                self
+            ).dispatch_under_start_lock(actor)
+            if outcome["activation"]["status"] != "DELIVERED":
+                outcome["stage"] = "ACTIVATION_PENDING"
+        return outcome
 
     def _dispatch(self, actor, op):
+        preparation_deadline = op.result.get("preparation_deadline")
+        if preparation_deadline is not None and (
+            utc_now() > datetime.fromisoformat(preparation_deadline)
+        ):
+            raise EpicStartError("INTEGRATION_PREPARATION_TIMEOUT")
         epic, start, facts = self._native(actor, op)
         if not facts["ready"]:
             raise EpicStartError("INTEGRATION_RUNTIME_NOT_IDLE")
@@ -285,6 +309,20 @@ class EpicStartService:
             or Path(baseline["cwd"]) != Path(epic.worktree_path)
         ):
             raise EpicStartError("INTEGRATION_SESSION_CHANGED")
+        # A failed final precondition is known not to have sent anything. Keep
+        # RUNTIME_READY so the same registered runtime can be retried. Only an
+        # actual dispatch intent consumes the single-send/ACK window.
+        _, current_start, current_facts = self._native(actor, op)
+        if current_start.id != start.id or self.git.head(epic.branch) != head:
+            raise EpicStartError("INTEGRATION_DISPATCH_CHANGED")
+        if not current_facts["ready"]:
+            raise EpicStartError("INTEGRATION_RUNTIME_NOT_IDLE")
+        if current_facts["session_id"] != sid:
+            raise EpicStartError("INTEGRATION_SESSION_CHANGED")
+        if preparation_deadline is not None and (
+            utc_now() > datetime.fromisoformat(preparation_deadline)
+        ):
+            raise EpicStartError("INTEGRATION_PREPARATION_TIMEOUT")
         op = self._save(
             op, stage="DISPATCH_REQUESTED", prompt=prompt, prompt_hash=digest(prompt),
             context=context, context_hash=context_hash, expected_ack=expected,
@@ -292,9 +330,6 @@ class EpicStartService:
             if baseline else [], start_operation_id=start.id,
             deadline=(utc_now() + timedelta(seconds=45)).isoformat(),
         )
-        epic, current_start, facts = self._native(actor, op)
-        if current_start.id != start.id or not facts["ready"] or self.git.head(epic.branch) != head:
-            raise EpicStartError("INTEGRATION_DISPATCH_CHANGED")
         try:
             self.herdr.prompt(epic.integration_agent_id, prompt, timeout_ms=45000)
             transport = "RETURNED"
@@ -361,10 +396,13 @@ class EpicStartService:
                     continue
                 # JSON equality alone equates bool/int; require the exact v1 integer too.
                 if type(ack.get("version")) is int and ack == expected:
-                    return dict(
+                    proof = dict(
                         turn_id=turn["id"], item_id=item["id"],
                         message_hash=digest(item["text"]),
                     )
+                    if item.get("nativeObservedAt") is not None:
+                        proof["native_observed_at"] = item["nativeObservedAt"]
+                    return proof
         return None
 
     def _observe(self, actor, op):
@@ -376,6 +414,7 @@ class EpicStartService:
                 epic = current.model_copy(update={"codex_session_id": sid})
                 self.store.update_runtime_metadata(epic)
         expected = self._assignment(epic, op, start)
+        thread = None
         if sid is None:
             proof = None
         else:
@@ -387,10 +426,19 @@ class EpicStartService:
                 raise EpicStartError("INTEGRATION_SESSION_CHANGED")
             proof = self._match(op, thread, expected, facts["status"])
         if op.status == "SUCCEEDED":
-            if proof is None or op.result["ack"] != proof | {"session_id": sid}:
+            current = proof | {"session_id": sid} if proof is not None else None
+            # Existing successful registrations did not persist optional native
+            # message time. Keep their original receipt shape on replay.
+            if current is not None and "native_observed_at" not in op.result["ack"]:
+                current.pop("native_observed_at", None)
+            if proof is None or current != op.result["ack"]:
                 raise EpicStartError("INTEGRATION_REGISTERED_ACK_CHANGED")
             return self.outcome(op, epic)
-        if utc_now() > datetime.fromisoformat(op.result["deadline"]):
+        expired = op.result["stage"] == "ACK_TIMEOUT" or (
+            utc_now() > datetime.fromisoformat(op.result["deadline"])
+        )
+        timely = RuntimeAssignmentService._completed_before_deadline(op, thread, proof)
+        if expired and not timely:
             self._save(op, stage="ACK_TIMEOUT", error="INTEGRATION_ACK_TIMEOUT")
             raise EpicStartError("INTEGRATION_ACK_TIMEOUT")
         if proof is None:
@@ -399,7 +447,7 @@ class EpicStartService:
             self._verify(actor, op)
             op = self._save(op, stage="REGISTERED", status="SUCCEEDED", ack=proof | {
                 "session_id": sid,
-            })
+            }, late_observation_verified=expired and timely)
         return self.outcome(op, epic)
 
     def connection_principal(self, actor):

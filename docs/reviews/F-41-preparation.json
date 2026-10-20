@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "measured_at": "2026-10-20T12:43:15.662148+00:00",
+  "status": "PREPARED_NOT_NATIVE_ACCEPTANCE",
+  "tests": {
+    "passed": 141,
+    "failed": 0,
+    "skipped": 0,
+    "junit": "F-41-preparation.xml",
+    "seconds": 108.01,
+    "command": "HERDR_REAL_CODEX_BINARY=<actual installed Rust binary> uv run --locked pytest -q tests/test_codex_execution.py tests/test_codex_mcp_launch.py tests/test_worker_commit.py tests/test_f41_native_composition.py tests/test_runtime_start.py tests/test_runtime_assignment.py tests/test_runtime_lifecycle.py tests/test_mcp.py --junitxml=/tmp/herdr-f41-regression.xml"
+  },
+  "composition_after_pin_inventory_change": {
+    "passed": 2,
+    "seconds": 1.83,
+    "junit": "F-41-composition.xml"
+  },
+  "wheel": {
+    "modules": 76,
+    "policies": 6,
+    "sha256": "dd5dbcbb5e67aab58dfcd618e0c9aa28dc7abfe6bb3c910a1660d1464b24580e",
+    "source_exact": true
+  },
+  "gates": {
+    "ruff": true,
+    "build": true,
+    "readme_check": true,
+    "local_links": true,
+    "source_pins_current": 89
+  },
+  "standalone_measurements": {
+    "worker": {
+      "git": 30,
+      "host_network": 1,
+      "network": 1,
+      "outside": 2,
+      "own": true,
+      "parent": 3,
+      "socket": 1,
+      "state": 2
+    },
+    "coordinator": {
+      "git": 30,
+      "host_network": 1,
+      "network": 1,
+      "outside": 2,
+      "own": 30,
+      "parent": 3,
+      "socket": 1,
+      "state": 2
+    },
+    "integration": {
+      "git": 30,
+      "host_network": 1,
+      "network": 1,
+      "outside": 2,
+      "own": 30,
+      "parent": 3,
+      "socket": 1,
+      "state": 2
+    },
+    "test_process": {
+      "git": 30,
+      "host_network": 111,
+      "network": true,
+      "outside": 2,
+      "own": 30,
+      "parent": 3,
+      "socket": 2,
+      "state": 2
+    }
+  },
+  "actual_board_and_sdk": {
+    "user": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "access": "Write",
+    "pending_user_tasks": 4,
+    "coordinator_tools": 6
+  },
+  "actual_native_sessions": 0,
+  "positive_native_gate": false,
+  "verified_acceptance_criteria": 0,
+  "test_fixture_ids": {
+    "epics": [
+      "bff4790c-45f9-41db-8019-9cade6e5485a",
+      "bb7592a9-f193-4df7-9133-6254fce85b53"
+    ],
+    "tasks": [
+      [
+        "5b4b2e28-91eb-4aac-a8fa-ecd2526be4d1",
+        "b46b9ec2-11c2-4f72-8649-b91f34f4cc68",
+        "44c1f43f-2b81-49a6-a18d-26a53ea2ce91"
+      ],
+      [
+        "c6bf629a-fe6f-452d-9a4f-d91bc84143ed"
+      ]
+    ]
+  },
+  "limits": [
+    "Controlled native facts in service tests are not an actual native agent run.",
+    "Kernel measurements are actual; the registered native broker/stop evidence and full scenario remain.",
+    "First composed-test assertion assumed private local bind must fail. Actual private namespace bind is valid; current test verifies an unreachable actual host TCP listener.",
+    "One pending-state fixture initially changed only relational column. Corrected to consistent payload+column; current regression passes.",
+    "No task review/integration or E10/main delivery claimed."
+  ]
+}

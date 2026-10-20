@@ -1,0 +1,367 @@
+{
+  "version": 1,
+  "stage": "NATIVE_BEFORE_AFTER_APPROVED_AND_ALL_OWN_RUNTIMES_STOPPED",
+  "observed_at": "2026-10-15T14:45:30.156293+00:00",
+  "source_checkpoint": "eded024a88b4401bc6695b2a5aa36fe2f9ca9505",
+  "product_source_pins": "/tmp/herdr-f39-source-pins.json",
+  "operator_driver_sha256": "56e5183feb6e5c7d70526fe0cb5d957f48fcabf4ccd7bced7eac8d9539c2214b",
+  "server": "hc-f39-r1-20261015",
+  "server_start": {
+    "stage": "PROCESS_STARTED",
+    "argv": [
+      "/home/stang/.local/bin/herdr",
+      "--session",
+      "hc-f39-r1-20261015",
+      "server"
+    ],
+    "server": "hc-f39-r1-20261015",
+    "configuration_sha256": "665c63698e38587e9e7e5b10d3221e8c51101b3f42792dd06c72e59cc2c50eca",
+    "pid": 3503543,
+    "start_time": "154134547"
+  },
+  "config_sha256": "665c63698e38587e9e7e5b10d3221e8c51101b3f42792dd06c72e59cc2c50eca",
+  "native_project": "d2ee4c75-7b80-465f-83ac-1750854a8e80",
+  "native_epic": "cc1051d1-0666-4fb7-b0a7-aa458d02f0e1",
+  "native_seed_task": "d9ee85a3-f657-4155-8b3c-6ce82d8d6f2f",
+  "main_before": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "worker_snapshots": [
+    {
+      "run_id": "0354f52c-c80f-4d2e-b1a0-ea9cc68ea71d",
+      "task_id": "f39-output-r1",
+      "session_id": "01a13fef-1f06-7031-8b71-2223530a0707",
+      "status": "DONE",
+      "slot": null,
+      "source_commit": "264dd9db300341a27891e2f4581ce49b7063c987",
+      "merge_commit": "33f2d7685b40d3b619a040495396d5328ae24758"
+    },
+    {
+      "run_id": "662ea4ae-46b8-4320-8791-b91c725b911b",
+      "task_id": "f39-seed-r1",
+      "session_id": "01a13fcc-d2d6-76c1-a546-e3e01a49a2c6",
+      "status": "DONE",
+      "slot": null,
+      "source_commit": "76a3723422a4a2ee421923e642e27a571b079cb7",
+      "merge_commit": "3d2f59a1d7c3ab3da6654305cc5e42511df401e1"
+    }
+  ],
+  "operator_approval": {
+    "source": "USER_EXPLICIT",
+    "text": "Ja, godkänn F39-r1-verktygen",
+    "journaled_choices": [
+      {
+        "file": "approval-coordinator-context-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "coordinator_review_context",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-coordinator-submit-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "coordinator_review_submit",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-correction-blocker-read-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_park_blocked",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-epic-complete-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "epic_complete",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-resume-seed-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "resume_task",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-approve-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_approve",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-merge-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_merge",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-review-request-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_review_request",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-schedule-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_schedule",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-start-correction-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_start",
+        "choice": "ALLOW_SESSION"
+      },
+      {
+        "file": "approval-task-start-seed-v1.json",
+        "stage": "KEY_SENT",
+        "tool": "task_start",
+        "choice": "ALLOW_ONCE"
+      }
+    ]
+  },
+  "fixture_input_event": {
+    "reason": "Pre-existing fixture AGENTS requires an explicit same-session prefix decision. Initial Worker correctly reported BLOCKED and was physically parked with slot release.",
+    "blocker_id": "9231b035-e8e5-48d7-b33f-6e7fe8461d3d",
+    "input_id": "5ebd20df-ab7b-44f4-9e2e-23732bfa4cd2",
+    "answer_source": "Operator confirmed Hej from the current registered task and existing preference; sent to Integration for actual F32 same-session resume."
+  },
+  "handoff_before": {
+    "id": "3cc9a75b-29ea-4f15-92a6-3a5f55b877bb",
+    "source": "3d2f59a1d7c3ab3da6654305cc5e42511df401e1"
+  },
+  "review_before": {
+    "context_id": "a558654546adc8a6288a65dc2db984720d8a38d7b48cdc6cc9fdeebbe6f33910",
+    "context_operation_id": "f3c81e3a-1d70-45e7-b4d6-10d1ae9d6ec2",
+    "source": "3d2f59a1d7c3ab3da6654305cc5e42511df401e1",
+    "target": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+    "handoff_id": "3cc9a75b-29ea-4f15-92a6-3a5f55b877bb",
+    "handoff_hash": "3ef9116e266c933676848b530a3e919d1d2690842ceb58d4ddab348e79ca72e7",
+    "membership_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "read_chunks": [
+      0,
+      1,
+      2
+    ],
+    "complete_patch_bytes": 238,
+    "patch_sha256": "b79184674eafe51abceb2fa42ead5003e723ce133a2d3d81bae492a99a6d748b",
+    "task_ids": [
+      "f39-seed-r1"
+    ],
+    "independent_verification": {
+      "id": "e77c5f86-5726-4e18-859e-6fd90fcb45e1",
+      "status": "FAILED",
+      "exit_code": 1,
+      "error_code": "TEST_FAILED"
+    },
+    "review_id": "5b4172c0-2031-47b8-8bc6-660f7cc5156a",
+    "review_operation_id": "4fd4190c-f10a-4e0f-8874-43ef51d7c27f",
+    "decision": {
+      "version": 1,
+      "result": "CHANGES_REQUESTED",
+      "context_id": "a558654546adc8a6288a65dc2db984720d8a38d7b48cdc6cc9fdeebbe6f33910",
+      "issues": [
+        {
+          "number": 1,
+          "problem": "The complete 238-byte main-to-epic patch adds only f39_input.txt with exactly Hej Ada and no newline; f39_output.txt is absent. The original input task was correctly approved for its bounded acceptance, but does not deliver the registered final epic output. Independent verification e77c5f86-5726-4e18-859e-6fd90fcb45e1 is FAILED with TEST_FAILED and exit_code 1; the baseline aggregate exit-zero checks verify only the input bytes.",
+          "requested_change": "Use the registered publish-output correction to create only f39_output.txt by reading f39_input.txt and appending exactly one newline, yielding the exact UTF-8 bytes Hej Ada followed by one newline. Preserve f39_input.txt and all other fixture files. Deliver the correction through the same existing Integration session and provide a new aggregate handoff for independent final review.",
+          "acceptance_criteria": [
+            "Final output is exactly Hej Ada followed by one newline."
+          ]
+        }
+      ]
+    },
+    "stage": "EPIC_CHANGES_REQUESTED"
+  },
+  "correction": {
+    "id": "ebbe981d-3f7f-4cc5-9a4a-95b80ea08f11",
+    "stage": "DISPATCHED",
+    "native_task_id": "40d9b2f3-7a4e-45a3-a002-8c9db65d5106",
+    "local_task_id": "f39-output-r1",
+    "entry_hash": "e21a5a20afb381557cbffb6168ce4f41bd2e9d5d862a682cf3d897037be4c15f",
+    "review_operation_id": "4fd4190c-f10a-4e0f-8874-43ef51d7c27f",
+    "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
+    "dispatch_session_id": "01a13fc5-4e15-78f3-afc4-6d7bab6b7723",
+    "dispatch_turn": "01a13fe7-b3db-7da2-8a43-f18c820cc49b",
+    "dispatch_item": "01a13fe7-b491-7442-a774-bb253cd96eba"
+  },
+  "handoff_after": {
+    "id": "30421f78-19d6-4ab5-9db8-c06fa777fa40",
+    "source": "33f2d7685b40d3b619a040495396d5328ae24758"
+  },
+  "review_after": {
+    "context_id": "53532cb9866bc249492cf9ecde8025dc39b2e25d3deed76b0b612614a5ebef7f",
+    "context_operation_id": "7b3502ed-4f24-4415-a43d-c4bd45cc5849",
+    "source": "33f2d7685b40d3b619a040495396d5328ae24758",
+    "target": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+    "handoff_id": "30421f78-19d6-4ab5-9db8-c06fa777fa40",
+    "handoff_hash": "ab52b4c0635e6a901c3dab312b0eb2190607593f456fc87d218b7567686d8548",
+    "membership_hash": "0ce50a70a10a1ef947d1d3f7209cadb956c09f664727bb34f2f4f86eb172f0dd",
+    "read_chunks": [
+      0,
+      1,
+      2
+    ],
+    "complete_patch_bytes": 451,
+    "patch_sha256": "755e475dba515f2542a1c2bcca44e793a450492aa8d5f99e001f1c58c9859364",
+    "task_ids": [
+      "f39-seed-r1",
+      "f39-output-r1"
+    ],
+    "independent_verification": {
+      "id": "69bdb360-f0ac-4d7d-95fa-d53c8e3be63b",
+      "status": "SUCCEEDED",
+      "exit_code": 0,
+      "error_code": null
+    },
+    "review_id": "90b5cbe8-4a58-42f6-85db-f63e2f25c05a",
+    "review_operation_id": "c45ea74d-a803-4b2a-a845-59c873cc0e4f",
+    "decision": {
+      "version": 1,
+      "result": "APPROVED",
+      "context_id": "53532cb9866bc249492cf9ecde8025dc39b2e25d3deed76b0b612614a5ebef7f",
+      "summary": "Read all three chunks of the fresh corrected handoff 30421f78-19d6-4ab5-9db8-c06fa777fa40 and reviewed the complete 451-byte diff from main d4215a26ba5e77d64a1fd4aed4117e5313c43563 to epic 33f2d7685b40d3b619a040495396d5328ae24758. The only changes are f39_input.txt containing exactly seven UTF-8 bytes Hej Ada without newline, preserving the original input blob, and f39_output.txt containing exactly Hej Ada followed by one newline; all other fixture files are unchanged. The effective plan and complete delivery membership include the preserved original f39-seed-r1 and correction f39-output-r1. Both have actual approved delivery records, epic merge commits, SUCCEEDED aftertests with exit code 0, STOPPED runtime status and stop IDs. Fresh independent epic verification 69bdb360-f0ac-4d7d-95fa-d53c8e3be63b at these exact source/main commits and both-task manifest SUCCEEDED with exit_code 0; current aggregate build, test and acceptance also exited 0. The registered final output criterion is met, resolving the earlier missing-output finding while preserving correction history. This approves final epic review only; main merge and epic Done are not asserted. The recorded manual probe limitation regarding positive D02/autonomy remains outside this registered output criterion.",
+      "verified_criteria": [
+        "Final output is exactly Hej Ada followed by one newline."
+      ]
+    },
+    "stage": "EPIC_APPROVED"
+  },
+  "stopped": true,
+  "limitations": [
+    "Manual registered product probe with actual operator input/readiness recovery; not autonomous F41 proof.",
+    "Native runtime source remains checkpoint eded024a, with all 81 baseline pins unchanged until after physical stop. Later R1 per-epic configuration refinement is separately tested, not represented as another native run.",
+    "No main merge; logical test epic remains APPROVED/board Active, physically stopped.",
+    "D02/F17 OS/autonomy gate remains unresolved and automatic claims remain denied."
+  ],
+  "history": [
+    {
+      "stage": "NATIVE_SCENARIO_IN_PROGRESS",
+      "observed_at": "2026-10-15T13:48:07.887758+00:00",
+      "worker_snapshots": [
+        {
+          "run_id": "662ea4ae-46b8-4320-8791-b91c725b911b",
+          "task_id": "f39-seed-r1",
+          "session_id": "01a13fcc-d2d6-76c1-a546-e3e01a49a2c6",
+          "status": "PARKED",
+          "slot": null
+        }
+      ]
+    }
+  ],
+  "native_coordinator_calls": [
+    {
+      "id": "exec-8fd41d89-8929-4735-978d-b56c8516b6d8",
+      "tool": "coordinator_review_context",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 16946
+    },
+    {
+      "id": "exec-881bf73c-5dbc-4da3-801e-b83531faea95",
+      "tool": "coordinator_review_read",
+      "status": "failed",
+      "error": null,
+      "duration_ms": 9317
+    },
+    {
+      "id": "exec-65d938e7-8186-492c-9970-90a16f261eb9",
+      "tool": "coordinator_review_read",
+      "status": "failed",
+      "error": null,
+      "duration_ms": 11679
+    },
+    {
+      "id": "exec-53152e0b-cf3e-4096-a559-6dd10ff8337b",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 15547
+    },
+    {
+      "id": "exec-89d21274-1439-4315-a4c7-84a602639b4c",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 10270
+    },
+    {
+      "id": "exec-c55d8506-c312-4b1c-a257-7e5e32d72c51",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 9884
+    },
+    {
+      "id": "exec-cc3a746f-cef7-4c80-9cc4-ad1b73000283",
+      "tool": "coordinator_review_submit",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 22950
+    },
+    {
+      "id": "exec-f042b0c8-4e14-4759-99cc-bfd8aa1dc2cb",
+      "tool": "coordinator_review_context",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 17745
+    },
+    {
+      "id": "exec-3932e830-c18c-4287-afb5-3ab9dd2bd318",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 10794
+    },
+    {
+      "id": "exec-0d493e95-ef11-48a2-b604-47192a93175e",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 10622
+    },
+    {
+      "id": "exec-c8a54707-933b-4116-966e-be9396bf7b6b",
+      "tool": "coordinator_review_read",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 9677
+    },
+    {
+      "id": "exec-62f1cdea-2d83-4cba-b5a4-c4655710f621",
+      "tool": "coordinator_review_submit",
+      "status": "completed",
+      "error": null,
+      "duration_ms": 17077
+    }
+  ],
+  "coordinator_final_status": "STOPPED",
+  "integration_final_status": "STOPPED",
+  "own_server_stopped": true,
+  "own_server_pid_absent": 3503543,
+  "claims": 0,
+  "main_merges": 0,
+  "main_after": "d4215a26ba5e77d64a1fd4aed4117e5313c43563",
+  "startup_recovery": {
+    "first_error": "RUNTIME_PANE_NOT_IDLE_OR_OWNED",
+    "task_run_id": "0354f52c-c80f-4d2e-b1a0-ea9cc68ea71d",
+    "start_operation_id": "5f67c18a-5d4c-4123-a3e3-ac4119daf0cf",
+    "pane_id": "w4:p1",
+    "terminal_id": "term_65de1a36980cb4",
+    "result": "Same genuine owned intent/run/pane retried through native Integration task_start after independent actual shell/cwd/Git checks; no replacement or fabricated readiness."
+  },
+  "coordinator_stop_recovery": "First wrapper returned TEAMPLAYER_CONNECTION_FAILED after real exit; durable EXIT_PENDING and absent agent were reread. Same stop key completed physical confirmation without another interrupt/exit.",
+  "coordinator_initial_registration": {
+    "run_id": "b1b7cfe9-f71f-4ae5-ab0d-63b1f516ba84",
+    "session_id": "01a13fc4-45b2-71d1-9e3c-fa720a87a911",
+    "agent_id": "hc-c-bb1149da67594df9a352162e",
+    "status": "ACTIVE",
+    "configuration_hash": "4f84d24d91b09fb3d6d8a1d258e26ed581618a4ce16ee9a5667ac20936ae2117",
+    "start_operation_id": "6dec851f-b79a-44a7-bf5c-039661429cd1",
+    "start_stage": "REGISTERED"
+  },
+  "integration_initial_registration": {
+    "run_id": "0e219621-d55c-4efc-b52f-f9cdec1fed10",
+    "session_id": "01a13fc5-4e15-78f3-afc4-6d7bab6b7723",
+    "agent_id": "hc-84bdcfe9563343ab8113b647",
+    "status": "ACTIVE",
+    "start_operation_id": "45838756-87b6-4497-a863-59f35016e7b1",
+    "start_stage": "REGISTERED"
+  }
+}

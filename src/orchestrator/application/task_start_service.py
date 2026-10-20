@@ -5,6 +5,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 
 from orchestrator.adapters.git import GitError
+from orchestrator.application.ack_observation import observe_bounded, validate_wait
 from orchestrator.application.git_integration_service import GitIntegrationService, IntegrationError
 from orchestrator.application.runtime_assignment_service import (
     AssignmentError,
@@ -40,7 +41,9 @@ class TaskStartService:
         prerequisite_probe=None,
         processes=None,
         claim_guard=None,
+        ack_wait_seconds=0,
     ):
+        self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.settings = settings
         self.slots = WorkerSlots(settings, store, processes=processes)
         self.store, self.herdr = store, herdr
@@ -316,11 +319,10 @@ class TaskStartService:
                 op = self._checkpoint(op, "RUNTIME_READY")
             if digest(op.result["instruction"]) != op.result["instruction_hash"]:
                 raise TaskStartError("WORKER_PROMPT_CHANGED")
-            result = self.assignment.dispatch(
-                actor,
-                task.id,
-                op.result["instruction"],
-                timeout_seconds=timeout_seconds,
+            result = observe_bounded(
+                lambda: self.assignment.dispatch(
+                    actor, task.id, op.result["instruction"], timeout_seconds=timeout_seconds,
+                ), self.ack_wait_seconds, pending=lambda result: result["status"] == "WAITING",
             )
             self._checkpoint(op, "WORKING" if result["status"] == "CONFIRMED" else "AWAITING_ACK")
             return result

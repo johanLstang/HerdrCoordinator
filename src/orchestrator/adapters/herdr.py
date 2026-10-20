@@ -1,5 +1,6 @@
 """Bounded Herdr CLI calls; no implicit server selection."""
 
+import hashlib
 import json
 import os
 import re
@@ -9,6 +10,7 @@ from pathlib import Path
 from uuid import UUID
 
 from orchestrator.adapters.codex import CodexAdapter, CodexError
+from orchestrator.domain.codex_execution import CodexExecutionPolicy, ExecutionPolicyError
 from orchestrator.domain.codex_mcp_launch import CodexMCPLaunch
 
 
@@ -38,7 +40,8 @@ def process_stamp(pid: int, argv: list[str], cwd: str) -> str:
 
 class HerdrAdapter:
     def __init__(
-        self, server_session: str, *, sandbox: str = "read-only", mcp: CodexMCPLaunch | None = None
+        self, server_session: str, *, sandbox: str = "read-only", mcp: CodexMCPLaunch | None = None,
+        execution_policy: CodexExecutionPolicy | None = None,
     ):
         if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9_-]{0,63}", server_session):
             raise HerdrError("INVALID_RUNTIME_CONFIGURATION")
@@ -48,10 +51,37 @@ class HerdrAdapter:
             raise HerdrError("HERDR_CONTEXT_REQUIRED")
         self.server_session, self.sandbox = server_session, sandbox
         self.mcp = CodexMCPLaunch.model_validate(mcp) if mcp is not None else None
+        self.execution_policy = (CodexExecutionPolicy.model_validate(execution_policy)
+                                 if execution_policy is not None else None)
+        if self.execution_policy is not None and (
+            self.mcp is None or self.execution_policy.workspace_access
+            != ("write" if sandbox == "workspace-write" else "read")
+        ):
+            raise HerdrError("INVALID_EXECUTION_POLICY_CONFIGURATION")
 
     @property
     def mcp_fingerprint(self):
-        return self.mcp.fingerprint if self.mcp else None
+        original = self.mcp.fingerprint if self.mcp else None
+        if self.execution_policy is None:
+            return original
+        value = json.dumps(dict(mcp=original, execution=self.execution_policy.fingerprint),
+                           sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    def _launch_args(self, cwd):
+        if self.execution_policy is not None:
+            try:
+                self.execution_policy.verify_files(cwd)
+            except ExecutionPolicyError:
+                raise HerdrError("EXECUTION_POLICY_FILES_UNVERIFIED") from None
+        return [
+            "--no-daemon",
+            *(["--sandbox", self.sandbox] if self.execution_policy is None else []),
+            "--ask-for-approval", "on-request" if self.execution_policy is None else "never",
+            "--cd", cwd,
+            *(self.mcp.cli_args() if self.mcp else []),
+            *(self.execution_policy.cli_args() if self.execution_policy else []),
+        ]
 
     def call(self, *args: str, timeout: int = 15) -> dict:
         try:
@@ -138,14 +168,7 @@ class HerdrAdapter:
             "30000",
             "--",
             *(["resume", str(UUID(resume_session_id))] if resume_session_id else []),
-            "--no-daemon",
-            "--sandbox",
-            self.sandbox,
-            "--ask-for-approval",
-            "on-request",
-            "--cd",
-            cwd,
-            *(self.mcp.cli_args() if self.mcp else []),
+            *self._launch_args(cwd),
             timeout=35,
         )
 
@@ -195,22 +218,14 @@ class HerdrAdapter:
             ):
                 raise ValueError
             info = self.process_info(binding["pane_id"])
-            required = [
-                "--no-daemon",
-                "--sandbox",
-                self.sandbox,
-                "--ask-for-approval",
-                "on-request",
-                "--cd",
-                cwd,
-                *(self.mcp.cli_args() if self.mcp else []),
-            ]
+            required = self._launch_args(cwd)
             cli = shutil.which("codex")
             if cli is None:
                 raise HerdrError("CODEX_EXECUTABLE_UNVERIFIED")
             installed = Path(cli).resolve()
             processes = []
             resumed_sessions = set()
+            pinned_native = False
             for process in info["foreground_processes"]:
                 args = process["argv"]
                 executable = Path(shutil.which(args[0]) or args[0]).resolve()
@@ -231,13 +246,22 @@ class HerdrAdapter:
                     if process["cwd"] != cwd:
                         raise ValueError
                     position = 2 if launcher else 1
+                    if self.execution_policy is not None:
+                        offset = position + (2 if args[position:position + 1] == ["resume"] else 0)
+                        if args[offset:] != required or (
+                            native and executable != self.execution_policy.binary.resolve()
+                        ):
+                            raise ValueError
+                        pinned_native = pinned_native or native
                     if len(args) > position and args[position] == "resume":
                         resumed_sessions.add(str(UUID(args[position + 1])))
                     pid = process["pid"]
                     if type(pid) is not int or pid <= 0:
                         raise ValueError
                     processes.append({"pid": pid, "start_time": process_stamp(pid, args, cwd)})
-            if info["pane_id"] != binding["pane_id"] or not processes:
+            if info["pane_id"] != binding["pane_id"] or not processes or (
+                self.execution_policy is not None and not pinned_native
+            ):
                 raise ValueError
             session = agent.get("agent_session")
             session_id = None

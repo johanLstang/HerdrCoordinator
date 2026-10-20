@@ -271,6 +271,22 @@ class IntegrationControlService:
             )
         return ToolResponse(ok=False, code=reason, message="reconcile recorded control step")
 
+    def _start_spec(self, task, epic, advice):
+        """Read the exact own configuration selected by fresh native board binding."""
+        identities = [row["task_id"] for row in advice["tasks"]
+                      if row.get("local_id") == task.task_id]
+        if len(identities) != 1:
+            return None
+        try:
+            spec = LocalTaskSpec.model_validate(self.scheduler.selection.specs[identities[0]])
+        except (KeyError, ValidationError):
+            return None
+        if (spec.project_id, spec.epic_id, spec.task_id) != (
+            task.project_id, epic.epic_id, task.task_id,
+        ):
+            return None
+        return spec.model_dump(mode="json")
+
     async def overview(self, actor):
         try:
             advice = await self.scheduler.selection.get_next(actor, actor.epic_run_id)
@@ -332,6 +348,10 @@ class IntegrationControlService:
                     requirements="Revalidate board/phase/review; resume needs explicit input",
                 )
             )
+            if "task_start" in next_operations:
+                rows[-1]["task_spec"] = self._start_spec(task, epic, advice)
+                if rows[-1]["task_spec"] is None:
+                    rows[-1]["task_spec_error"] = "REGISTERED_TASK_SPEC_UNVERIFIED"
         reserved = sum(
             isinstance(t, TaskRun) and t.worker_slot is not None for t in self.store.get_runs()
         )

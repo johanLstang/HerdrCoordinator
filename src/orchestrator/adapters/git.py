@@ -287,3 +287,59 @@ class GitAdapter:
             "merge", "--no-ff", "--no-edit", "-m", f"herdr-operation:{operation_id}",
             source, cwd=path,
         )
+
+    def _worker_git(self, path, arguments, *, data=None, environment=None):
+        """Fixed broker operations, isolated from inherited Git environment/hooks."""
+        try:
+            result = subprocess.run(
+                self._command(*arguments), cwd=path,
+                env=self._environment() | dict(environment or {}), input=data,
+                capture_output=True, timeout=30, check=False,
+            )
+            if result.returncode:
+                raise GitError("worker Git operation requires reconciliation")
+            return result.stdout.decode("utf-8", errors="surrogateescape").strip()
+        except (OSError, subprocess.TimeoutExpired):
+            raise GitError("worker Git outcome is unknown; reconcile the saved intent") from None
+
+    def worker_tree(self, path, parent, files, private_index):
+        """Build an exact-byte tree in an operator-private index, without filters."""
+        self.require_commit(parent)
+        environment = {"GIT_INDEX_FILE": str(private_index)}
+        self._worker_git(path, ("-c", "core.sparseCheckout=false", "read-tree", parent),
+                         environment=environment)
+        for name, entry in files.items():
+            if entry is None:
+                arguments = ("update-index", "--force-remove", "--", name)
+            else:
+                mode, content = entry
+                blob = self._worker_git(path, ("hash-object", "--no-filters", "-w", "--stdin"),
+                                        data=content, environment=environment)
+                arguments = ("update-index", "--add", "--cacheinfo", f"{mode:o},{blob},{name}")
+            self._worker_git(path, arguments, environment=environment)
+        return self._worker_git(path, ("write-tree",), environment=environment)
+
+    def worker_commit_object(self, path, tree, parent, message, operation_id, author, timestamp):
+        """Frozen identity/time/content make recovery produce the same Git object."""
+        self.require_commit(parent)
+        environment = {
+            "GIT_AUTHOR_NAME": author[0], "GIT_AUTHOR_EMAIL": author[1],
+            "GIT_COMMITTER_NAME": author[0], "GIT_COMMITTER_EMAIL": author[1],
+            "GIT_AUTHOR_DATE": timestamp, "GIT_COMMITTER_DATE": timestamp,
+        }
+        return self._worker_git(
+            path, ("-c", "commit.gpgSign=false", "commit-tree", tree, "-p", parent,
+                   "-m", message, "-m", "herdr-worker-commit:" + operation_id),
+            environment=environment,
+        )
+
+    def worker_update_ref(self, path, branch, commit, parent):
+        self.require_commit(commit)
+        self.require_commit(parent)
+        self.run("check-ref-format", "refs/heads/" + branch)
+        self._worker_git(path, ("update-ref", "refs/heads/" + branch, commit, parent))
+
+    def worker_sync_index(self, path, commit):
+        self.require_commit(commit)
+        # No -u: never overwrite a Worker's files while reconciling the index.
+        self._worker_git(path, ("-c", "core.sparseCheckout=false", "read-tree", commit))

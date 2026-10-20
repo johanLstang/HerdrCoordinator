@@ -1,0 +1,1130 @@
+{
+  "version": 1,
+  "stage": "CURRENT_APPROVED_REVIEW_AWAITING_SEPARATE_USER_MAIN_APPROVAL",
+  "observed_at": "2026-10-16T09:01:32.231976+00:00",
+  "repository": "/tmp/herdr-f40-r1-fixture-20261015/repo",
+  "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+  "coordinator_session_id": "01a143de-70c8-71d3-9f24-11c5278e7517",
+  "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+  "review_id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+  "review": {
+    "id": "39246d45-5cc2-4ee2-9bfb-3f1321ce4982",
+    "project_id": "f40-probe-r1",
+    "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+    "kind": "coordinator_epic_review",
+    "idempotency_key": "f40-r1-final-review",
+    "status": "SUCCEEDED",
+    "result": {
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+      "proposal_hash": "e4edbde9fbdaa76280aaac0f7dedba12a613dba93aa51e514f972768b25bb8db",
+      "decision": {
+        "version": 1,
+        "result": "APPROVED",
+        "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+        "summary": "Read and checked all current review chunks 0, 1 and 2 (3 total; 17593 characters), including the current plan, specification, sources, full authoritative base64 diff, task results, aggregate handoff and limitations. The complete 219-byte diff from main b4919eb13d1934ec5c7ecafd98c5d748f58a0d18 to epic 6033883834da04f296d29beeaa9fca960fdbfc8a adds only f40_greeting.txt with exact UTF-8 bytes Hej Ada followed by one newline; README.md, AGENTS.md and all other files are preserved. Registered task review c54d1ddf-dc3e-463d-9a93-bc1ff9ddf8fe approved task commit 82b6b2023d78d41bd47485099a75e20707b8fa11; registered operation 4868f477-d4ff-47a7-b8e8-f8afa1554971 merged it to the reviewed epic source. The actual Worker READY_FOR_REVIEW report is recorded and Worker runtime is STOPPED. The Worker disclosed using a direct Python exact-byte assertion because no registered verification command was exposed; subsequent registered task-delivery verification, aggregate build/test/acceptance and current independent verification bfdfa206-76cc-4dfc-85d0-e03b2e4891a5 all succeeded with exit code 0. Independent verification binds the same source/main commits and task review/merge manifest. Actual aggregate handoff f079d92b-0e01-41a1-9042-3612d3bef4cc is present. All registered bounded scope, preservation, role-service, acceptance and verification criteria pass. This approval records final review only. The bounded manual-product-probe limitation remains: D02/F17 positive OS/autonomy gate is unverified and native next-epic claim must remain WAIT without a trusted positive gate. No delivery or continuation is authorized by this review.",
+        "verified_criteria": [
+          "The delivered greeting is exactly Hej Ada followed by one newline."
+        ]
+      },
+      "choices": [],
+      "stage": "EPIC_APPROVED",
+      "configuration_hash": "55c14dd19250fe5f2337fa6d20ab7191354f78c37eb1763d9e1d2b27126fd8e9",
+      "review_operation_id": "ac8a9a7b-9bd7-4671-bfd4-422c4b03bfb1"
+    },
+    "error_code": null,
+    "created_at": "2026-10-16T09:01:13.651771Z",
+    "updated_at": "2026-10-16T09:01:15.501889Z"
+  },
+  "review_context": {
+    "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+    "configuration_hash": "55c14dd19250fe5f2337fa6d20ab7191354f78c37eb1763d9e1d2b27126fd8e9",
+    "membership_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "handoff_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+    "handoff_hash": "63ec186537cf2940487ffd55bcc2abddd4775c80593dd19e556ea59ced0b8c1a",
+    "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+    "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+    "epic_board_hash": "1d224dd80cc7574048135c1f4acf4c4fdf1128753b85432248e56303d7f74508",
+    "epic_board_scope_hash": "3fffe2f14e0557a4a51299fc3645f3c1828786d5b9fe650b90b372eb75693dda",
+    "stage": "CURRENT",
+    "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+    "verification_id": "bfdfa206-76cc-4dfc-85d0-e03b2e4891a5",
+    "verification_key": "cr-verify-8029e45d-33ac-4a94-b07b-f9d7e9aab4fa"
+  },
+  "context_document_bytes": 17595,
+  "read_chunks": [
+    {
+      "id": "451258ec-773f-4998-bc5b-1a562a52cf4b",
+      "project_id": "f40-probe-r1",
+      "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+      "kind": "coordinator_review_chunk",
+      "idempotency_key": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f:0",
+      "status": "SUCCEEDED",
+      "result": {
+        "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+        "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+        "chunk_index": 0,
+        "chunk_hash": "6d4ba146ca02bcc23f3253bad48c8ae3ad0dc303a45e4a7ac2eec67f27a72a5c"
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:59:09.691606Z",
+      "updated_at": "2026-10-16T08:59:09.691611Z"
+    },
+    {
+      "id": "d7b17975-1f22-4e65-9135-534346aa8d70",
+      "project_id": "f40-probe-r1",
+      "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+      "kind": "coordinator_review_chunk",
+      "idempotency_key": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f:1",
+      "status": "SUCCEEDED",
+      "result": {
+        "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+        "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+        "chunk_index": 1,
+        "chunk_hash": "28c5d064a4611da23483fb1301a3d3bf7fdaeb016f0d3ba57b4f23e6fc3cf52d"
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:59:16.823134Z",
+      "updated_at": "2026-10-16T08:59:16.823139Z"
+    },
+    {
+      "id": "34050b7b-54e0-4bc2-88f7-332a70977af0",
+      "project_id": "f40-probe-r1",
+      "coordinator_run_id": "95b20746-e85a-4028-8e2e-f642a486beab",
+      "kind": "coordinator_review_chunk",
+      "idempotency_key": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f:2",
+      "status": "SUCCEEDED",
+      "result": {
+        "context_id": "db95e103a57ab5873298eafaf3e6b9d2e62144513abb270d14268fb0122b2b9f",
+        "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+        "chunk_index": 2,
+        "chunk_hash": "f2da767c97bdc2c62a051718fe291c10c0c562d105873c00c554aef85535215b"
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:59:24.093487Z",
+      "updated_at": "2026-10-16T08:59:24.093494Z"
+    }
+  ],
+  "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+  "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+  "diff": "diff --git a/f40_greeting.txt b/f40_greeting.txt\nnew file mode 100644\nindex 0000000..decfc9d\n--- /dev/null\n+++ b/f40_greeting.txt\n@@ -0,0 +1 @@\n+Hej Ada\n",
+  "worker_stop": {
+    "status": "STOPPED",
+    "session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+    "run": {
+      "id": "fe294276-3943-442a-b76e-474b0f3ef791",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_id": "f40-seed-r1",
+      "branch": "task/f40-epic-r1-f40-seed-r1",
+      "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+      "resume_state": null,
+      "internal_status": "DONE",
+      "kanban_status": "Done",
+      "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+      "worker_slot": null,
+      "herdr_workspace_id": "w3",
+      "herdr_server_session": "hc-f40-r1-20261015",
+      "herdr_tab_id": "w3:t1",
+      "herdr_pane_id": "w3:p1",
+      "herdr_terminal_id": "term_65df12d4106043",
+      "codex_session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+      "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "current_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+      "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+      "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+      "started_at": "2026-10-16T08:44:37.352884Z",
+      "completed_at": "2026-10-16T08:55:09.967602Z"
+    }
+  },
+  "aggregate_and_posttest": [
+    {
+      "id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_run_id": null,
+      "kind": "epic_complete",
+      "idempotency_key": "f40-r1-handoff",
+      "status": "SUCCEEDED",
+      "result": {
+        "stage": "EPIC_READY_FOR_REVIEW",
+        "snapshot": {
+          "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+          "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+          "manifest": [
+            {
+              "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+              "task_id": "f40-seed-r1",
+              "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+              "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+              "review_id": "c54d1ddf-dc3e-463d-9a93-bc1ff9ddf8fe",
+              "operation_id": "4868f477-d4ff-47a7-b8e8-f8afa1554971",
+              "run": {
+                "id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "project_id": "f40-probe-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "branch": "task/f40-epic-r1-f40-seed-r1",
+                "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+                "resume_state": null,
+                "internal_status": "DONE",
+                "kanban_status": "Done",
+                "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+                "worker_slot": null,
+                "herdr_workspace_id": "w3",
+                "herdr_server_session": "hc-f40-r1-20261015",
+                "herdr_tab_id": "w3:t1",
+                "herdr_pane_id": "w3:p1",
+                "herdr_terminal_id": "term_65df12d4106043",
+                "codex_session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+                "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "current_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "approved_source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+                "started_at": "2026-10-16T08:44:37.352884Z",
+                "completed_at": "2026-10-16T08:55:09.967602Z"
+              },
+              "board_task_id": "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
+              "board_version": 9,
+              "task_spec_hash": "de59849186d307c1dea18b698e423531d29cac82da1a9c836485b15f7445c30f",
+              "branch": "task/f40-epic-r1-f40-seed-r1",
+              "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+              "session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+              "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+              "delivery_id": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3",
+              "aftertest": {
+                "id": "8433cb3f-d7b8-40d2-b24d-8c54a273bef9",
+                "project_id": "f40-probe-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "kind": "task_delivery_test",
+                "idempotency_key": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3:f40-r1-task-postverify",
+                "status": "SUCCEEDED",
+                "result": {
+                  "delivery_id": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3",
+                  "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+                  "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                  "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                  "command_hash": "43e643bf344eea8e6723373b15dc7807a4a765c15ba716a1f3f11d76ce09fdb6",
+                  "timeout": 45,
+                  "command": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'; p=Path('f40_next.txt'); assert not p.exists() or p.read_bytes()==b'Hej Bo\\n'"
+                  ],
+                  "exit_code": 0
+                },
+                "error_code": null,
+                "created_at": "2026-10-16T08:55:06.855340Z",
+                "updated_at": "2026-10-16T08:55:07.087281Z"
+              },
+              "stop_id": "3c66e9dd-fff7-41e9-a9d4-964659fc3cea",
+              "runtime_status": "STOPPED",
+              "worker_slot": null,
+              "context": {
+                "version": 1,
+                "reviewable": true,
+                "project_id": "f40-probe-r1",
+                "epic_id": "f40-epic-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "task_branch": "task/f40-epic-r1-f40-seed-r1",
+                "task_worktree": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+                "epic_branch": "feature/epic-f40-epic-r1",
+                "task_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "epic_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "task_specification": {
+                  "version": 1,
+                  "project_id": "f40-probe-r1",
+                  "epic_id": "f40-epic-r1",
+                  "task_id": "f40-seed-r1",
+                  "name": "F40-r1 native greeting fixture",
+                  "goal": "Create only f40_greeting.txt with exact UTF-8 bytes Hej Ada followed by one newline. Prefix Hej is fixed by README; no extra input is required.",
+                  "requirements": [
+                    "Preserve README.md, AGENTS.md and other files."
+                  ],
+                  "scope": [
+                    "Create only f40_greeting.txt with the exact assigned byte sequence."
+                  ],
+                  "out_of_scope": [
+                    "Other worktrees, direct board writes, main merge and environment changes."
+                  ],
+                  "acceptance_criteria": [
+                    "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                  ],
+                  "sources": [
+                    "README.md",
+                    "AGENTS.md"
+                  ],
+                  "dependencies": [],
+                  "external_prerequisites": [],
+                  "verification_steps": [
+                    "Run the registered actual Python standard-library verification.",
+                    "Commit only the task file and return actual READY_FOR_REVIEW metadata."
+                  ]
+                },
+                "acceptance_criteria": [
+                  "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                ],
+                "epic_requirements": {
+                  "version": 1,
+                  "project_id": "f40-probe-r1",
+                  "epic_id": "f40-epic-r1",
+                  "requirements": [
+                    "Preserve fixture instructions and other files; use registered role services."
+                  ],
+                  "acceptance_criteria": [
+                    "The delivered greeting is exactly Hej Ada followed by one newline."
+                  ],
+                  "sources": [
+                    "README.md",
+                    "AGENTS.md"
+                  ]
+                },
+                "sources": [
+                  {
+                    "path": "README.md",
+                    "side": "task",
+                    "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "blob": "d22a0dc3ffb2ff4909f6c5a8b808303c1d9b36c1",
+                    "text": "# Harmless F40 delivery fixture\n\nThe fixed greeting prefix is Hej. Epic one publishes only f40_greeting.txt as UTF-8\nbytes Hej Ada followed by exactly one newline. Epic two is a planned dependent\nepic for the continuation gate; its future file is f40_next.txt (Hej Bo and newline).\nUse registered services for role decisions, task review, integration and status.\nWorker tests use the supplied Python standard-library command. Preserve README\nand AGENTS. No external data, credentials or dependencies are required.\n"
+                  },
+                  {
+                    "path": "AGENTS.md",
+                    "side": "task",
+                    "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "blob": "a1cbbc74c6a5287c6d3bb310df41ef0e51b2ed62",
+                    "text": "# F40 product probe\n\nFollow the actual assigned role, task and registered services. Workers implement\nonly their assigned task file in their own task worktree, test and commit it, then\nreport actual READY_FOR_REVIEW metadata. The prefix Hej and complete exact bytes\nare fixed by README and the assignment; no additional input is required for them.\nIntegration schedules/reviews/delivers tasks through its scoped MCP tools.\nCoordinator reviews and requests delivery only through its scoped MCP tools.\nPreserve other files, branches and worktrees. No agent performs direct main merge,\nboard writes, state edits, environment changes or access to credentials.\n"
+                  },
+                  {
+                    "path": "README.md",
+                    "side": "epic",
+                    "commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "blob": "d22a0dc3ffb2ff4909f6c5a8b808303c1d9b36c1",
+                    "text": "# Harmless F40 delivery fixture\n\nThe fixed greeting prefix is Hej. Epic one publishes only f40_greeting.txt as UTF-8\nbytes Hej Ada followed by exactly one newline. Epic two is a planned dependent\nepic for the continuation gate; its future file is f40_next.txt (Hej Bo and newline).\nUse registered services for role decisions, task review, integration and status.\nWorker tests use the supplied Python standard-library command. Preserve README\nand AGENTS. No external data, credentials or dependencies are required.\n"
+                  },
+                  {
+                    "path": "AGENTS.md",
+                    "side": "epic",
+                    "commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "blob": "a1cbbc74c6a5287c6d3bb310df41ef0e51b2ed62",
+                    "text": "# F40 product probe\n\nFollow the actual assigned role, task and registered services. Workers implement\nonly their assigned task file in their own task worktree, test and commit it, then\nreport actual READY_FOR_REVIEW metadata. The prefix Hej and complete exact bytes\nare fixed by README and the assignment; no additional input is required for them.\nIntegration schedules/reviews/delivers tasks through its scoped MCP tools.\nCoordinator reviews and requests delivery only through its scoped MCP tools.\nPreserve other files, branches and worktrees. No agent performs direct main merge,\nboard writes, state edits, environment changes or access to credentials.\n"
+                  }
+                ],
+                "diff": {
+                  "complete": true,
+                  "bytes": 219,
+                  "sha256": "e4536726f85401e8f3bd7b2977ac039029d768852811cfe2edcec2d10ad3ade0",
+                  "patch_base64": "ZGlmZiAtLWdpdCBhL2Y0MF9ncmVldGluZy50eHQgYi9mNDBfZ3JlZXRpbmcudHh0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLmRlY2ZjOWQ5NzM0ZWY5OWQ0NWJlZTczY2U1N2VmNDZhYzVlZjBkY2IKLS0tIC9kZXYvbnVsbAorKysgYi9mNDBfZ3JlZXRpbmcudHh0CkBAIC0wLDAgKzEgQEAKK0hlaiBBZGEK",
+                  "display_text": "diff --git a/f40_greeting.txt b/f40_greeting.txt\nnew file mode 100644\nindex 0000000000000000000000000000000000000000..decfc9d9734ef99d45bee73ce57ef46ac5ef0dcb\n--- /dev/null\n+++ b/f40_greeting.txt\n@@ -0,0 +1 @@\n+Hej Ada\n",
+                  "full_command": [
+                    "git",
+                    "--no-replace-objects",
+                    "-c",
+                    "core.hooksPath=/dev/null",
+                    "-c",
+                    "core.fsmonitor=false",
+                    "-c",
+                    "color.ui=false",
+                    "diff",
+                    "--no-ext-diff",
+                    "--no-textconv",
+                    "--no-renames",
+                    "--binary",
+                    "--full-index",
+                    "--submodule=short",
+                    "--ignore-submodules=none",
+                    "--no-color",
+                    "--src-prefix=a/",
+                    "--dst-prefix=b/",
+                    "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "--"
+                  ]
+                },
+                "changed_files": [
+                  {
+                    "path": "f40_greeting.txt",
+                    "status": "A",
+                    "additions": 1,
+                    "deletions": 0,
+                    "binary": false
+                  }
+                ],
+                "tests": {
+                  "operation_id": "6ddb8137-5616-4a11-8573-e7bf18290845",
+                  "key": "review-test:dea047cf-942b-4f98-8eaa-caccacab41bb",
+                  "status": "SUCCEEDED",
+                  "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                  "command_hash": "43e643bf344eea8e6723373b15dc7807a4a765c15ba716a1f3f11d76ce09fdb6",
+                  "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                  "exit_code": 0,
+                  "command": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'; p=Path('f40_next.txt'); assert not p.exists() or p.read_bytes()==b'Hej Bo\\n'"
+                  ],
+                  "timeout": 45
+                },
+                "task_start_operation_id": "2885378d-25ec-41e8-a4dc-2a8b3822a565",
+                "handoff_operation_id": "ec8ba1d5-8678-487e-9fe8-08b68d56e0f6",
+                "sync_operation_id": "13c17f07-2291-4e50-823d-cb7f2ea4d811",
+                "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf"
+              },
+              "approval": {
+                "stage": "APPROVED",
+                "decision": {
+                  "version": 1,
+                  "result": "APPROVED",
+                  "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf",
+                  "summary": "Reviewed complete 219-byte diff from epic b4919eb13d1934ec5c7ecafd98c5d748f58a0d18 to task 82b6b2023d78d41bd47485099a75e20707b8fa11. Only f40_greeting.txt is added with exact UTF-8 bytes Hej Ada followed by one newline. README.md and AGENTS.md are unchanged; all other files are preserved. Registered Python test 6ddb8137-5616-4a11-8573-e7bf18290845 passed with exit code 0 for the exact reviewed commits. Verified context records actual task start and Worker handoff. All scope, preservation, commit and verification requirements are satisfied.",
+                  "verified_criteria": [
+                    "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                  ]
+                },
+                "reviewer": {
+                  "actor_id": "91bf9da2-46bf-48de-8f99-ba0df318d085",
+                  "role": "Integration",
+                  "project_id": "f40-probe-r1",
+                  "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                  "task_run_id": null
+                },
+                "task_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "epic_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "verification_id": "6ddb8137-5616-4a11-8573-e7bf18290845",
+                "verification_key": "review-test:dea047cf-942b-4f98-8eaa-caccacab41bb",
+                "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf",
+                "review_id": "c54d1ddf-dc3e-463d-9a93-bc1ff9ddf8fe",
+                "review_number": 1
+              },
+              "worker_report": {
+                "version": 1,
+                "status": "READY_FOR_REVIEW",
+                "project_id": "f40-probe-r1",
+                "epic_id": "f40-epic-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "branch": "task/f40-epic-r1-f40-seed-r1",
+                "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "summary": "Created and committed only f40_greeting.txt containing exactly Hej Ada followed by one newline. Other files preserved; working tree clean.",
+                "test_summary": "Post-commit Python byte verification and git diff --check passed. Initial staging was blocked by sandbox permissions; the escalated commit succeeded.",
+                "tests": [
+                  {
+                    "command": [
+                      "python3",
+                      "-c",
+                      "from pathlib import Path; assert Path(\"f40_greeting.txt\").read_bytes() == b\"Hej Ada\\n\"; print(\"PASS: exact UTF-8 bytes Hej Ada followed by one newline\")"
+                    ],
+                    "exit_code": 0,
+                    "summary": "Exact bytes verified after commit."
+                  },
+                  {
+                    "command": [
+                      "git",
+                      "diff",
+                      "--check"
+                    ],
+                    "exit_code": 0,
+                    "summary": "Passed after commit."
+                  }
+                ],
+                "files_changed": [
+                  "f40_greeting.txt"
+                ],
+                "limitations": [
+                  "No registered verification command was exposed; used a direct Python standard-library exact-byte assertion."
+                ],
+                "reason": "",
+                "input_required": ""
+              }
+            }
+          ],
+          "manifest_hash": "224758ba4ede1c9a9353127a3630afd37cceb65ae5ca6e8f628a1fe00ec168c6",
+          "config_hash": "f30949884a2048efdb348a805ea6adef946734b83b94e359f4877e4c3d79735f",
+          "acceptance_version": 1
+        },
+        "report": {
+          "type": "EPIC_READY_FOR_REVIEW",
+          "project_id": "f40-probe-r1",
+          "epic_id": "f40-epic-r1",
+          "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+          "branch": "feature/epic-f40-epic-r1",
+          "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/epic-f40-epic-r1",
+          "integration_agent_id": "hc-264a2a0077464da7aaea489f",
+          "session_id": "01a143e0-68bb-7b33-a484-8761fc3e63b1",
+          "specification": {
+            "version": 1,
+            "project_id": "f40-probe-r1",
+            "epic_id": "f40-epic-r1",
+            "requirements": [
+              "Preserve fixture instructions and other files; use registered role services."
+            ],
+            "acceptance_criteria": [
+              "The delivered greeting is exactly Hej Ada followed by one newline."
+            ],
+            "sources": [
+              "README.md",
+              "AGENTS.md"
+            ],
+            "acceptance_version": 1,
+            "task_ids": [
+              "f40-seed-r1"
+            ],
+            "build": {
+              "argv": [
+                "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                "-c",
+                "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+              ],
+              "timeout": 30
+            },
+            "test": {
+              "argv": [
+                "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                "-c",
+                "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+              ],
+              "timeout": 30
+            },
+            "acceptance": {
+              "argv": [
+                "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                "-c",
+                "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+              ],
+              "timeout": 30
+            },
+            "known_limitations": [
+              "Bounded manually registered product probe. D02/F17 positive OS/autonomy gate is unverified.",
+              "Native next-epic claim must remain WAIT without a trusted positive runtime gate."
+            ]
+          },
+          "sources": [
+            {
+              "path": "README.md",
+              "side": "epic",
+              "commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+              "blob": "d22a0dc3ffb2ff4909f6c5a8b808303c1d9b36c1",
+              "text": "# Harmless F40 delivery fixture\n\nThe fixed greeting prefix is Hej. Epic one publishes only f40_greeting.txt as UTF-8\nbytes Hej Ada followed by exactly one newline. Epic two is a planned dependent\nepic for the continuation gate; its future file is f40_next.txt (Hej Bo and newline).\nUse registered services for role decisions, task review, integration and status.\nWorker tests use the supplied Python standard-library command. Preserve README\nand AGENTS. No external data, credentials or dependencies are required.\n"
+            },
+            {
+              "path": "AGENTS.md",
+              "side": "epic",
+              "commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+              "blob": "a1cbbc74c6a5287c6d3bb310df41ef0e51b2ed62",
+              "text": "# F40 product probe\n\nFollow the actual assigned role, task and registered services. Workers implement\nonly their assigned task file in their own task worktree, test and commit it, then\nreport actual READY_FOR_REVIEW metadata. The prefix Hej and complete exact bytes\nare fixed by README and the assignment; no additional input is required for them.\nIntegration schedules/reviews/delivers tasks through its scoped MCP tools.\nCoordinator reviews and requests delivery only through its scoped MCP tools.\nPreserve other files, branches and worktrees. No agent performs direct main merge,\nboard writes, state edits, environment changes or access to credentials.\n"
+            }
+          ],
+          "source_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+          "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+          "manifest": [
+            {
+              "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+              "task_id": "f40-seed-r1",
+              "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+              "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+              "review_id": "c54d1ddf-dc3e-463d-9a93-bc1ff9ddf8fe",
+              "operation_id": "4868f477-d4ff-47a7-b8e8-f8afa1554971",
+              "run": {
+                "id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "project_id": "f40-probe-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "branch": "task/f40-epic-r1-f40-seed-r1",
+                "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+                "resume_state": null,
+                "internal_status": "DONE",
+                "kanban_status": "Done",
+                "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+                "worker_slot": null,
+                "herdr_workspace_id": "w3",
+                "herdr_server_session": "hc-f40-r1-20261015",
+                "herdr_tab_id": "w3:t1",
+                "herdr_pane_id": "w3:p1",
+                "herdr_terminal_id": "term_65df12d4106043",
+                "codex_session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+                "base_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "current_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "approved_source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "approved_target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+                "started_at": "2026-10-16T08:44:37.352884Z",
+                "completed_at": "2026-10-16T08:55:09.967602Z"
+              },
+              "board_task_id": "e037e1ca-9ebd-4101-a4d7-c50b4f972de1",
+              "board_version": 9,
+              "task_spec_hash": "de59849186d307c1dea18b698e423531d29cac82da1a9c836485b15f7445c30f",
+              "branch": "task/f40-epic-r1-f40-seed-r1",
+              "worktree_path": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+              "session_id": "01a143e3-17da-7ee1-8a26-2de801acf98b",
+              "worker_agent_id": "hc-ac562d56bab74bdc81d6cca2",
+              "delivery_id": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3",
+              "aftertest": {
+                "id": "8433cb3f-d7b8-40d2-b24d-8c54a273bef9",
+                "project_id": "f40-probe-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "kind": "task_delivery_test",
+                "idempotency_key": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3:f40-r1-task-postverify",
+                "status": "SUCCEEDED",
+                "result": {
+                  "delivery_id": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3",
+                  "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+                  "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                  "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                  "command_hash": "43e643bf344eea8e6723373b15dc7807a4a765c15ba716a1f3f11d76ce09fdb6",
+                  "timeout": 45,
+                  "command": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'; p=Path('f40_next.txt'); assert not p.exists() or p.read_bytes()==b'Hej Bo\\n'"
+                  ],
+                  "exit_code": 0
+                },
+                "error_code": null,
+                "created_at": "2026-10-16T08:55:06.855340Z",
+                "updated_at": "2026-10-16T08:55:07.087281Z"
+              },
+              "stop_id": "3c66e9dd-fff7-41e9-a9d4-964659fc3cea",
+              "runtime_status": "STOPPED",
+              "worker_slot": null,
+              "context": {
+                "version": 1,
+                "reviewable": true,
+                "project_id": "f40-probe-r1",
+                "epic_id": "f40-epic-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "task_branch": "task/f40-epic-r1-f40-seed-r1",
+                "task_worktree": "/tmp/herdr-f40-r1-fixture-20261015/worktrees/f40-probe-r1/task-f40-epic-r1-f40-seed-r1",
+                "epic_branch": "feature/epic-f40-epic-r1",
+                "task_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "epic_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "task_specification": {
+                  "version": 1,
+                  "project_id": "f40-probe-r1",
+                  "epic_id": "f40-epic-r1",
+                  "task_id": "f40-seed-r1",
+                  "name": "F40-r1 native greeting fixture",
+                  "goal": "Create only f40_greeting.txt with exact UTF-8 bytes Hej Ada followed by one newline. Prefix Hej is fixed by README; no extra input is required.",
+                  "requirements": [
+                    "Preserve README.md, AGENTS.md and other files."
+                  ],
+                  "scope": [
+                    "Create only f40_greeting.txt with the exact assigned byte sequence."
+                  ],
+                  "out_of_scope": [
+                    "Other worktrees, direct board writes, main merge and environment changes."
+                  ],
+                  "acceptance_criteria": [
+                    "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                  ],
+                  "sources": [
+                    "README.md",
+                    "AGENTS.md"
+                  ],
+                  "dependencies": [],
+                  "external_prerequisites": [],
+                  "verification_steps": [
+                    "Run the registered actual Python standard-library verification.",
+                    "Commit only the task file and return actual READY_FOR_REVIEW metadata."
+                  ]
+                },
+                "acceptance_criteria": [
+                  "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                ],
+                "epic_requirements": {
+                  "version": 1,
+                  "project_id": "f40-probe-r1",
+                  "epic_id": "f40-epic-r1",
+                  "requirements": [
+                    "Preserve fixture instructions and other files; use registered role services."
+                  ],
+                  "acceptance_criteria": [
+                    "The delivered greeting is exactly Hej Ada followed by one newline."
+                  ],
+                  "sources": [
+                    "README.md",
+                    "AGENTS.md"
+                  ]
+                },
+                "sources": [
+                  {
+                    "path": "README.md",
+                    "side": "task",
+                    "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "blob": "d22a0dc3ffb2ff4909f6c5a8b808303c1d9b36c1",
+                    "text": "# Harmless F40 delivery fixture\n\nThe fixed greeting prefix is Hej. Epic one publishes only f40_greeting.txt as UTF-8\nbytes Hej Ada followed by exactly one newline. Epic two is a planned dependent\nepic for the continuation gate; its future file is f40_next.txt (Hej Bo and newline).\nUse registered services for role decisions, task review, integration and status.\nWorker tests use the supplied Python standard-library command. Preserve README\nand AGENTS. No external data, credentials or dependencies are required.\n"
+                  },
+                  {
+                    "path": "AGENTS.md",
+                    "side": "task",
+                    "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "blob": "a1cbbc74c6a5287c6d3bb310df41ef0e51b2ed62",
+                    "text": "# F40 product probe\n\nFollow the actual assigned role, task and registered services. Workers implement\nonly their assigned task file in their own task worktree, test and commit it, then\nreport actual READY_FOR_REVIEW metadata. The prefix Hej and complete exact bytes\nare fixed by README and the assignment; no additional input is required for them.\nIntegration schedules/reviews/delivers tasks through its scoped MCP tools.\nCoordinator reviews and requests delivery only through its scoped MCP tools.\nPreserve other files, branches and worktrees. No agent performs direct main merge,\nboard writes, state edits, environment changes or access to credentials.\n"
+                  },
+                  {
+                    "path": "README.md",
+                    "side": "epic",
+                    "commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "blob": "d22a0dc3ffb2ff4909f6c5a8b808303c1d9b36c1",
+                    "text": "# Harmless F40 delivery fixture\n\nThe fixed greeting prefix is Hej. Epic one publishes only f40_greeting.txt as UTF-8\nbytes Hej Ada followed by exactly one newline. Epic two is a planned dependent\nepic for the continuation gate; its future file is f40_next.txt (Hej Bo and newline).\nUse registered services for role decisions, task review, integration and status.\nWorker tests use the supplied Python standard-library command. Preserve README\nand AGENTS. No external data, credentials or dependencies are required.\n"
+                  },
+                  {
+                    "path": "AGENTS.md",
+                    "side": "epic",
+                    "commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "blob": "a1cbbc74c6a5287c6d3bb310df41ef0e51b2ed62",
+                    "text": "# F40 product probe\n\nFollow the actual assigned role, task and registered services. Workers implement\nonly their assigned task file in their own task worktree, test and commit it, then\nreport actual READY_FOR_REVIEW metadata. The prefix Hej and complete exact bytes\nare fixed by README and the assignment; no additional input is required for them.\nIntegration schedules/reviews/delivers tasks through its scoped MCP tools.\nCoordinator reviews and requests delivery only through its scoped MCP tools.\nPreserve other files, branches and worktrees. No agent performs direct main merge,\nboard writes, state edits, environment changes or access to credentials.\n"
+                  }
+                ],
+                "diff": {
+                  "complete": true,
+                  "bytes": 219,
+                  "sha256": "e4536726f85401e8f3bd7b2977ac039029d768852811cfe2edcec2d10ad3ade0",
+                  "patch_base64": "ZGlmZiAtLWdpdCBhL2Y0MF9ncmVldGluZy50eHQgYi9mNDBfZ3JlZXRpbmcudHh0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLmRlY2ZjOWQ5NzM0ZWY5OWQ0NWJlZTczY2U1N2VmNDZhYzVlZjBkY2IKLS0tIC9kZXYvbnVsbAorKysgYi9mNDBfZ3JlZXRpbmcudHh0CkBAIC0wLDAgKzEgQEAKK0hlaiBBZGEK",
+                  "display_text": "diff --git a/f40_greeting.txt b/f40_greeting.txt\nnew file mode 100644\nindex 0000000000000000000000000000000000000000..decfc9d9734ef99d45bee73ce57ef46ac5ef0dcb\n--- /dev/null\n+++ b/f40_greeting.txt\n@@ -0,0 +1 @@\n+Hej Ada\n",
+                  "full_command": [
+                    "git",
+                    "--no-replace-objects",
+                    "-c",
+                    "core.hooksPath=/dev/null",
+                    "-c",
+                    "core.fsmonitor=false",
+                    "-c",
+                    "color.ui=false",
+                    "diff",
+                    "--no-ext-diff",
+                    "--no-textconv",
+                    "--no-renames",
+                    "--binary",
+                    "--full-index",
+                    "--submodule=short",
+                    "--ignore-submodules=none",
+                    "--no-color",
+                    "--src-prefix=a/",
+                    "--dst-prefix=b/",
+                    "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                    "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                    "--"
+                  ]
+                },
+                "changed_files": [
+                  {
+                    "path": "f40_greeting.txt",
+                    "status": "A",
+                    "additions": 1,
+                    "deletions": 0,
+                    "binary": false
+                  }
+                ],
+                "tests": {
+                  "operation_id": "6ddb8137-5616-4a11-8573-e7bf18290845",
+                  "key": "review-test:dea047cf-942b-4f98-8eaa-caccacab41bb",
+                  "status": "SUCCEEDED",
+                  "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                  "command_hash": "43e643bf344eea8e6723373b15dc7807a4a765c15ba716a1f3f11d76ce09fdb6",
+                  "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                  "exit_code": 0,
+                  "command": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'; p=Path('f40_next.txt'); assert not p.exists() or p.read_bytes()==b'Hej Bo\\n'"
+                  ],
+                  "timeout": 45
+                },
+                "task_start_operation_id": "2885378d-25ec-41e8-a4dc-2a8b3822a565",
+                "handoff_operation_id": "ec8ba1d5-8678-487e-9fe8-08b68d56e0f6",
+                "sync_operation_id": "13c17f07-2291-4e50-823d-cb7f2ea4d811",
+                "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf"
+              },
+              "approval": {
+                "stage": "APPROVED",
+                "decision": {
+                  "version": 1,
+                  "result": "APPROVED",
+                  "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf",
+                  "summary": "Reviewed complete 219-byte diff from epic b4919eb13d1934ec5c7ecafd98c5d748f58a0d18 to task 82b6b2023d78d41bd47485099a75e20707b8fa11. Only f40_greeting.txt is added with exact UTF-8 bytes Hej Ada followed by one newline. README.md and AGENTS.md are unchanged; all other files are preserved. Registered Python test 6ddb8137-5616-4a11-8573-e7bf18290845 passed with exit code 0 for the exact reviewed commits. Verified context records actual task start and Worker handoff. All scope, preservation, commit and verification requirements are satisfied.",
+                  "verified_criteria": [
+                    "f40_greeting.txt contains exactly the UTF-8 bytes Hej Ada followed by one newline."
+                  ]
+                },
+                "reviewer": {
+                  "actor_id": "91bf9da2-46bf-48de-8f99-ba0df318d085",
+                  "role": "Integration",
+                  "project_id": "f40-probe-r1",
+                  "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                  "task_run_id": null
+                },
+                "task_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "epic_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+                "verification_id": "6ddb8137-5616-4a11-8573-e7bf18290845",
+                "verification_key": "review-test:dea047cf-942b-4f98-8eaa-caccacab41bb",
+                "context_id": "8a3418f4ee8d420a070d3aeb384780f68f34192e8318c513b5a35cdb7f4f4fcf",
+                "review_id": "c54d1ddf-dc3e-463d-9a93-bc1ff9ddf8fe",
+                "review_number": 1
+              },
+              "worker_report": {
+                "version": 1,
+                "status": "READY_FOR_REVIEW",
+                "project_id": "f40-probe-r1",
+                "epic_id": "f40-epic-r1",
+                "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+                "task_id": "f40-seed-r1",
+                "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+                "branch": "task/f40-epic-r1-f40-seed-r1",
+                "commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+                "summary": "Created and committed only f40_greeting.txt containing exactly Hej Ada followed by one newline. Other files preserved; working tree clean.",
+                "test_summary": "Post-commit Python byte verification and git diff --check passed. Initial staging was blocked by sandbox permissions; the escalated commit succeeded.",
+                "tests": [
+                  {
+                    "command": [
+                      "python3",
+                      "-c",
+                      "from pathlib import Path; assert Path(\"f40_greeting.txt\").read_bytes() == b\"Hej Ada\\n\"; print(\"PASS: exact UTF-8 bytes Hej Ada followed by one newline\")"
+                    ],
+                    "exit_code": 0,
+                    "summary": "Exact bytes verified after commit."
+                  },
+                  {
+                    "command": [
+                      "git",
+                      "diff",
+                      "--check"
+                    ],
+                    "exit_code": 0,
+                    "summary": "Passed after commit."
+                  }
+                ],
+                "files_changed": [
+                  "f40_greeting.txt"
+                ],
+                "limitations": [
+                  "No registered verification command was exposed; used a direct Python standard-library exact-byte assertion."
+                ],
+                "reason": "",
+                "input_required": ""
+              }
+            }
+          ],
+          "manifest_hash": "224758ba4ede1c9a9353127a3630afd37cceb65ae5ca6e8f628a1fe00ec168c6",
+          "config_hash": "f30949884a2048efdb348a805ea6adef946734b83b94e359f4877e4c3d79735f",
+          "acceptance_version": 1,
+          "diff": {
+            "encoding": "base64",
+            "patch": "ZGlmZiAtLWdpdCBhL2Y0MF9ncmVldGluZy50eHQgYi9mNDBfZ3JlZXRpbmcudHh0Cm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLmRlY2ZjOWQ5NzM0ZWY5OWQ0NWJlZTczY2U1N2VmNDZhYzVlZjBkY2IKLS0tIC9kZXYvbnVsbAorKysgYi9mNDBfZ3JlZXRpbmcudHh0CkBAIC0wLDAgKzEgQEAKK0hlaiBBZGEK",
+            "sha256": "e4536726f85401e8f3bd7b2977ac039029d768852811cfe2edcec2d10ad3ade0",
+            "bytes": 219,
+            "complete": true,
+            "full_command": [
+              "git",
+              "--no-replace-objects",
+              "-c",
+              "core.hooksPath=/dev/null",
+              "-c",
+              "core.fsmonitor=false",
+              "-c",
+              "color.ui=false",
+              "diff",
+              "--no-ext-diff",
+              "--no-textconv",
+              "--no-renames",
+              "--binary",
+              "--full-index",
+              "--submodule=short",
+              "--ignore-submodules=none",
+              "--no-color",
+              "--src-prefix=a/",
+              "--dst-prefix=b/",
+              "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+              "6033883834da04f296d29beeaa9fca960fdbfc8a",
+              "--"
+            ]
+          },
+          "limitations": [
+            "Bounded manually registered product probe. D02/F17 positive OS/autonomy gate is unverified.",
+            "Native next-epic claim must remain WAIT without a trusted positive runtime gate."
+          ],
+          "steps": [
+            {
+              "id": "584e551f-4c4b-43eb-adfe-ae68c5f15c77",
+              "project_id": "f40-probe-r1",
+              "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+              "task_run_id": null,
+              "kind": "epic_completion_step",
+              "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:build",
+              "status": "SUCCEEDED",
+              "result": {
+                "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+                "name": "build",
+                "command": {
+                  "argv": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                  ],
+                  "timeout": 30
+                },
+                "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+                "exit_code": 0
+              },
+              "error_code": null,
+              "created_at": "2026-10-16T08:56:44.957518Z",
+              "updated_at": "2026-10-16T08:56:45.031019Z"
+            },
+            {
+              "id": "d575b7ee-72d2-4a2e-9561-6e7ccf0f300f",
+              "project_id": "f40-probe-r1",
+              "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+              "task_run_id": null,
+              "kind": "epic_completion_step",
+              "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:test",
+              "status": "SUCCEEDED",
+              "result": {
+                "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+                "name": "test",
+                "command": {
+                  "argv": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                  ],
+                  "timeout": 30
+                },
+                "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+                "exit_code": 0
+              },
+              "error_code": null,
+              "created_at": "2026-10-16T08:56:48.372026Z",
+              "updated_at": "2026-10-16T08:56:48.445876Z"
+            },
+            {
+              "id": "cdd305d5-a607-423e-9816-d2ab17c275ed",
+              "project_id": "f40-probe-r1",
+              "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+              "task_run_id": null,
+              "kind": "epic_completion_step",
+              "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:acceptance",
+              "status": "SUCCEEDED",
+              "result": {
+                "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+                "name": "acceptance",
+                "command": {
+                  "argv": [
+                    "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                    "-c",
+                    "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                  ],
+                  "timeout": 30
+                },
+                "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+                "exit_code": 0
+              },
+              "error_code": null,
+              "created_at": "2026-10-16T08:56:51.843681Z",
+              "updated_at": "2026-10-16T08:56:51.917364Z"
+            }
+          ],
+          "acceptance": "PASS"
+        },
+        "report_hash": "63ec186537cf2940487ffd55bcc2abddd4775c80593dd19e556ea59ced0b8c1a",
+        "steps": [
+          {
+            "id": "584e551f-4c4b-43eb-adfe-ae68c5f15c77",
+            "project_id": "f40-probe-r1",
+            "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+            "task_run_id": null,
+            "kind": "epic_completion_step",
+            "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:build",
+            "status": "SUCCEEDED",
+            "result": {
+              "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+              "name": "build",
+              "command": {
+                "argv": [
+                  "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                  "-c",
+                  "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                ],
+                "timeout": 30
+              },
+              "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+              "exit_code": 0
+            },
+            "error_code": null,
+            "created_at": "2026-10-16T08:56:44.957518Z",
+            "updated_at": "2026-10-16T08:56:45.031019Z"
+          },
+          {
+            "id": "d575b7ee-72d2-4a2e-9561-6e7ccf0f300f",
+            "project_id": "f40-probe-r1",
+            "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+            "task_run_id": null,
+            "kind": "epic_completion_step",
+            "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:test",
+            "status": "SUCCEEDED",
+            "result": {
+              "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+              "name": "test",
+              "command": {
+                "argv": [
+                  "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                  "-c",
+                  "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                ],
+                "timeout": 30
+              },
+              "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+              "exit_code": 0
+            },
+            "error_code": null,
+            "created_at": "2026-10-16T08:56:48.372026Z",
+            "updated_at": "2026-10-16T08:56:48.445876Z"
+          },
+          {
+            "id": "cdd305d5-a607-423e-9816-d2ab17c275ed",
+            "project_id": "f40-probe-r1",
+            "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+            "task_run_id": null,
+            "kind": "epic_completion_step",
+            "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:acceptance",
+            "status": "SUCCEEDED",
+            "result": {
+              "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+              "name": "acceptance",
+              "command": {
+                "argv": [
+                  "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+                  "-c",
+                  "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+                ],
+                "timeout": 30
+              },
+              "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+              "exit_code": 0
+            },
+            "error_code": null,
+            "created_at": "2026-10-16T08:56:51.843681Z",
+            "updated_at": "2026-10-16T08:56:51.917364Z"
+          }
+        ]
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:56:41.329993Z",
+      "updated_at": "2026-10-16T08:56:55.245876Z"
+    },
+    {
+      "id": "584e551f-4c4b-43eb-adfe-ae68c5f15c77",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_run_id": null,
+      "kind": "epic_completion_step",
+      "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:build",
+      "status": "SUCCEEDED",
+      "result": {
+        "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+        "name": "build",
+        "command": {
+          "argv": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+            "-c",
+            "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+          ],
+          "timeout": 30
+        },
+        "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+        "exit_code": 0
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:56:44.957518Z",
+      "updated_at": "2026-10-16T08:56:45.031019Z"
+    },
+    {
+      "id": "d575b7ee-72d2-4a2e-9561-6e7ccf0f300f",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_run_id": null,
+      "kind": "epic_completion_step",
+      "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:test",
+      "status": "SUCCEEDED",
+      "result": {
+        "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+        "name": "test",
+        "command": {
+          "argv": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+            "-c",
+            "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+          ],
+          "timeout": 30
+        },
+        "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+        "exit_code": 0
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:56:48.372026Z",
+      "updated_at": "2026-10-16T08:56:48.445876Z"
+    },
+    {
+      "id": "cdd305d5-a607-423e-9816-d2ab17c275ed",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_run_id": null,
+      "kind": "epic_completion_step",
+      "idempotency_key": "f079d92b-0e01-41a1-9042-3612d3bef4cc:acceptance",
+      "status": "SUCCEEDED",
+      "result": {
+        "parent_id": "f079d92b-0e01-41a1-9042-3612d3bef4cc",
+        "name": "acceptance",
+        "command": {
+          "argv": [
+            "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+            "-c",
+            "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'"
+          ],
+          "timeout": 30
+        },
+        "snapshot_hash": "5431f8e3c67763615e18b96509bed3f114bbea8da077c8283b2607c2ea1bc4de",
+        "exit_code": 0
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:56:51.843681Z",
+      "updated_at": "2026-10-16T08:56:51.917364Z"
+    },
+    {
+      "id": "8433cb3f-d7b8-40d2-b24d-8c54a273bef9",
+      "project_id": "f40-probe-r1",
+      "epic_run_id": "6ab6cad1-9429-4d8c-81a0-5f98b903acda",
+      "task_run_id": "fe294276-3943-442a-b76e-474b0f3ef791",
+      "kind": "task_delivery_test",
+      "idempotency_key": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3:f40-r1-task-postverify",
+      "status": "SUCCEEDED",
+      "result": {
+        "delivery_id": "1faf3dca-e41d-4d2e-a332-c9e9146f5ed3",
+        "merge_commit": "6033883834da04f296d29beeaa9fca960fdbfc8a",
+        "source_commit": "82b6b2023d78d41bd47485099a75e20707b8fa11",
+        "target_commit": "b4919eb13d1934ec5c7ecafd98c5d748f58a0d18",
+        "command_hash": "43e643bf344eea8e6723373b15dc7807a4a765c15ba716a1f3f11d76ce09fdb6",
+        "timeout": 45,
+        "command": [
+          "/home/stang/Documents/Projects/HerdrCoordinator/.worktrees/task-e10-f40/.venv/bin/python",
+          "-c",
+          "from pathlib import Path; import hashlib; assert hashlib.sha256(Path('README.md').read_bytes()).hexdigest()=='5ddd000474388646fcad2db9a51ab16e202c3d3f73fd041c35f5f63fb5aa59f2'; assert hashlib.sha256(Path('AGENTS.md').read_bytes()).hexdigest()=='df007056d23ecb8fcb589099bc093b9c19075b6b62bc67e22d24a905ee476e10'; assert Path('f40_greeting.txt').read_bytes()==b'Hej Ada\\n'; p=Path('f40_next.txt'); assert not p.exists() or p.read_bytes()==b'Hej Bo\\n'"
+        ],
+        "exit_code": 0
+      },
+      "error_code": null,
+      "created_at": "2026-10-16T08:55:06.855340Z",
+      "updated_at": "2026-10-16T08:55:07.087281Z"
+    }
+  ],
+  "main_permit_exists": false,
+  "main_delivery_exists": false,
+  "runtime_gate": false,
+  "config_sha256": "f59484b22ffc7fd885162a17f67cbc417f9fd55e889375364c9a27faa686f46f"
+}

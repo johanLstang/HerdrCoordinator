@@ -133,7 +133,8 @@ def setup(epic_setup):  # noqa: F811
 
 
 def task(control, local_id):
-    return next(t for t in control.store.get_tasks("e") if t.task_id == local_id)
+    return next(t for t in control.store.get_tasks(control.epic_start.principal.epic_run_id)
+                if t.task_id == local_id)
 
 
 def finish(control, sessions, local_id):
@@ -155,8 +156,8 @@ def finish(control, sessions, local_id):
     report = dict(
         version=1,
         status="READY_FOR_REVIEW",
-        project_id="p",
-        epic_id="E-34",
+        project_id=t.project_id,
+        epic_id=control.store.get_epic(t.epic_run_id).epic_id,
         epic_run_id=t.epic_run_id,
         task_id=t.task_id,
         task_run_id=t.id,
@@ -624,3 +625,62 @@ def test_known_correction_result_survives_failed_scheduler_checkpoint(setup, mon
         assert retry.ok and retry.data["status"] == "EXISTING" and len(sessions.sent) == count
 
     asyncio.run(asyncio.wait_for(exercise(), timeout=90))
+
+
+def test_own_recovery_overview_supplies_exact_registered_spec_not_guessed_prose(setup, monkeypatch):
+    from orchestrator.application.task_start_service import TaskStartError
+
+    control, runtime, actor, _, sessions = setup
+    original = control.scheduler.start.start
+    spec = control.scheduler.selection.specs[T1]
+
+    def not_ready(*args, **kwargs):
+        raise TaskStartError("RUNTIME_NOT_IDLE")
+
+    monkeypatch.setattr(control.scheduler.start, "start", not_ready)
+    first = asyncio.run(runtime.call_async("task_start", dict(
+        project_id="p", epic_run_id="e", task=spec,
+    )))
+    assert not first.ok
+    owned = task(control, "F-01")
+    rows = first.data["overview"]["tasks"]
+    row = next(row for row in rows if row["task_run_id"] == owned.id)
+    assert row["task_spec"] == spec and "task_start" in row["next_operations"]
+    assert owned.codex_session_id is None
+    monkeypatch.setattr(control.scheduler.start, "start", original)
+    result = asyncio.run(runtime.call_async("task_start", dict(
+        project_id="p", epic_run_id="e", task=row["task_spec"],
+    )))
+    assert result.ok and task(control, "F-01").id == owned.id
+    assert task(control, "F-01").internal_status == TaskState.WORKING
+    assert len(control.store.get_tasks("e")) == 1
+    view = asyncio.run(control.overview(actor))
+    assert "task_spec" not in view["tasks"][0]
+
+
+@pytest.mark.parametrize("change", ["project", "epic", "missing", "ambiguous"])
+def test_recovery_metadata_never_substitutes_foreign_missing_or_ambiguous_spec(
+    setup, monkeypatch, change,
+):
+    from orchestrator.application.task_start_service import TaskStartError
+
+    control, runtime, actor, _, _ = setup
+    spec = control.scheduler.selection.specs[T1]
+    monkeypatch.setattr(control.scheduler.start, "start",
+                        lambda *a, **k: (_ for _ in ()).throw(TaskStartError("RUNTIME_NOT_IDLE")))
+    result = asyncio.run(runtime.call_async("task_start", dict(
+        project_id="p", epic_run_id="e", task=spec,
+    )))
+    row = result.data["overview"]["tasks"][0]
+    owned, epic = task(control, "F-01"), control.store.get_epic("e")
+    advice = result.data["overview"]["selection"]
+    if change == "missing":
+        advice = dict(advice, tasks=[])
+    elif change == "ambiguous":
+        selected = next(r for r in advice["tasks"] if r["local_id"] == owned.task_id)
+        advice = dict(advice, tasks=[selected, selected])
+    else:
+        key = "project_id" if change == "project" else "epic_id"
+        control.scheduler.selection.specs[T1] = dict(spec, **{key: "foreign"})
+    assert row["task_spec"] == spec
+    assert control._start_spec(owned, epic, advice) is None

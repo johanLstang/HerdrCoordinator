@@ -38,3 +38,6 @@ select = ["E", "F", "I", "UP", "B"]
 "prompts/worker-v1.md" = "orchestrator/prompts/worker-v1.md"
 "prompts/integration-review-v1.md" = "orchestrator/prompts/integration-review-v1.md"
 "prompts/integration-v1.md" = "orchestrator/prompts/integration-v1.md"
+"prompts/coordinator-v1.md" = "orchestrator/prompts/coordinator-v1.md"
+"prompts/coordinator-review-v1.md" = "orchestrator/prompts/coordinator-review-v1.md"
+"prompts/coordinator-delivery-v1.md" = "orchestrator/prompts/coordinator-delivery-v1.md"

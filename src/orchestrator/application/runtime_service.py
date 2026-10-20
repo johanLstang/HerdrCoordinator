@@ -12,6 +12,7 @@ from orchestrator.application.task_review_service import TaskReviewError
 from orchestrator.application.task_scheduler_service import SchedulerError
 from orchestrator.application.task_selection_service import TaskSelectionError
 from orchestrator.application.task_start_service import TaskStartError
+from orchestrator.application.worker_commit_service import WorkerCommitError
 from orchestrator.application.worker_report_service import ReportError
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.event_log import EventLog
@@ -29,6 +30,8 @@ from orchestrator.mcp.contracts import (
     TaskReviewRequest,
     TaskStartRequest,
     ToolResponse,
+    WorkerCommitRequest,
+    WorkerWorkspaceRequest,
 )
 from orchestrator.persistence.store import StateStore, StoreError
 
@@ -104,6 +107,8 @@ class RuntimeService:
         task_resume=None,
         epic_start=None,
         integration_control=None,
+        coordinator_control=None,
+        worker_commit=None,
     ):
         self.store, self.actor, self.log = store, actor, log
         self.task_start = task_start
@@ -119,6 +124,18 @@ class RuntimeService:
         self.task_resume = task_resume
         self.epic_start = epic_start
         self.integration_control = integration_control
+        self.coordinator_control = coordinator_control
+        self.worker_commit = worker_commit
+        if worker_commit is not None and (
+            actor is None or actor.role != Role.WORKER or actor != worker_commit.principal
+            or store is not worker_commit.store
+            or any(s is not None for s in (
+                task_start, worker_reports, task_review, task_changes, task_approval, task_merge,
+                teamplayer_sync, task_selection, task_scheduler, task_attention, task_resume,
+                epic_start, integration_control, coordinator_control,
+            ))
+        ):
+            raise StateError("worker commit requires a dedicated registered Worker connection")
 
     def _target(self, target: Target):
         if self.actor.project_id != target.project_id:
@@ -134,6 +151,14 @@ class RuntimeService:
         return record
 
     def call(self, operation: str, arguments: dict) -> ToolResponse:
+        if self.worker_commit is not None:
+            response = self._worker_call(operation, arguments)
+            self.log.emit("mcp.policy", "INFO" if response.ok else "WARNING",
+                          "tool decision", code=response.code, role=self.actor.role)
+            return response
+        if self.coordinator_control is not None:
+            return ToolResponse(ok=False, code="ASYNC_CONTROL_REQUIRED",
+                                message="use guarded async Coordinator control")
         if (
             self.integration_control is not None
             and operation not in self.integration_control.operations
@@ -160,6 +185,15 @@ class RuntimeService:
         return response
 
     async def call_async(self, operation, arguments):
+        if self.worker_commit is not None:
+            return self.call(operation, arguments)
+        if self.coordinator_control is not None:
+            response = await self.coordinator_control.call(self.actor, operation, arguments)
+            self.log.emit(
+                "mcp.policy", "INFO" if response.ok else "WARNING", "tool decision",
+                code=response.code, role=self.actor.role if self.actor else "Unregistered",
+            )
+            return response
         if (
             self.integration_control is not None
             and operation not in self.integration_control.operations
@@ -244,6 +278,27 @@ class RuntimeService:
             role=self.actor.role if self.actor else "Unregistered",
         )
         return response
+
+    def _worker_call(self, operation, arguments):
+        if operation not in {"worker_workspace", "worker_commit"}:
+            return ToolResponse(ok=False, code="UNKNOWN_OPERATION", message="tool not registered")
+        try:
+            if operation == "worker_workspace":
+                WorkerWorkspaceRequest.model_validate(arguments)
+                data = self.worker_commit.status(self.actor)
+            else:
+                request = WorkerCommitRequest.model_validate(arguments)
+                data = self.worker_commit.commit(self.actor, request.request_key, request.message)
+            return ToolResponse(ok=True, code="OK", message="verified own Worker workspace",
+                                data=data)
+        except ValidationError:
+            return ToolResponse(ok=False, code="INVALID_ARGUMENT", message="invalid Worker schema")
+        except WorkerCommitError as error:
+            return ToolResponse(ok=False, code=str(error),
+                                message="reconcile the own commit intent")
+        except Exception:
+            return ToolResponse(ok=False, code="WORKER_COMMIT_UNVERIFIED",
+                                message="preserve work and reconcile the recorded intent")
 
     async def _start_epic(self, arguments):
         if self.actor is None:

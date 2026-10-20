@@ -20,7 +20,7 @@ Credentials ligger i miljövariabler vars **namn** kan anges i `credential_env`.
 
 ## Runtime-lagring (F-02)
 
-`StateStore` lagrar EpicRun, TaskRun, Review, Operation, ExternalReference och TransitionEvent. SQLite-schema 2 använder `PRAGMA user_version`, foreign keys och explicita transaktioner; flera skrivningar kan grupperas med `store.transaction()`. Nästlade operationer använder savepoints. En misslyckad enhet återställs utan partiella rader. F-03 migrerar schema 1 till 2 genom att lägga till transition_events i samma transaktion, utan att skriva om befintliga runs.
+`StateStore` lagrar EpicRun, TaskRun, Review, Operation, ExternalReference och TransitionEvent. SQLite-schema 3 använder `PRAGMA user_version`, foreign keys och explicita transaktioner; flera skrivningar kan grupperas med `store.transaction()`. Nästlade operationer använder savepoints. En misslyckad enhet återställs utan partiella rader. F-03 migrerar schema 1 till 2 genom att lägga till transition_events i samma transaktion, utan att skriva om befintliga runs. F38 lägger atomiskt till separata CoordinatorRun/ProjectOperation-tabeller och projektägarskap från schema 1/2; äldre payloadbytes och relationskontrakt bevaras. Se [schema och recovery](docs/coordinator/F-38-claim.md).
 
 Modellfälten lagras som validerad JSON tillsammans med relations- och indexkolumner. Tider är tidszonsmedvetna och normaliseras till UTC. Ett projekt/task-ID får bara ha en ofullbordad ägande run (`completed_at IS NULL`). Historiska avslutade runs kan bevaras. Taskens projekt måste matcha dess epic. Reviewnummer är unika per taskrun. Operationsnycklar är unika per projekt/operationstyp, och externa ID:n får inte bindas till två ägare inom samma projekt/provider/typ. Okända session-, workspace-, agent-, slot- och commitreferenser är null tills ett verkligt delresultat finns.
 
@@ -105,7 +105,7 @@ with StateStore(settings.sqlite_path) as store:
 
 Lokala ID:n `E-02`/`F-05` ger branches `feature/epic-e02` och `task/e02-f05`. UUID:n bevarar bindestreck. IDs i path/branch får innehålla bokstäver, siffror och bindestreck, högst 80 tecken; de normaliseras till gemener för Git-namn, men den exakta identiteten sparas i SQLite. Namnkollision innebär fel. Paths är `<worktree_root>/<project-id>/epic-<epic>` respektive `task-<epic>-<task>`. Ett explicit pathargument måste matcha samma normaliserade path; traversal och symlänkar utanför roten avvisas.
 
-Skapande lagrar run och `Operation(PENDING)` med repository/common-dir, branch, path och exakt bas-SHA **före** Git-mutation. Operationens UUID registreras som lokal branchägarmarkör `branch.<branch>.herdrOwner` före `git worktree add`. Därefter verifieras worktree, branch, ägare och HEAD; current_commit och `Operation(SUCCEEDED)` sparas atomiskt. Schema 2 används utan migration. SQLite-transaktioner serialiserar skapande även mellan separata serviceanslutningar.
+Skapande lagrar run och `Operation(PENDING)` med repository/common-dir, branch, path och exakt bas-SHA **före** Git-mutation. Operationens UUID registreras som lokal branchägarmarkör `branch.<branch>.herdrOwner` före `git worktree add`. Därefter verifieras worktree, branch, ägare och HEAD; current_commit och `Operation(SUCCEEDED)` sparas atomiskt. Gitoperationen ändrar inget schema; aktuell lagringsmigration beskrivs under F38. SQLite-transaktioner serialiserar skapande även mellan separata serviceanslutningar.
 
 Vid avbrott bevaras intent, ägarmarkör och kända Git-resurser. Samma run-ID återanvänder en verifierad branch/worktree, även efter processomstart. Befintlig branch utan rätt ägarmarkör adopteras inte. Om en färdig resurs saknas, en ofärdig branch har ändrats eller källbasen ändrats innan resursen skapats stoppas återförsöket för avstämning. Servicen raderar, återställer eller force-checkar inte något arbete. Initial base_commit bevaras; färsk Git-status levereras av F-06.
 
@@ -125,7 +125,7 @@ Underlaget är `reviewable=false` vid smutsig källa/mål, saknad aktuell bas i 
 
 ## Synkronisering och taskintegration (F-07)
 
-`GitIntegrationService(settings, store, test_command=(...))` är ett internt API för en betrodd, registrerad Integration i rätt epic. Worker och Coordinator får inte utföra dess taskoperationer. Testkommandot och timeouten är operatörskonfiguration; de får inte hämtas från en agentrapport eller nya MCP-argument. Testprocessens output lagras/loggas inte. Schema 2 används utan migration.
+`GitIntegrationService(settings, store, test_command=(...))` är ett internt API för en betrodd, registrerad Integration i rätt epic. Worker och Coordinator får inte utföra dess taskoperationer. Testkommandot och timeouten är operatörskonfiguration; de får inte hämtas från en agentrapport eller nya MCP-argument. Testprocessens output lagras/loggas inte. Gitoperationen ändrar inget schema; aktuell lagringsmigration beskrivs under F38.
 
 1. `sync_task_with_epic(actor, task_run_id, key=...)` synkar aktuell Epic → Task. Det är separat från leverans, ogiltigförklarar äldre approval vid ändrat underlag och bevarar konflikter i task-worktreet. En tidigare Approved-task går till ChangesRequested när reviewn måste göras om. Ingen reset, abort eller cleanup utförs automatiskt.
 2. `verify_task(actor, task_run_id, key=...)` kör det konfigurerade testkommandot som argv i task-worktreet. Operationen sparar faktiska source/target-SHA, kommandots hash och exitkod. Kod, bas eller arbetsläge som ändras under testkörningen ger FAILED/STALE_TEST_EVIDENCE. En okänd utgång efter processavbrott kräver en ny uttrycklig verifiering; en tests_passed-flagga godtas inte.
@@ -393,3 +393,90 @@ delresultat sparas i SQLite före `EPIC_READY_FOR_REVIEW`. Ändrade underlag
 kräver omverifiering; kända steg återanvänds, okänt processutfall omsänds inte
 automatiskt. Epicboard förblir Active och Coordinator tar slutreview och
 main-integration separat. Se [konfiguration, grindar och recovery](docs/integration/F-36-completion.md).
+
+## Projekt-Coordinator och nästa epic (F38)
+
+En separat registrerad Coordinator-session äger projektplanen från main utan Worker-slot eller artificiell EpicRun. Det scoped MCP-gränssnittet erbjuder `coordinator_overview` och `epic_claim_next`; tjänsten verifierar färsk board/User/Write, prioritet, backloggordning, faktisk main-leverans för beroenden och beständig ensamreservation före F34-start. Olöst D02/F17 ger WAIT utan start. Se [konfiguration, schema 3 och recovery](docs/coordinator/F-38-claim.md). Slutreview/main-merge/fortsättning levereras i F39–F41.
+
+## Slutreview och korrigeringsplan (F39)
+
+Operatören kan registrera `CoordinatorReviewPolicy` och `CoordinatorReviewService`
+som en separat fingerprintad capability i projektets verkliga Coordinatorrun.
+`coordinator_review_context`, `coordinator_review_read` och
+`coordinator_review_submit` binder beslutet till aktuell kod, main, fullständig diff,
+taskleveranser, acceptans och oberoende tester. Varje del av granskningsdokumentet
+måste ha lästs genom tjänsten före beslut.
+
+Vid underkännande skapas riktiga User-tilldelade korrigeringstasks från tillåtna
+templates och feedback återförs till samma registrerade Integration-session.
+Ursprunglig registrering och gamla Done-/review-/mergebevis bevaras. Nytt F36-handoff
+och ny review krävs efter korrigeringen. Se [konfiguration och recovery](docs/coordinator/F-39-review.md).
+F39 exponerar ingen main-merge eller fortsättningsloop; F40–41 återstår.
+
+## Epicleverans och fortsättning (F40)
+
+Den separata registrerade `coordinator_epic_deliver`-förmågan knyter aktuell
+F39-approval till en faktisk F08-mainmerge, fysiskt F13-stopp, oberoende sluttest,
+Done-synk och release före nästa F38-claim. Kända effekter återanvänds efter avbrott;
+fel behåller faktisk merge och hindrar för tidig fortsättning. Rootens ändliga
+epicpolicyregister tillåter nästa verkliga run utan ändrad konfiguration och
+bevarar verifierade korrigeringars beroendebevis.
+Se [komposition, säkerhetsgrind och recovery](docs/coordinator/F-40-delivery.md).
+Generell autonomi kräver fortsatt positiv D02/F17-grind; ett separat avgränsat
+manuellt provgodkännande gäller endast sitt konkreta granskningsunderlag.
+
+## Restriktiva sessionsprofiler och Worker-commit (F41)
+
+Valfri intern `CodexExecutionPolicy` binder en session till explicit begränsad
+Linuxprofil, fryst nativebinär och exakt startargv. Worker skriver egen arbetsyta
+och använder en separat registrerad commitservice för egen branch; gemensam
+Git-metadata är skrivskyddad i shell. Coordinator/Integration har läsprofiler och
+sina befintliga rolltjänster. Standardstart utan profilen behåller tidigare beteende.
+
+Det egna MCP-gränssnittet accepterar endast `worker_workspace()` och
+`worker_commit(request_key, message)`, med faktisk task/runtime/slot/PID/SID-
+kontroll och beständig återhämtning efter okänt Git-svar. Detta aktiverar inte
+autonomi ensamt. Se [kontrakt, recovery och det konkreta provets grindar](docs/coordinator/F-41-execution.md).
+F41:s verkliga nativeacceptans är verifierad genom två fullständiga provepics;
+se [slutprov och aktuella kvitton](docs/coordinator/F-41-native.md).
+F41 är granskad, Task→E10-integrerad och efterverifierad;
+E10:s samlade PR/mainintegration återstår.
+
+Det separata F41-provet väljer också `activate_registered=True` i `EpicStartService`
+och `ack_wait_seconds=5` i dess registrerade scheduler/startkomposition. Efter exakt
+native start-ACK levererar tjänsten en fast, journalförd aktivering till samma
+Integration. Okänt transportsvar observeras utan blind omsändning; claim väntar på
+faktisk leverans. Worker-start, korrigering och input-resume kan kort observera
+samma strikta ACK innan kontrollen lämnas tillbaka till modellen. Standardvärdena
+är av respektive noll; befintliga runtimeintentioner skrivs inte om. Ingen av
+inställningarna ger rätt att committa, granska eller mergea utan ordinarie bevis.
+
+Vid skyddat startåterförsök ger `integration_overview` den egna radens `task_spec`
+för CLAIMED/STARTING. Integration kopierar det exakta registrerade värdet; ändrad
+spec nekas fortfarande. Nya assignmentintentioner börjar i `PREPARED` fram till
+dispatchmarkeringen. Bara bevisat osänd förberedelse får pröva readiness igen;
+`DISPATCH_REQUESTED` och äldre okända resultat observeras utan omsändning.
+Originaldeadline och ACK-/runtimekontroller gäller i alla faser.
+
+Nya assignmentintentioner använder internt dispatchprotokoll2: en fast högst300s
+förberedelsefrist och ännu ingen ACK-deadline i PREPARED. Första ACK-fristen
+(högst45s) skapas en gång vid den enda dispatchmarkeringen. Transient ej-idle
+förberedelse ger WAITING utan send. Äldre sparade protokoll, utgångna frister och
+okända transportutfall återaktiveras inte.
+
+Integration-start kan avstämma ett senare observerat ACK även efter ACK_TIMEOUT
+endast när samma korrelerade native item/turn bevisas levererat inom den
+oförändrade originalfristen. Odaterade eller faktiskt sena svar godtas inte.
+Gamla lyckade kvittensformat bevaras och ingen prompt skickas om.
+
+Integration-startens sista native-/HEAD-kontroll sker före beständig send-intention.
+Känt osänd `RUNTIME_READY` kan återförsökas inom en fast 300s förberedelsefrist,
+satt en gång efter runtime-start. Därefter skapas första ACK-fristen vid den enda
+send-markeringen. Okända gamla send-utfall eller utgångna frister omsänds inte.
+
+`TaskSelectionService.dependency_specs` är en separat valfri operatörskatalog
+för läsande beviskontroll av andra redan levererade epics. Den kan inte leverera
+saknad spec för en ny aktuell task. Tidigare tasks verifieras med sin egen
+registrerade leverans-/reviewkontext, aktuella board och verkliga Git-/stoppbevis.
+En icke-tom katalog ingår i scheduleridentiteten; tom standard ändrar inget äldre
+konfigurationshash.

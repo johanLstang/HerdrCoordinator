@@ -9,6 +9,7 @@ from copy import deepcopy
 from pydantic import ValidationError
 
 from orchestrator.adapters.teamplayer_mcp import TeamPlayerError
+from orchestrator.application.ack_observation import validate_wait
 from orchestrator.application.runtime_assignment_service import digest
 from orchestrator.application.task_approval_service import TaskApprovalError, TaskApprovalService
 from orchestrator.application.task_attention_service import AttentionError, TaskAttentionService
@@ -46,7 +47,10 @@ class TaskSchedulerService:
         processes=None,
         review_provider=None,
         timeout_seconds=45,
+        registration=None,
+        ack_wait_seconds=0,
     ):
+        self.ack_wait_seconds = validate_wait(ack_wait_seconds)
         self.settings, self.store, self.selection, self.sync = settings, store, selection, sync
         if (
             settings != selection.settings
@@ -62,47 +66,57 @@ class TaskSchedulerService:
         ):
             raise SchedulerError("SCHEDULER_CONFIGURATION_INVALID")
         self.review_provider, self.timeout_seconds = review_provider, timeout_seconds
-        self.scheduler_id = digest(
-            canonical_json(
-                {
-                    "settings": settings.model_dump(mode="json"),
-                    "specs": {
-                        k: LocalTaskSpec.model_validate(v).model_dump(mode="json")
-                        for k, v in selection.specs.items()
-                    },
-                    "order": list(selection.order),
-                    "epic_prerequisites": selection.epic_prerequisites,
-                    "delivery_contexts": {
-                        k: v.model_dump(mode="json") for k, v in selection.delivery_contexts.items()
-                    },
-                    "scopes": selection.scopes,
-                    "bindings": {
-                        k: v.model_dump(mode="json") for k, v in selection.reader.bindings.items()
-                    },
-                    "project_id": sync.project_id,
-                    "external_project_id": sync.external_project_id,
-                    "user_id": sync.user_id,
-                    "server_session": herdr.server_session,
-                    "sandbox": herdr.sandbox,
-                    "timeout_seconds": timeout_seconds,
-                }
-            )
-        )
+        self.registration = registration
+        configuration = {
+            "settings": settings.model_dump(mode="json"),
+            "specs": {
+                k: LocalTaskSpec.model_validate(v).model_dump(mode="json")
+                for k, v in selection.specs.items()
+            },
+            "order": list(selection.order),
+            "epic_prerequisites": selection.epic_prerequisites,
+            "delivery_contexts": {
+                k: v.model_dump(mode="json") for k, v in selection.delivery_contexts.items()
+            },
+            "scopes": selection.scopes,
+            "bindings": {
+                k: v.model_dump(mode="json") for k, v in selection.reader.bindings.items()
+            },
+            "project_id": sync.project_id,
+            "external_project_id": sync.external_project_id,
+            "user_id": sync.user_id,
+            "server_session": herdr.server_session,
+            "sandbox": herdr.sandbox,
+            "timeout_seconds": timeout_seconds,
+        }
+        if ack_wait_seconds:
+            configuration["ack_wait_seconds"] = ack_wait_seconds
+        if selection.dependency_specs:
+            configuration["dependency_specs"] = {
+                k: LocalTaskSpec.model_validate(v).model_dump(mode="json")
+                for k, v in selection.dependency_specs.items()
+            }
+        self.scheduler_id = (registration.scheduler_identity(configuration)
+                             if registration is not None else digest(canonical_json(configuration)))
         self._board = None
         self.start = TaskStartService(
-            settings, store, herdr, codex, processes=processes, claim_guard=self._claim_guard
+            settings, store, herdr, codex, processes=processes, claim_guard=self._claim_guard,
+            ack_wait_seconds=ack_wait_seconds
         )
         self.reports = WorkerReportService(settings, store, herdr, codex)
         self.review = TaskReviewService(settings, store)
         self.approval = TaskApprovalService(settings, store)
-        self.changes = TaskChangesService(settings, store, herdr, codex)
+        self.changes = TaskChangesService(settings, store, herdr, codex,
+                                          ack_wait_seconds=ack_wait_seconds)
         self.merge = TaskMergeService(settings, store, herdr, codex, processes=processes)
         self.attention = TaskAttentionService(
             settings, store, sync, herdr, codex, processes=processes
         )
-        self.resume = TaskResumeService(self.attention)
+        self.resume = TaskResumeService(self.attention, ack_wait_seconds=ack_wait_seconds)
 
     def _scope(self, actor, epic_run_id):
+        if self.registration is not None:
+            self.registration.connection_principal(actor)
         try:
             epic = self.selection._scope(actor, epic_run_id)
         except TaskSelectionError:
@@ -142,6 +156,8 @@ class TaskSchedulerService:
             os.close(fd)
 
     def _identity(self, task):
+        if self.registration is not None:
+            self.registration.connection_principal(self.registration.principal)
         op = self.store.get_operation(task.project_id, self.start.KIND, task.task_id)
         if (
             op is None

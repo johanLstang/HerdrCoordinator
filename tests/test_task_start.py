@@ -391,3 +391,30 @@ def test_immutable_base_change_after_claim_requires_reconciliation(setup, monkey
         s.start(actor, actor.epic_run_id, spec)
     assert not h.workspaces and s.worktrees.git.head("task/e-t") is None
     assert s.store.get_tasks(actor.epic_run_id)[0].worker_slot is None
+
+
+def test_optional_bounded_ack_observation_confirms_delayed_native_ack_without_resend(
+    setup, monkeypatch,
+):
+    s, actor, spec, h, history = setup
+    s.ack_wait_seconds = 5
+
+    def prompt(name, text, *, timeout_ms):
+        h.sent.append(text)
+        h.session_id = SID
+
+    h.prompt = prompt
+    sleeps = []
+
+    def delayed_ack(seconds):
+        sleeps.append(seconds)
+        assert not s.store.db.in_transaction
+        assert s.store.get_tasks(actor.epic_run_id)[0].internal_status == TaskState.STARTING
+        history.reply(h.sent[0])
+
+    monkeypatch.setattr("orchestrator.application.ack_observation.sleep", delayed_ack)
+    result = s.start(actor, actor.epic_run_id, spec)
+    assert result["status"] == "CONFIRMED" and len(sleeps) == len(h.sent) == h.starts == 1
+    assert s.store.get_task(result["task"]["id"]).internal_status == TaskState.WORKING
+    assert s.start(actor, actor.epic_run_id, spec)["status"] == "EXISTING"
+    assert len(h.sent) == h.starts == 1
