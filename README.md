@@ -465,3 +465,15 @@ Integration-start kan avstämma ett senare observerat ACK även efter ACK_TIMEOU
 endast när samma korrelerade native item/turn bevisas levererat inom den
 oförändrade originalfristen. Odaterade eller faktiskt sena svar godtas inte.
 Gamla lyckade kvittensformat bevaras och ingen prompt skickas om.
+
+Integration-startens sista native-/HEAD-kontroll sker före beständig send-intention.
+Känt osänd `RUNTIME_READY` kan återförsökas inom en fast 300s förberedelsefrist,
+satt en gång efter runtime-start. Därefter skapas första ACK-fristen vid den enda
+send-markeringen. Okända gamla send-utfall eller utgångna frister omsänds inte.
+
+`TaskSelectionService.dependency_specs` är en separat valfri operatörskatalog
+för läsande beviskontroll av andra redan levererade epics. Den kan inte leverera
+saknad spec för en ny aktuell task. Tidigare tasks verifieras med sin egen
+registrerade leverans-/reviewkontext, aktuella board och verkliga Git-/stoppbevis.
+En icke-tom katalog ingår i scheduleridentiteten; tom standard ändrar inget äldre
+konfigurationshash.

@@ -31,6 +31,7 @@ class TaskSelectionService:
         specs,
         task_order,
         epic_prerequisites,
+        dependency_specs=None,
         delivery_contexts=None,
         scopes=None,
         codex=None,
@@ -40,6 +41,7 @@ class TaskSelectionService:
         self.settings, self.store, self.reader = settings, store, reader
         # All configuration is supplied by the operator, never in MCP tool arguments.
         self.specs = deepcopy(dict(specs))
+        self.dependency_specs = deepcopy(dict(dependency_specs or {}))
         self.order = tuple(task_order)
         self.epic_prerequisites = deepcopy(dict(epic_prerequisites))
         self.delivery_contexts, self.scopes = dict(delivery_contexts or {}), dict(scopes or {})
@@ -67,12 +69,13 @@ class TaskSelectionService:
         board = await self.reader.read_project()
         return self.evaluate(actor, epic_run_id, board)
 
-    def _spec(self, row, epic, board):
+    def _spec(self, row, epic, board, *, catalog=None):
         """Names/descriptions do not establish executable scope or identity."""
-        if row.binding is None or row.id not in self.specs:
+        catalog = self.specs if catalog is None else catalog
+        if row.binding is None or row.id not in catalog:
             raise TaskSelectionError("TASK_SPEC_MISSING")
         try:
-            raw = self.specs[row.id]
+            raw = catalog[row.id]
             spec = LocalTaskSpec.model_validate(
                 raw.model_dump() if isinstance(raw, LocalTaskSpec) else raw
             )
@@ -95,7 +98,7 @@ class TaskSelectionService:
             raise TaskSelectionError("TASK_SPEC_BOARD_MISMATCH")
         return spec
 
-    def _task_run(self, row, board, project_id):
+    def _task_run(self, row, board, project_id, *, current_epic_id):
         if row.binding is None:
             raise TaskSelectionError("DEPENDENCY_BINDING_MISSING")
         matches = [
@@ -119,12 +122,25 @@ class TaskSelectionService:
             raise TaskSelectionError("DEPENDENCY_RUN_SCOPE_MISMATCH")
         if task.internal_status != TaskState.DONE:
             raise TaskSelectionError("DEPENDENCY_RUNTIME_NOT_DONE")
+        settings, catalog = self.settings, self.specs
+        if epic.id != current_epic_id:
+            settings = self.delivery_contexts.get(epic.id)
+            if epic.status != EpicState.DONE or settings is None or (
+                settings.repository != self.settings.repository
+                or settings.sqlite_path != self.settings.sqlite_path
+                or task.task_id not in self.scopes.get(epic.id, ())
+            ):
+                raise TaskSelectionError("EPIC_DEPENDENCY_PROOF_MISSING")
+            # The read-only prior catalog never supplies executable current scope.
+            # Keep legacy global catalogs valid, but verify prior evidence with
+            # its own review configuration rather than the new epic's settings.
+            catalog = self.specs if row.id in self.specs else self.dependency_specs
         evidence = TeamPlayerEvidence(
-            self.settings, self.store, codex=self.codex, processes=self.processes
+            settings, self.store, codex=self.codex, processes=self.processes
         )
         try:
             registered = evidence.spec(task)
-            spec = self._spec(row, epic, board)
+            spec = self._spec(row, epic, board, catalog=catalog)
             if registered != spec:
                 raise TaskSelectionError("DEPENDENCY_SPEC_CHANGED")
             status, proof, _ = evidence.task(task)
@@ -172,7 +188,7 @@ class TaskSelectionService:
         ):
             raise TaskSelectionError("EPIC_DEPENDENCY_SCOPE_UNVERIFIED")
         for row in rows:
-            self._task_run(row, board, current.project_id)
+            self._task_run(row, board, current.project_id, current_epic_id=current.id)
         try:
             evidence = TeamPlayerEvidence(
                 context, self.store, scopes=self.scopes, codex=self.codex, processes=self.processes
@@ -305,7 +321,9 @@ class TaskSelectionService:
                     block("DEPENDENCY_NOT_DONE", identity)
                     continue
                 try:
-                    delivered_epic, proof = self._task_run(dependency, board, epic.project_id)
+                    delivered_epic, proof = self._task_run(
+                        dependency, board, epic.project_id, current_epic_id=epic.id,
+                    )
                     if delivered_epic.id != epic.id:
                         if dependency.epic_id not in epic_proofs:
                             epic_proofs[dependency.epic_id] = self._epic_proof(

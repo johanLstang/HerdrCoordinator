@@ -473,3 +473,50 @@ def test_native_auth_failure_and_unregistered_mcp_do_not_return_candidates(setup
         runtime.call_async("task_get_next", {"project_id": "p", "epic_run_id": a.epic_run_id})
     )
     assert result.code == "UNAUTHENTICATED" and not result.data
+
+
+@pytest.mark.parametrize('attack, expected', [
+    (None, None),
+    ('missing-prior', 'TASK_SPEC_MISSING'),
+    ('foreign-prior', 'TASK_SPEC_INVALID'),
+    ('changed-prior', 'DEPENDENCY_SPEC_CHANGED'),
+    ('missing-own', 'TASK_SPEC_MISSING'),
+])
+def test_scoped_own_catalog_and_read_only_prior_specs_use_prior_review_context(
+    ready, attack, expected,
+):
+    from orchestrator.domain.review_contracts import EpicReviewSpec
+
+    old, board, actor, identity = previous_epic(ready)
+    prior = {T1: deepcopy(old.specs[T1])}
+    own = {identity: deepcopy(old.specs[identity])}
+    if attack == 'missing-prior':
+        prior.clear()
+    elif attack == 'foreign-prior':
+        prior[T1]['epic_id'] = 'Foreign'
+    elif attack == 'changed-prior':
+        prior[T1]['goal'] = 'Changed after the original reviewed delivery'
+    elif attack == 'missing-own':
+        # The dependency catalog cannot replace a missing executable own spec.
+        prior.update(own)
+        own.clear()
+    settings = old.settings.model_copy(update={'review_context': EpicReviewSpec(
+        version=1, project_id='p', epic_id='Next', requirements=['New epic requirements'],
+        acceptance_criteria=['Independent next acceptance'], sources=['README.md'],
+    )})
+    service = TaskSelectionService(
+        settings, old.store, old.reader, specs=own, task_order=tuple(own),
+        dependency_specs=prior, epic_prerequisites=old.epic_prerequisites,
+        delivery_contexts=old.delivery_contexts, scopes=old.scopes,
+        codex=old.codex, processes=old.processes,
+    )
+    before = service.store.db.total_changes, service.git.head('main'), service.git.worktrees()
+    result = run(service.get_next(actor, actor.epic_run_id))
+    if expected is None:
+        assert result['candidates'] == [identity]
+        assert result['epic_dependencies'][E]['final_test_id']
+    else:
+        assert result['candidates'] == [] and expected in codes(result, identity)
+    assert (service.store.db.total_changes, service.git.head('main'),
+            service.git.worktrees()) == before
+    assert service.store.get_tasks(actor.epic_run_id) == []

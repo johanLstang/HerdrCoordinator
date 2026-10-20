@@ -1992,6 +1992,8 @@ Förberett separat `/tmp/herdr-f41-r1-20261020` med egen server hc-f41-r1-202610
 
 **Pre-dispatch-rättning verifierad inför R17:**68 aktuella start-/aktiverings-/kompositionsfall PASS42.15s, inklusive övergående andra nativekontroll före send, fast preparation-timeout, crash efter send-intention utan resend, samma ACK-frist och bevisad sen observation. Ruff/build/READMECLI/exakt wheel78 moduler/sex policies PASS. R16:s primärleverans står kvar och nästa Integration/root är faktiskt STOPPED;91 originalkällor sparade. Ny avgränsad F41-r1.7 har verkliga User105/Pending-ID:n och samma godkända verktygsgräns. Samlat nytt nativeprov krävs före acceptans; F41 Active0/3 och E10 Active2/3.
 
+**R17 primärleverans och verklig nästa start; beroendekontrakt före kod:** Primär provepic faktiskt Done/released på mainb4ee724831d978de14afc6f9aa0b296c2bb7f7ef efter task-/epicfix, aktuell åttadelad review och exit0. Nästa Integration startad/ACK-registrerad/automatiskt aktiverad på exakt denna bas. D blockeras före Worker-start eftersom tidigare Done-tasks saknas i nästa epicens egna specifikationskatalog. Ingen användarinput eller operatörsinjektion behövs. Separat betrodd dependency_specs för endast läsande kontroll av färdig annan epic samt dess egen review-/leveranskontext fastställs i [kontraktet](docs/coordinator/F-41-runtime-plan.md); eget taskval/exakta specs och alla faktiska Donebevis består. Återstående egna runtimes stoppas och R17 bevaras före kod; gamla leveranser/timers/sessioner ändras inte. F41 Active0/3, E10 Active2/3; en ny full fryst körning krävs.
+
 ## Epic E-11 Återhämta körningar efter avbrott och omstart
 
 **Fas:** 11. **Prioritet:** P1. **Kanban-status:** Planned. **TeamPlayer Epic-ID:** `c1a21c17-3fcf-4f15-800d-c69f61d07df8`.

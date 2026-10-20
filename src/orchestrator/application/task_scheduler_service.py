@@ -91,6 +91,11 @@ class TaskSchedulerService:
         }
         if ack_wait_seconds:
             configuration["ack_wait_seconds"] = ack_wait_seconds
+        if selection.dependency_specs:
+            configuration["dependency_specs"] = {
+                k: LocalTaskSpec.model_validate(v).model_dump(mode="json")
+                for k, v in selection.dependency_specs.items()
+            }
         self.scheduler_id = (registration.scheduler_identity(configuration)
                              if registration is not None else digest(canonical_json(configuration)))
         self._board = None

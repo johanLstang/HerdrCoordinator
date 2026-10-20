@@ -55,6 +55,7 @@ from orchestrator.domain.coordinator_review import CoordinatorReviewPolicy
 from orchestrator.domain.models import EpicRun, TaskRun, utc_now
 from orchestrator.domain.policy import Actor, Role
 from orchestrator.domain.review_contracts import EpicReviewSpec
+from orchestrator.domain.states import EpicState
 from orchestrator.domain.teamplayer import LocalBoardBinding
 from orchestrator.domain.worker_contracts import canonical_json
 from orchestrator.event_log import EventLog
@@ -196,14 +197,23 @@ async def composition(config_path):
                          for identity, entry in zip(view.native_task_ids, view.spec.tasks,
                                                     strict=True)}
                 contexts = {identity: s.original_start.settings for identity, s in subjects.items()
-                            if identity != view.principal.epic_run_id}
+                            if identity != view.principal.epic_run_id
+                            and store.get_epic(identity).status == EpicState.DONE}
                 previous_scopes = {k: v for k, v in scopes().items() if k in contexts}
+                prior_specs = {}
+                for identity in contexts:
+                    prior, native_ids, _ = subjects[identity].plan.current()
+                    for native_id, entry in zip(native_ids, prior.tasks, strict=True):
+                        if native_id in prior_specs:
+                            raise RuntimeError("F41_DEPENDENCY_SPEC_COLLISION")
+                        prior_specs[native_id] = entry.task.model_dump(mode="json")
                 prerequisites = tuple(p.native_epic_id for p in policies
                                       if p.original.epic_id in view.spec.dependencies)
                 selection = TaskSelectionService(
                     view.settings, store, reader(), specs=specs, task_order=tuple(specs),
                     epic_prerequisites={view.spec.epic_id: prerequisites},
-                    delivery_contexts=contexts, scopes=previous_scopes, codex=codex,
+                    dependency_specs=prior_specs, delivery_contexts=contexts,
+                    scopes=previous_scopes, codex=codex,
                 )
                 scheduler = TaskSchedulerService(view.settings, store, selection,
                                                   sync(view.settings), workers, codex,

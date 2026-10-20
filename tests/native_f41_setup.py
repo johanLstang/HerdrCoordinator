@@ -21,8 +21,8 @@ from orchestrator.domain.worker_contracts import canonical_json
 
 PROJECT = "d2ee4c75-7b80-465f-83ac-1750854a8e80"
 USER = "105f26a7-0648-438d-94fd-3260ac3af4ee"
-LOCAL = "f41-r1-7"
-PRIMARY, NEXT = "F41R17", "F41NEXT17"
+LOCAL = "f41-r1-8"
+PRIMARY, NEXT = "F41R18", "F41NEXT18"
 
 
 def task(epic, identity, name, goal, criteria, scope, dependencies=()):
@@ -38,7 +38,7 @@ def task(epic, identity, name, goal, criteria, scope, dependencies=()):
 
 
 def specs():
-    a = task(PRIMARY, "A", "F41-r1.7 A Unicode labels",
+    a = task(PRIMARY, "A", "F41-r1.8 A Unicode labels",
              "Implement normalize_label(value) in labels.py, strip whitespace, normalize NFC, "
              "reject non-str and blank. Controlled first-attempt injection for this bounded test: "
              "first implement strip/validation with real passing ASCII baseline tests, explicitly "
@@ -46,13 +46,13 @@ def specs():
              "changes and let THIS SAME Worker add NFC and Unicode tests. Never claim NFC passed.",
              ["normalize_label strips and normalizes Unicode NFC",
               "Non-string and blank labels are rejected"], ["labels.py", "tests/test_labels.py"])
-    b = task(PRIMARY, "B", "F41-r1.7 B validated even totals",
+    b = task(PRIMARY, "B", "F41-r1.8 B validated even totals",
              "Implement even_total(values) in totals.py: list of integers, exclude bool, "
              "sum even values including negatives, empty list returns 0; reject invalid input.",
              ["Even integers are summed including negatives and empty input",
               "Non-list, bool and non-int elements raise TypeError"],
              ["totals.py", "tests/test_totals.py"])
-    c = task(PRIMARY, "C", "F41-r1.7 C composed caption",
+    c = task(PRIMARY, "C", "F41-r1.8 C composed caption",
              "Implement caption(name,values) in caption.py using labels.normalize_label and "
              "totals.even_total; output '<normalized name>: <even sum>'. Add real tests and README "
              "example showing caption with decomposed A-ring name and [2,3,4,-2], producing "
@@ -65,7 +65,7 @@ def specs():
     criteria = ["Unicode labels and validated even totals work together",
                 "Caption and README example produce 'Åsa: 4'",
                 "Public api.py exports normalize_label, even_total and caption"]
-    first = dict(version=1, project_id=LOCAL, epic_id=PRIMARY, title="F41-r1.7 native pipeline",
+    first = dict(version=1, project_id=LOCAL, epic_id=PRIMARY, title="F41-r1.8 native pipeline",
                  goal="Actual two-Worker pipeline, same-session task fix and aggregate correction",
                  requirements=criteria, acceptance_criteria=criteria,
                  sources=["README.md", "AGENTS.md"], project_instructions=[
@@ -81,12 +81,12 @@ def specs():
                      "Its known limitation is missing independent public-API verification. "
                      "Coordinator must independently review all epic criteria before delivery.",
                  ], tasks=[a, b, c], dependencies=[])
-    d = task(NEXT, "D", "F41-r1.7 next report on delivered main",
+    d = task(NEXT, "D", "F41-r1.8 next report on delivered main",
              "In report.py import caption from api (provided by previous main delivery), "
              "implement report(name,values) returning 'Report '+caption(name,values), add tests.",
              ["report(' Åsa ',[2,3,4,-2]) equals 'Report Åsa: 4'"],
              ["report.py", "tests/test_report.py"])
-    second = dict(first, epic_id=NEXT, title="F41-r1.7 dependent next epic",
+    second = dict(first, epic_id=NEXT, title="F41-r1.8 dependent next epic",
                   goal="Start from new actual main after previous verified delivery",
                   requirements=d["task"]["acceptance_criteria"],
                   acceptance_criteria=d["task"]["acceptance_criteria"],
