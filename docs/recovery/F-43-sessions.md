@@ -1,5 +1,7 @@
 # F43: återanslutning till registrerade sessioner
 
+Aktuellt läge 2026-10-29: native R2 verifierat3/3 med källkvalificering, slutliga21 kodprov PASS. F43 Testing/Active; review och faktisk Task→Epic återstår. Äldre R1-väntelägen nedan är historik. Slutlig funktionell kod `d162a8bc3f14526b498a6b37f363151705dd515b`.
+
 ## Kontrakt före implementation
 
 Källor: arkitektur §§7,23,28,45; workflow §§17–18,38; Backlog F43.
@@ -19,7 +21,7 @@ SessionRecoveryService återkopplar verifierade Coordinator-, Integration- och W
 
 Generell in-flight-recovery av start, merge och synk ingår i F44. En avslutad CoordinatorRun är immutable och återöppnas inte. Saknad fysisk process utan bekräftat inaktivitetsunderlag leder till Attention även om Codex-metadata finns kvar.
 
-## Verifiering
+## Ursprunglig verifieringsplan (historik)
 
 Planerad: verklig temporär Git/SQLite, restart med samma identiteter, fel roll/config/resurs, oförändrad smutsig Worker, parkerad task med/utan sparat svar, två upptagna slots, okänt inpututfall utan omsändning och kontrollerat saknad sessionsreferens. Separat verkligt Herdr/Codex-prov använder nytt ofarligt repository och avgränsad TeamPlayer-testepic. Ingen tidigare F41-session återstartas.
 
@@ -74,7 +76,7 @@ lämnas som väntande originaloperation. Epicen är fortsatt Active. En hold som
 återstår på en avslutad run syns fortfarande i F42-inventeringen och lämnas till
 F44:s explicit avstämda originaloperation; F43 återöppnar inte avslutade runs.
 
-## Pågående verifiering och verkligt prov
+## Historik: pågående verifiering och R1-prov
 
 Kontrollerade peers: 18 riktade prov PASS75.38s före den sista kontrollgränsgrinden,
 samt tre riktade hold-/återställningsprov PASS18.53s efter grinden. Slutlig samlad
@@ -125,7 +127,7 @@ eller påhittas. Underlaget finns privat i `snapshot2-proof.json` och båda äld
 konfigurationssnapshotarna är bevarade. Fortsatta prov använder den nya frysta
 källan och samma originalregistrering; detta är ännu inget native acceptansbevis.
 
-## Avstämt kodunderlag
+## Historiskt kodunderlag före R2
 
 Funktionell commit `5bd6f539bb8747bc53b6fa0f968dd5483113ddf8`. Slutliga20 PASS104.75s,119 regressionsprov PASS584.17s och7 kompletterande kontroll-/projektprov PASS357.73s;143 unika fall, källskillnader redovisas uttryckligen. [Verifieringsunderlag](F-43-verification.json) och [pågående review](../reviews/F-43-progress.md). TeamPlayer NeedsApproval5/User105 och E11Active11 med egenacceptans0/3 är återlästa. Nativeprov, full leveransreview, Task→Epic och eftertester återstår.
 
