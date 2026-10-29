@@ -15,3 +15,26 @@ Beständig recoveryjournal redovisar ursprunglig operation, ägare, aktuell obse
 ## Verifieringsplan
 
 Felinjicering vid start-, merge-, test-, stopp- och synkgränser med faktisk temporär Git/SQLite och tydligt kontrollerade runtime-/boardpeers. Kontrollera samma SID/runs/worktrees, högst två slots, ingen dubblerad start/merge/prompt/kommentar samt ändrad roll/konfiguration/HEAD/worktree/board och unknown-result. Native- och maskinomstartsanspråk kräver separata faktiska prov; F45 ansvarar för samlade avbrottsprov.
+
+## Komposition och avgränsad användning
+
+```python
+operator = OperationRecoveryService(
+    original_session_recovery,
+    controls=[original_integration_control],
+    delivery=original_coordinator_delivery,
+)
+receipt = await operator.recover(original_operation_id)
+```
+
+Alla objekt är konkreta ursprungstjänster för samma SQLite/projekt. Återstart återskapar dem från skyddad originalkonfiguration; MCP får inget nytt verktyg för roller, adoption eller recovery. Pending epicstart och epicboardsynk kräver dessutom den riktiga ursprungliga Coordinatorns verifierade anslutning; en serialiserad roll i en journal räcker inte. Metoden tar inte emot gamla rapporter som effektbehörighet och anropar ingen claim-/startfabrik.
+
+Stödda originaljournaler: coordinator_start/stop, epic_start, task_start samt underordnad start_runtime/dispatch_assignment; task_merge med merge/testbarn; coordinator_epic_delivery med mainmerge/testbarn; teamplayer_sync; samt F43:s tekniska monitorposter när ursprunglig fysisk stoppning bekräftas. Ohanterade, FAILED och CONFLICT-operationer ger Attention med original-ID och konkret operatörsåtgärd. Ingen generell automatisk konfliktlösning eller cleanup införs.
+
+RECORDED_COMPLETE betyder bara att originaljournalen redan är avslutad; det är ingen ny live-/Done-/mergeverifiering. RECOVERED betyder att originaleffekten avstämts/slutförts. WAITING och ATTENTION är beständiga tekniska hinder som F42 fortfarande blockerar ny scheduling för. Originaloperationen, saknade steg och originaltjänsterna måste fortfarande läsas. Ett separat kvarvarande synkintent väljs med sitt eget sparade ID.
+
+Ett funnet ACK kan ha blivit beständigt medan parent och board ännu visar startläge. F44 verifierar då färsk identity/owner/spec/dependency och den ursprungliga claim-/assignmentjournalen, slutför dess checkpoint och synkar efteråt. Den vanliga schedulerstarten får inte förväxla detta bevisade mellanläge med ett nytt Worker-uppdrag.
+
+Okända tester återkörs under originaltjänstens Gitlås och exakt commit-/kommandokontroll, med en ny stabil nyckel härledd från senaste okända testintentet. Även förlust efter ett återförsök ger nästa explicita recovery en ny journal, aldrig ny merge. Äldre PENDING-testjournaler blir SUPERSEDED först när faktisk exit0, samma merge/source/target/command och leverans-/manifestkoppling verifierats. Historiska resultat ändras inte till PASS. Kända misslyckade tester kräver operatörsbeslut. Coordinatorleveransen återfinner ett redan godkänt sluttest via F08:s aktuella commit-/manifestkontroll om parentcheckpointen saknas.
+
+Stoppad monitoravstämning är läsande mot native/Git/board och skriver bara tekniska journaler. Den kräver originalregistreringens hash/principal, hash på föregående monitorpost, faktisk stop-/processgruppsbevisning, samma session, färsk Git/board och upprepad inaktivitetskontroll efter avstämningen. Affärsfas, completed_at, session, worktree och slot ändras inte och inget resume skickas.

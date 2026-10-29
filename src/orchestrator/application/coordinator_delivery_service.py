@@ -364,6 +364,14 @@ class CoordinatorDeliveryService:
             raise CoordinatorError("COORDINATOR_DELIVERY_PARENT_NOT_STOPPED")
         if op.result["stage"] == "STOPPED":
             test_key = "cd-final-" + digest(op.id + ":" + verification_key)
+            # A crash may follow the actual bound test and precede the parent's
+            # checkpoint. Revalidate that original proof through F08; do not run
+            # another command merely because the recovery caller used a new key.
+            passed = [t for t in self.store.get_operations(run_id, kind="verify_main_merge")
+                      if t.status == "SUCCEEDED" and t.result.get("exit_code") == 0
+                      and t.result.get("merge_key") == op.result["merge_key"]]
+            if passed:
+                test_key = max(passed, key=lambda t: (t.created_at, t.id)).idempotency_key
             try:
                 test = manager.verify_main_merge(actor, run_id, merge_key=op.result["merge_key"],
                                                   key=test_key)

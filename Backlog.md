@@ -2048,6 +2048,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Resultat och kontrakt:** Git-merge som redan är utförd upprepas inte. Testunderlag utan säkrad commitkoppling körs om. Okänt externt utfört steg avstäms eller eskaleras. Manuella Git/Kanbanändringar skrivs inte över utan verifiering; cleanup påverkar inte osäkrat arbete.
 
+**Förtydligat kontrakt:** [F44 originaloperationer](docs/recovery/F-44-operations.md). Betrodd operatör väljer en beständig originalidentitet; ursprungliga tjänster behåller behörighet, lås och aktuell Git-/board-/runtimevalidering. Ohanterade/okända utfall eskaleras utan adoption eller ersättningsresurs.
+
 **Acceptans**
 
 - [ ] **F-44.A1:** Avbrott efter skapad session men före lokal slutregistrering återfinner ägd session eller eskalerar utan dubbel start.
