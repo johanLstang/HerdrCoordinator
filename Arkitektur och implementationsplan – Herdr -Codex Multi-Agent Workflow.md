@@ -1045,6 +1045,12 @@ Den betrodda operatörskompositionen återkopplar originalregistreringarna och �
 
 ---
 
+## F44: originaloperationer vid partiella resultat
+
+[Recoverykontraktet](docs/recovery/F-44-operations.md) väljer en beständig originaloperationsidentitet åt gången genom betrodd operatörskomposition. Ursprungliga services återvaliderar konfiguration, principal, slots och aktuell Git-/board-/sessionsdata innan bara saknade steg fortsätter. Återfunnen faktisk merge upprepas inte. Okända testresultat får en ny commitbunden verifieringsjournal; redan godkänt test återvalideras och återanvänds. Okända externa historikutfall avstäms mot originalsynkens markör/version. Avvikelse och ohanterad operation blir beständig Attention utan resursadoption, slotrelease eller falskt Done. Stoppade tekniska monitorposter kan avstämmas utan resume efter faktiskt originalstoppbevis. Se kontraktet för stödda originaljournaler och betydelsen av RECORDED_COMPLETE.
+
+---
+
 # 29. Locks
 
 Systemet bör ha logiska locks.

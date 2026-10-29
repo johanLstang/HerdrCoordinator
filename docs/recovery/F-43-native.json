@@ -394,5 +394,12 @@
       "next_role": "F44/operator: reconcile original closed-run monitoring record; no runtime restart or fabricated Done"
     }
   ],
-  "no_pending_external_effect_operations": true
+  "no_pending_external_effect_operations": true,
+  "follow_up_F44": {
+    "date": "2026-10-29",
+    "both_original_technical_holds_settled": true,
+    "artifact": "docs/recovery/F-44-native-settlement.json",
+    "original_F43_archive_unchanged": true,
+    "qualification": "Fields above retain actual F43 close observations; F44 settled original stopped monitors without native/board effects or reopening runs."
+  }
 }
