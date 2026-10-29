@@ -309,6 +309,8 @@ class OperationRecoveryService:
         tests = [o for o in self.store.get_operations(run_id, kind="verify_main_merge")
                  if o.result.get("merge_key") == parent.result["merge_key"]]
         pending = [t for t in tests if t.status == "PENDING"]
+        if tests and not pending and not any(t.status == "SUCCEEDED" for t in tests):
+            raise OperationRecoveryError("FAILED_TEST_REQUIRES_OPERATOR_DECISION")
         key = "recovery-" + (max(pending, key=lambda t: (t.created_at, t.id)).id
                                if pending else parent.id)
         self._journal(op, stage="WAITING", reason="VERIFY_ORIGINAL_EPIC_DELIVERY",

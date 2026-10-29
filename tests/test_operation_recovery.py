@@ -406,3 +406,29 @@ def test_partial_epic_registration_requires_protected_original_coordinator_conte
     result = run(OperationRecoveryService(sessions).recover(op.id))
     assert result["stage"] == ("RECOVERED" if original_coordinator else "ATTENTION"), result
     assert before == (native.starts, len(native.prompts), len(native.workspaces))
+
+
+@pytest.mark.parametrize("review_setup", ["delivery"], indirect=True)
+def test_known_failed_main_verification_is_not_automatically_retried(delivery_setup):
+    d = delivery_setup
+    f, delivery, control = d.f, d.delivery, d.control
+    async def exercise():
+        await approved(f)
+        f.verification_failure_file.write_text("Controlled actual verifier failure\n")
+        failed = await delivery.deliver(f.coordinator, "p", "e", "delivery", "failed")
+        assert failed["status"] == "ATTENTION"
+        f.verification_failure_file.unlink()
+        parent = delivery._rows()[0]
+        before = delivery.store.get_operations("e", kind="verify_main_merge")
+        main = f.review.runtime.main()
+        sessions = SessionRecoveryService(f.review.runtime.settings, delivery.store,
+                                          control.scheduler.selection.reader, project_id="p",
+                                          coordinator=delivery.runtime,
+                                          integrations=[control.epic_start])
+        operator = OperationRecoveryService(sessions, controls=[control], delivery=delivery)
+        answer = await operator.recover(parent.id)
+        assert answer["stage"] == "ATTENTION", answer
+        assert answer["reason"] == "FAILED_TEST_REQUIRES_OPERATOR_DECISION"
+        assert delivery.store.get_operations("e", kind="verify_main_merge") == before
+        assert f.review.runtime.main() == main and delivery.store.get_epic("e").status == "MERGING"
+    run(exercise())
