@@ -38,3 +38,11 @@ Ett funnet ACK kan ha blivit beständigt medan parent och board ännu visar star
 Okända tester återkörs under originaltjänstens Gitlås och exakt commit-/kommandokontroll, med en ny stabil nyckel härledd från senaste okända testintentet. Även förlust efter ett återförsök ger nästa explicita recovery en ny journal, aldrig ny merge. Äldre PENDING-testjournaler blir SUPERSEDED först när faktisk exit0, samma merge/source/target/command och leverans-/manifestkoppling verifierats. Historiska resultat ändras inte till PASS. Kända misslyckade tester kräver operatörsbeslut. Coordinatorleveransen återfinner ett redan godkänt sluttest via F08:s aktuella commit-/manifestkontroll om parentcheckpointen saknas.
 
 Stoppad monitoravstämning är läsande mot native/Git/board och skriver bara tekniska journaler. Den kräver originalregistreringens hash/principal, hash på föregående monitorpost, faktisk stop-/processgruppsbevisning, samma session, färsk Git/board och upprepad inaktivitetskontroll efter avstämningen. Affärsfas, completed_at, session, worktree och slot ändras inte och inget resume skickas.
+
+## Faktisk avstämning av F43:s avslutade prov
+
+Båda ursprungliga tekniska monitorjournaler är avstämda mot riktig Herdr/Codex/Git/TeamPlayer. Alla agenter förblev stoppade och slots0; runs/referenser/events/reviews och ursprungskonfigurationen är oförändrade. Bara tekniska journaler ändrades, utan native-/boardskrivningar eller återöppning. [Faktiskt kvitto och skyddat arkiv](F-44-native-settlement.json). Separat F43-arkiv bevaras byteidentiskt. Detta intygar inget nytt avbrotts-, merge- eller maskinomstartsprov.
+
+## Slutverifierad kandidat
+
+Funktionell kod `c2be7d9436f34b6918cceeafbfd6c661c092928d`:30 recoveryprov PASS352.36s och24 samlade leverans-/tvåepicsfall PASS1343.36s,54 unika fall. Kontrollerade native-/boardpeers med faktisk temporär Git/SQLite. Full slutgrupp inkluderar kanoniska nycklar, exakt aktuellt boardintent och korrupt avslutad ägare. Den avbrutna fixturkörningen räknas inte. Riktig separat F43-monitoravstämning har uttrycklig källkvalificering. [Verifieringsunderlag](F-44-verification.json). Review, faktisk Task→Epic och eftertester återstår före Done.

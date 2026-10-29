@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-29. E01–E10 Done på main; F01–F43 Done/User105. F43 Done11: granskad source6cf4782, faktisk Task→E11no-ff9dba975,21 eftertester PASS280.36s och native3/3 med redovisad källkvalificering. E11 Active12/egenacceptans1/3; F44 InProgress2/User105 i eget worktree. F45–F50 och E12 Planned. Ursprunglig backlogg12 epics/50tasks; separata produktprov är tydligt märkta.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-29. E01–E10 Done på main; F01–F43 Done/User105. F43 Done11: granskad source6cf4782, faktisk Task→E11no-ff9dba975,21 eftertester PASS280.36s och native3/3 med redovisad källkvalificering. E11 Active12/egenacceptans1/3; F44 Testing5/User105 i eget worktree. F45–F50 och E12 Planned. Ursprunglig backlogg12 epics/50tasks; separata produktprov är tydligt märkta.
 
 ## Styrande underlag
 
@@ -2038,7 +2038,7 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `6c45d324-00ea-473e-822b-9d31947efc75`.
 
-**Körbar:** Pågår — InProgress2/User105, task/e11-f44 från E11bas3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4. F43 Done11/no-ff9dba975 och E10 Done/main verifierade. Bootstrap Worker implementerar en avgränsad recoveryoperation åt gången.
+**Körbar:** Verifiering — Testing5/User105, task/e11-f44 från E11bas3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4. F43 Done11/no-ff9dba975 och E10 Done/main verifierade. Bootstrap Worker implementerar en avgränsad recoveryoperation åt gången.
 
 **Källa:** A §§28–30, 45; W §§23–26, 33, 40. **Berör:** Operationsjournal, Git, TeamPlayer, slotstate.
 
@@ -2052,13 +2052,17 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Acceptans**
 
-- [ ] **F-44.A1:** Avbrott efter skapad session men före lokal slutregistrering återfinner ägd session eller eskalerar utan dubbel start.
-- [ ] **F-44.A2:** Avbrott efter task/main-merge återfinner merge-SHA och återupptar verifiering/statussynk utan ny merge.
-- [ ] **F-44.A3:** Okänt kommentarutfall och avvikande worktree ger avstämning/Attention i stället för dubbla sidoeffekter.
+- [x] **F-44.A1:** Avbrott efter skapad session men före lokal slutregistrering återfinner ägd session eller eskalerar utan dubbel start.
+- [x] **F-44.A2:** Avbrott efter task/main-merge återfinner merge-SHA och återupptar verifiering/statussynk utan ny merge.
+- [x] **F-44.A3:** Okänt kommentarutfall och avvikande worktree ger avstämning/Attention i stället för dubbla sidoeffekter.
 
 **Verifiering:** Felinjicering vid dokumenterade operationsgränser i temporärt Git/SQLite och adaptrar med okända svar.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Aktuellt 2026-10-29:** Kod3c23271; slutliga recovery-/leveransprov pågår före review/merge/Done. Båda F43-monitorjournaler på stoppade provresurser är faktiskt avstämda utan native-/boardskrivningar, återstart eller ändrade affärsruns/slots. [Faktiskt kvitto](docs/recovery/F-44-native-settlement.json). Ingen maskinomstartsacceptans intygas.
+
+**Slutverifierad kandidat:** Funktionell kod `c2be7d9436f34b6918cceeafbfd6c661c092928d`;30 slutliga recoveryprov PASS352.36s och24 leverans-/tvåepicsprov PASS1343.36s,54 unika fall utan dubblerad historik. Ruff/build/READMECLI/wheel82 moduler+sex policies/90 pins/credentialsökning/länkar PASS. Riktigt stoppat nativeprov avstämt med redovisad tidigare källversion, inga nya native-/boardskrivningar. Bootstrap Integration granskar exakt slutlig task-/epic-SHA före no-ff och eftertest/Done. [Underlag](docs/recovery/F-44-verification.json).
 
 ### Task F-45 Verifiera återhämtning genom avsiktliga avbrott
 
@@ -2323,7 +2327,7 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Active | Ja | 1/3 | E-10 Done på main | E11 Active12/egenacceptans1/3; F42Done9 och F43Done11/no-ff9dba975/21 eftertester PASS. F44/F45 och mainleverans återstår. |
 | 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Done | Klar | 3/3 | E-10 | Done9/User105; granskad94f023d→E11 cf37091,32 eftertester/Ruff/build/CLI/wheel79+sex policies/86 pins PASS. F43 NeedsApproval5; inget ytterligare F42-arbete. |
 | 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Done | Ja | 3/3 | E-10, F-42, X-01, X-02 | Done11; review6cf4782/no-ff9dba975/21 eftertester PASS; se slutreview. |
-| 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Active | Ja | 0/3 | E-10, F-43 | Nästa kandidat; F43 Done11/no-ff9dba975 verifierad, läs originaljournaler före återförsök. |
+| 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Active | Ja | 3/3 | E-10, F-43 | READY_FOR_REVIEW;54 slutprov PASS, exakt review/merge/eftertest före Done. |
 | 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 57 | E-12 | Epic | Härda orchestrering och gör drift spårbar | — | 12 | be200a7c-4dad-47a1-a785-e25e84903124 | P0 | Planned | Nej | 0/3 | E-11 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 58 | F-46 | Task/feature | Härda project epic och task locks över processgränser | E-12 | 12 | 831d353a-a683-452f-864d-823b5908cd85 | P0 | Planned | Nej | 0/3 | E-11 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
