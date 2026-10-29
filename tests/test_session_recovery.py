@@ -439,3 +439,34 @@ def test_registered_effective_plan_recovers_stopped_original_integration(review_
     assert result["stage"] == "CONNECTED", result
     assert parent.store.get_epic(original.id).codex_session_id == original.codex_session_id
     assert f.sessions.starts == starts + 1
+
+
+def test_unconfirmed_native_resume_keeps_reserved_slot_and_records_actual_attention(control_setup):
+    control, _, a, _, native = control_setup
+    task, blocked = parked(control, a, native)
+    decision = InputDecision(input_id=str(uuid4()), blocker_id=blocked["blocker_id"], answer="7")
+    control.scheduler.resume._saved(a, task, decision)
+    original = native.verify_agent
+    starting = native.starts
+
+    def blocked_after_resume(*args):
+        result = original(*args)
+        if native.starts > starting:
+            return result | {"ready": False, "status": "blocked"}
+        return result
+
+    native.verify_agent = blocked_after_resume
+    recovered = service(control)
+    result = row(run(recovered.poll()), task.id)
+    current = control.store.get_task(task.id)
+    assert result["stage"] == "ATTENTION" and result["worker_slot"] == 1, result
+    assert current.internal_status == "PARKED" and current.worker_slot == 1
+    assert recovered._get(current).result["subject"] == current.model_dump(mode="json")
+    assert native.starts == starting + 1
+    native.verify_agent = original
+    with StateStore(control.settings.sqlite_path) as db:
+        reopened = service(control, db=db)
+        assert row(run(reopened.poll()), task.id)["stage"] == "INPUT_PENDING"
+        assert row(run(reopened.poll()), task.id)["stage"] == "CONNECTED"
+        assert db.get_task(task.id).codex_session_id == task.codex_session_id
+    assert native.starts == starting + 1

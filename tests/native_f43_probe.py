@@ -8,6 +8,7 @@ import asyncio
 import hashlib
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -50,7 +51,9 @@ def save(path, data):
     temporary.replace(path)
 
 
-def prepare(root):
+def prepare(root, attempt="r1", date="20261020"):
+    if not re.fullmatch(r"r[1-9][0-9]{0,2}", attempt) or not re.fullmatch(r"[0-9]{8}", date):
+        raise RuntimeError("INVALID_EXPLICIT_PROBE_ATTEMPT")
     if (root / "config.json").exists():
         raise RuntimeError("EXISTING_PROBE_CONFIG_PRESERVED")
     root.chmod(0o700)
@@ -76,7 +79,8 @@ def prepare(root):
     )
     g.run("add", "README.md", "AGENTS.md")
     g.run("commit", "-m", "Seed harmless F43 fixed JSON fixture")
-    project, epic, co_run, epic_run = "f43-r1", "F43R1", str(uuid4()), str(uuid4())
+    project, epic = "f43-" + attempt, "F43" + attempt.upper()
+    co_run, epic_run = str(uuid4()), str(uuid4())
     criteria = [
         "Samma registrerade session och worktree återfinns efter förlorad controlleranslutning.",
         "Parkering, sparat svar och återupptagning bevarar identiteter och högst två aktiva "
@@ -93,7 +97,7 @@ def prepare(root):
                     project_id=project,
                     epic_id=epic,
                     task_id=letter,
-                    name="PROV F43-r1 " + letter + " — fast sessions- och inputprob",
+                    name="PROV F43-" + attempt + " " + letter + " — fast sessions- och inputprob",
                     goal="Fixed JSON recovery probe. No tools, commands, code or file edits. "
                     "After the required WORKING acknowledgement, report version-1 BLOCKED with "
                     "original IDs, branch, summary 'Fixed JSON recovery probe', "
@@ -146,7 +150,7 @@ def prepare(root):
     )
     for role, name in [(Role.COORDINATOR, "coordinator"), (Role.INTEGRATION, "integration")]:
         actor = Actor(
-            actor_id="f43-r1-" + name,
+            actor_id="f43-" + attempt + "-" + name,
             role=role,
             project_id=project,
             epic_run_id=epic_run if role == Role.INTEGRATION else None,
@@ -182,7 +186,8 @@ def prepare(root):
         co_run=co_run,
         epic_run=epic_run,
         pins=pins,
-        server="hc-f43-r1-20261020",
+        attempt=attempt,
+        server="hc-f43-" + attempt + "-" + date,
         mcp_host=str(source / "tests/native_f43_host.py"),
         python=sys.executable,
         disabled_servers=list(native.get("mcp_servers", {})),
@@ -289,7 +294,7 @@ async def composition(root):
 async def main():
     root, command = Path(sys.argv[1]).resolve(), sys.argv[2]
     if command == "prepare":
-        prepare(root)
+        prepare(root, *(sys.argv[3:5]))
         return
     async with composition(root) as (c, runtime, epic, recovery, resume):
         actor = epic.principal
@@ -318,7 +323,12 @@ async def main():
             start = TaskStartService(
                 runtime.settings, store, epic.herdr, epic.codex, ack_wait_seconds=5
             )
-            task = start.start(actor, actor.epic_run_id, spec, timeout_seconds=45)
+            started = start.start(actor, actor.epic_run_id, spec, timeout_seconds=45)
+            task = store.get_task(started["task"]["id"])
+            if started["status"] not in {"CONFIRMED", "EXISTING"}:
+                save(root / "start-task-latest.json", started)
+                print(json.dumps(started, ensure_ascii=False), flush=True)
+                return
             await resume.sync.bind_task(actor, task.id, c["ids"]["taskIds"][index])
             result = dict(
                 task=task.model_dump(mode="json"), sync=await resume.sync.sync_task(actor, task.id)

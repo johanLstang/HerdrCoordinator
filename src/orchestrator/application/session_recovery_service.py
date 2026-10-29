@@ -299,6 +299,15 @@ class SessionRecoveryService:
                         stage = "ATTENTION"
                         codes = ([str(error)] if isinstance(error, SessionRecoveryError)
                                  else ["ORIGINAL_SESSION_UNVERIFIED"])
+                        # F13/F32 may have durably reserved a slot or recorded a
+                        # native generation before reporting an unknown outcome.
+                        # Preserve that actual subject; never write the pre-effect
+                        # snapshot over it or lose the recovery observation.
+                        fresh = self._load(identity)
+                        fresh_context = self._context(fresh)
+                        if fresh_context[:2] != context[:2]:
+                            raise SessionRecoveryError("RECOVERY_OWNER_CHANGED") from None
+                        run = fresh
                 op = self._record(run, context, stage, codes=codes, cursor=cursor,
                                   runtime_status=runtime_status)
                 mirror = await self._mirror(run, op)

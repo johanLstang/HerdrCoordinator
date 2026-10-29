@@ -4,10 +4,10 @@
   "branch": "task/e11-f43",
   "functional_commit": "5bd6f539bb8747bc53b6fa0f968dd5483113ddf8",
   "epic_base": "a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a",
-  "review_verdict": "INCOMPLETE_NATIVE_VERIFICATION",
+  "review_verdict": "READY_FOR_REVIEW_PENDING_INTEGRATION",
   "task_done": false,
-  "ready_for_review": false,
-  "acceptance_verified": "0/3; native integration still required",
+  "ready_for_review": true,
+  "acceptance_verified": "3/3; native evidence with explicit source qualifications",
   "tests": {
     "groups": [
       {
@@ -118,7 +118,7 @@
     "src/orchestrator/application/task_delivery_evidence.py": "b45be8ab7b2971a2f3d7b60e79b5d319467b96f6520fa3b99439740f986fd42b",
     "src/orchestrator/application/runtime_start_service.py": "74ba43f6e5c5d71ed722adf1acfc10021c1a52dc8d733bf71579758870756653",
     "src/orchestrator/application/session_recovery_record.py": "6d6b10ddb0756ce3693a4e99047e3e6d787be7a2b6a2df3ad407dbadb10b43bb",
-    "src/orchestrator/application/session_recovery_service.py": "67c325fcff0ea812be419744443940ebc9fd71321946c5f5659621f790ed0086",
+    "src/orchestrator/application/session_recovery_service.py": "cb2c86d88a015a6459f0ccd33504fd7f32efb6564b573dc2545a649bac5bad13",
     "src/orchestrator/application/runtime_lifecycle_service.py": "30ba9aa2f9ec9ed60e8c7faba5d70c282d97aac525d09471b552748e142e20e3",
     "src/orchestrator/application/git_review_service.py": "f7f5cb57a154f90f90eec00d464d5b97811c688e75df4a1155f25643991c8a39",
     "src/orchestrator/application/coordinator_runtime_service.py": "58ee71e20e27cd46867594865646c023e2a3664f50384d95ff6305b119bbdc6d",
@@ -162,59 +162,55 @@
     "prompts/coordinator-review-v1.md": "0cf1039d58da0bbfafa94e6c5ace77487231e69260f8b8352280f2c38f36c688",
     "prompts/AGENTS.md": "b8d3469cf21fdef0263c0e229353ea0825838395c5c35400865d9ad3ac6d3469",
     "prompts/integration-v1.md": "495f04203c91605493407f259a797b26a92eb7339b0d635dfe04dfc01a6f1ca5",
-    "tests/native_f43_probe.py": "e64b55e8397ad6e2855f48b04b8746b9824a21fa8b1487f388bf74180526a3a9",
+    "tests/native_f43_probe.py": "40e785e24658729cd8339edf7fa50633bd4b685b12459466747cfc65e1dbcb04",
     "tests/native_f37_host.py": "c9469aa994e4733d86cefaa1e79bbd4d7cfa530543fb2293003a54f207a06caf",
     "tests/native_f43_host.py": "96f9fca978e5ce5432eca54877d0ceafdf7724e4352fb319b3cad471a6ff43ea"
   },
   "native": {
-    "stage": "WAITING_FOR_CODEX_UPDATE_DIALOG_DECISION",
-    "known_action": "User authorizes Skip for current 0.162.1 to 0.163.0 update dialog; Herdr skill requires asking before answering blocked UI.",
-    "server": "hc-f43-r1-20261020",
-    "root": "/tmp/herdr-f43-r1-20261020",
-    "coordinator_run": "1114f161-54c9-453d-8efa-0f02460e7314",
-    "operation_id": "cf06e48d-ecba-4304-af87-a1744ba265ae",
-    "agent": "hc-c-f43f4267ddf84867aeaa920f",
-    "pane": "w1:p1",
-    "runtime_stage": "AGENT_PENDING",
-    "session_id": null,
-    "prompts_sent": 0,
-    "epic_runs": 0,
-    "task_runs": 0,
-    "worker_slots": 0,
-    "snapshot": {
-      "stage": "FROZEN_RECOVERY_SOURCE_2",
-      "original_run": "1114f161-54c9-453d-8efa-0f02460e7314",
-      "original_operation": "cf06e48d-ecba-4304-af87-a1744ba265ae",
-      "configuration_hash": "4278b586d5bdfc332673723ceca5b4552273684c3723d245e2a74bed977f3756",
-      "configuration_unchanged": true,
-      "db_changes": 0,
-      "native_session_id": null,
-      "prompts_sent": 0,
-      "epic_runs": 0,
-      "task_runs": 0,
-      "source_pins": 91,
-      "mcp_host_path_preserved": "/tmp/herdr-f43-r1-20261020/frozen-source/tests/native_f43_host.py",
-      "original_source_preserved": "/tmp/herdr-f43-r1-20261020/frozen-source",
-      "new_source": "/tmp/herdr-f43-r1-20261020/frozen-recovery-source"
+    "artifact": "docs/recovery/F-43-native.json",
+    "actual_herdr": "0.9.3",
+    "actual_codex": "0.162.1",
+    "server": "hc-f43-r2-20261029",
+    "acceptance": {
+      "F-43.A1": "A1-controller-reconnect-proof.json; earlier native snapshot, positive-path AST identical after final error-handler fix; final21 cover current code",
+      "F-43.A2": "A2-same-session-input-proof.json on frozen-recovery-v2; one original input/resume, exact same SID, capacity2",
+      "F-43.A3": "A3-missing-reference-proof.json on frozen-recovery-v2; actual TeamPlayer NeedsInput, retained slot, no replacement"
     },
-    "probe_epic": "1d66d61c-452e-4769-b578-63de5168f4b0",
-    "probe_tasks": [
-      "953176e9-ee80-4175-955e-7d567a1de083",
-      "cf002888-8749-4e22-8a9f-7f7740554d9d",
-      "ebc797c2-ebd0-4257-8052-08fa2e793bdb"
+    "all_agents_physically_stopped": true,
+    "all_worker_slots_released": true,
+    "archive": {
+      "path": "/home/stang/.local/state/herdr-coordinator/evidence/F-43/r2-complete-stopped-20261029.tar.gz",
+      "sha256": "86a75c12e0eb00cad0c3dc44f5f9dea88300ad270812cf369aec57aca7fc84ba",
+      "bytes": 1472126,
+      "consistent_sqlite_backup": "evidence-state.db"
+    },
+    "retained_technical_holds": [
+      {
+        "id": "96537db6-c04f-466c-a5db-1e4184999bc4",
+        "run": "2d153a85-d06f-4835-8e6e-37789ead5084",
+        "stage": "ATTENTION",
+        "reason": "Recovery requires operator action: TEAMPLAYER_UNAVAILABLE. Restore the original registered resource/connection, then rerun recovery. Keep session, branch, worktree and reservation; no replacement.",
+        "next_role": "F44/operator: reconcile original closed-run monitoring record; no runtime restart or fabricated Done"
+      },
+      {
+        "id": "32b26e49-2d1a-4744-a7a3-4c2fc93583de",
+        "run": "3e683731-550a-419c-a597-5252f83f2124",
+        "stage": "ATTENTION",
+        "reason": "Recovery requires operator action: TEAMPLAYER_UNAVAILABLE. Restore the original registered resource/connection, then rerun recovery. Keep session, branch, worktree and reservation; no replacement.",
+        "next_role": "F44/operator: reconcile original closed-run monitoring record; no runtime restart or fabricated Done"
+      }
     ],
-    "completed_reconnect_proof": false
+    "secondary_measurement_rejected": true,
+    "r1_preserved": true
   },
   "remaining": [
-    "User decision for native update UI",
-    "Complete actual same-session reconnect and park/input/slot/missing-reference proof",
-    "Actual full delivery review",
-    "Task to epic no-ff integration and posttests",
-    "TeamPlayer Done only after delivery verification"
+    "Bootstrap Integration full review of exact task/epic SHA",
+    "Task to epic no-ff merge and actual posttests",
+    "Fresh-version TeamPlayer Done and epic description sync"
   ],
   "teamplayer": {
-    "task_status": "NeedsApproval",
-    "task_version": 5,
+    "task_status": "Testing",
+    "task_version": 9,
     "execution_owner_kind": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "task_status_and_description_readback": true,
@@ -225,5 +221,28 @@
     "epic_own_acceptance": "0/3",
     "all_50_product_tasks_assigned_to_user105": true,
     "done_features": "F01-F42"
-  }
+  },
+  "test_groups_qualified": [
+    {
+      "path": "docs/recovery/F-43-r2-unit.xml",
+      "tests": 21,
+      "seconds": 101.3,
+      "result": "PASS",
+      "source": "final recovery handler"
+    },
+    {
+      "path": "docs/recovery/F-43-regression.xml",
+      "tests": 119,
+      "seconds": 584.17,
+      "result": "PASS",
+      "source": "historical pre-final-control/handler refinement"
+    },
+    {
+      "path": "docs/recovery/F-43-control.xml",
+      "tests": 7,
+      "seconds": 357.73,
+      "result": "PASS",
+      "source": "control guard and pure membership extraction; preceding final error handler"
+    }
+  ]
 }

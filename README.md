@@ -515,4 +515,4 @@ parkerat; sparat F32-input fortsätter med originalnyckel och atomär slotkontro
 Teknisk Attention bevarar affärsfas, session och reservation och kan speglas till
 TeamPlayer med verifierad journal. Ett senare manuellt boardbeslut skrivs inte över.
 Se [komposition, förvillkor och verifieringsläge](docs/recovery/F-43-sessions.md).
-Nativeprov och leveransreview återstår innan F43 kan bli Done.
+Verkliga nativefall och slutliga21 prov är verifierade med redovisad källkvalificering. Taskreview/integration och eftertester återstår före F43 Done.

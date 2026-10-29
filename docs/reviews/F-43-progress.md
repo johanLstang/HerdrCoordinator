@@ -1,6 +1,6 @@
-# F43: kodunderlag, nativeprov väntar på beslut
+# F43: leveranskandidat med verifierat nativeprov
 
-**Bedömning:** INCOMPLETE_NATIVE_VERIFICATION. Ingen leveransapproval, READY_FOR_REVIEW, taskmerge eller Done.
+**Bedömning:** READY_FOR_REVIEW. Nativeacceptans3/3 med redovisad källkvalificering. Ingen leveransapproval, taskmerge eller Done ännu.
 
 Worker-kod `5bd6f539bb8747bc53b6fa0f968dd5483113ddf8` på `task/e11-f43`, från E11 `a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a`. Bootstrap Integration har gått igenom kontrakt, roll-/ownerbindning, slot-/resumejournaler, TeamPlayer-överlagring och faktiskt testunderlag. Full leveransreview återstår efter nativeprovet.
 
@@ -30,3 +30,11 @@ Originalsnapshot och slutlig separat recovery-snapshot är bevarade; konfigurati
 Nästa ansvariga roll är operatör/bootstrap Integration: efter godkänt UI-val verifieras aktuell UI och samma ursprungliga start fortsätter genom produktservicen. Kör nativeprovet färdigt, granska exakt slutlig task-/epic-SHA, integrera no-ff Task→Epic och eftertesta innan Done. F44 får inte startas genom att kringgå detta beroende. E11 förblir Active och egenacceptans0/3.
 
 TeamPlayer: F43 **NeedsApproval5/User105**, status och beskrivning synkade/återlästa. E11 **Active11**, beskrivning synkad/återläst, egenacceptans0/3. Backloggens feature och Kanbanrad är Attention. Ingen Git-merge har utförts.
+
+## Uppdaterad leverans 2026-10-29
+
+R1 kunde inte fortsätta eftersom servern försvunnit före prompt/ACK/SID; originalresurserna är arkiverade och adopteras inte. Användaren godkände Skip och förtroende för det separata R2-provrepoet och dess worktrees. Verkliga R2-fall A1/A2/A3 har passerat; [nativeunderlag](../recovery/F-43-native.json) redovisar alla sessioner, processer, originalnycklar, faktisk boardstatus och fysisk slutstoppning. Inga nativeverktyg eller kodändringar utfördes av provagenterna.
+
+Nativeprovet hittade en blockerande kodbugg vid okänt resume-resultat efter faktisk slotreservation. Rättningen journalför färskt, på nytt ägarvaliderat subjekt i stället för gamla slotdata. Ny regression samt slutliga21 PASS101.30s verifierar detta. A2/A3 använder rättad frozen-recovery-v2; A1:s oförändrade positiva AST-väg och tidigare snapshot kvalificeras uttryckligen. Ett extra A1-försök är ogiltigförklarat och ger inga passerade kriterier; två kvarvarande tekniska journaler på stoppade provresurser lämnas explicit till F44/operatör, utan runtimeåterstart eller falskt Done.
+
+Ny full granskning av exakt slutlig task-/epic-SHA, faktisk Task→Epic och eftertester återstår före Done. De äldre avsnitten ovan är historik från vänteläget.
