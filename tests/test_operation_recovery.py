@@ -373,7 +373,11 @@ def test_completed_coordinator_monitor_requires_actual_inactivity_without_reopen
         runtime.processes.lingering = True
     elif case == "owner":
         closed = runtime.store.get_coordinator(runtime.run_id)
-        runtime.store.update_coordinator(closed.model_copy(update={"actor_id": "changed-owner"}))
+        # Fault injection only: the valid API forbids changing a completed owner.
+        corrupted = closed.model_copy(update={"actor_id": "changed-owner"})
+        with runtime.store.transaction() as db:
+            db.execute("UPDATE coordinator_runs SET payload=? WHERE id=?",
+                       (corrupted.model_dump_json(), closed.id))
     before = runtime.store.get_coordinator(runtime.run_id), runtime.herdr.starts
     result = run(OperationRecoveryService(sessions).recover(op.id))
     assert result["stage"] == ("RECOVERED" if case == "inactive" else "ATTENTION"), result
