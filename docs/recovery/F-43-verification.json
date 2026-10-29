@@ -210,7 +210,13 @@
       }
     ],
     "secondary_measurement_rejected": true,
-    "r1_preserved": true
+    "r1_preserved": true,
+    "follow_up_F44": {
+      "both_original_holds_settled": true,
+      "artifact": "docs/recovery/F-44-native-settlement.json",
+      "F44_task_status": "Done8",
+      "qualification": "Retained-hold fields above are the factual historical F43 close snapshot; F44 resolved those original technical journals without runtime restart or changed business runs/slots."
+    }
   },
   "remaining": [
     "E11: F44/F45 and aggregate review/PR/main delivery"

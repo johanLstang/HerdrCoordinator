@@ -519,4 +519,6 @@ Verkliga nativefall och slutliga21 prov är verifierade med redovisad källkvali
 
 F43 levererad till E11: granskad task6cf4782, no-ff9dba975,21 eftertester PASS280.36s; TeamPlayerDone11. Nativeacceptans och källkvalificering samt kvarvarande F44-journaler redovisas i [slutreview](docs/reviews/F-43.md). E11 förblir Active inför F44/F45 och mainintegration.
 
-F44 utvecklas på task/e11-f44: [kontrakt och operatörskomposition](docs/recovery/F-44-operations.md) för avgränsad återställning av sparade originaloperationer. Ingen F44-leverans eller maskinomstartsverifiering intygas ännu.
+F44 är verifierad och levererad till E11 (Done8/no-ff18415ef/12 eftertester PASS): [kontrakt och operatörskomposition](docs/recovery/F-44-operations.md) för avgränsad återställning av sparade originaloperationer. [Slutreview och källkvalificering](docs/reviews/F-44.md). F45:s verkliga avbrottsmatris och vald målmaskin återstår.
+
+E11 är Active13, egenacceptans2/3. F45 väntar på vald isolerad målmaskin för verkliga avbrottsprov: [provplan och inputbehov](docs/recovery/F-45-test-plan.md). F45 är NeedsInput3/Attention; F44 är Done8 efter granskad no-ff18415ef och12 eftertester PASS.

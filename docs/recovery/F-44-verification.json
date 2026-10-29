@@ -4,8 +4,8 @@
   "branch": "task/e11-f44",
   "epic_base": "3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4",
   "functional_commit": "c2be7d9436f34b6918cceeafbfd6c661c092928d",
-  "task_done": false,
-  "review_verdict": "READY_FOR_REVIEW_PENDING_INTEGRATION",
+  "task_done": true,
+  "review_verdict": "APPROVED",
   "ready_for_review": true,
   "acceptance_verified": "3/3; actual temporary Git/SQLite and controlled runtime/board peers",
   "criteria": {
@@ -183,17 +183,46 @@
     "contents": "original before/after SQLite, actual settlement receipt, unchanged config, operator driver, 93 source pins"
   },
   "remaining": [
-    "Exact source/epic review",
-    "Task→E11 no-ff and posttests",
-    "Fresh-version task Done and epic description sync"
+    "E11: F45 selected isolated target and actual interruption matrix, aggregate review/PR/main delivery"
   ],
   "teamplayer": {
-    "task_status": "Testing",
-    "task_version": 6,
+    "task_status": "Done",
+    "task_version": 8,
     "owner_kind": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "epic_status": "Active",
-    "epic_version": 12,
-    "epic_own_acceptance": "1/3"
+    "epic_version": 13,
+    "epic_own_acceptance": "2/3",
+    "epic_description_sync": "synced and read back",
+    "task_status_and_description_readback": true,
+    "next_task": "F45 NeedsInput3/User105; X03 target selection missing"
+  },
+  "delivery": {
+    "stage": "MERGED_PENDING_POSTVERIFICATION",
+    "operation_id": "690bd57a-69dc-4a3a-a856-0eb0f4fc589a",
+    "source": "a4c09df16f3d718e83745f7bd648fb83cc99d4b9",
+    "target": "3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4",
+    "main": "c43c9e679077cd5e7f5a70454c38ea0d0af0a83b",
+    "source_branch": "task/e11-f44",
+    "target_branch": "feature/epic-e11",
+    "review_sha256": "bc76d88b98fe4d106930593127425073d2c0d433be24e3d4e1588a368541bc96",
+    "bootstrap_exception": "Manual development worktrees are not product runs and are not adopted. Bootstrap Integration uses GitAdapter after independent path/branch/base/SHA/clean checks, saved actual review, common Git lock and posttests. No Worker merge authority or fabricated product owner/session/slot/state.",
+    "merge_commit": "18415ef3a84fabcb4df27172c84197bfa51bebb4"
+  },
+  "post_merge": {
+    "tests": 12,
+    "seconds": 150.071,
+    "reported_cli_seconds": 150.22,
+    "exit_code": 0,
+    "command": "uv run --locked pytest <12 explicit original-intent/unknown-test/approval/alias/manual-history/stopped-owner cases> -q --junitxml=/tmp/herdr-f44-post.xml",
+    "artifact": "docs/reviews/F-44-post.xml",
+    "merge_commit": "18415ef3a84fabcb4df27172c84197bfa51bebb4",
+    "source_pins": 90,
+    "wheel_modules": 82,
+    "policies": 6,
+    "ruff": "PASS",
+    "build": "PASS",
+    "READMECLI": "PASS",
+    "diff_check": "PASS"
   }
 }

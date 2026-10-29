@@ -2,7 +2,7 @@
 
 HerdrCoordinator ska genomföra utvecklingsarbete från TeamPlayer till verifierad merge i `main` genom Codex-agenter i Herdr. Denna backlogg omfattar hela implementationsplanen: **12 epics och 50 tasks**, från grundplattform till recovery och härdad drift. Varje task är en avgränsad feature och ett möjligt Worker-uppdrag.
 
-**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-29. E01–E10 Done på main; F01–F43 Done/User105. F43 Done11: granskad source6cf4782, faktisk Task→E11no-ff9dba975,21 eftertester PASS280.36s och native3/3 med redovisad källkvalificering. E11 Active12/egenacceptans1/3; F44 Testing5/User105 i eget worktree. F45–F50 och E12 Planned. Ursprunglig backlogg12 epics/50tasks; separata produktprov är tydligt märkta.
+**Statuskälla:** TeamPlayer HerdrCoordinator, avstämd 2026-10-29. E01–E10 Done på main; F01–F44 Done/User105. F44 Done8: granskad sourcea4c09df, faktisk Task→E11no-ff18415ef,54 aktuella förtestfall och12 eftertester PASS. F43 Done11/no-ff9dba975; två äldre tekniska provjournaler avstämda genom F44 utan återstart. E11 Active13/egenacceptans2/3; F45 NeedsInput3/User105 och Attention eftersom X-03 saknar vald isolerad målmaskin. F46–F50 och E12 Planned. Ursprunglig backlogg12 epics/50tasks; separata produktprov är tydligt märkta.
 
 ## Styrande underlag
 
@@ -1975,7 +1975,7 @@ Operatören kan starta om orchestratorn och återuppta verifierbart arbete utan 
 ### Epicacceptans
 
 - [x] **E-11.A1:** Omstart återfinner fungerande runs och återupptar rätt session/övervakning.
-- [ ] **E-11.A2:** Halvfärdig start, merge och synk slutförs eller eskaleras utan dubbel operation.
+- [x] **E-11.A2:** Halvfärdig start, merge och synk slutförs eller eskaleras utan dubbel operation.
 - [ ] **E-11.A3:** Saknade/avvikande resurser ger konkret Attention och avbrottsprov bevarar arbete.
 
 Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifieras genom taskernas underlag och ett samlat prov av epicens resultat.
@@ -2036,9 +2036,9 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 ### Task F-44 Återställ halvfärdiga starter merges och synkskrivningar
 
-**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Active. **TeamPlayer Task-ID:** `6c45d324-00ea-473e-822b-9d31947efc75`.
+**Epic/fas/prioritet:** E-11 / 11 / P0. **Kanban-status:** Done. **TeamPlayer Task-ID:** `6c45d324-00ea-473e-822b-9d31947efc75`.
 
-**Körbar:** Verifiering — Testing5/User105, task/e11-f44 från E11bas3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4. F43 Done11/no-ff9dba975 och E10 Done/main verifierade. Bootstrap Worker implementerar en avgränsad recoveryoperation åt gången.
+**Körbar:** Klar — sourcea4c09df APPROVED, faktisk Task→E11no-ff18415ef,12 eftertester PASS150.22s/exit0; TeamPlayer Done8/User105 återläst.
 
 **Källa:** A §§28–30, 45; W §§23–26, 33, 40. **Berör:** Operationsjournal, Git, TeamPlayer, slotstate.
 
@@ -2064,11 +2064,13 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 
 **Slutverifierad kandidat:** Funktionell kod `c2be7d9436f34b6918cceeafbfd6c661c092928d`;30 slutliga recoveryprov PASS352.36s och24 leverans-/tvåepicsprov PASS1343.36s,54 unika fall utan dubblerad historik. Ruff/build/READMECLI/wheel82 moduler+sex policies/90 pins/credentialsökning/länkar PASS. Riktigt stoppat nativeprov avstämt med redovisad tidigare källversion, inga nya native-/boardskrivningar. Bootstrap Integration granskar exakt slutlig task-/epic-SHA före no-ff och eftertest/Done. [Underlag](docs/recovery/F-44-verification.json).
 
+**Slutleverans 2026-10-29:** Exakt task `a4c09df16f3d718e83745f7bd648fb83cc99d4b9` mot epic `3c5eb90630ddf6b7ca0af7a50b6e42014c5bade4`/main `c43c9e679077cd5e7f5a70454c38ea0d0af0a83b`. Funktionell kod `c2be7d9436f34b6918cceeafbfd6c661c092928d`. Sparad faktisk review/full diff111299bytes; GitAdapter/common-dir flock gav no-ff `18415ef3a84fabcb4df27172c84197bfa51bebb4`, operation `690bd57a-69dc-4a3a-a856-0eb0f4fc589a`, rätt parents och identiskt granskat träd. På merge:12 eftertester PASS150.22s/exit0 samt Ruff/build/CLI/wheel82moduler+sex policies/90pins/diffkontroll PASS. Före merge30+24 aktuella fall/54 unika PASS; äldre överlapp och avbruten fixturkörning räknas inte. [Slutreview](docs/reviews/F-44.md), [maskinunderlag](docs/reviews/F-44.json), [eftertest](docs/reviews/F-44-post.xml). Task Done8/User105 återläst; E11 kvar Active/egenacceptans2/3 inför F45 och samlad mainleverans.
+
 ### Task F-45 Verifiera återhämtning genom avsiktliga avbrott
 
-**Epic/fas/prioritet:** E-11 / 11 / P1. **Kanban-status:** Planned. **TeamPlayer Task-ID:** `da58688a-6542-49f4-be40-8df908a08ee0`.
+**Epic/fas/prioritet:** E-11 / 11 / P1. **Kanban-status:** Attention. **TeamPlayer Task-ID:** `da58688a-6542-49f4-be40-8df908a08ee0`.
 
-**Körbar:** Nej — invänta F-44 och epicens beroende samt nedanstående externa villkor.
+**Körbar:** Nej — F44 Done8/no-ff18415ef och E10/main är verifierade. X-03 saknar vald isolerad målmaskin; användaren behöver ange separat värd/SSH-adress eller välja denna Pi. Provplan klar, TeamPlayer NeedsInput3/User105 och beskrivning synkade/återlästa. Ingen F45-kod, provsession eller omstart har startats.
 
 **Källa:** A §§28, 45; W §§17–18, 35–40. **Berör:** Avbrottsmatris, verkliga integrationer, runbook.
 
@@ -2087,6 +2089,8 @@ Epicen följer dessutom den gemensamma definitionen av Done. Acceptansen verifie
 **Verifiering:** Verklig avbrottsmatris plus kontroll av runs, sessions-ID, commits och synkavsikter efter omstart.
 
 **Leverans:** tillämpa den gemensamma taskdefinitionen av Done. Worker lämnar READY_FOR_REVIEW med commit och underlag; Integration-rollen registrerar review, merge-SHA och integrationsresultat innan Done.
+
+**Konkret förutsättning 2026-10-29:** [Avbrottsmatris och provplan](docs/recovery/F-45-test-plan.md) förberedd. Fråga om målmiljön är ställd och ännu obesvarad. X-03/F45.A3 kräver faktisk maskinomstart; container-/processomstart ersätter inte detta. Nästa ansvariga roll är operatör/användare, därefter bootstrap Worker. Inga senare beroenden kringgås och E11 förblir Active.
 
 ## Epic E-12 Härda orchestrering och gör drift spårbar
 
@@ -2324,11 +2328,11 @@ E-03 är Done efter PR #3/main-merge 0395728 och 262 sluttester. Fortsätt direk
 | 49 | F-39 | Task/feature | Slutgranska epic och återför korrigeringskrav | E-10 | 10 | 0657116a-4cf9-483f-aa9f-57612d7cee39 | P1 | Done | Nej | 3/3 | E-09, F-38, X-02 | Granskad04fe7939; mergea388e6b4; post100 PASS; faktiskt native före/efter/stopp. |
 | 50 | F-40 | Task/feature | Integrera epic och fortsätt efter slutverifiering | E-10 | 10 | 4073e26d-b095-47e3-99a6-7704f757f485 | P0 | Done | Ja | 3/3 | E-09, F-39 | Granskad44cb0ef/no-ff f4d6621;35 eftertester PASS1263.82s. Native6aab460/repeat/stopp/test/Done verifierade; generell gate kvar inför F41. |
 | 51 | F-41 | Task/feature | Verifiera första kompletta autonoma epicflödet | E-10 | 10 | dc32d701-aca3-4f3d-a0fa-8a8e0e5457bb | P1 | Done | Nej | 3/3 | E-09, F-40, X-01, X-02 | Granskad7bd9c19/no-ff21b60d7; post6 PASS127.50s, runtime/migration25 PASS5.58s. R18 två nativeleveranser/fem Done; alla agenter STOPPED. |
-| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Active | Ja | 1/3 | E-10 Done på main | E11 Active12/egenacceptans1/3; F42Done9 och F43Done11/no-ff9dba975/21 eftertester PASS. F44/F45 och mainleverans återstår. |
+| 52 | E-11 | Epic | Återhämta körningar efter avbrott och omstart | — | 11 | c1a21c17-3fcf-4f15-800d-c69f61d07df8 | P1 | Active | Ja | 2/3 | E-10 Done på main | Active13; F42–F44 Done, F45 NeedsInput3/X-03 målmaskin saknas; samlad verifiering/PR/main återstår. |
 | 53 | F-42 | Task/feature | Stäm av SQLite Git Herdr och TeamPlayer vid start | E-11 | 11 | 995ac9d9-31d6-4e87-ba5b-d8524fb2b298 | P0 | Done | Klar | 3/3 | E-10 | Done9/User105; granskad94f023d→E11 cf37091,32 eftertester/Ruff/build/CLI/wheel79+sex policies/86 pins PASS. F43 NeedsApproval5; inget ytterligare F42-arbete. |
 | 54 | F-43 | Task/feature | Återuppta verifierade sessioner och parkerade tasks | E-11 | 11 | bb3488c7-5c64-48ac-b105-72036fda275e | P0 | Done | Ja | 3/3 | E-10, F-42, X-01, X-02 | Done11; review6cf4782/no-ff9dba975/21 eftertester PASS; se slutreview. |
-| 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Active | Ja | 3/3 | E-10, F-43 | READY_FOR_REVIEW;54 slutprov PASS, exakt review/merge/eftertest före Done. |
-| 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Planned | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
+| 55 | F-44 | Task/feature | Återställ halvfärdiga starter merges och synkskrivningar | E-11 | 11 | 6c45d324-00ea-473e-822b-9d31947efc75 | P0 | Done | Ja | 3/3 | E-10, F-43 | Done8; reviewa4c09df/no-ff18415ef/12 eftertester PASS; se slutreview. |
+| 56 | F-45 | Task/feature | Verifiera återhämtning genom avsiktliga avbrott | E-11 | 11 | da58688a-6542-49f4-be40-8df908a08ee0 | P1 | Attention | Nej | 0/3 | E-10, F-44, X-01, X-02, X-03 | NeedsInput3/User105; ange isolerad värd/SSH-adress eller välj denna Pi. Provplan klar, inga avbrott startade. |
 | 57 | E-12 | Epic | Härda orchestrering och gör drift spårbar | — | 12 | be200a7c-4dad-47a1-a785-e25e84903124 | P0 | Planned | Nej | 0/3 | E-11 Done på main | Genomför ingående tasks; därefter epicacceptans och slutreview. |
 | 58 | F-46 | Task/feature | Härda project epic och task locks över processgränser | E-12 | 12 | 831d353a-a683-452f-864d-823b5908cd85 | P0 | Planned | Nej | 0/3 | E-11 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
 | 59 | F-47 | Task/feature | Inför deadlines begränsade retries och strukturerade fel | E-12 | 12 | cf9a3d67-b839-45a1-88ed-023369d7e3e5 | P0 | Planned | Nej | 0/3 | E-11, F-46 | Verifiera beroenden och villkor; följ taskens Codex-instruktion. |
