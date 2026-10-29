@@ -356,9 +356,9 @@ def test_unknown_coordinator_workspace_escalates_without_adoption_or_second_crea
     assert len(native.workspaces) == 1 and native.starts == 0 and len(native.prompts) == 0
 
 
-@pytest.mark.parametrize("inactivity", [True, False])
+@pytest.mark.parametrize("case", ["inactive", "lingering", "owner"])
 def test_completed_coordinator_monitor_requires_actual_inactivity_without_reopening(
-    claims_setup, inactivity,
+    claims_setup, case,
 ):
     claims, actor, _, _, _, _ = claims_setup
     runtime = claims.runtime
@@ -369,13 +369,16 @@ def test_completed_coordinator_monitor_requires_actual_inactivity_without_reopen
     op = sessions._record(coordinator, (registration, actor, runtime.codex), "ATTENTION",
                           codes=["TEAMPLAYER_UNAVAILABLE"])
     runtime.stop(actor, "original-observed-stop")
-    if not inactivity:
+    if case == "lingering":
         runtime.processes.lingering = True
+    elif case == "owner":
+        closed = runtime.store.get_coordinator(runtime.run_id)
+        runtime.store.update_coordinator(closed.model_copy(update={"actor_id": "changed-owner"}))
     before = runtime.store.get_coordinator(runtime.run_id), runtime.herdr.starts
     result = run(OperationRecoveryService(sessions).recover(op.id))
-    assert result["stage"] == ("RECOVERED" if inactivity else "ATTENTION"), result
+    assert result["stage"] == ("RECOVERED" if case == "inactive" else "ATTENTION"), result
     assert before == (runtime.store.get_coordinator(runtime.run_id), runtime.herdr.starts)
-    assert sessions._get(before[0]).result["requires_reconciliation"] is not inactivity
+    assert sessions._get(before[0]).result["requires_reconciliation"] is (case != "inactive")
 
 
 @pytest.mark.parametrize("original_coordinator", [True, False])
@@ -432,3 +435,23 @@ def test_known_failed_main_verification_is_not_automatically_retried(delivery_se
         assert delivery.store.get_operations("e", kind="verify_main_merge") == before
         assert f.review.runtime.main() == main and delivery.store.get_epic("e").status == "MERGING"
     run(exercise())
+
+
+@pytest.mark.parametrize("kind", ["task_start", "start_runtime", "dispatch_assignment",
+                                  "teamplayer_sync"])
+def test_alias_operation_key_cannot_continue_another_original_intent(control_setup, kind):
+    control, _, _, board, native = control_setup
+    start(control)
+    t = task(control, "F-01")
+    real = original(control, kind)
+    alias = Operation(project_id="p", epic_run_id=t.epic_run_id, task_run_id=t.id,
+                      kind=kind, idempotency_key="invalid-alias-key", result=real.result)
+    control.store.add_operation(alias)
+    before = native.starts, len(native.sent), len(board.applied)
+    operator = recovery(control)
+    answer = run(operator.recover(alias.id))
+    assert answer["stage"] == "ATTENTION", answer
+    assert answer["reason"] == ("ORIGINAL_BOARD_INTENT_CHANGED" if kind == "teamplayer_sync"
+                                else "ORIGINAL_OPERATION_KEY_CHANGED")
+    assert before == (native.starts, len(native.sent), len(board.applied))
+    assert operator._find(real.id) == real

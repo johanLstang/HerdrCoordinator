@@ -74,10 +74,20 @@ class OperationRecoveryService:
                                result=result or {})
             if not history or history[-1] != observation:
                 history.append(observation)
+            actions = {
+                "ORIGINAL_OPERATION_KEY_CHANGED": "SELECT_CANONICAL_ORIGINAL_OPERATION_ID",
+                "ORIGINAL_BOARD_INTENT_CHANGED": "RECONCILE_CURRENT_LOCAL_EVENT_WITH_ORIGINAL_SYNC",
+                "FAILED_TEST_REQUIRES_OPERATOR_DECISION": (
+                    "REVIEW_FAILURE_AND_CHOOSE_NEW_TEST_ATTEMPT"
+                ),
+                "ORIGINAL_OPERATION_HANDLER_REQUIRED": "OPERATOR_REVIEW_UNSUPPORTED_OPERATION",
+            }
             data = anchor | observation | dict(
                 history=history, requires_reconciliation=stage in {"ATTENTION", "WAITING"},
-                next_action="RESTORE_ORIGINAL_RESOURCE_AND_RETRY_SAME_OPERATION"
-                if stage in {"ATTENTION", "WAITING"} else None,
+                next_role="Operator" if stage in {"ATTENTION", "WAITING"} else None,
+                next_action=(actions.get(
+                    reason, "RESTORE_ORIGINAL_RESOURCE_AND_RETRY_SAME_OPERATION"
+                ) if stage in {"ATTENTION", "WAITING"} else None),
             )
             data["observation_hash"] = fingerprint(data)
             if old:
@@ -169,6 +179,15 @@ class OperationRecoveryService:
 
     async def _drive(self, op):
         kind = op.kind
+        canonical = {
+            MONITOR: self._owner(op), "epic_start": getattr(op, "epic_run_id", None),
+            "start_runtime": self._owner(op), "dispatch_assignment": self._owner(op),
+        }
+        if kind == "task_start":
+            task = self.store.get_task(op.task_run_id)
+            canonical[kind] = task.task_id if task else None
+        if kind in canonical and op.idempotency_key != canonical[kind]:
+            raise OperationRecoveryError("ORIGINAL_OPERATION_KEY_CHANGED")
         if kind == MONITOR:
             return await self._stopped_monitor(op)
         if kind == "coordinator_start":
@@ -208,7 +227,9 @@ class OperationRecoveryService:
             if len(configured) != 1:
                 raise OperationRecoveryError("ORIGINAL_TASK_SPEC_REQUIRED")
             original = self.store.get_operation(self.project_id, "task_start", task.task_id)
-            if original is None or original.task_run_id != task.id:
+            if original is None or original.task_run_id != task.id or (
+                kind == "task_start" and original.id != op.id
+            ):
                 raise OperationRecoveryError("ORIGINAL_TASK_START_REQUIRED")
             scheduler = control.scheduler
             if task.internal_status == "WORKING":
@@ -244,6 +265,22 @@ class OperationRecoveryService:
                 actor = runtime.connection_principal(runtime.principal)
             if op.result["intent"]["actor"] != actor.model_dump(mode="json"):
                 raise OperationRecoveryError("ORIGINAL_BOARD_OWNER_CHANGED")
+            is_task = op.task_run_id is not None
+            target = sync._run(actor, self._owner(op), is_task)
+            status, proof, text = sync._source(actor, target, is_task)
+            event_key = dict(run_id=target.id, task=is_task, event_id=proof["event_id"])
+            for field in ("attention", "input"):
+                if field + "_id" in proof:
+                    for suffix in ("_id", "_hash"):
+                        event_key[field + suffix] = proof[field + suffix]
+            if "recovery_revision" in proof:
+                event_key["recovery_revision"] = proof["recovery_revision"]
+            expected = dict(target_id=sync._reference(target, is_task),
+                            external_project_id=sync.external_project_id, user_id=sync.user_id,
+                            task=is_task, status=status, proof=proof, text=text,
+                            actor=actor.model_dump(mode="json"))
+            if op.idempotency_key != fingerprint(event_key) or op.result["intent"] != expected:
+                raise OperationRecoveryError("ORIGINAL_BOARD_INTENT_CHANGED")
             result = (await sync.sync_task(actor, op.task_run_id) if op.task_run_id
                       else await sync.sync_epic(actor, op.epic_run_id))
             return {k: result[k] for k in ("status", "operation_id")}
@@ -359,8 +396,15 @@ class OperationRecoveryService:
             stops = [s for s in self.store.project_operations(run.id, kind="coordinator_stop")
                      if s.status == "SUCCEEDED" and s.result.get("inactive")
                      and s.result.get("start_operation_id") == registration.id]
-            if run.configuration_hash != runtime.configuration_hash or run.status != "STOPPED" or (
-                run.completed_at is None or len(stops) != 1 or not runtime._stopped(run, stops[0])
+            if (
+                registration.status != "SUCCEEDED"
+                or registration.result.get("stage") != "REGISTERED"
+                or registration.coordinator_run_id != run.id
+                or run.actor_id != runtime.principal.actor_id
+                or run.worktree_path != str(runtime.settings.repository)
+                or run.configuration_hash != runtime.configuration_hash
+                or run.status != "STOPPED" or run.completed_at is None
+                or len(stops) != 1 or not runtime._stopped(run, stops[0])
             ):
                 raise OperationRecoveryError("ORIGINAL_INACTIVITY_UNVERIFIED")
             context = registration, runtime.principal, runtime.codex
