@@ -2,9 +2,9 @@
 
 **Bedömning:** READY_FOR_REVIEW. Nativeacceptans3/3 med redovisad källkvalificering. Ingen leveransapproval, taskmerge eller Done ännu.
 
-Worker-kod `5bd6f539bb8747bc53b6fa0f968dd5483113ddf8` på `task/e11-f43`, från E11 `a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a`. Bootstrap Integration har gått igenom kontrakt, roll-/ownerbindning, slot-/resumejournaler, TeamPlayer-överlagring och faktiskt testunderlag. Full leveransreview återstår efter nativeprovet.
+Slutlig Worker-kod `d162a8bc3f14526b498a6b37f363151705dd515b` på `task/e11-f43`, från E11 `a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a`. Bootstrap Integration har gått igenom kontrakt, roll-/ownerbindning, slot-/resumejournaler, TeamPlayer-överlagring och faktiskt testunderlag. Full leveransreview återstår efter nativeprovet.
 
-## Genomförd verifiering
+## Historisk verifiering före slutligt nativefynd
 
 - Slutliga recoveryprov:20 PASS104.75s/exit0, faktisk Git/SQLite med kontrollerade Herdr/Codex/boardpeers.
 - Regression:119 PASS584.17s/exit0. Gruppen föregår sista hold-grinden och uppdelningen av planverifiering.
@@ -21,7 +21,7 @@ Råa JUnit och källhashar: [verifieringsunderlag](../recovery/F-43-verification
 3. En stoppad Integration med registrerad korrigeringsplan kräver ren medlemskapsverifiering utan liveförvillkor. Samma session återupptas sedan via F13.
 4. Beständig övervakning innehåller både aktuell fysisk runtime-status och native turncursor. Varje poll verifierar originalresurserna på nytt.
 
-## Verkligt kvarvarande hinder
+## Historiskt hinder före användarens godkännande och R2
 
 Den egna servern `hc-f43-r1-20261020` och en verklig STARTING-Coordinator finns. Samma run `1114f161-54c9-453d-8efa-0f02460e7314`, originaloperation `cf06e48d-ecba-4304-af87-a1744ba265ae`/AGENT_PENDING, agent `hc-c-f43f4267ddf84867aeaa920f` i `w1:p1`. Codex frågar om uppdatering0.162.1→0.163.0; användaren har tillfrågats om **Skip**. Herdr-skillen kräver beslut före svar på blockerad dialog. Ingen uppdatering, prompt, ACK, native sessions-ID, EpicRun, TaskRun eller slot har skapats efter detta stopp.
 
@@ -38,3 +38,5 @@ R1 kunde inte fortsätta eftersom servern försvunnit före prompt/ACK/SID; orig
 Nativeprovet hittade en blockerande kodbugg vid okänt resume-resultat efter faktisk slotreservation. Rättningen journalför färskt, på nytt ägarvaliderat subjekt i stället för gamla slotdata. Ny regression samt slutliga21 PASS101.30s verifierar detta. A2/A3 använder rättad frozen-recovery-v2; A1:s oförändrade positiva AST-väg och tidigare snapshot kvalificeras uttryckligen. Ett extra A1-försök är ogiltigförklarat och ger inga passerade kriterier; två kvarvarande tekniska journaler på stoppade provresurser lämnas explicit till F44/operatör, utan runtimeåterstart eller falskt Done.
 
 Ny full granskning av exakt slutlig task-/epic-SHA, faktisk Task→Epic och eftertester återstår före Done. De äldre avsnitten ovan är historik från vänteläget.
+
+Slutlig källcommit: `d162a8bc3f14526b498a6b37f363151705dd515b`. Aktuella21 prov, nativekvalificering och strukturella kontroller finns i verifieringsunderlaget. Senast återläst TeamPlayer Testing9/User105; lokal Active. Äldre väntetexter ovan beskriver inte aktuellt läge.

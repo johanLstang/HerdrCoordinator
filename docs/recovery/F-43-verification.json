@@ -2,7 +2,7 @@
   "feature": "F-43",
   "task_id": "bb3488c7-5c64-48ac-b105-72036fda275e",
   "branch": "task/e11-f43",
-  "functional_commit": "5bd6f539bb8747bc53b6fa0f968dd5483113ddf8",
+  "functional_commit": "d162a8bc3f14526b498a6b37f363151705dd515b",
   "epic_base": "a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a",
   "review_verdict": "READY_FOR_REVIEW_PENDING_INTEGRATION",
   "task_done": false,
@@ -32,15 +32,24 @@
         "errors": 0
       }
     ],
-    "unique_cases": 143
+    "unique_cases": 144,
+    "overlaps_not_added": true,
+    "current_final_recovery": {
+      "artifact": "docs/recovery/F-43-r2-unit.xml",
+      "cases": 21,
+      "result": "PASS",
+      "seconds": 101.3
+    }
   },
-  "regression_qualification": "119-case group preceded final control hold and pure membership extraction; complemented by 20 final recovery cases and 7 control/project cases. Native runtime-status output is checked in final20.",
+  "regression_qualification": "119 cases preceded final control/membership refinements; seven control cases preceded the final error-handler refresh. Current final21 cover the final source. Native A1 positive path is AST equivalent; native A2/A3 use final source. 144 distinct cases across qualified groups, not one current full-suite run.",
   "structural": {
     "changed_files": [
       "Arkitektur och implementationsplan – Herdr -Codex Multi-Agent Workflow.md",
       "Backlog.md",
       "README.md",
       "docs/recovery/F-43-control.xml",
+      "docs/recovery/F-43-native.json",
+      "docs/recovery/F-43-r2-unit.xml",
       "docs/recovery/F-43-regression.xml",
       "docs/recovery/F-43-sessions.md",
       "docs/recovery/F-43-unit.xml",
@@ -59,7 +68,7 @@
       "tests/test_integration_control.py",
       "tests/test_session_recovery.py"
     ],
-    "local_doc_links": 232,
+    "local_doc_links": 236,
     "wheel_modules": 81,
     "policies": [
       "coordinator-delivery-v1.md",
