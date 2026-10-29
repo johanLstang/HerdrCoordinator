@@ -151,6 +151,19 @@ class IntegrationControlService:
                 ok=False, code="INTEGRATION_RUNTIME_UNVERIFIED", message="reconcile epic runtime"
             )
         result = None
+        if task is not None and operation not in {
+            "runtime_status", "policy_check", "task_park_blocked",
+        }:
+            from orchestrator.application.session_recovery_record import task_record
+
+            try:
+                recovery = task_record(self.store, task)
+                held = recovery is not None and recovery.result["stage"] == "ATTENTION"
+            except Exception:
+                held = True
+            if held:
+                return ToolResponse(ok=False, code="SESSION_RECOVERY_REQUIRED",
+                                    message="operator must verify the original session first")
         try:
             if operation == "integration_overview":
                 result = ToolResponse(ok=True, code="OK", message="Integration overview")
@@ -340,12 +353,23 @@ class IntegrationControlService:
                     next_operations = ["task_review_request"]
                     runtime = runtime | {"reason": "CURRENT_APPROVAL_UNVERIFIED"}
             journal = self.store.get_operation(task.project_id, self.scheduler.KIND, task.id)
+            from orchestrator.application.session_recovery_record import task_record
+
+            try:
+                recovery = task_record(self.store, task)
+                recovery = ({"stage": recovery.result["stage"],
+                             "reason": recovery.result["reason"]} if recovery else None)
+            except Exception:
+                recovery = {"stage": "ATTENTION", "reason": "RECOVERY_OBSERVATION_CHANGED"}
+            if recovery and recovery["stage"] == "ATTENTION":
+                next_operations = []
             rows.append(
                 dict(
                     task_run_id=task.id,
                     task_id=task.task_id,
                     state=task.internal_status.value,
-                    kanban=task.kanban_status.value,
+                    kanban=("Attention" if recovery and recovery["stage"] == "ATTENTION"
+                            else task.kanban_status.value),
                     slot=task.worker_slot,
                     session_id=task.codex_session_id,
                     branch=task.branch,
@@ -353,6 +377,7 @@ class IntegrationControlService:
                     current_commit=self.scheduler.start.worktrees.git.head(task.branch),
                     merge_commit=task.merge_commit,
                     runtime=runtime,
+                    recovery=recovery,
                     reason=journal.result.get("reason") if journal else None,
                     context_id=journal.result.get("context_id") if journal else None,
                     request_key=journal.result.get("request_key") if journal else None,

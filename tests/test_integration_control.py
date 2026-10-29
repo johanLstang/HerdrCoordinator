@@ -61,12 +61,14 @@ class Sessions(Workers):
 
 
 @pytest.fixture
-def setup(epic_setup):  # noqa: F811
+def setup(epic_setup, request):  # noqa: F811
     initial, coordinator, integration, _ = epic_setup
     data = initial.spec.model_dump(mode="json")
     tasks = {T1: data["tasks"][0]["task"], T2: data["tasks"][1]["task"]}
     tasks[T2]["dependencies"] = []
     tasks[T3] = deepcopy(tasks[T1]) | {"task_id": "F-03", "dependencies": ["F-01"]}
+    if getattr(request, "param", None) == "independent":
+        tasks[T3]["dependencies"] = []
     data["tasks"] = [dict(version=1, priority="P0", task=t) for t in tasks.values()]
     data["dependencies"] = []
     settings = initial.settings.model_copy(
@@ -91,6 +93,8 @@ def setup(epic_setup):  # noqa: F811
     epic = EpicStartService(settings, initial.store, sessions, data, integration, codex=sessions)
     assert asyncio.run(epic.start(coordinator, "p", "E-34", "e"))["stage"] == "REGISTERED"
     board = Board(tasks)
+    if getattr(request, "param", None) == "independent":
+        next(t for t in board.tasks if t["taskId"] == T3)["dependencyTaskIds"] = []
     bindings = {E: LocalBoardBinding(local_id="E-34")} | {
         k: LocalBoardBinding(local_id=v["task_id"]) for k, v in tasks.items()
     }

@@ -1,0 +1,398 @@
+{
+  "A1-controller-reconnect-proof.json": {
+    "acceptance": "F-43.A1",
+    "passed": true,
+    "old_controller": 2314454,
+    "new_controller": 2328594,
+    "signal": "SIGTERM",
+    "original_controller_confirmed_gone": true,
+    "registered_native_processes_unchanged": [
+      {
+        "pid": 2306758,
+        "start_time": "274219500",
+        "argv_sha256": "5edb140a08fc0bd5401382ebd8ca26a19b371c00a60a11b89b4727c3a33deaed"
+      },
+      {
+        "pid": 2306772,
+        "start_time": "274219539",
+        "argv_sha256": "d6f90a3d4317c9b4a642b9dbba54e39b65720c26f02e4ad20ae7526b88e45bc9"
+      },
+      {
+        "pid": 2308866,
+        "start_time": "274239039",
+        "argv_sha256": "b6f27a3ab9c54f087afed6069e069b27229bc1c2b88daebce58fba89c113b4e1"
+      },
+      {
+        "pid": 2308873,
+        "start_time": "274239044",
+        "argv_sha256": "8bfd7ed2c89b37f9302b32658da65c937cbeaa750ac0fd21147c317ff0d4abcc"
+      },
+      {
+        "pid": 2311346,
+        "start_time": "274252065",
+        "argv_sha256": "c923034949870b7978f9580e2377de876630c9ee8fbff3d0320f95f4c5cca127"
+      },
+      {
+        "pid": 2311353,
+        "start_time": "274252073",
+        "argv_sha256": "ca6e10da6a42f8cf12b500f6af319f60dfe243afd5ba4dc06a322c54a754dc56"
+      },
+      {
+        "pid": 2298194,
+        "start_time": "274167845",
+        "argv_sha256": "ea78957f9bc7f231aab5f2ca280f202f7aa0a34fecafdc1dcf9800e5bda9f9de"
+      },
+      {
+        "pid": 2298203,
+        "start_time": "274167858",
+        "argv_sha256": "9525bedd2f94764aba6193fa0bfb1c9445eca2602add620f295d27a50250a821"
+      }
+    ],
+    "subjects_unchanged": true,
+    "coordinator_count": 1,
+    "epic_count": 1,
+    "task_count": 2,
+    "slots": [
+      2,
+      1
+    ],
+    "task_states": [
+      "WORKING",
+      "WORKING"
+    ],
+    "native_agent_count": 4,
+    "same_session_ids": [
+      "01a18753-5116-7213-8e0d-fc46e5eb4900",
+      "01a18757-8c9b-7320-b2e6-12fb92e1cbe1",
+      "01a1875a-81ed-7360-a35b-a8971253e3bf",
+      "01a1875c-7e15-7872-b1c0-0e0f9f2af9f5"
+    ],
+    "runtime_statuses": [
+      "idle",
+      "done",
+      "done",
+      "done"
+    ],
+    "monitoring_resumed": true,
+    "qualifier": "Tasks remain WORKING; native Workers were ready/done after their fixed JSON reports. No claim of simultaneous model computation."
+  },
+  "A1-normal-path-code-equivalence.json": {
+    "passed": true,
+    "normal_path_ast_identical": true,
+    "old_source": "frozen-source",
+    "new_source": "frozen-recovery-v2",
+    "only_change": "Reread actual subject and validate original owner after an effectful error",
+    "positive_A1_source": "A1-controller-reconnect-proof.json",
+    "invalid_second_attempt": "A1-v2-controller-reconnect-proof.json is invalid and is not acceptance evidence"
+  },
+  "A2-same-session-input-proof.json": {
+    "acceptance": "F-43.A2",
+    "passed": true,
+    "park_without_answer_preserved": true,
+    "capacity_wait_verified": true,
+    "saved_input_preserved": true,
+    "same_input_operation": "eaba88e5-37c8-4c10-8abe-a8f40c7844be",
+    "same_input_id": "f1765b41-7b09-46e9-8d18-bf6aad8b61ba",
+    "same_resume_key": "input-resume:eaba88e5-37c8-4c10-8abe-a8f40c7844be",
+    "resume_operation": "4d7db219-c143-42ea-8a9a-2b13b25d4a4f",
+    "session_id": "01a1875a-81ed-7360-a35b-a8971253e3bf",
+    "branch": "task/f43r2-a",
+    "worktree_path": "/tmp/herdr-f43-r2-20261029/trees/f43-r2/task-f43r2-a",
+    "old_slot": null,
+    "new_slot": 2,
+    "active_slots": [
+      {
+        "task": "B",
+        "slot": null
+      },
+      {
+        "task": "C",
+        "slot": 1
+      },
+      {
+        "task": "A",
+        "slot": 2
+      }
+    ],
+    "native_input_prompts": 1,
+    "native_user_turns": 2,
+    "input_stage": "ACTIVE_AND_SYNCED",
+    "recovery_source": "/tmp/herdr-f43-r2-20261029/frozen-recovery-v2",
+    "same_decision_file_sha256": true
+  },
+  "A3-missing-reference-proof.json": {
+    "acceptance": "F-43.A3",
+    "passed": true,
+    "injection": "Controlled clearing of saved Task C session reference; original physical session remains and is preserved for repair",
+    "task_run_id": "a02fcef6-79bd-40b1-ae95-21c38437a405",
+    "original_session_id": "01a18764-9ef5-70e3-b834-08191e7f085a",
+    "physical_session_unchanged": true,
+    "stored_session_id": null,
+    "slot_retained": 1,
+    "internal_phase": "WORKING",
+    "codes": [
+      "SESSION_CHANGED_OR_UNREGISTERED",
+      "SESSION_REFERENCE_MISSING"
+    ],
+    "teamplayer_status": "NeedsInput",
+    "teamplayer_version": 5,
+    "task_count": 3,
+    "worktree_count": 5,
+    "no_replacement_worktree": true,
+    "no_resume_or_new_worker": true,
+    "original_process_identities": [
+      {
+        "pid": 2336992,
+        "start_time": "274305327"
+      },
+      {
+        "pid": 2337042,
+        "start_time": "274305334"
+      }
+    ]
+  },
+  "final-native-audit.json": {
+    "all_native_agents_gone": true,
+    "all_slots_released_after_physical_stop": true,
+    "task_states": [
+      {
+        "id": "58f3c32b-9dd2-419f-b3ec-b8d624b61feb",
+        "task": "B",
+        "state": "PARKED",
+        "slot": null
+      },
+      {
+        "id": "a02fcef6-79bd-40b1-ae95-21c38437a405",
+        "task": "C",
+        "state": "PARKED",
+        "slot": null
+      },
+      {
+        "id": "ae4bf134-b8a6-4686-bc04-63161f22c9cd",
+        "task": "A",
+        "state": "PARKED",
+        "slot": null
+      }
+    ],
+    "coordinator": "STOPPED",
+    "teamplayer_sync": [
+      {
+        "task": "B",
+        "result": {
+          "status": "SYNCED",
+          "operation_id": "bbc7a099-5aa9-4ab2-ad04-34d135440c42"
+        }
+      },
+      {
+        "task": "C",
+        "result": {
+          "status": "SYNCED",
+          "operation_id": "a1977558-d89c-44a2-9a43-0dd11d33f45f"
+        }
+      },
+      {
+        "task": "A",
+        "result": {
+          "status": "SYNCED",
+          "operation_id": "53e775c7-0c62-44e1-8fed-8e66babbd652"
+        }
+      }
+    ],
+    "native_threads": [
+      {
+        "run": "3e683731-550a-419c-a597-5252f83f2124",
+        "session": "01a18753-5116-7213-8e0d-fc46e5eb4900",
+        "turns": 1,
+        "tool_calls": 0
+      },
+      {
+        "run": "2d153a85-d06f-4835-8e6e-37789ead5084",
+        "session": "01a18757-8c9b-7320-b2e6-12fb92e1cbe1",
+        "turns": 1,
+        "tool_calls": 0
+      },
+      {
+        "run": "58f3c32b-9dd2-419f-b3ec-b8d624b61feb",
+        "session": "01a1875c-7e15-7872-b1c0-0e0f9f2af9f5",
+        "turns": 1,
+        "tool_calls": 0
+      },
+      {
+        "run": "a02fcef6-79bd-40b1-ae95-21c38437a405",
+        "session": "01a18764-9ef5-70e3-b834-08191e7f085a",
+        "turns": 1,
+        "tool_calls": 0
+      },
+      {
+        "run": "ae4bf134-b8a6-4686-bc04-63161f22c9cd",
+        "session": "01a1875a-81ed-7360-a35b-a8971253e3bf",
+        "turns": 2,
+        "tool_calls": 0
+      }
+    ],
+    "epic_status": "ACTIVE; bounded probe is not a Git delivery",
+    "no_probe_task_done_claim": true
+  },
+  "recovery-v2-upgrade.json": {
+    "reason": "Native unconfirmed resume had durably reserved slot; recovery must record the fresh actual subject after error",
+    "old_source": "/tmp/herdr-f43-r2-20261029/frozen-source",
+    "new_source": "/tmp/herdr-f43-r2-20261029/frozen-recovery-v2",
+    "mcp_host_unchanged": "/tmp/herdr-f43-r2-20261029/frozen-source/tests/native_f43_host.py",
+    "coordinator_configuration_hash_unchanged": "8c46a2a8a6c7e3823e4b69fe81dbad61ed2e5529c2b58bb4155abd4edc3d39fd",
+    "epic_registration_unchanged": "82d06e04-d8f3-49aa-8d71-18af95262fea",
+    "database_changes": 0,
+    "inventory_unchanged": true,
+    "source_pins": 91
+  },
+  "ui-decisions.json": {
+    "user_skip_approved": true,
+    "skip_performed": true,
+    "user_trust_approved": true,
+    "scope": "/tmp/herdr-f43-r2-20261029 repo and its test worktrees",
+    "trust_performed_for": [
+      "repo"
+    ],
+    "agent": "hc-c-9e50bc57d3ea4350ac6aca98",
+    "observed_version": "0.162.1",
+    "update_not_installed": true,
+    "user_trust_scope_confirmed": "F43 probe root and its worktrees",
+    "coordinator_registered": {
+      "id": "3e683731-550a-419c-a597-5252f83f2124",
+      "project_id": "f43-r2",
+      "actor_id": "f43-r2-coordinator",
+      "branch": "main",
+      "worktree_path": "/tmp/herdr-f43-r2-20261029/repo",
+      "initial_commit": "9e3efdf30da042d4b2fd21f6b13909975c1f848b",
+      "configuration_hash": "8c46a2a8a6c7e3823e4b69fe81dbad61ed2e5529c2b58bb4155abd4edc3d39fd",
+      "status": "ACTIVE",
+      "coordinator_agent_id": "hc-c-9e50bc57d3ea4350ac6aca98",
+      "herdr_workspace_id": "w1",
+      "herdr_server_session": "hc-f43-r2-20261029",
+      "herdr_tab_id": "w1:t1",
+      "herdr_pane_id": "w1:p1",
+      "herdr_terminal_id": "term_65ef88ed22f3f1",
+      "codex_session_id": "01a18753-5116-7213-8e0d-fc46e5eb4900",
+      "started_at": "2026-10-29T10:58:21.037447Z",
+      "completed_at": null
+    }
+  },
+  "kind": "actual Git SQLite Herdr Codex and TeamPlayer integration",
+  "archive": {
+    "path": "/home/stang/.local/state/herdr-coordinator/evidence/F-43/r2-complete-stopped-20261029.tar.gz",
+    "sha256": "86a75c12e0eb00cad0c3dc44f5f9dea88300ad270812cf369aec57aca7fc84ba",
+    "bytes": 1472126,
+    "consistent_sqlite_backup": "evidence-state.db"
+  },
+  "source_pins": {
+    "src/orchestrator/event_log.py": "d50ae2945a1f4529e1271abdc74995eb7b57f22237352983301b21d0254d9967",
+    "src/orchestrator/cli.py": "e4fdfed7c7096f19a10c2c59ed8299029d40a2dc38f2f76d60854697113d2c30",
+    "src/orchestrator/__init__.py": "b9a288f7c8d33390b639b0a88c7782aa470251e15250bae48e58f3c2719164af",
+    "src/orchestrator/config.py": "f0b6517b96834beb3ab3bfb8da4edc02a83d6c3722d4f7f2dfa58bfb60624bf2",
+    "src/orchestrator/__main__.py": "c80853943cd5ee3a8dec1e4a2abf8c176f157cbc996c33a560aec46272bf0bb8",
+    "src/orchestrator/mcp/principal.py": "17bdb0a85f997c242a2e115e5c1c63dba0425a2c626b665fe4121705e41a1ec9",
+    "src/orchestrator/mcp/contracts.py": "118571d740ddb297037a628b06042573d6b7ce72a512fcfd2dbcd284139bf63a",
+    "src/orchestrator/mcp/server.py": "be338387fd5951b685f698d06e9412496386384d5ddd3a2ee52728fcd35f8049",
+    "src/orchestrator/mcp/__init__.py": "bef622bd46f0d75d74d7febe20b64d59813a7cbe8822f9f1153c3849a8bc8075",
+    "src/orchestrator/adapters/git.py": "15e3932cdb0fb7c05a4f509cbd2ac45735d5d1b1bf0ed53c7dfcda0177e766bb",
+    "src/orchestrator/adapters/processes.py": "682cebef3d2288c948fcfbfcc0f0d1bc2f304a7db7f10219bff7607485dc0f32",
+    "src/orchestrator/adapters/teamplayer_correction.py": "afe1bdeb231b03d3e7cccba332a5f6e075f8fa68542864b8d42b641a061a99b4",
+    "src/orchestrator/adapters/__init__.py": "54302bd9cd006611636f4179b4dbf546e759b65f6b39e331d7322c9e7e293854",
+    "src/orchestrator/adapters/codex.py": "26720918af681f4a81be78ec7fa3d5603c23f64088e5f9acdfd50e8a4dbbf6e4",
+    "src/orchestrator/adapters/teamplayer_mcp.py": "c9ca572c6144fe69c8bdb22d22fb22bbcb6364707e399406b4aaf8a926705523",
+    "src/orchestrator/adapters/herdr.py": "472b806ccb838201a7af6dea9c72df6ea38e1510fd9174eb4fb3eb4adcc00f38",
+    "src/orchestrator/domain/worker_contracts.py": "486898bec25d1ca423fb7b6bd6c490d1735ef1a9c75aa8098a59574c9524d287",
+    "src/orchestrator/domain/states.py": "68b078994ce6e4e844214c3b2f47b660e33c7b544103e81e9bf3aecab72599cc",
+    "src/orchestrator/domain/attention.py": "c59e93051a1eda1b720758f0e4d088df4e53cfea6b71bb8ddd448d4f442b5a38",
+    "src/orchestrator/domain/coordinator_contracts.py": "3de7fa1e11fc8a7bb81dc44381def0e9d86a4994a208ca7e16c78170eb74cc27",
+    "src/orchestrator/domain/review_contracts.py": "18bfffe6d62e1b3f307cb1858bfa55791e6653639e034ea8183927379d9a88de",
+    "src/orchestrator/domain/codex_execution.py": "4337c8b471a74019c3d3bbb6ecf9ec7fdf0cccb8bc933e6a9b52a80bb91ae996",
+    "src/orchestrator/domain/teamplayer.py": "6e19018bd712029e44a9244dcd4478675b74f44620ef8e954c96c186f929418e",
+    "src/orchestrator/domain/coordinator.py": "16c7bbfbab1e980e4f8b2bc0861ae9116e3f5d3439438cbf920dfdb4d8b08227",
+    "src/orchestrator/domain/coordinator_review.py": "ffc1472093f2b87b76fb80e3a5c8660a002ae9cff6b17d48f996a75fd20b8851",
+    "src/orchestrator/domain/__init__.py": "3b79510c763d64599f6e554cafa658e3feffea3d8ca88f56e35a0e60b681dbe8",
+    "src/orchestrator/domain/git_facts.py": "c2a6150f7c452a49ccd17b85f859cd67bd3b2de521d530e3ab084c12ced8194a",
+    "src/orchestrator/domain/integration_contracts.py": "13be526d4377bffd1af73f900d733e9a4bb0b2947a87dba3ba93150ebec906fd",
+    "src/orchestrator/domain/epic_completion.py": "2e433d93d747d8d43d4c58f5da08f0f72bd823995ac3e14eff851c390d3f53ba",
+    "src/orchestrator/domain/policy.py": "9794f58e3c999cdbe2895c6356a605814c2efe3788e1762922c16afd7c46c92b",
+    "src/orchestrator/domain/models.py": "1581b21c7f0f08e5cafad865a0939a756e103786b28e1cbaf197e05d99b6827b",
+    "src/orchestrator/domain/codex_mcp_launch.py": "274c0065c9d15a87d958ae80484c5112583e5642adcf3f50b329a31a54be965a",
+    "src/orchestrator/application/integration_control_service.py": "a75ed1ad4f2f5b36fc4f57968db37d17d90a18246e4675bfc8b363d8e8c0f61d",
+    "src/orchestrator/application/review_prompt.py": "1df619a7fe1f6e2a3b4c81e369690b63b8c487e5b4253145fa8d77b86a3e2e88",
+    "src/orchestrator/application/epic_start_service.py": "a44f7048c0aadf428cff091718fb21de3e00a1dac90f144489ebb8c72d15fb6e",
+    "src/orchestrator/application/task_cleanup_service.py": "5476db5f55f1b4c95c1bbd17cce3c736bb068db05a73d10b290b0cc2abaf88cd",
+    "src/orchestrator/application/epic_completion_service.py": "080e5247bf07956020806d9ff730d4726017b529c3b749987728368609f35086",
+    "src/orchestrator/application/task_selection_service.py": "465985b93521631bec391feff9b82448e02b7358499c952181b83addddbb614a",
+    "src/orchestrator/application/worker_report.py": "c788e98914633054ca124103221841a4a3c156334c17a7e171d5aac30db2570e",
+    "src/orchestrator/application/task_start_service.py": "0fc0becb1e76b84a2f90bb8eb60c4d9adb19be8d40f4b30d06e9109de0eebd67",
+    "src/orchestrator/application/state_service.py": "c65efe7fa0add6228331bcfaf01d1ad131759dacbfedb594e91aa9c9166793ae",
+    "src/orchestrator/application/task_delivery_evidence.py": "b45be8ab7b2971a2f3d7b60e79b5d319467b96f6520fa3b99439740f986fd42b",
+    "src/orchestrator/application/runtime_start_service.py": "74ba43f6e5c5d71ed722adf1acfc10021c1a52dc8d733bf71579758870756653",
+    "src/orchestrator/application/session_recovery_record.py": "6d6b10ddb0756ce3693a4e99047e3e6d787be7a2b6a2df3ad407dbadb10b43bb",
+    "src/orchestrator/application/session_recovery_service.py": "cb2c86d88a015a6459f0ccd33504fd7f32efb6564b573dc2545a649bac5bad13",
+    "src/orchestrator/application/runtime_lifecycle_service.py": "30ba9aa2f9ec9ed60e8c7faba5d70c282d97aac525d09471b552748e142e20e3",
+    "src/orchestrator/application/git_review_service.py": "f7f5cb57a154f90f90eec00d464d5b97811c688e75df4a1155f25643991c8a39",
+    "src/orchestrator/application/coordinator_runtime_service.py": "58ee71e20e27cd46867594865646c023e2a3664f50384d95ff6305b119bbdc6d",
+    "src/orchestrator/application/worker_report_service.py": "38c5695e561715b5a94fea3862e33e372525e88b02dccd964b8dae8272f40182",
+    "src/orchestrator/application/task_review_service.py": "021306a6d84f033d2653d82f668dd7156a5939446353880214eb06a52c48edc9",
+    "src/orchestrator/application/runtime_service.py": "680bca8faef1340677f1877ef394ed637c6cb6d519e32a81b1a8103b71b67aea",
+    "src/orchestrator/application/worker_prompt.py": "7817faca597b319dacfa0c19be01897c5140a6b32b700b2bb969c730dc34d54c",
+    "src/orchestrator/application/coordinator_correction_service.py": "adb76e7c46592a90e0751fea761da3efa380e99c8bdb4b440dd795c8a8a48731",
+    "src/orchestrator/application/coordinator_control_service.py": "5e74b270094870d5d15cbe637b2dabcc40094d3df1df6af43f02e5961a6f6f18",
+    "src/orchestrator/application/task_resume_service.py": "f20ad945a6ccba768af869d015c602da2e058ff4f87c5ff4af40e5ebd6274cda",
+    "src/orchestrator/application/epic_integration_service.py": "22cf028892bb095d1c541b124c8151eb382e113f8f9031dcb0ab917ec3535edf",
+    "src/orchestrator/application/epic_correction_plan.py": "b91df247686ff51752a9cc8d872371cadf1f55a7b89cacd8ddbc6335a4691f7c",
+    "src/orchestrator/application/ack_observation.py": "50ae239b74f7231fb8327acca76944f750abfcbad2f11cce773a2422d40d1588",
+    "src/orchestrator/application/task_attention_service.py": "87c44c3a91008eb1b600f346bf82e534b61561c2639310ad61fd8e5594cb73fd",
+    "src/orchestrator/application/teamplayer_evidence.py": "00e1e0918436f3d26102a9176c5cee7af5a2d82b6de8f1dbe7608543b67037a0",
+    "src/orchestrator/application/teamplayer_reader.py": "4199883d6aed3fe68f1be280d3695c2e500bbed1f8742bc2a2cf66a35c729e8e",
+    "src/orchestrator/application/coordinator_review_service.py": "647d128fbc91bde6b6f77c0e11e2732c33ded01b1298076945a3e4ca0fb9313c",
+    "src/orchestrator/application/task_changes_service.py": "1febe8b1f9ca069f5f77debec4233b33befd067e4317dbf1e9b905e11e0a53b7",
+    "src/orchestrator/application/__init__.py": "40dae748055e6a3acf3a85d0bf91cb1ce9421ac28945ffe6e5827747b91d1b19",
+    "src/orchestrator/application/task_merge_service.py": "3a9db563ff158d9742ca75926a92d8da1bed09723cdc5ccfe3c6bbd87cd6c11f",
+    "src/orchestrator/application/worker_commit_service.py": "f373d8b27e2377a3e71bf35d11a9fedf6e856fa1035b59d91856123e8cacd7f1",
+    "src/orchestrator/application/task_scheduler_service.py": "5019db901e0da2301f79320c85f0f53662b9c963d975d85e9a2a1779c462602a",
+    "src/orchestrator/application/runtime_assignment_service.py": "21df73b2cf7f257ea259383472591a1786d30066d6f8981c78a78725a5014858",
+    "src/orchestrator/application/git_integration_service.py": "112dc1bd3ba6f48725385cbdab2edbac6e102de399c1517bd52e752617718e76",
+    "src/orchestrator/application/integration_activation_service.py": "15410b325d0890e51c2295677e48c206a36d3ec9e081e78a95414db53fc5996a",
+    "src/orchestrator/application/worktree_service.py": "56dee552e6ef9262a315b6968c723472c547d172d42f5170ae884bec91771081",
+    "src/orchestrator/application/reconciliation_service.py": "52674ce4cceee190db6f138a959ed536374368bf9ff10c8bba648f3e33072d58",
+    "src/orchestrator/application/task_resume_intent.py": "eae64910baabc57de465b7d8a8f007e901a9e3aed31faece753814f71c3ead05",
+    "src/orchestrator/application/coordinator_delivery_service.py": "abf5a03542ad540ddd79a6b74198f50fbeda01d1c89d5407239f12b61ecfa8bd",
+    "src/orchestrator/application/coordinator_review_subject.py": "e449c386883ac69c0af71e299a6ff39119cf71bdef310d633319606b33df20d0",
+    "src/orchestrator/application/task_approval_service.py": "270f7861a7a33e0bd34e5d24266dec93c978de6c778c4b51cd7529bfd6568535",
+    "src/orchestrator/application/teamplayer_sync.py": "fbcc2c86b184d54c32a85153a5f63225506a389700c38324e0c8ceaef5297812",
+    "src/orchestrator/application/worker_slots.py": "63a242b6cc8f11502a1a2b080735532661deec9a81ce3da0d6e59f3eeec44fb8",
+    "src/orchestrator/application/coordinator_claim_service.py": "970266bb296a345c0dfdb1334145687ff2219074b0ae7d73c52179fa54fdac66",
+    "src/orchestrator/persistence/__init__.py": "f0901e56ad2f99de99e016c2d1aa11aa04207007328fe52b8891b4997f33ed72",
+    "src/orchestrator/persistence/store.py": "babaa29f9be7a878deb1640053bd573bb746f3b0ae8657af5099c878cb6ef677",
+    "prompts/worker-v1.md": "cf37c4b75d847d50db855272f6e5099f1b8b1919c366a122f5d6493607c50f61",
+    "prompts/coordinator-delivery-v1.md": "2f1528bb4d3e6ccced650bd3b6a0bf24f9c05b9ed3806f42038e1c7482b62148",
+    "prompts/integration-review-v1.md": "a1186e9902f59ef7bf66a2711c0b025c287e844de9aba61342018d66d5198c94",
+    "prompts/coordinator-v1.md": "7d02271881fe1a0d5cbff0c4c022c06bc54f80be5397a13af6dbe59bb30a76cb",
+    "prompts/coordinator-review-v1.md": "0cf1039d58da0bbfafa94e6c5ace77487231e69260f8b8352280f2c38f36c688",
+    "prompts/AGENTS.md": "b8d3469cf21fdef0263c0e229353ea0825838395c5c35400865d9ad3ac6d3469",
+    "prompts/integration-v1.md": "495f04203c91605493407f259a797b26a92eb7339b0d635dfe04dfc01a6f1ca5",
+    "tests/native_f43_probe.py": "40e785e24658729cd8339edf7fa50633bd4b685b12459466747cfc65e1dbcb04",
+    "tests/native_f37_host.py": "c9469aa994e4733d86cefaa1e79bbd4d7cfa530543fb2293003a54f207a06caf",
+    "tests/native_f43_host.py": "96f9fca978e5ce5432eca54877d0ceafdf7724e4352fb319b3cad471a6ff43ea"
+  },
+  "secondary_attempt_rejected": "A1-v2-controller-reconnect-proof.json used stale after data and is explicitly invalidated; subsequent poll overlapped stop and failed. Not acceptance evidence.",
+  "r1_history": "Original R1 server missing at 2026-10-29 resume. Original incomplete start and files preserved in separate archive; not adopted or counted as reconnect proof.",
+  "retained_technical_holds_after_secondary_stop_race": [
+    {
+      "id": "96537db6-c04f-466c-a5db-1e4184999bc4",
+      "run": "2d153a85-d06f-4835-8e6e-37789ead5084",
+      "stage": "ATTENTION",
+      "reason": "Recovery requires operator action: TEAMPLAYER_UNAVAILABLE. Restore the original registered resource/connection, then rerun recovery. Keep session, branch, worktree and reservation; no replacement.",
+      "next_role": "F44/operator: reconcile original closed-run monitoring record; no runtime restart or fabricated Done"
+    },
+    {
+      "id": "32b26e49-2d1a-4744-a7a3-4c2fc93583de",
+      "run": "3e683731-550a-419c-a597-5252f83f2124",
+      "stage": "ATTENTION",
+      "reason": "Recovery requires operator action: TEAMPLAYER_UNAVAILABLE. Restore the original registered resource/connection, then rerun recovery. Keep session, branch, worktree and reservation; no replacement.",
+      "next_role": "F44/operator: reconcile original closed-run monitoring record; no runtime restart or fabricated Done"
+    }
+  ],
+  "no_pending_external_effect_operations": true
+}

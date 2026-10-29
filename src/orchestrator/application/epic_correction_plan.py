@@ -205,9 +205,13 @@ class RegisteredIntegrationPlan:
 
     def connection_principal(self, actor):
         self.original.connection_principal(actor)
+        self.verify_membership()
+        return self.principal
+
+    def verify_membership(self):
+        """Verify protected additive scope without requiring its native process to be live."""
         spec, native, stamp = self.plan.current()
         if stamp != self.membership_hash or tuple(native) != self.native_task_ids or (
             canonical_json(spec.model_dump(mode="json")) != self._spec_json
         ):
             raise CorrectionPlanError("CORRECTION_EFFECTIVE_PLAN_STALE")
-        return self.principal
