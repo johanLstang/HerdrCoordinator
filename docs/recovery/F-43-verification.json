@@ -4,8 +4,8 @@
   "branch": "task/e11-f43",
   "functional_commit": "d162a8bc3f14526b498a6b37f363151705dd515b",
   "epic_base": "a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a",
-  "review_verdict": "READY_FOR_REVIEW_PENDING_INTEGRATION",
-  "task_done": false,
+  "review_verdict": "APPROVED",
+  "task_done": true,
   "ready_for_review": true,
   "acceptance_verified": "3/3; native evidence with explicit source qualifications",
   "tests": {
@@ -213,23 +213,21 @@
     "r1_preserved": true
   },
   "remaining": [
-    "Bootstrap Integration full review of exact task/epic SHA",
-    "Task to epic no-ff merge and actual posttests",
-    "Fresh-version TeamPlayer Done and epic description sync"
+    "E11: F44/F45 and aggregate review/PR/main delivery"
   ],
   "teamplayer": {
-    "task_status": "Testing",
-    "task_version": 9,
+    "task_status": "Done",
+    "task_version": 11,
     "execution_owner_kind": "User",
     "responsible_user_id": "105f26a7-0648-438d-94fd-3260ac3af4ee",
     "task_status_and_description_readback": true,
     "epic_status": "InProgress",
-    "epic_version": 11,
+    "epic_version": 12,
     "epic_description_readback": true,
     "local_epic_status": "Active",
-    "epic_own_acceptance": "0/3",
+    "epic_own_acceptance": "1/3",
     "all_50_product_tasks_assigned_to_user105": true,
-    "done_features": "F01-F42"
+    "done_features": "F01-F43"
   },
   "test_groups_qualified": [
     {
@@ -253,5 +251,32 @@
       "result": "PASS",
       "source": "control guard and pure membership extraction; preceding final error handler"
     }
-  ]
+  ],
+  "delivery": {
+    "stage": "MERGED_PENDING_POSTVERIFICATION",
+    "operation_id": "adb61676-e354-472c-9164-5f263b4df619",
+    "source": "6cf4782062b3cb55ee1820ed801e7f0f29049181",
+    "target": "a07dfc64a7e44b5ad36ab8e0d4cbaddb7bb6b15a",
+    "main": "c43c9e679077cd5e7f5a70454c38ea0d0af0a83b",
+    "source_branch": "task/e11-f43",
+    "target_branch": "feature/epic-e11",
+    "review_sha256": "2919b9649d3bdfbc15aa909d53ca55cdb9919856259e70db4837f0082b3dfb6c",
+    "bootstrap_exception": "Unregistered manual development worktrees are not adopted. Bootstrap Integration uses GitAdapter after independent path/branch/base/SHA/clean checks, saved actual review, common Git lock and posttests. No Worker merge authority or fabricated product ownership/session/slot/state.",
+    "merge_commit": "9dba9758bab4e9e927480abfbddca6c0970621da"
+  },
+  "post_merge": {
+    "tests": 21,
+    "seconds": 280.237,
+    "exit_code": 0,
+    "command": "uv run --locked pytest tests/test_session_recovery.py --junitxml=/tmp/herdr-f43-post-unit.xml -q",
+    "artifact": "docs/reviews/F-43-post.xml",
+    "merge_commit": "9dba9758bab4e9e927480abfbddca6c0970621da",
+    "source_pins": 91,
+    "wheel_modules": 81,
+    "policies": 6,
+    "ruff": "PASS",
+    "build": "PASS",
+    "READMECLI": "PASS",
+    "diff_check": "PASS"
+  }
 }
